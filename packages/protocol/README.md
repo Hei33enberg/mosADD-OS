@@ -1,0 +1,33 @@
+# @m0ssad/protocol
+
+Zod-validated message schemas and codecs for the mosadd protocol. Shared across all `m*` modules and providers.
+
+> **A module of [mosadd](https://github.com/mosadd/os) — a human OS for communications.**
+
+## Install
+
+```bash
+npm install @m0ssad/protocol
+```
+
+## Usage
+
+```ts
+import { Message, encodeMessage, decodeMessage } from "@m0ssad/protocol";
+
+const msg: Message = {
+  id: "...",
+  kind: "text",
+  sender: "...",
+  recipient: "...",
+  payload: "hello",
+  timestamp: Date.now(),
+};
+
+const bytes = encodeMessage(msg);
+const restored = decodeMessage(bytes); // throws on invalid input
+```
+
+## License
+
+[Apache-2.0](../../LICENSE). Patent grant included.

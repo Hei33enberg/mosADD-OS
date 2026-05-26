@@ -1,0 +1,52 @@
+{
+  "name": "@m0ssad/protocol",
+  "version": "3.0.0-alpha.0",
+  "description": "Message schemas and codecs for the mosadd protocol — Zod-validated types shared across all m* modules.",
+  "homepage": "https://github.com/mosadd/os/tree/main/packages/protocol",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mosadd/os.git",
+    "directory": "packages/protocol"
+  },
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "keywords": [
+    "mosadd",
+    "protocol",
+    "zod",
+    "schema",
+    "codec"
+  ]
+}

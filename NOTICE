@@ -1,0 +1,72 @@
+mosadd
+Copyright 2026 mosadd contributors
+
+This product includes software developed at mosadd
+(https://mosadd.com/).
+
+---
+
+This product includes code derived from third-party projects:
+
+1. Hermes Agent
+   Copyright (c) 2025 Nous Research
+   Licensed under the MIT License.
+   https://github.com/NousResearch/Hermes-Agent
+
+   The gateway/platforms/ adapters in `packages/bridges/` are
+   structurally derived from Hermes Agent's multi-platform gateway,
+   reimplemented in TypeScript with significant modifications.
+
+2. LiveKit
+   Copyright (c) LiveKit, Inc.
+   Licensed under the Apache License 2.0.
+   https://github.com/livekit/livekit
+
+   `forks/livekit-server/` is a vendored fork of livekit-server,
+   rebranded as `m0ssad-fabric` for our use case, with custom
+   patches in `patches/` for threat radar primitives, anonymous
+   identity support, and multi-channel hub abstractions.
+
+3. mautrix
+   Copyright (c) Tulir Asokan
+   Licensed under the Apache License 2.0.
+   https://github.com/mautrix/
+
+   Matrix bridge protocol implementations in `packages/bridges/matrix/`
+   reference mautrix design patterns.
+
+4. Pion WebRTC
+   Copyright (c) the Pion Authors
+   Licensed under the MIT License.
+   https://github.com/pion/webrtc
+
+   Transitive dependency via LiveKit fork. Used as foundational
+   Go WebRTC implementation.
+
+5. nwaku / Waku
+   Copyright (c) the Waku Org
+   Licensed under the Apache License 2.0.
+   https://github.com/waku-org/nwaku
+
+   Adapted as messaging backbone for anonymous identity mode in
+   `packages/providers/nwaku/`.
+
+6. Dendrite (Matrix.org)
+   Copyright (c) The Matrix.org Foundation C.I.C.
+   Licensed under the Apache License 2.0.
+   https://github.com/matrix-org/dendrite
+
+   Optional Matrix homeserver integration in
+   `packages/providers/dendrite/`.
+
+7. Routr (Fonoster)
+   Copyright (c) Fonoster Inc.
+   Licensed under the Apache License 2.0.
+   https://github.com/fonoster/routr
+
+   SIP control plane for mCALL in `packages/providers/routr/`.
+
+---
+
+For a machine-readable manifest of dependencies and their licenses,
+see THIRD-PARTY-LICENSES.md.

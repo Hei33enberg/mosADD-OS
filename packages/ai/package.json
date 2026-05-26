@@ -1,0 +1,27 @@
+{
+  "name": "@m0ssad/ai",
+  "version": "3.0.0-alpha.0",
+  "description": "Framework adapters for mosadd. Subpath exports: @m0ssad/ai/vercel, @m0ssad/ai/langchain, @m0ssad/ai/openai, @m0ssad/ai/anthropic. Single package, atomic releases (Stripe Agent Toolkit pattern).",
+  "homepage": "https://github.com/mosadd/os/tree/main/packages/ai",
+  "repository": { "type": "git", "url": "https://github.com/mosadd/os.git", "directory": "packages/ai" },
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./vercel": { "types": "./dist/vercel/index.d.ts", "import": "./dist/vercel/index.js" },
+    "./langchain": { "types": "./dist/langchain/index.d.ts", "import": "./dist/langchain/index.js" },
+    "./openai": { "types": "./dist/openai/index.d.ts", "import": "./dist/openai/index.js" },
+    "./anthropic": { "types": "./dist/anthropic/index.d.ts", "import": "./dist/anthropic/index.js" }
+  },
+  "files": ["dist", "src", "README.md"],
+  "publishConfig": { "access": "public" },
+  "scripts": {
+    "build": "tsup src/index.ts src/vercel/index.ts src/langchain/index.ts src/openai/index.ts src/anthropic/index.ts --format esm --dts --clean",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": { "@m0ssad/mcp": "workspace:*" },
+  "devDependencies": { "tsup": "^8.3.5", "typescript": "^5.7.2" }
+}

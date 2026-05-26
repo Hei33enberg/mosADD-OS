@@ -1,0 +1,22 @@
+@m0ssad/bridges
+Copyright 2026 mosadd contributors
+
+This package includes code structurally derived from:
+
+  Hermes Agent
+  Copyright (c) 2025 Nous Research
+  Licensed under the MIT License.
+  https://github.com/NousResearch/Hermes-Agent
+
+The multi-platform gateway pattern in this package (BridgeProvider
+interface, per-platform adapters) is reimplemented in TypeScript
+based on Hermes Agent's gateway/platforms/ module.
+
+Substantial reworking includes:
+- Migration from Python to TypeScript
+- Adaptation to MCP tool surface
+- Replacement of Hermes' agent loop with mosadd's m* OS module model
+- Integration with @m0ssad/core radar middleware
+- BYOK credential model
+
+Original MIT license terms preserved.

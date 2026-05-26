@@ -1,0 +1,50 @@
+{
+  "name": "mosadd-os",
+  "version": "3.0.0-alpha.0",
+  "private": true,
+  "description": "mosadd — A human OS. Add. Operating system for human communications.",
+  "homepage": "https://mosadd.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mosadd/os.git"
+  },
+  "license": "Apache-2.0",
+  "author": "mosadd contributors",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "build": "pnpm -r --parallel run build",
+    "test": "pnpm -r --parallel run test",
+    "typecheck": "pnpm -r --parallel run typecheck",
+    "lint": "pnpm -r --parallel run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,yaml,yml}\"",
+    "clean": "pnpm -r --parallel run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.9",
+    "@types/node": "^22.10.0",
+    "prettier": "^3.4.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "keywords": [
+    "mosadd",
+    "communication",
+    "mcp",
+    "agent",
+    "claude",
+    "cursor",
+    "operating-system",
+    "messaging",
+    "ptt",
+    "pstn",
+    "matrix",
+    "discord",
+    "telegram"
+  ]
+}

@@ -1,0 +1,34 @@
+name: RFC discussion
+description: Open a discussion before writing a formal RFC (new m* module, public API change, governance change)
+labels: [rfc, triage]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: 'Proposed RFC title (e.g. "RFC: mPOST broadcast module")'
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: One-paragraph summary
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Use case + motivation
+    validations:
+      required: true
+  - type: textarea
+    id: rough-api
+    attributes:
+      label: Rough API sketch (if applicable)
+      render: typescript
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: I'll write a full RFC in docs/rfcs/ once this discussion converges
+          required: true
