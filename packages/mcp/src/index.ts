@@ -8,5 +8,5 @@
  */
 
 export { createMosaddServer } from "./server.js";
-export type { MosaddServerOptions, MosaddTool } from "./types.js";
+export type { MosaddServerOptions, MosaddTool, MosaddToolContext } from "./types.js";
 export { allTools } from "./tools/index.js";
