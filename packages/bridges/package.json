@@ -2,8 +2,8 @@
   "name": "@m0ssad/bridges",
   "version": "3.0.0-alpha.0",
   "description": "Bridge modules — reach existing networks (Telegram, Discord, Matrix, Signal, WhatsApp, Slack, iMessage) from mosadd. Derived from Hermes Agent gateway/platforms/ (MIT).",
-  "homepage": "https://github.com/mosadd/os/tree/main/packages/bridges",
-  "repository": { "type": "git", "url": "https://github.com/mosadd/os.git", "directory": "packages/bridges" },
+  "homepage": "https://github.com/Hei33enberg/mosadd-os/tree/main/packages/bridges",
+  "repository": { "type": "git", "url": "https://github.com/Hei33enberg/mosadd-os.git", "directory": "packages/bridges" },
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -13,9 +13,10 @@
   "publishConfig": { "access": "public" },
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --clean",
+    "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": { "@m0ssad/core": "workspace:*" },
-  "devDependencies": { "tsup": "^8.3.5", "typescript": "^5.7.2" }
+  "devDependencies": { "tsup": "^8.3.5", "typescript": "^5.7.2", "vitest": "^2.1.8" }
 }

@@ -4,6 +4,7 @@ Index of architecture documents.
 
 | Doc | Status | Description |
 |---|---|---|
+| [phase-2-hub.md](phase-2-hub.md) | Draft | Commercial hub design — 5 responsibilities, trust boundaries, pricing tiers |
 | [control-data-plane.md](control-data-plane.md) | TODO | PTT/CALL: agent ↔ MCP control + client ↔ WebRTC data |
 | [fork-strategy.md](fork-strategy.md) | TODO | LiveKit fork + divergence discipline |
 | [identity-recovery.md](identity-recovery.md) | TODO | Anonymous identity + passphrase/seed recovery |
