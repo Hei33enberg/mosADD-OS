@@ -7,6 +7,7 @@ Quickstart configs for the agent runtimes that consume `@m0ssad/mcp`.
 | [`claude-code/`](claude-code/) | Claude Code | stdio (local) |
 | [`cursor/`](cursor/) | Cursor | stdio (local) |
 | [`chatgpt-apps/`](chatgpt-apps/) | ChatGPT Apps | HTTP/SSE (hosted via Phase 2 `mcp.mosadd.com`) |
+| [`vercel-ai/`](vercel-ai/) | Vercel AI SDK (Node.js) | in-process via `@m0ssad/ai/vercel` |
 
 ## Other runtimes
 
