@@ -1,24 +1,116 @@
 # @m0ssad/ai
 
-Framework adapters for mosadd. Single package with subpath exports — one install, all frameworks.
+Framework adapters for [mosadd](https://mosadd.dev) — use the 17 mosadd OS tools directly from your favorite agent framework without spinning up the MCP server.
 
-```bash
-npm install @m0ssad/ai
-```
+**One package, four entrypoints, atomic releases** — pattern stolen from [Stripe Agent Toolkit](https://github.com/stripe/agent-toolkit).
+
+| Subpath | Framework | What you get |
+|---|---|---|
+| `@m0ssad/ai/vercel` | [Vercel AI SDK](https://sdk.vercel.ai) (`ai` package, v4+) | `Record<string, VercelTool>` for `streamText` / `generateText` |
+| `@m0ssad/ai/langchain` | [LangChain](https://js.langchain.com) | Plain descriptors you wrap in `DynamicStructuredTool` |
+| `@m0ssad/ai/openai` | [OpenAI Agents SDK](https://github.com/openai/openai-agents-js) | `FunctionTool[]` for the `tools:` array on `Agent` |
+| `@m0ssad/ai/anthropic` | [Anthropic SDK](https://github.com/anthropics/anthropic-sdk-typescript) | `[{ name, description, input_schema }]` for Messages API |
+
+## Vercel AI SDK
 
 ```ts
 import { mosadd } from "@m0ssad/ai/vercel";
-import { mosaddTools } from "@m0ssad/ai/langchain";
-import { mosaddTools as openaiTools } from "@m0ssad/ai/openai";
-import { mosaddTools as anthropicTools } from "@m0ssad/ai/anthropic";
+import { streamText } from "ai";
+
+const tools = mosadd({
+  modules: ["mDM", "mROOM"],
+  supabase: {
+    url: process.env.M0SSAD_SUPABASE_URL!,
+    anonKey: process.env.M0SSAD_SUPABASE_ANON_KEY!,
+    userJwt: process.env.M0SSAD_USER_JWT!,
+  },
+});
+
+await streamText({ model: openai("gpt-5"), tools, messages });
 ```
 
-Pattern from [Stripe Agent Toolkit](https://github.com/stripe/agent-toolkit). Single version, atomic release.
+## LangChain
 
-## Status
+```ts
+import { mosadd } from "@m0ssad/ai/langchain";
+import { DynamicStructuredTool } from "@langchain/core/tools";
+import { createReactAgent } from "@langchain/langgraph/prebuilt";
 
-Pre-alpha. Stub exports. Real implementations in v3.0.0-alpha.1.
+const tools = mosadd({ modules: ["mDM"] }).map(
+  (t) => new DynamicStructuredTool(t),
+);
+
+const agent = createReactAgent({ llm, tools });
+```
+
+## OpenAI Agents SDK
+
+```ts
+import { mosadd } from "@m0ssad/ai/openai";
+import { Agent, run } from "@openai/agents";
+
+const agent = new Agent({
+  name: "mosadd-helper",
+  instructions: "Manage the user's mosadd communications when asked.",
+  tools: mosadd({ modules: ["mDM", "mROOM", "mAIL"] }),
+});
+
+await run(agent, "Send Alice a message saying I'll be late.");
+```
+
+## Anthropic SDK / Claude Agent SDK
+
+```ts
+import Anthropic from "@anthropic-ai/sdk";
+import { mosaddTools, executeMosaddToolCall } from "@m0ssad/ai/anthropic";
+
+const client = new Anthropic();
+const tools = mosaddTools({ modules: ["mDM", "mROOM"] });
+
+let response = await client.messages.create({
+  model: "claude-opus-4-7",
+  max_tokens: 1024,
+  tools,
+  messages: [{ role: "user", content: "Send Bob a guest room link valid 1h." }],
+});
+
+while (response.stop_reason === "tool_use") {
+  // … find tool_use blocks, run executeMosaddToolCall, append tool_result, loop …
+}
+```
+
+## Options
+
+```ts
+interface MosaddOptions {
+  /** Filter to specific m* modules. Defaults to ALL shipped tools. */
+  modules?: string[];
+
+  /** BYOK Supabase creds. Falls back to env vars if omitted. */
+  supabase?: {
+    url: string;
+    anonKey: string;
+    userJwt?: string;
+  };
+
+  /** Log level. */
+  logLevel?: "debug" | "info" | "warn" | "error";
+}
+```
+
+If `supabase` is omitted, the adapters read from env:
+- `M0SSAD_SUPABASE_URL`
+- `M0SSAD_SUPABASE_ANON_KEY`
+- `M0SSAD_USER_JWT`
+
+## What you don't get
+
+This adapter pack stays minimal on purpose:
+
+- **No peer deps** on `ai`, `@langchain/*`, `@openai/agents`, or `@anthropic-ai/sdk`. We return shapes those packages happen to accept. The consumer brings the framework.
+- **No HTTP transport.** Adapters call the mosadd handlers directly in-process. For HTTP/SSE use the MCP server — see [`packages/mcp`](../mcp).
+- **Strict JSON Schema** for OpenAI/Anthropic is approximate today (`strict: false`). v3.0.0-alpha.1 brings exact mode via `zod-to-json-schema`.
 
 ## License
 
-[Apache-2.0](../../LICENSE).
+Apache-2.0. See [LICENSE](../../LICENSE).
