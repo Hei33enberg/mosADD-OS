@@ -1,14 +1,20 @@
 # @m0ssad/mcp
 
-Model Context Protocol (MCP) server for mosadd. Exposes the mosadd OS modules — `mDM`, `mTALK`, `mAIL`, `mCALL`, `mIRC`, `mIRL`, `mROOM`, and bridges — to any agent runtime.
+MCP server for [mosadd](https://mosadd.dev) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **A module of [mosadd](https://github.com/mosadd/os) — a human OS for communications.**
+> **3.0.0-alpha** — `mDM` only, wired to the m0ssad-3 Supabase backend as a strangler-fig step. Phase 1 full will add mTALK / mAIL / mCALL / mIRC / mIRL / mROOM + bridges. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 167-event radar in front.
 
 ## Install
 
-### As a local stdio server (Claude Code, Cursor, Cline, Windsurf, ...)
+### Claude Code
 
-Add to your MCP config:
+```bash
+claude mcp add mosadd npx -- -y @m0ssad/mcp
+```
+
+### Cursor
+
+`~/.cursor/mcp.json`:
 
 ```json
 {
@@ -17,92 +23,94 @@ Add to your MCP config:
       "command": "npx",
       "args": ["-y", "@m0ssad/mcp"],
       "env": {
-        "MOSADD_API_KEY": "your-key-from-hub.mosadd.com"
+        "M0SSAD_SUPABASE_URL": "https://<your-project>.supabase.co",
+        "M0SSAD_SUPABASE_ANON_KEY": "<anon key>",
+        "M0SSAD_USER_JWT": "<your session JWT>"
       }
     }
   }
 }
 ```
 
-### Hosted (ChatGPT Apps, Lovable, Bolt, custom HTTP clients)
+### Standalone
 
-Point your client at `https://mcp.mosadd.com` and authenticate with OAuth.
-See [docs/hosted-mcp.md](../../docs/hosted-mcp.md).
-
-## Exposed tools
-
-Each `m*` module exposes a family of tools. Names follow `m{MODULE}_{operation}`:
-
-### `mDM` — Direct messages
-
-- `mDM_send` — send a DM (with optional thread, optional E2E)
-- `mDM_list` — list recent DMs (with pagination, optional thread filter)
-- `mDM_respond_request` — accept/reject a DM request from a stranger
-
-### `mTALK` — Push-to-talk (Phase 1 — kill feature)
-
-- `mTALK_start_session` — open a PTT session
-- `mTALK_push` / `mTALK_release` — semantic PTT
-- `mTALK_speak` — agent injects synthesized speech into the room
-
-### `mAIL` — Email (Phase 1)
-
-- `mAIL_send`, `mAIL_view`, `mAIL_list`
-
-### `mCALL` — PSTN (Phase 1, requires DID acquisition)
-
-- `mCALL_start_pstn`, `mCALL_end_pstn`, `mCALL_list_did`
-
-### `mIRC` — Persistent channels (Phase 1)
-
-- `mIRC_create_channel`, `mIRC_join`, `mIRC_send_message`, `mIRC_list_channels`
-
-### `mROOM` — Ephemeral rooms (Phase 1)
-
-- `mROOM_create`, `mROOM_guest_token`, `mROOM_list_participants`
-
-### `mIRL` — Live-stream after-parties (Phase 1)
-
-- `mIRL_create_after_party`, `mIRL_list_attendees`
-
-### Bridges (Phase 1)
-
-- `mMATRIX_send`, `mDISCORD_send`, `mTELEGRAM_send` (Phase 1 MVP)
-- `mSLACK_send`, `mSIGNAL_send` (Phase 1 P1)
-
-## Usage example
-
-```ts
-// Claude Code session
-await use_mcp_tool({
-  server: "mosadd",
-  tool: "mDM_send",
-  arguments: {
-    to: "alice@mosadd",
-    text: "Have you seen the build log?",
-    thread_id: "incident-2026-05-26"
-  }
-});
+```bash
+M0SSAD_SUPABASE_URL=... M0SSAD_SUPABASE_ANON_KEY=... M0SSAD_USER_JWT=... npx @m0ssad/mcp
 ```
 
-## Configuration
+## BYOK — get your env values
 
-Environment variables:
+While the hosted gateway is in development, the alpha runs in **local BYOK mode** — you supply your own Supabase credentials to talk to your own m0ssad-3 backend.
 
-- `MOSADD_API_KEY` — required for cloud mode (issued by hub.mosadd.com)
-- `MOSADD_HUB_URL` — defaults to `https://mcp.mosadd.com`
-- `MOSADD_MODE` — `cloud` (default) | `local` | `self-host`
-- `MOSADD_LOG_LEVEL` — `debug` | `info` | `warn` | `error`
+- `M0SSAD_SUPABASE_URL` — your Supabase project URL (e.g. `https://abc.supabase.co`)
+- `M0SSAD_SUPABASE_ANON_KEY` — the public anon key from project settings
+- `M0SSAD_USER_JWT` — a Supabase session token for your mosadd user. Get it from the browser:
+  1. Sign in to mosadd.com
+  2. Open DevTools → Application → Local Storage → `sb-<ref>-auth-token`
+  3. Copy the `access_token` field
 
-For BYOK provider keys (Telnyx, Resend, etc.), use the hub dashboard or set:
-- `MOSADD_TELNYX_API_KEY`
-- `MOSADD_RESEND_API_KEY`
-- ...
+In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling required.
 
-## Status
+## Tools shipped in alpha
 
-**Pre-alpha.** Only `mDM_send`, `mDM_list`, `mDM_respond_request` have working stubs. Other tools return `{ error: "not yet implemented" }`. Track progress in [LINEAR-2143](https://linear.app/ip-ra/issue/LINEAR-2143).
+| Tool | Description |
+|---|---|
+| `mDM_list_contacts` | List your mosadd contacts (returns `identity_id` to use elsewhere) |
+| `mDM_send` | Send a DM. `{ to: identity_id, text, thread_label?, reply_to_id? }` |
+| `mDM_list` | Read DM thread |
+| `mDM_respond_request` | Accept/reject incoming DM request |
+
+All tool names follow [RFC 0001](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
+
+## Try it (60-second demo)
+
+In Claude Code with env vars set:
+
+> List my mosadd contacts.
+
+Claude calls `mDM_list_contacts` → you see your contact list.
+
+> Send "hello from Claude" to <id> with thread label `notes`.
+
+Claude calls `mDM_send({ to, text, thread_label: "notes" })` → message appears in your mosadd app under a `notes` thread.
+
+## Architecture
+
+```
+Agent (Claude / Cursor / ...)
+        │
+        │ stdio MCP
+        ▼
+@m0ssad/mcp server  (this package)
+        │
+        │ supabase.functions.invoke('message-send', ...)
+        │ + Authorization: Bearer <M0SSAD_USER_JWT>
+        ▼
+m0ssad-3 Edge Function
+        │
+        │ RLS-checked insert
+        ▼
+Postgres `messages` table
+        │
+        │ Realtime broadcast
+        ▼
+mosadd.com app (receiver)
+```
+
+For PTT / CALL / ROOM (real-time media), the architecture separates **control plane** (MCP) from **data plane** (WebRTC daemon). See [docs/architecture/control-data-plane.md](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/architecture/control-data-plane.md) when it lands.
+
+## Configuration via env vars
+
+| Env | Description | Required |
+|---|---|---|
+| `M0SSAD_SUPABASE_URL` | Supabase project URL | yes |
+| `M0SSAD_SUPABASE_ANON_KEY` | Supabase anon key | yes |
+| `M0SSAD_USER_JWT` | User session token | yes (for tools that touch user data) |
+| `MOSADD_API_KEY` | Hub API key (Phase 2 hosted mode) | no |
+| `MOSADD_HUB_URL` | Override hub url | no |
+| `MOSADD_MODE` | `local` / `cloud` / `self-host` | no (auto-detected) |
+| `MOSADD_LOG_LEVEL` | `debug` / `info` / `warn` / `error` | no (default `info`) |
 
 ## License
 
-[Apache-2.0](../../LICENSE). Patent grant included.
+Apache-2.0. See repo [LICENSE](https://github.com/Hei33enberg/mosadd-os/blob/main/LICENSE) and [NOTICE](https://github.com/Hei33enberg/mosadd-os/blob/main/NOTICE).
