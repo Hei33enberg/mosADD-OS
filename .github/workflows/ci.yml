@@ -16,6 +16,9 @@ jobs:
     name: typecheck · build · smoke
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # Opt into Node.js 24 for action runtimes (GitHub deprecating Node 20 in Sep 2026)
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
     steps:
       - uses: actions/checkout@v4
