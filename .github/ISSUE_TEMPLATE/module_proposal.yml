@@ -1,0 +1,32 @@
+name: New m* module proposal
+description: Propose a new mosadd OS module
+labels: [rfc, module-proposal]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Adding a new `m*` module is a substantive change and requires an RFC.
+        Read [RFC 0001 — module naming](../docs/rfcs/0001-module-naming.md) first.
+        This issue is for **early-stage discussion**. The RFC PR comes next.
+  - type: input
+    id: module
+    attributes:
+      label: Proposed module name
+      placeholder: "mEXAMPLE"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: One-line description
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Why is this a semantic primitive (not a vendor wrapper)?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: List ≥2 viable backend providers
+    validations:
+      required: true
