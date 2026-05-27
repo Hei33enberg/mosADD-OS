@@ -1,23 +1,63 @@
 # @m0ssad/bridges
 
-Bridges to existing networks — reach Telegram/Discord/Matrix/Signal/WhatsApp/Slack/iMessage contacts from your mosadd OS without making them switch.
+Bridge Provider Pack — let mosadd users reach contacts on existing networks (Matrix, Discord, Telegram, Slack, Signal, WhatsApp, iMessage) **without forcing those contacts to sign up for mosadd**.
 
-Each bridge exposes a new `m*` OS module:
+> Phase 1 alpha: TypeScript interface + 3 scaffold adapters (Matrix, Discord, Telegram). Real protocol wiring lands per-bridge in follow-ups to [LINEAR-2168](https://linear.app/ip-ra/issue/LINEAR-2168). Adapters currently throw `BridgeNotImplementedError` from their handlers — the shape is locked, the wires are not.
 
-| Bridge | Module | Status |
-|---|---|---|
-| Matrix.org federation | `mMATRIX` | Phase 1 MVP |
-| Discord | `mDISCORD` | Phase 1 MVP |
-| Telegram (MTProto) | `mTELEGRAM` | Phase 1 MVP |
-| Slack | `mSLACK` | Phase 1 P1 |
-| Signal | `mSIGNAL` | Phase 1 P1 |
-| WhatsApp Business + mautrix-whatsapp | `mWHATSAPP` | Phase 2 (legal review) |
-| iMessage | `mIMESSAGE` | Phase 2 (legal review) |
+## Why bridges
 
-## Attribution
+Every new messenger fights "but all my friends are on WhatsApp/Telegram". mosadd's OS framing turns that into a feature: `add mTELEGRAM` and the user can reach Telegram contacts from a single mosadd MCP call — no fork in their network.
 
-Structurally derived from [Hermes Agent](https://github.com/NousResearch/Hermes-Agent) (MIT, Nous Research). See [NOTICE](./NOTICE).
+This package is design-adopted from the [Hermes Agent](https://github.com/NousResearch/Hermes-Agent) (MIT, Nous Research) `gateway/platforms/` pattern. See the project [NOTICE](../../NOTICE) for full attribution.
+
+## Shape
+
+```ts
+import { getBridge, type BridgeProvider } from "@m0ssad/bridges";
+
+const matrix: BridgeProvider = getBridge("matrix");
+await matrix.verifyConfig({ homeserver: "...", access_token: "...", user_id: "@bot:..." });
+await matrix.sendMessage(config, { to: "!roomId:server", text: "hi from mosadd" });
+```
+
+`BridgeProvider` is uniform across networks — every bridge implements `verifyConfig`, `sendMessage`, `listMessages`, and `resolveHandle`. Network-specific config shape (token, session, homeserver, …) is validated inside each adapter.
+
+## Bridges in this package
+
+| Bridge | Status | Upstream license | Notes |
+|---|---|---|---|
+| `MatrixBridge` | scaffold | Apache-2.0 (matrix-bot-sdk planned) | First-class — federation reaches the whole Matrix network with one bot account |
+| `DiscordBridge` | scaffold | MIT (discord.js / discord-api-types planned) | Bot token, channel + DM scope |
+| `TelegramBridge` | scaffold | MIT (telegraf / gram.js planned) | Two modes — Bot API and MTProto user session |
+
+Coming next (per [LINEAR-2168](https://linear.app/ip-ra/issue/LINEAR-2168)):
+
+- `SlackBridge` — workspace bots (Phase 1 P1)
+- `SignalBridge` — linked device, signal-cli-rest-api (Phase 1 P1)
+- `WhatsAppBridge` — Business Cloud API (Phase 2, legal review)
+- `iMessageBridge` — Mac-only via Blue Bubbles or BlueBubbles-Server (Phase 2, legal review)
+
+## BYOK config
+
+Every bridge takes a network-specific config object — see each adapter's TypeScript types for the exact shape. Adapters validate eagerly: `verifyConfig({})` throws with an actionable error.
+
+Env-var convention (for the MCP server to surface):
+
+| Bridge | Env vars |
+|---|---|
+| Matrix | `M0SSAD_MATRIX_HOMESERVER`, `M0SSAD_MATRIX_ACCESS_TOKEN`, `M0SSAD_MATRIX_USER_ID` |
+| Discord | `M0SSAD_DISCORD_TOKEN`, `M0SSAD_DISCORD_GUILD` (optional) |
+| Telegram (bot) | `M0SSAD_TELEGRAM_BOT_TOKEN` |
+| Telegram (user) | `M0SSAD_TELEGRAM_API_ID`, `M0SSAD_TELEGRAM_API_HASH`, `M0SSAD_TELEGRAM_SESSION` |
+
+## Contributing a new bridge
+
+1. Open a [module proposal issue](https://github.com/Hei33enberg/mosadd-os/issues/new?template=module_proposal.yml) with the network name and your rationale.
+2. After RFC accepts (see [governance](../../GOVERNANCE.md)), implement the `BridgeProvider` interface in `packages/bridges/src/<network>/index.ts`.
+3. Add the bridge to the `bridges` registry in `packages/bridges/src/index.ts`.
+4. Wire it into the MCP server with a tool surface in `packages/mcp/src/tools/<network>.ts` (see how `mIRC` does it — straight pattern to copy).
+5. Add a SKILL for Claude users in `skills/<network>/SKILL.md`.
 
 ## License
 
-[Apache-2.0](../../LICENSE).
+Apache-2.0. See [LICENSE](../../LICENSE) and [NOTICE](../../NOTICE).
