@@ -1,0 +1,34 @@
+# MCP registry submissions
+
+Once `@m0ssad/mcp` is on npm (currently dry-run-ready, waiting on the publish token), submit it to the major MCP registries so people can discover it.
+
+| Registry | URL | Method | Status |
+|---|---|---|---|
+| **Official MCP Registry** | https://github.com/modelcontextprotocol/registry | PR to `servers/` | Draft ready ([entry.md](./modelcontextprotocol-registry.md)) |
+| **mcp.so** | https://mcp.so | Auto-detect from GitHub (claim via PR or web form) | Draft ready ([entry.md](./mcp-so.md)) |
+| **Smithery** | https://smithery.ai | Auto-detect — connect GitHub, runs metadata extraction | Draft ready ([entry.md](./smithery.md)) |
+| **Glama** | https://glama.ai/mcp/servers | Auto-detect or PR | Draft ready ([entry.md](./glama.md)) |
+| **mcpservers.org** | https://mcpservers.org | PR to repo | Draft ready ([entry.md](./mcpservers-org.md)) |
+| **Anthropic plugins** | https://github.com/anthropics/claude-plugins-official | PR after beta period | Wait for ≥10 GitHub stars first |
+
+## Workflow per submission
+
+1. After `pnpm publish` succeeds and the version is live on npmjs.com
+2. Open a PR per registry using the prepared `entry.md` content as the payload
+3. Track responses; respond to maintainer questions within 24 h
+4. Update `docs/registry-submissions/<registry>.md` with the merged PR URL
+
+## Shared submission payload
+
+Most registries want the same fields. Keep these consistent:
+
+- **Name**: `@m0ssad/mcp`
+- **Display name**: `mosadd — A human OS. Add.`
+- **One-liner**: `Operating system for human communications. mDM · mTALK · mAIL · mCALL · mIRC · mIRL · mROOM, plus bridges to Telegram, Discord, Matrix.`
+- **Repo**: `https://github.com/Hei33enberg/mosadd-os`
+- **License**: `Apache-2.0`
+- **Author**: `mosadd contributors`
+- **Homepage**: `https://mosadd.dev`
+- **Install**: `npx -y @m0ssad/mcp`
+- **Tags**: `messaging`, `voice`, `email`, `agents`, `apache-2`, `open-source`, `bridges`
+- **OS modules listed**: mDM (alpha), mIRC (alpha), mROOM (alpha — incl. guest links USP), mAIL (alpha), mTALK / mCALL / mIRL / bridges (design)
