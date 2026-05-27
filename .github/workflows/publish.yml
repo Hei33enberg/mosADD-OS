@@ -1,0 +1,77 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'npm dist-tag (alpha, beta, latest)'
+        required: true
+        default: 'alpha'
+      access:
+        description: 'access (public, restricted)'
+        required: true
+        default: 'public'
+
+jobs:
+  publish:
+    name: publish @m0ssad/* to npm
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      contents: read
+      id-token: write  # for npm provenance
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm -r build
+
+      - name: Smoke test
+        run: |
+          echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}
+          {"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
+            | timeout 10 node packages/mcp/dist/bin/mcp.js > /dev/null
+          echo "✓ MCP server starts and lists tools"
+
+      - name: Publish (in dependency order)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          TAG="${{ github.event.inputs.tag || 'alpha' }}"
+          ACCESS="${{ github.event.inputs.access || 'public' }}"
+          for pkg in protocol crypto threat-engine mcp; do
+            echo "::group::publish @m0ssad/$pkg"
+            pnpm publish "packages/$pkg" \
+              --access "$ACCESS" \
+              --tag "$TAG" \
+              --no-git-checks \
+              --provenance
+            echo "::endgroup::"
+          done
+
+      - name: Smoke install
+        run: |
+          # Verify the published package actually works
+          TAG="${{ github.event.inputs.tag || 'alpha' }}"
+          mkdir /tmp/smoke && cd /tmp/smoke
+          npm init -y > /dev/null
+          npm install "@m0ssad/mcp@$TAG"
+          ls node_modules/@m0ssad/mcp/dist/bin/mcp.js
+          echo "✓ @m0ssad/mcp@$TAG installs and has the bin"

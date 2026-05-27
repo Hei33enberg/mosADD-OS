@@ -6,9 +6,17 @@ on:
   pull_request:
     branches: [main]
 
+# Cancel superseded runs on the same branch.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ci:
+    name: typecheck · build · smoke
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
     steps:
       - uses: actions/checkout@v4
 
@@ -24,14 +32,37 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Typecheck
-        run: pnpm typecheck
+      - name: Typecheck (all packages)
+        run: pnpm -r typecheck
 
-      - name: Lint
-        run: pnpm lint --if-present
+      - name: Build (all packages)
+        run: pnpm -r build
 
-      - name: Test
-        run: pnpm test --if-present
+      - name: Smoke test — @m0ssad/mcp speaks MCP
+        run: |
+          # Initialize handshake + list tools, fail if we don't see the expected channels.
+          OUTPUT=$(echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}
+          {"jsonrpc":"2.0","id":2,"method":"tools/list"}' | timeout 10 node packages/mcp/dist/bin/mcp.js)
+          echo "$OUTPUT"
+          for tool in mDM_send mDM_list_contacts mIRC_create mROOM_create_guest_link mAIL_send; do
+            if ! echo "$OUTPUT" | grep -q "\"name\":\"$tool\""; then
+              echo "::error::Expected tool $tool missing from tools/list"
+              exit 1
+            fi
+          done
+          echo "✓ All expected tools present in MCP smoke test"
 
-      - name: Build
-        run: pnpm build --if-present
+      - name: Test (any packages that have it)
+        run: pnpm -r test --if-present
+
+      - name: Lint (any packages that have it)
+        run: pnpm -r lint --if-present
+
+      - name: Publish dry-run (verify packages can be packed)
+        run: |
+          for pkg in protocol crypto threat-engine mcp; do
+            echo "--- npm pack --dry-run @m0ssad/$pkg ---"
+            cd packages/$pkg
+            npm pack --dry-run 2>&1 | tail -5
+            cd ../..
+          done
