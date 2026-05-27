@@ -2,7 +2,7 @@ import { getRuntimeCrypto } from "./platform";
 import { deriveHkdfKey } from "./hkdf";
 import { generateIdentity, exportEd25519KeyPair } from "./identity";
 import { generateMnemonic, mnemonicToSeed, mnemonicToWords, validateMnemonic } from "./mnemonic";
-import { randomBytes, textEncoder, toBase64 } from "./utils";
+import { randomBytes, textEncoder } from "./utils";
 
 export interface VaultIdentity {
   accountId: string;

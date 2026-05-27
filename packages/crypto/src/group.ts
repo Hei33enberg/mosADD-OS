@@ -1,7 +1,7 @@
 import { deriveHkdfKey } from "./hkdf";
 import { generateX25519KeyPair, deriveSharedSecret, importX25519PublicKey, exportX25519KeyPair } from "./x25519";
-import { encryptBytes, decryptBytes, type EncryptedPayload } from "./aes";
-import { randomBytes, textEncoder, fromBase64, toBase64 } from "./utils";
+import { encryptBytes, decryptBytes } from "./aes";
+import { randomBytes, textEncoder } from "./utils";
 
 export interface WrappedGroupKey {
   ephemeralPub: string;

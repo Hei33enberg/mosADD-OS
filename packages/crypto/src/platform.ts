@@ -3,7 +3,7 @@ export function getRuntimeCrypto(): Crypto {
   if (typeof globalThis !== "undefined" && (globalThis as any).crypto) return (globalThis as any).crypto;
   if (typeof window !== "undefined" && window.crypto) return window.crypto;
   return {
-    getRandomValues: (buf: any) => {
+    getRandomValues: (_buf: unknown) => {
       throw new Error("crypto.getRandomValues not available. Is react-native-get-random-values polyfilled?");
     },
     subtle: undefined as any
