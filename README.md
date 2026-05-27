@@ -1,50 +1,68 @@
+<div align="center">
+
 # mosadd
 
-> **A human OS. Add.**
+**A human OS. Add.**
 
-`m·os·add` — operating system for human communications. Modular primitives — `mDM` for direct messages, `mTALK` for push-to-talk, `mCALL` for calls, `mROOM` for rooms, `mIRL` for live-stream after-parties, plus bridges to Telegram/Discord/Matrix/Signal — and you **add** what you need. Free open-source core, commercial hub for transmission + threat radar. Build for humans, agents, or both.
+`m·os·add` — operating system for human communications.
+Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and you `add` what you need.
 
-## Status
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/status-3.0.0--alpha-orange)](https://github.com/Hei33enberg/mosadd-os/releases)
+[![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
+[![Tools](https://img.shields.io/badge/tools-17%20live-5af082)](packages/mcp)
+[![mosadd.dev](https://img.shields.io/badge/site-mosadd.dev-5af082)](https://mosadd.dev)
 
-Pre-alpha. v3.0.0 in development. See [roadmap](https://linear.app/ip-ra/project/mosadd-deaa4bef6de8) and [Phase 1 epic](https://linear.app/ip-ra/issue/LINEAR-2138).
+</div>
 
-## Quickstart (will work after Phase 1 Foundation lands)
+---
 
-### Use in Claude Code
+## What's live today (3.0.0-alpha.0)
+
+**Tagline-to-code real:**
 
 ```bash
-npx @m0ssad/mcp
+npx -y @m0ssad/mcp
 ```
 
-Add to `~/.config/claude-code/mcp.json`:
+…starts an MCP server with **17 tools** across four mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, or send email — all through your own mosadd backend (BYOK).
 
-```json
-{
-  "mcpServers": {
-    "mosadd": {
-      "command": "npx",
-      "args": ["@m0ssad/mcp"],
-      "env": {
-        "MOSADD_API_KEY": "..."
-      }
-    }
-  }
-}
+| Channel | Tools | Highlight |
+|---|---|---|
+| **mDM** | `mDM_list_contacts`, `mDM_send`, `mDM_list`, `mDM_respond_request` | Multi-thread per contact (USP — unlike WhatsApp/Telegram) |
+| **mIRC** | `mIRC_create`, `mIRC_list`, `mIRC_get`, `mIRC_update`, `mIRC_delete` | Discord/Slack-style persistent channels with capability flags |
+| **mROOM** | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join`, `mROOM_leave`, `mROOM_close`, `mROOM_list` | **No other registered MCP server exposes single-call guest links** |
+| **mAIL** | `mAIL_send`, `mAIL_view` | Every user gets `<userId>@mosadd.com` for free |
+
+Phase 1 follow-ups: **mTALK** (push-to-talk + agent in the room), **mCALL** (PSTN with vocoder + anonymized DID), **mIRL** (live-stream after-party), and bridges to Telegram / Discord / Matrix / Signal / Slack.
+
+## Quickstart (60 seconds)
+
+### Claude Code
+
+```bash
+claude mcp add mosadd npx -- -y @m0ssad/mcp
 ```
 
-### Use in Cursor / Windsurf / Cline
+Then set three env vars in your MCP config — see [`examples/claude-code/`](./examples/claude-code/) for the walkthrough (including how to grab your session JWT from mosadd.com DevTools).
 
-Same MCP config. Works in any MCP-capable client.
+### Cursor / Windsurf / Cline
 
-### Use in your own agent (Vercel AI SDK)
+Drop [`examples/cursor/mcp.json`](./examples/cursor/mcp.json) into `~/.cursor/mcp.json` (or your equivalent) and fill in the env. Restart the editor.
 
-```ts
-import { mosadd } from "@m0ssad/ai/vercel";
+### Anthropic Skills (Claude Code plugin)
 
-const tools = mosadd({ apiKey: process.env.MOSADD_API_KEY });
-
-await streamText({ model, tools, messages });
+```bash
+claude plugin install https://github.com/Hei33enberg/mosadd-os.git
 ```
+
+This installs the MCP server **and** the four [`skills/`](./skills/) — each `SKILL.md` teaches Claude when to invoke which channel.
+
+### Try it
+
+> **You:** "Create a room and give me a guest link for Bob, valid 1 hour."
+>
+> **Claude:** calls `mROOM_create` → `mROOM_create_guest_link({ display_name: "Bob", ttl_seconds: 3600 })` → returns the share URL. Bob opens it in any browser. No signup. Done.
 
 ## OS modules (`m*`)
 
@@ -52,60 +70,65 @@ await streamText({ model, tools, messages });
 
 | Module | What | Status |
 |---|---|---|
-| `mDM` | Direct messages, multi-thread per contact, optional E2E | MVP target |
-| `mTALK` | Push-to-talk voice, LLM-as-participant | MVP target (kill feature) |
-| `mAIL` | Email, every user gets `<id>@mosadd.com` | MVP target |
-| `mCALL` | PSTN out, anonymous DID pool, vocoder | MVP target |
-| `mIRC` | Persistent channels (Discord/Slack semantics) | MVP target |
-| `mIRL` | Live-stream after-party (YT/TikTok creators monetize) | MVP target |
-| `mROOM` | Ephemeral group rooms + no-account join links | MVP target |
+| `mDM` | Direct messages, multi-thread per contact, optional E2E | **alpha (shipped)** |
+| `mTALK` | Push-to-talk voice, LLM-as-participant | Phase 1 (design in [LINEAR-2145](https://linear.app/ip-ra/issue/LINEAR-2145)) |
+| `mAIL` | Email, every user gets `<id>@mosadd.com` | **alpha (shipped)** |
+| `mCALL` | PSTN out, anonymous DID pool, vocoder | Phase 1 (design in [LINEAR-2172](https://linear.app/ip-ra/issue/LINEAR-2172)) |
+| `mIRC` | Persistent channels (Discord/Slack semantics) | **alpha (shipped)** |
+| `mIRL` | Live-stream after-party (YT/TikTok creators monetize) | Phase 1 |
+| `mROOM` | Ephemeral rooms + no-account join links | **alpha (shipped)** |
 
 ### Bridge modules (reach existing networks)
 
 | Module | What | Status |
 |---|---|---|
-| `mMATRIX` | Matrix.org federation | Phase 1 |
-| `mDISCORD` | Discord DM + channel post | Phase 1 |
-| `mTELEGRAM` | Telegram DM + group | Phase 1 |
+| `mMATRIX` | Matrix.org federation | Phase 1 P0 ([LINEAR-2168](https://linear.app/ip-ra/issue/LINEAR-2168)) |
+| `mDISCORD` | Discord DM + channel post | Phase 1 P0 |
+| `mTELEGRAM` | Telegram DM + group | Phase 1 P0 |
 | `mSLACK` | Slack workspace | Phase 1 P1 |
 | `mSIGNAL` | Signal | Phase 1 P1 |
-| `mWHATSAPP` | WhatsApp | Phase 2 (legal) |
-| `mIMESSAGE` | iMessage | Phase 2 (legal) |
+| `mWHATSAPP` | WhatsApp | Phase 2 (legal review) |
+| `mIMESSAGE` | iMessage | Phase 2 (legal review) |
 
-Community-contributed modules in `v3.1+`: `mPOST`, `mWALL`, `mBROADCAST`, `mPING`, `mPAY`, `mVAULT`, ...
+Community-contributed modules in v3.1+: `mPOST`, `mWALL`, `mBROADCAST`, `mPING`, `mPAY`, `mVAULT`, … RFC required — see [RFC 0001](./docs/rfcs/0001-module-naming.md).
 
 ## Architecture
 
 **Public OSS layer (Apache-2.0, this repo):**
-- `@m0ssad/mcp` — single MCP server, all channels
-- `@m0ssad/core` — channel primitives
-- `@m0ssad/providers` — vendor adapters (forked LiveKit, Routr SIP, nwaku p2p, Dendrite Matrix)
-- `@m0ssad/bridges` — Telegram/Discord/Matrix/Signal/WhatsApp (Hermes-derived)
-- `@m0ssad/ai` — framework adapters (`@m0ssad/ai/vercel`, `@m0ssad/ai/langchain`, ...)
-- `@m0ssad/crypto`, `@m0ssad/protocol`, `@m0ssad/threat-engine`
+- [`@m0ssad/mcp`](./packages/mcp) — single MCP server, all channels (THE main artifact)
+- [`@m0ssad/core`](./packages/core) — channel primitives
+- [`@m0ssad/providers`](./packages/providers) — vendor adapters (forked LiveKit, Routr SIP, nwaku p2p, Dendrite Matrix)
+- [`@m0ssad/bridges`](./packages/bridges) — Telegram/Discord/Matrix/Signal/WhatsApp (Hermes-derived)
+- [`@m0ssad/ai`](./packages/ai) — framework adapters (Vercel AI SDK, LangChain, OpenAI Agents, Anthropic Agents)
+- [`@m0ssad/crypto`](./packages/crypto), [`@m0ssad/protocol`](./packages/protocol), [`@m0ssad/threat-engine`](./packages/threat-engine)
 
-**Commercial hub (proprietary):**
-- `mcp.mosadd.com` — hosted MCP gateway with OAuth + BYOK
-- `hub.mosadd.com` — SaaS dashboard (API keys, usage, billing, threat timeline)
-- Radar 167-event threat detection middleware
+**Commercial hub** (proprietary, hosted at `mcp.mosadd.com` + `hub.mosadd.com`):
+- Hosted MCP gateway with OAuth + BYOK key broker
+- 167-event threat radar middleware (the moat)
+- Unified billing across providers
 - Multi-provider PSTN failover orchestration
+- Enterprise self-host packaging + NIS2 audit trail
 
 ## Why we're different
 
-Built for the **agent era** (Claude Code, Cursor, Lovable, Manus, ChatGPT Apps) — first-class MCP support, semantic OS primitives instead of vendor-shaped tool wrappers. Vendor-agnostic across our forked stack + Telnyx/Twilio/Matrix/Discord backends. Managed threat radar watching every message, call, and bridge — the moat nobody else ships.
+Built for the **agent era** (Claude Code, Cursor, Lovable, Manus, ChatGPT Apps) — first-class MCP support, **semantic OS primitives instead of vendor-shaped tool wrappers**. Vendor-agnostic across our forked stack + Telnyx/Twilio/Matrix/Discord backends. Managed threat radar watching every message, call, and bridge — the moat nobody else ships.
+
+Read [docs/roadmap.md](./docs/roadmap.md) for the full plan or jump to the [M5 milestone](https://linear.app/ip-ra/project/mosadd-deaa4bef6de8) for live status.
 
 ## Contributing
 
-We're an open community. Start with [CONTRIBUTING.md](./CONTRIBUTING.md) and [GOVERNANCE.md](./GOVERNANCE.md). RFCs for new `m*` modules in [`docs/rfcs/`](./docs/rfcs/).
+We're an open community. Start with [CONTRIBUTING.md](./CONTRIBUTING.md), [GOVERNANCE.md](./GOVERNANCE.md), and the [RFC index](./docs/rfcs/).
 
-Discord: _coming soon_ · Twitter: [@mosadd](https://twitter.com/mosadd)
+Adding a new `m*` module requires an RFC — see [RFC 0001](./docs/rfcs/0001-module-naming.md) for the bar (semantic primitive, ≥2 backend providers, radar hooks, MCP tool surface).
+
+Discord: _coming soon_ · Web: [mosadd.dev](https://mosadd.dev) · Linear: [M5 epic](https://linear.app/ip-ra/issue/LINEAR-2138)
 
 ## License
 
 [Apache-2.0](./LICENSE). Patent grant included. Compatible with proprietary use.
 
-This project includes code derived from:
-- [Hermes Agent](https://github.com/NousResearch/Hermes-Agent) (MIT, Nous Research) — `gateway/platforms/` adapted to `packages/bridges/`
+This project includes or adapts code from:
 - [LiveKit](https://github.com/livekit/livekit) (Apache-2.0) — vendored as `forks/livekit-server/`, rebranded `m0ssad-fabric`
-
-See [NOTICE](./NOTICE) for full attribution.
+- [Hermes Agent](https://github.com/NousResearch/Hermes-Agent) (MIT, Nous Research) — `gateway/platforms/` adapted to `packages/bridges/`
+- [@noble/curves, @noble/ciphers, @noble/hashes](https://paulmillr.com/noble/) (MIT) — `@m0ssad/crypto`
+- Several other dependencies — see full attribution in [NOTICE](./NOTICE).
