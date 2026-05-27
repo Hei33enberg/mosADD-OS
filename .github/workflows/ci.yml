@@ -53,9 +53,8 @@ jobs:
           done
           echo "✓ All expected tools present in MCP smoke test"
 
-      - name: Test (vitest, --passWithNoTests so empty packages don't fail)
-        run: pnpm -r --workspace-concurrency=1 exec -- vitest run --passWithNoTests
-        continue-on-error: true
+      - name: Test (vitest across packages that have a test script)
+        run: pnpm -r test --if-present
 
       - name: Lint (any packages that have it)
         run: pnpm -r lint --if-present
