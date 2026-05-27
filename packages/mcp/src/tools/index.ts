@@ -8,13 +8,17 @@
 import type { MosaddTool } from "../types.js";
 import { mdmTools } from "./mdm.js";
 import { mircTools } from "./mirc.js";
+import { mircMembersTools } from "./mirc-members.js";
 import { mroomTools } from "./mroom.js";
+import { mroomMessagesTools } from "./mroom-messages.js";
 import { mailTools } from "./mail.js";
 
 export const allTools: MosaddTool[] = [
   ...mdmTools,
   ...mircTools,
+  ...mircMembersTools,
   ...mroomTools,
+  ...mroomMessagesTools,
   ...mailTools,
   // mtalkTools, mcallTools, mirlTools,
   // mmatrixTools, mdiscordTools, mtelegramTools, mslackTools, msignalTools,
