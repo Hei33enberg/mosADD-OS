@@ -51,20 +51,29 @@ export function mosadd(options: MosaddOptions = {}): OpenAICompatibleTool[] {
  * `zod-to-json-schema` for spec-correct strict mode.
  */
 function zodToJsonSchemaApprox(schema: unknown): Record<string, unknown> {
-  const def = (schema as { _def?: { shape?: () => Record<string, unknown> } })?._def;
-  if (!def?.shape) return { type: "object", properties: {} };
+  // Zod 4: `.shape` is a property on ZodObject. Zod 3: function on `_def.shape()`.
+  const direct = (schema as { shape?: Record<string, unknown> })?.shape;
+  const fromDef = (schema as { _def?: { shape?: () => Record<string, unknown> } })?._def?.shape;
+  const shape: Record<string, unknown> | undefined =
+    direct ?? (typeof fromDef === "function" ? fromDef() : undefined);
 
-  const shape = def.shape();
+  if (!shape) return { type: "object", properties: {} };
+
   const properties: Record<string, unknown> = {};
   const required: string[] = [];
 
   for (const [key, val] of Object.entries(shape)) {
-    const innerDef = (val as { _def?: { typeName?: string; description?: string } })?._def;
+    const innerDef = (val as { _def?: { typeName?: string; description?: string }; description?: string })?._def;
+    const description =
+      innerDef?.description ?? (val as { description?: string })?.description;
     properties[key] = {
       type: "string",
-      description: innerDef?.description,
+      description,
     };
-    if (!innerDef?.typeName?.includes("Optional")) required.push(key);
+    const isOptional =
+      innerDef?.typeName?.includes("Optional") ||
+      (val as { isOptional?: () => boolean })?.isOptional?.() === true;
+    if (!isOptional) required.push(key);
   }
 
   return {
