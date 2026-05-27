@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "mosadd": {
+      "command": "npx",
+      "args": ["-y", "@m0ssad/mcp"],
+      "env": {
+        "M0SSAD_SUPABASE_URL": "https://<your-project>.supabase.co",
+        "M0SSAD_SUPABASE_ANON_KEY": "<your supabase anon key>",
+        "M0SSAD_USER_JWT": "<your session JWT — see README>"
+      }
+    }
+  }
+}

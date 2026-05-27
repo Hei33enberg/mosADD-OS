@@ -1,0 +1,52 @@
+{
+  "name": "mosadd",
+  "displayName": "mosadd — A human OS. Add.",
+  "description": "Operating system for human communications. Direct messages, push-to-talk, calls, email, channels, rooms with no-account guest links — and bridges to Telegram, Discord, Matrix. Open-source under Apache-2.0.",
+  "version": "3.0.0-alpha.0",
+  "author": {
+    "name": "mosadd contributors",
+    "url": "https://mosadd.dev"
+  },
+  "homepage": "https://mosadd.dev",
+  "repository": "https://github.com/Hei33enberg/mosadd-os",
+  "license": "Apache-2.0",
+  "mcpServers": {
+    "mosadd": {
+      "command": "npx",
+      "args": ["-y", "@m0ssad/mcp"],
+      "env": {
+        "M0SSAD_SUPABASE_URL": "https://<your-project>.supabase.co",
+        "M0SSAD_SUPABASE_ANON_KEY": "<anon key>",
+        "M0SSAD_USER_JWT": "<your session token>"
+      }
+    }
+  },
+  "skills": [
+    {
+      "name": "mosadd-mdm",
+      "path": "../mdm/SKILL.md"
+    },
+    {
+      "name": "mosadd-mroom",
+      "path": "../mroom/SKILL.md"
+    },
+    {
+      "name": "mosadd-mirc",
+      "path": "../mirc/SKILL.md"
+    },
+    {
+      "name": "mosadd-mail",
+      "path": "../mail/SKILL.md"
+    }
+  ],
+  "tags": [
+    "communication",
+    "messaging",
+    "mcp",
+    "agents",
+    "claude",
+    "cursor",
+    "open-source",
+    "apache-2"
+  ]
+}
