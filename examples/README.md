@@ -8,6 +8,8 @@ Quickstart configs for the agent runtimes that consume `@m0ssad/mcp`.
 | [`cursor/`](cursor/) | Cursor | stdio (local) |
 | [`chatgpt-apps/`](chatgpt-apps/) | ChatGPT Apps | HTTP/SSE (hosted via Phase 2 `mcp.mosadd.com`) |
 | [`vercel-ai/`](vercel-ai/) | Vercel AI SDK (Node.js) | in-process via `@m0ssad/ai/vercel` |
+| [`langchain/`](langchain/) | LangChain (Node.js) | in-process via `@m0ssad/ai/langchain` |
+| [`anthropic/`](anthropic/) | Anthropic SDK (Node.js) | in-process via `@m0ssad/ai/anthropic` |
 
 ## Other runtimes
 
