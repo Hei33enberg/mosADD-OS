@@ -18,8 +18,7 @@
     "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "incremental": true
+    "sourceMap": true
   },
   "exclude": ["node_modules", "dist", "build", ".turbo"]
 }

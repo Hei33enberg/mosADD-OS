@@ -36,14 +36,18 @@ export function createMosaddServer(options: MosaddServerOptions = {}) {
   );
 
   for (const tool of allTools) {
+    // MCP SDK v1.x expects the field-level Zod shape (`{ to: z.string(), text: z.string() }`),
+    // not the wrapping `z.object({...})`. Tool inputs are declared as ZodObject schemas
+    // so we can `.parse()` them in the handler; surface the inner `.shape` to the SDK here.
+    const shape =
+      tool.inputSchema && typeof tool.inputSchema === "object" && "shape" in tool.inputSchema
+        ? (tool.inputSchema as { shape: Record<string, unknown> }).shape
+        : (tool.inputSchema as unknown as Record<string, unknown>);
+
     server.tool(
       tool.name,
       tool.description,
-      // The MCP SDK accepts a Zod schema directly via .shape on object schemas,
-      // or a JSON Schema. We pass a thin wrapper that derives the input from the Zod schema.
-      // For simplicity in the alpha we forward the raw schema; a follow-up RFC will
-      // refine this contract.
-      tool.inputSchema as unknown as Parameters<typeof server.tool>[2],
+      shape as Parameters<typeof server.tool>[2],
       async (input: unknown) => {
         const parsed = tool.inputSchema.parse(input);
         try {
