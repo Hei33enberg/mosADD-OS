@@ -1,0 +1,109 @@
+name: SBOM + supply-chain
+
+# Generates a Software Bill of Materials (SPDX 2.3 JSON) for every
+# Apache-2.0 package in mosadd-os. Foundation for Common Criteria
+# EAL2+ supply-chain attestation. Mirrors m0ssad-3/sbom.yml structure.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/sbom.yml"
+  pull_request:
+    paths:
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: write   # required to attach SBOMs to releases
+  id-token: write
+  actions: read
+
+jobs:
+  generate-sbom:
+    name: Generate SBOM (${{ matrix.pkg }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pkg:
+          - ai
+          - bridges
+          - core
+          - crypto
+          - mcp
+          - protocol
+          - providers
+          - threat-engine
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Install syft
+        uses: anchore/sbom-action/download-syft@v0.17.7
+
+      - name: Read package version
+        id: pkg
+        run: |
+          VERSION=$(node -p "require('./packages/${{ matrix.pkg }}/package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Generate SBOM (SPDX JSON)
+        run: |
+          mkdir -p sbom
+          syft "dir:packages/${{ matrix.pkg }}" \
+            -o spdx-json="sbom/m0ssad-${{ matrix.pkg }}.spdx.json" \
+            --source-name "@m0ssad/${{ matrix.pkg }}" \
+            --source-version "${{ steps.pkg.outputs.version }}"
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-${{ matrix.pkg }}
+          path: sbom/m0ssad-${{ matrix.pkg }}.spdx.json
+          retention-days: 90
+
+      - name: Attach SBOM to release (if event is release)
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: sbom/m0ssad-${{ matrix.pkg }}.spdx.json
+
+  audit-aggregate:
+    name: pnpm audit (high+ gate)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Audit
+        run: pnpm audit --audit-level=high --prod || (echo "::warning::pnpm audit found high+ severity vulnerabilities" && exit 1)

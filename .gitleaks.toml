@@ -1,0 +1,17 @@
+# gitleaks config — extends defaults.
+title = "mosadd-os gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Globally allowed paths (lock files, build output)"
+paths = [
+  '''(.*?)\.lock''',
+  '''package-lock\.json''',
+  '''pnpm-lock\.yaml''',
+  '''dist/''',
+  '''build/''',
+  '''node_modules/''',
+  '''coverage/''',
+]

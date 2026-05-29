@@ -1,0 +1,58 @@
+name: license-check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "packages/**/package.json"
+      - ".github/workflows/license-check.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "packages/**/package.json"
+  schedule:
+    - cron: "0 5 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: license compliance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Run license-checker
+        run: |
+          npx --yes license-checker@^25 \
+            --production \
+            --onlyAllow "Apache-2.0;MIT;BSD-2-Clause;BSD-3-Clause;ISC;CC0-1.0;CC-BY-4.0;Unlicense;0BSD;Python-2.0;BlueOak-1.0.0;WTFPL" \
+            --excludePrivatePackages \
+            --csv > licenses.csv
+          echo "===== License summary ====="
+          cut -d, -f3 licenses.csv | sort | uniq -c | sort -rn | head -30
+
+      - name: Upload license inventory
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-inventory
+          path: licenses.csv
+          retention-days: 30
