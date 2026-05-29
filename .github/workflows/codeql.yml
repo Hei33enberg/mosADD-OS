@@ -39,6 +39,10 @@ jobs:
               - "**/coverage"
 
       - name: Perform CodeQL Analysis
+        # INTERIM: SARIF upload 403s until Code Scanning is enabled at the repo
+        # level (Settings → Code security and analysis). Remove this line once
+        # enabled so CodeQL becomes a hard gate.
+        continue-on-error: true
         uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{ matrix.language }}"
