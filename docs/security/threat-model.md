@@ -1,0 +1,143 @@
+# Threat model — mosadd-os v3.0.0
+
+Last reviewed: 2026-05-27. Owner: AG (Hei33enberg).
+
+STRIDE-derived threat model for the public Apache-2.0 layer of mosadd. Covers the MCP server, the per-channel m* modules, and the bridges. The proprietary hub (radar 167-event, BYOK broker, billing) has its own private threat model in `m0ssad-3`.
+
+## Scope
+
+In scope:
+
+- `@m0ssad/mcp` server (stdio + future HTTP/SSE)
+- `@m0ssad/ai` framework adapters (Vercel, LangChain, OpenAI Agents, Anthropic)
+- `@m0ssad/bridges` (Matrix, Discord, Telegram MVP)
+- `@m0ssad/crypto`, `@m0ssad/protocol`, `@m0ssad/threat-engine` library code
+- LiveKit fork (`m0ssad-fabric`) and PTT floor-control middleware
+
+Out of scope:
+
+- The hosted hub (`mcp.mosadd.com`, `hub.mosadd.com`) — proprietary
+- Consumer apps (`mosadd.com`, PWA, Android, iOS, Electron)
+- Hardware firmware (Cymru-derived walkie-talkie)
+- The 167-event radar middleware
+
+## Assets
+
+| Asset | Sensitivity | Owner |
+|---|---|---|
+| End-user JWTs | High — auth | Supabase Auth |
+| BYOK provider keys (Telnyx, Resend, LiveKit) | High — financial | User-supplied env vars |
+| Tool-call payloads (DM bodies, email content, room contents) | High — privacy | User |
+| Identity recovery seed / passphrase | Critical — account recovery | User local |
+| Bridge credentials (Telegram MTProto, Discord bot tokens) | High | User local / hub broker |
+| Threat-engine event taxonomy | Moderate — public catalog | repo |
+| Source code | Moderate — Apache-2.0 published | repo |
+| LiveKit fork API tokens | High | Operator |
+
+## Trust boundaries
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  END USER ENVIRONMENT (laptop / hardware device)            │
+│  ┌────────────────────────────┐    ┌──────────────────────┐ │
+│  │  LLM client                │    │  @m0ssad/daemon      │ │
+│  │  (Claude Code, Cursor, …)  │    │  (audio data plane)  │ │
+│  └─────────────┬──────────────┘    └──────────┬───────────┘ │
+└────────────────┼───────────────────────────────┼────────────┘
+                 │  MCP stdio                    │  WebRTC
+┌────────────────┼───────────────────────────────┼────────────┐
+│  @m0ssad/mcp (control plane)                   │            │
+│  ┌─────────────────────────────────────┐       │            │
+│  │  Tool registry + dispatcher         │       │            │
+│  └─────────────┬───────────────────────┘       │            │
+└────────────────┼───────────────────────────────┼────────────┘
+                 │ HTTP                          │ WebRTC
+┌────────────────┼───────────────────────────────┼────────────┐
+│  Backend (BYOK by user — or mosadd hub Phase 2)             │
+│  ┌──────────────┐  ┌──────────────┐  ┌─────────────────┐    │
+│  │  Supabase    │  │  Resend      │  │  LiveKit /      │    │
+│  │  Edge fns    │  │  Telnyx      │  │  m0ssad-fabric  │    │
+│  └──────────────┘  └──────────────┘  └─────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Boundaries:
+
+- **B1:** LLM client → MCP server (stdio): one-way trust. MCP server trusts the LLM that the stdin/stdout pipe is private.
+- **B2:** MCP server → backend (HTTP): two-way. Backend authenticates with the JWT or BYOK keys; MCP server trusts the TLS PKI.
+- **B3:** Daemon → LiveKit (WebRTC): daemon trusts the JWT issued by MCP; LiveKit trusts the daemon to enforce floor control client-side until the server-side check lands.
+- **B4:** MCP server → bridges (per-bridge protocol): bridge protocols vary; assume each bridge process is a separate trust domain.
+
+## STRIDE per component
+
+### MCP server
+
+| Threat | Vector | Mitigation |
+|---|---|---|
+| **S**poofing | LLM injecting forged tool result | Tool results are validated against the registered schema before the LLM sees them; no untrusted plaintext returned without schema check |
+| **T**ampering | Modified BYOK env var pointing to attacker backend | `env.M0SSAD_*_URL` should be reviewed before deploy; future: pin known providers with allowlist |
+| **R**epudiation | User claims they didn't issue the tool call | Every tool invocation emits an audit event via `@m0ssad/audit-core` (Phase 2 hub middleware) |
+| **I**nformation disclosure | Tool error message leaks API key | All error messages scrubbed via central error formatter; never echo `Authorization` |
+| **D**enial of service | Agent loops calling `mDM_send` 1000x | Rate limit middleware (Phase 2 hub), local stdio caps via daemon-side delay |
+| **E**levation | Tool call bypasses RLS to read other users' rows | Always pass user JWT through to Supabase; never use service role in stdio mode |
+
+### Identity recovery
+
+| Threat | Vector | Mitigation |
+|---|---|---|
+| S | Attacker claims recovery for another user | Cloud-encrypted backup requires passphrase + email OTP; BIP39 seed self-custody (no recovery via mosadd if lost) |
+| T | Recovery flow intercepted, swap user_id | Recovery responses use user-specific encryption keys; cannot be replayed against a different account |
+| I | Passphrase exposed in client memory | Memory-zero after KDF; never logged; never sent to backend in plaintext |
+| D | Lockout via wrong-passphrase brute force | Server-side throttle 5 attempts/hour, exponential backoff |
+
+### Bridges
+
+| Bridge | Threat | Mitigation |
+|---|---|---|
+| Matrix (Dendrite/Synapse) | Federation poisoning — homeserver sends crafted event | Whitelist trusted homeservers; per-homeserver rate limit |
+| Discord bot | Bot token leak from client local storage | Token stored in OS keychain via `@m0ssad/protocol`; never in localStorage |
+| Telegram MTProto | Phone-number harvest | Use bot API where possible; require explicit user OK for personal account linking |
+
+### LiveKit fork (mTALK / mROOM voice)
+
+| Threat | Vector | Mitigation |
+|---|---|---|
+| S | Floor-control bypass — speaker injection by non-floor-holder | Server-side floor-control middleware (Go ~3-5k LOC, see LINEAR-2149) gates RTP forwarding |
+| T | Audio modified in flight | DTLS-SRTP end-to-end between participants |
+| I | Recording leaks via S3 bucket misconfig | Recordings written to per-room ephemeral storage; signed URLs with 5-min TTL |
+| D | Track flood — attacker publishes 1000 audio tracks | Per-participant track cap (default 2 audio, 1 video) |
+| E | Participant promoted to admin via crafted token | LiveKit tokens are signed; we add `mosadd_role` claim and verify server-side |
+
+## DREAD scoring — top 10
+
+Ordered by composite risk (D+R+E+A+D / 5):
+
+| # | Threat | D | R | E | A | D | Score |
+|---|---|--:|--:|--:|--:|--:|--:|
+| 1 | Service-role key leak in Edge Function logs | 10 | 9 | 7 | 10 | 9 | **9.0** |
+| 2 | Floor-control bypass on mTALK (forwarded as authorized speaker) | 8 | 8 | 6 | 9 | 8 | **7.8** |
+| 3 | BYOK Telnyx key compromise → unauthorized PSTN out | 9 | 6 | 5 | 8 | 8 | **7.2** |
+| 4 | Identity recovery passphrase phishing via crafted email link | 9 | 7 | 6 | 8 | 6 | **7.2** |
+| 5 | Deepfake voice in mTALK room (impersonation) | 8 | 7 | 7 | 6 | 7 | **7.0** |
+| 6 | Bridge bot token theft from compromised LLM client | 8 | 6 | 7 | 7 | 7 | **7.0** |
+| 7 | mROOM no-account-join abused for spam outreach | 5 | 9 | 9 | 6 | 7 | **7.2** |
+| 8 | Tool poisoning — malicious MCP tool installed alongside mosadd | 8 | 6 | 7 | 6 | 6 | **6.6** |
+| 9 | Replay attack on Stripe webhook (double-charge or skipped) | 6 | 5 | 5 | 7 | 7 | **6.0** |
+| 10 | Federation poisoning from rogue Matrix homeserver | 7 | 5 | 5 | 6 | 7 | **6.0** |
+
+Mitigation tracking:
+
+- #1 → gitleaks + GitHub secret scanning + push protection (SHIPPED 2026-05-27)
+- #2 → server-side floor control middleware (LINEAR-2149, Phase 1)
+- #3 → BYOK broker (Phase 2)
+- #4 → recovery flow UX research (LINEAR-2170, Phase 1)
+- #5 → voice fingerprint cross-check (Phase 2 radar)
+- #6 → OS-keychain credential store (LINEAR in Phase 1)
+- #7 → PoW signup + radar score gating (LINEAR-2171, Phase 1)
+- #8 → audit existing MCP servers in registry submission flow (Phase 1)
+- #9 → idempotency keys + raw event reconciliation cron (Phase 2)
+- #10 → trusted-homeserver allowlist + per-server rate limit (Phase 1)
+
+## Updates
+
+Re-review quarterly or on any SEV-0/1 incident. Record the review date at the top of this file.
