@@ -105,6 +105,7 @@ Community-contributed modules in v3.1+: `mPOST`, `mWALL`, `mBROADCAST`, `mPING`,
 - [`@m0ssad/bridges`](./packages/bridges) — Telegram/Discord/Matrix/Signal/WhatsApp (Hermes-derived)
 - [`@m0ssad/ai`](./packages/ai) — framework adapters (Vercel AI SDK, LangChain, OpenAI Agents, Anthropic Agents)
 - [`@m0ssad/crypto`](./packages/crypto), [`@m0ssad/protocol`](./packages/protocol), [`@m0ssad/threat-engine`](./packages/threat-engine)
+- [`apps/dev`](./apps/dev) — the **[mosadd.dev](https://mosadd.dev)** developer portal (Next.js; deployed standalone via Vercel, Root Directory `apps/dev`). Lives here, alongside the toolkit it documents.
 
 **Commercial hub** (proprietary, hosted at `mcp.mosadd.com` + `hub.mosadd.com`):
 - Hosted MCP gateway with OAuth + BYOK key broker

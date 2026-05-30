@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+
+@source '../app/**/*.{ts,tsx}';
+
+@theme {
+  --color-radar-green: #5af082;
+  --color-radar-dim: #2a3a2f;
+  --color-radar-dark: #0a0f0c;
+}
+
+html {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  background: #0a0a0a;
+  color: #ebebeb;
+}
+
+body {
+  background: #0a0a0a;
+}
+
+.font-display {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
