@@ -8,7 +8,7 @@ import { generateMnemonic, initWordlist, mnemonicToSeed, mnemonicToWords, valida
 import { SecureSession } from "../session";
 import { createVault, verifyVaultPassphrase } from "../vault";
 import { generateX25519KeyPair } from "../x25519";
-import { performX3dh } from "../x3dh";
+import { performX3dh, performX3dhResponder } from "../x3dh";
 
 describe("@m0ssad/crypto", () => {
   beforeAll(() => {
@@ -218,6 +218,127 @@ describe("@m0ssad/crypto", () => {
     const r2 = await performX3dh(ik.privateKey, ek.privateKey, bundle);
 
     expect(Buffer.from(r1.rootKey).toString("hex")).toBe(Buffer.from(r2.rootKey).toString("hex"));
+  });
+
+  // --------------- X3DH initiator <-> responder agreement ---------------
+
+  it("initiator and responder derive the SAME root key (with one-time pre-key)", async () => {
+    // Responder (Bob) long-term + prekeys.
+    const bobIdentity = await generateX25519KeyPair();
+    const bobSignedPreKey = await generateX25519KeyPair();
+    const bobOneTimePreKey = await generateX25519KeyPair();
+
+    // Initiator (Alice) identity + per-handshake ephemeral.
+    const aliceIdentity = await generateX25519KeyPair();
+    const aliceEphemeral = await generateX25519KeyPair();
+
+    const initiator = await performX3dh(aliceIdentity.privateKey, aliceEphemeral.privateKey, {
+      identityPublicKey: bobIdentity.publicKey,
+      signedPreKeyPublicKey: bobSignedPreKey.publicKey,
+      oneTimePreKeyPublicKey: bobOneTimePreKey.publicKey,
+    });
+
+    const responder = await performX3dhResponder(
+      {
+        identityPrivateKey: bobIdentity.privateKey,
+        signedPreKeyPrivateKey: bobSignedPreKey.privateKey,
+        oneTimePreKeyPrivateKey: bobOneTimePreKey.privateKey,
+      },
+      {
+        initiatorIdentityPublicKey: aliceIdentity.publicKey,
+        initiatorEphemeralPublicKey: aliceEphemeral.publicKey,
+        usedOneTimePreKeyId: bobOneTimePreKey ? 42 : undefined,
+      },
+    );
+
+    expect(Buffer.from(responder.rootKey).toString("hex")).toBe(
+      Buffer.from(initiator.rootKey).toString("hex"),
+    );
+    expect(responder.sharedSecrets).toHaveLength(4);
+  });
+
+  it("initiator and responder agree WITHOUT a one-time pre-key (3 secrets)", async () => {
+    const bobIdentity = await generateX25519KeyPair();
+    const bobSignedPreKey = await generateX25519KeyPair();
+    const aliceIdentity = await generateX25519KeyPair();
+    const aliceEphemeral = await generateX25519KeyPair();
+
+    const initiator = await performX3dh(aliceIdentity.privateKey, aliceEphemeral.privateKey, {
+      identityPublicKey: bobIdentity.publicKey,
+      signedPreKeyPublicKey: bobSignedPreKey.publicKey,
+    });
+    const responder = await performX3dhResponder(
+      {
+        identityPrivateKey: bobIdentity.privateKey,
+        signedPreKeyPrivateKey: bobSignedPreKey.privateKey,
+      },
+      {
+        initiatorIdentityPublicKey: aliceIdentity.publicKey,
+        initiatorEphemeralPublicKey: aliceEphemeral.publicKey,
+      },
+    );
+
+    expect(Buffer.from(responder.rootKey).toString("hex")).toBe(
+      Buffer.from(initiator.rootKey).toString("hex"),
+    );
+    expect(responder.sharedSecrets).toHaveLength(3);
+  });
+
+  it("responder throws if header references an OPK but no private key is supplied", async () => {
+    const bobIdentity = await generateX25519KeyPair();
+    const bobSignedPreKey = await generateX25519KeyPair();
+    const aliceIdentity = await generateX25519KeyPair();
+    const aliceEphemeral = await generateX25519KeyPair();
+
+    await expect(
+      performX3dhResponder(
+        {
+          identityPrivateKey: bobIdentity.privateKey,
+          signedPreKeyPrivateKey: bobSignedPreKey.privateKey,
+        },
+        {
+          initiatorIdentityPublicKey: aliceIdentity.publicKey,
+          initiatorEphemeralPublicKey: aliceEphemeral.publicKey,
+          usedOneTimePreKeyId: 7,
+        },
+      ),
+    ).rejects.toThrow(/one-time prekey/i);
+  });
+
+  it("full handshake: X3DH root key bootstraps a working SecureSession both ways", async () => {
+    const bobIdentity = await generateX25519KeyPair();
+    const bobSignedPreKey = await generateX25519KeyPair();
+    const bobOneTimePreKey = await generateX25519KeyPair();
+    const aliceIdentity = await generateX25519KeyPair();
+    const aliceEphemeral = await generateX25519KeyPair();
+
+    const initiator = await performX3dh(aliceIdentity.privateKey, aliceEphemeral.privateKey, {
+      identityPublicKey: bobIdentity.publicKey,
+      signedPreKeyPublicKey: bobSignedPreKey.publicKey,
+      oneTimePreKeyPublicKey: bobOneTimePreKey.publicKey,
+    });
+    const responder = await performX3dhResponder(
+      {
+        identityPrivateKey: bobIdentity.privateKey,
+        signedPreKeyPrivateKey: bobSignedPreKey.privateKey,
+        oneTimePreKeyPrivateKey: bobOneTimePreKey.privateKey,
+      },
+      {
+        initiatorIdentityPublicKey: aliceIdentity.publicKey,
+        initiatorEphemeralPublicKey: aliceEphemeral.publicKey,
+        usedOneTimePreKeyId: 99,
+      },
+    );
+
+    // Alice = initiator role, Bob = responder role — same rootKey from X3DH.
+    const alice = await SecureSession.fromRootKey(initiator.rootKey, "initiator");
+    const bob = await SecureSession.fromRootKey(responder.rootKey, "responder");
+
+    const toBob = await alice.encrypt(new TextEncoder().encode("first contact"));
+    expect(new TextDecoder().decode(await bob.decrypt(toBob))).toBe("first contact");
+
+    const toAlice = await bob.encrypt(new TextEncoder().encode("ack"));
+    expect(new TextDecoder().decode(await alice.decrypt(toAlice))).toBe("ack");
   });
 
   // --------------- X25519 key generation ---------------
