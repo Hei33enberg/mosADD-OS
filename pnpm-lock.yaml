@@ -168,6 +168,9 @@ importers:
       '@m0ssad/protocol':
         specifier: workspace:*
         version: link:../protocol
+      '@m0ssad/providers':
+        specifier: workspace:*
+        version: link:../providers
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.4
         version: 1.29.0(@cfworker/json-schema@4.1.1)(zod@4.4.3)

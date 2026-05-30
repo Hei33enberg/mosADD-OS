@@ -9,7 +9,12 @@
  *      list which it converts into its own framework shape.
  */
 
-import { allTools, type MosaddTool, type MosaddToolContext } from "@m0ssad/mcp";
+import {
+  allTools,
+  defaultProviders,
+  type MosaddTool,
+  type MosaddToolContext,
+} from "@m0ssad/mcp";
 
 /** Shared options accepted by every framework adapter. */
 export interface MosaddOptions {
@@ -83,6 +88,9 @@ export function buildContext(options: MosaddOptions = {}): MosaddToolContext {
 
   return {
     options: { mode: "local", hubUrl: "https://mcp.mosadd.com" },
+    // Same default network adapters the MCP server uses. Framework adapters run
+    // network-only (no carrier host injecting a radio provider).
+    providers: defaultProviders(),
     log: (level: "debug" | "info" | "warn" | "error", msg: string, extra?: unknown) => {
       if (order[level] >= threshold) {
         process.stderr.write(

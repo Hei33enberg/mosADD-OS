@@ -3,8 +3,19 @@
  */
 
 import type { z } from "zod";
+import type { DmProvider } from "@m0ssad/providers";
 
 export type Mode = "cloud" | "local" | "self-host";
+
+/**
+ * Transport backends per channel. The server fills any missing entry with its
+ * default network adapter; a host (e.g. cymru-os) injects alternatives —
+ * notably a radio DmProvider — via `MosaddServerOptions.providers`. This is
+ * the DI seam that keeps mosadd-os transport-agnostic.
+ */
+export interface ProviderRegistry {
+  dm: DmProvider;
+}
 
 export interface MosaddServerOptions {
   /** API key for hosted mode. Required if mode === "cloud". */
@@ -15,10 +26,17 @@ export interface MosaddServerOptions {
   mode?: Mode;
   /** Log level. */
   logLevel?: "debug" | "info" | "warn" | "error";
+  /**
+   * Host-injected channel providers. Any omitted channel uses the default
+   * network adapter. A carrier-aware host supplies e.g. a radio DmProvider here.
+   */
+  providers?: Partial<ProviderRegistry>;
 }
 
 export interface MosaddToolContext {
   options: Required<Pick<MosaddServerOptions, "mode" | "hubUrl">> & MosaddServerOptions;
+  /** Resolved channel providers (defaults merged with host-injected ones). */
+  providers: ProviderRegistry;
   /** Per-request logger. */
   log: (level: "debug" | "info" | "warn" | "error", msg: string, extra?: unknown) => void;
 }

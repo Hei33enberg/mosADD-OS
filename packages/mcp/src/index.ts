@@ -7,6 +7,11 @@
  * License: Apache-2.0
  */
 
-export { createMosaddServer } from "./server.js";
-export type { MosaddServerOptions, MosaddTool, MosaddToolContext } from "./types.js";
+export { createMosaddServer, defaultProviders } from "./server.js";
+export type {
+  MosaddServerOptions,
+  MosaddTool,
+  MosaddToolContext,
+  ProviderRegistry,
+} from "./types.js";
 export { allTools } from "./tools/index.js";
