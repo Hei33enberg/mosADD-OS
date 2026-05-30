@@ -40,6 +40,23 @@ export async function getAccountId(publicKey: Uint8Array): Promise<string> {
   return `m0:${toHex(publicKey).slice(0, 16)}`;
 }
 
+/** Sign a message with an Ed25519 identity private key. Returns raw signature bytes. */
+export function signEd25519(privateKey: Uint8Array, message: Uint8Array): Uint8Array {
+  return ed25519.sign(message, privateKey);
+}
+
+/**
+ * Verify an Ed25519 signature. Returns false (never throws) on any malformed
+ * input, so callers can treat a bad signature as a clean rejection.
+ */
+export function verifyEd25519(signature: Uint8Array, message: Uint8Array, publicKey: Uint8Array): boolean {
+  try {
+    return ed25519.verify(signature, message, publicKey);
+  } catch {
+    return false;
+  }
+}
+
 export async function generateIdentity(seed?: Uint8Array): Promise<Identity> {
   const keyPair = await generateEd25519KeyPair(seed);
   const accountId = await getAccountId(keyPair.publicKey);
