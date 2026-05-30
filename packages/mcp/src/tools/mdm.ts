@@ -279,6 +279,7 @@ async function mDM_respond_request(
 export const mdmTools: MosaddTool[] = [
   {
     name: "mDM_list_contacts",
+    requires: "any",
     description:
       "List the user's mosadd contacts. Returns identity_id (use this for mDM_send / mDM_list), account handle, display name, and contact state (pending, accepted, blocked).",
     inputSchema: mDM_list_contacts_input,
@@ -286,6 +287,7 @@ export const mdmTools: MosaddTool[] = [
   },
   {
     name: "mDM_send",
+    requires: "any",
     description:
       "Send a direct message via mosadd mDM. Pass `to` as the recipient's mosadd identity_id (look it up with mDM_list_contacts). Optional thread_label puts the message in a named thread within the conversation — mosadd USP: multiple threads per contact, unlike WhatsApp/Telegram. Alpha: payload is plaintext JSON base64-wrapped. Phase 2 swaps in Double Ratchet end-to-end encryption.",
     inputSchema: mDM_send_input,
@@ -293,6 +295,7 @@ export const mdmTools: MosaddTool[] = [
   },
   {
     name: "mDM_list",
+    requires: "any",
     description:
       "List recent direct messages with a specific contact. Pass contact_id as the identity_id from mDM_list_contacts. Optionally filter to a single thread_label.",
     inputSchema: mDM_list_input,
@@ -300,6 +303,7 @@ export const mdmTools: MosaddTool[] = [
   },
   {
     name: "mDM_respond_request",
+    requires: "any",
     description:
       "Accept or reject an incoming DM request from a contact who is not yet in the user's whitelist.",
     inputSchema: mDM_respond_request_input,

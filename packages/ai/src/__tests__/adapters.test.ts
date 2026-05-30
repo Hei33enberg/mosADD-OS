@@ -25,7 +25,7 @@ describe("framework adapters", () => {
     it("returns an array of { name, description, schema, func }", () => {
       const tools = mosaddLangchain({ modules: ["mROOM"] });
       expect(Array.isArray(tools)).toBe(true);
-      expect(tools.length).toBe(6); // mROOM has 6 tools
+      expect(tools.length).toBe(8); // mROOM = 6 room ops + 2 message ops
       const create = tools.find((t) => t.name === "mROOM_create_guest_link");
       expect(create).toBeDefined();
       expect(typeof create?.func).toBe("function");
@@ -35,7 +35,7 @@ describe("framework adapters", () => {
   describe("@m0ssad/ai/openai", () => {
     it("returns FunctionTool-shaped descriptors", () => {
       const tools = mosaddOpenAI({ modules: ["mIRC"] });
-      expect(tools.length).toBe(5);
+      expect(tools.length).toBe(15); // mIRC = 5 channel ops + 10 member ops
       for (const t of tools) {
         expect(t.type).toBe("function");
         expect(typeof t.name).toBe("string");

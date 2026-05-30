@@ -21,9 +21,17 @@ describe("@m0ssad/mcp", () => {
       expect(names).toContain("mAIL_view");
     });
 
-    it("follows RFC 0001 naming — m<MODULE>_<operation>", () => {
+    it("follows RFC 0001 naming — channel tools m<MODULE>_<operation>, meta tools comms_<op>", () => {
+      const channelName = /^m[A-Z][A-Z0-9_]*_[a-z][a-z0-9_]*$/;
+      const metaName = /^comms_[a-z][a-z0-9_]*$/; // discovery/meta namespace
       for (const tool of allTools) {
-        expect(tool.name).toMatch(/^m[A-Z][A-Z0-9_]*_[a-z][a-z0-9_]*$/);
+        expect(tool.name).toMatch(new RegExp(`${channelName.source}|${metaName.source}`));
+      }
+    });
+
+    it("every tool declares a transport requirement (any | radio | network)", () => {
+      for (const tool of allTools) {
+        expect(["any", "radio", "network"]).toContain(tool.requires);
       }
     });
 

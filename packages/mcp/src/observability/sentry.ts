@@ -21,13 +21,17 @@ const ENV =
 const RELEASE = process.env.M0SSAD_SENTRY_RELEASE;
 
 let initialized = false;
-let sentryRef: typeof import("@sentry/node") | null = null;
+// @sentry/node is an OPTIONAL peer — operators install it only if they opt in
+// via M0SSAD_SENTRY_DSN. Typed as `any` + loaded via a non-literal specifier so
+// the package compiles and ships without the dependency present.
+let sentryRef: any = null;
 
 export async function initSentry(): Promise<void> {
   if (initialized || !DSN) return;
   try {
-    // Lazy import so we don't bloat the cold start of users who don't opt in.
-    const Sentry = await import("@sentry/node").catch(() => null);
+    // Lazy, optional import (variable specifier => tsc won't require the module).
+    const spec = "@sentry/node";
+    const Sentry: any = await import(spec).catch(() => null);
     if (!Sentry) return;
     Sentry.init({
       dsn: DSN,
@@ -35,7 +39,7 @@ export async function initSentry(): Promise<void> {
       release: RELEASE,
       tracesSampleRate: 0.1,
       sendDefaultPii: false,
-      beforeSend(event) {
+      beforeSend(event: any) {
         // Strip Authorization header / BYOK env values if they sneak in.
         if (event.extra) {
           for (const k of Object.keys(event.extra)) {
@@ -64,7 +68,7 @@ export function captureToolError(
 ): void {
   if (!sentryRef) return;
   try {
-    sentryRef.withScope((scope) => {
+    sentryRef.withScope((scope: any) => {
       if (ctx.tool) scope.setTag("tool", ctx.tool);
       if (ctx.user_id) scope.setUser({ id: ctx.user_id });
       sentryRef!.captureException(err);

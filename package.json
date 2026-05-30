@@ -32,6 +32,11 @@
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
   },
+  "pnpm": {
+    "overrides": {
+      "langsmith": ">=0.6.0"
+    }
+  },
   "keywords": [
     "mosadd",
     "communication",

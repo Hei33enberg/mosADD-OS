@@ -100,6 +100,7 @@ async function invokeChannelMembers(
 export const mircMembersTools: MosaddTool[] = [
   {
     name: "mIRC_join",
+    requires: "network",
     description:
       "Join a channel as the current user. For private channels pass `password`. Returns a membership row or 409 if already a member.",
     inputSchema: mIRC_join_input,
@@ -107,6 +108,7 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_request_access",
+    requires: "network",
     description:
       "Request access to an invite_only channel. Owner / admins get a notification with the optional message.",
     inputSchema: mIRC_request_access_input,
@@ -114,24 +116,28 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_leave",
+    requires: "network",
     description: "Leave a channel as the current user. Owner cannot leave without transferring ownership first.",
     inputSchema: mIRC_leave_input,
     handler: ((input, ctx) => invokeChannelMembers("leave", input as Record<string, unknown>, ctx)) as MosaddTool["handler"],
   },
   {
     name: "mIRC_approve_request",
+    requires: "network",
     description: "Approve a pending access request. Admins / moderators / owner only.",
     inputSchema: mIRC_approve_request_input,
     handler: ((input, ctx) => invokeChannelMembers("approve-request", input as Record<string, unknown>, ctx)) as MosaddTool["handler"],
   },
   {
     name: "mIRC_reject_request",
+    requires: "network",
     description: "Reject a pending access request. Admins / moderators / owner only.",
     inputSchema: mIRC_reject_request_input,
     handler: ((input, ctx) => invokeChannelMembers("reject-request", input as Record<string, unknown>, ctx)) as MosaddTool["handler"],
   },
   {
     name: "mIRC_kick",
+    requires: "network",
     description:
       "Remove a member from the channel. They can rejoin if not banned. Requires moderator+. `reason` is logged to channel-event-log.",
     inputSchema: mIRC_kick_input,
@@ -139,6 +145,7 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_ban",
+    requires: "network",
     description:
       "Ban a member from the channel. They cannot rejoin until unbanned. `until` (ISO-8601) for time-bound ban; omit for permanent. Requires admin+.",
     inputSchema: mIRC_ban_input,
@@ -146,12 +153,14 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_unban",
+    requires: "network",
     description: "Lift a ban. Requires admin+.",
     inputSchema: mIRC_unban_input,
     handler: ((input, ctx) => invokeChannelMembers("unban", input as Record<string, unknown>, ctx)) as MosaddTool["handler"],
   },
   {
     name: "mIRC_set_role",
+    requires: "network",
     description:
       "Promote / demote a member. Roles: owner > admin > moderator > member > guest. Only owner can promote to admin; only admin+ can promote to moderator.",
     inputSchema: mIRC_set_role_input,
@@ -159,6 +168,7 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_set_ptt",
+    requires: "network",
     description:
       "Grant or revoke PTT floor permission for a member in voice-capable channels (capabilities.ptt=true). Requires moderator+.",
     inputSchema: mIRC_set_ptt_input,

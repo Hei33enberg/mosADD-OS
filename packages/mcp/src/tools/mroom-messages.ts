@@ -125,6 +125,7 @@ async function mROOM_list_messages(
 export const mroomMessagesTools: MosaddTool[] = [
   {
     name: "mROOM_send_message",
+    requires: "network",
     description:
       "Send a text message into a private room. Authorisation: must be a member (or guest with a valid token). Alpha payload is plaintext base64; v0.2 wraps with Double Ratchet.",
     inputSchema: mROOM_send_message_input,
@@ -132,6 +133,7 @@ export const mroomMessagesTools: MosaddTool[] = [
   },
   {
     name: "mROOM_list_messages",
+    requires: "network",
     description:
       "List recent text messages in a private room. Cursor-paginated, newest first.",
     inputSchema: mROOM_list_messages_input,
