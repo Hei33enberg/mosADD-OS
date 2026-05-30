@@ -16,7 +16,7 @@ describe("@m0ssad/ai/core", () => {
 
     it("supports multiple modules", () => {
       const both = filterTools({ modules: ["mDM", "mROOM"] });
-      expect(both.length).toBe(4 + 6);
+      expect(both.length).toBe(4 + 8); // mDM=4, mROOM=6 room + 2 message ops
       expect(
         both.every((t) => t.name.startsWith("mDM_") || t.name.startsWith("mROOM_")),
       ).toBe(true);
