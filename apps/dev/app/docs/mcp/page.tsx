@@ -41,7 +41,7 @@ export default function McpPage() {
       />
 
       <P>
-        Total surface today: <strong>29 tools across 4 channels</strong> (mDM, mIRC, mROOM, mAIL).
+        Total surface today: <strong>32 tools across 4 channels</strong> — mDM ×6, mIRC ×15, mROOM ×8, mAIL ×2, plus the <code className="font-mono text-primary">comms_capabilities</code> discovery tool.
       </P>
 
       <H2>Transports</H2>

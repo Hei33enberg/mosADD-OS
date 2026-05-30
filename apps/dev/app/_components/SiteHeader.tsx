@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Logo } from './Logo';
 
 const navLinks = [
   { href: '/docs', label: 'Docs' },
@@ -11,15 +12,20 @@ const navLinks = [
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-neutral-800 bg-neutral-950/80 backdrop-blur sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-display text-lg font-semibold">
-          <span className="text-radar-green">m·os·add</span>
-          <span className="text-neutral-500 text-xs uppercase tracking-widest">/dev</span>
+    <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur">
+      {/* thin scanline accent on the top edge */}
+      <div aria-hidden className="h-px w-full bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+        <Link href="/" className="flex items-center" aria-label="mosadd.dev home">
+          <Logo size="base" suffix="dev" />
         </Link>
-        <nav className="hidden md:flex items-center gap-5 text-sm">
+        <nav className="hidden items-center gap-6 text-sm md:flex">
           {navLinks.map((l) => (
-            <Link key={l.href} href={l.href} className="text-neutral-400 hover:text-neutral-100 transition">
+            <Link
+              key={l.href}
+              href={l.href}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
               {l.label}
             </Link>
           ))}
@@ -27,24 +33,26 @@ export function SiteHeader() {
             href="https://github.com/Hei33enberg/mosadd-os"
             target="_blank"
             rel="noreferrer"
-            className="text-neutral-400 hover:text-neutral-100 transition"
+            className="text-muted-foreground transition-colors hover:text-foreground"
           >
             GitHub
           </a>
           <a
             href="https://mosadd.com"
-            className="px-3 py-1.5 rounded border border-radar-green/40 text-radar-green hover:bg-radar-green/10 transition"
+            className="rounded-none border border-primary/40 px-3 py-1.5 text-primary transition-colors hover:bg-primary/10"
           >
             mosadd.com →
           </a>
         </nav>
-        <nav className="md:hidden flex items-center gap-3 text-sm">
-          <Link href="/docs" className="text-neutral-400 hover:text-neutral-100">Docs</Link>
+        <nav className="flex items-center gap-4 text-sm md:hidden">
+          <Link href="/docs" className="text-muted-foreground hover:text-foreground">
+            Docs
+          </Link>
           <a
             href="https://github.com/Hei33enberg/mosadd-os"
             target="_blank"
             rel="noreferrer"
-            className="text-neutral-400 hover:text-neutral-100"
+            className="text-muted-foreground hover:text-foreground"
           >
             GitHub
           </a>
