@@ -128,4 +128,22 @@ describe("mDM E2EE golden path — X3DH handshake + ratchet, both directions", (
       /has not published a prekey bundle/i,
     );
   });
+
+  it("rejects a tampered (MITM) prekey bundle instead of starting a session", async () => {
+    const backend = new SharedBackend();
+    const alice = ctxFor(backend, "alice");
+    const bob = ctxFor(backend, "bob");
+
+    await tool("mDM_publish_keys")({}, bob);
+
+    // MITM swaps Bob's DH identity key (a SIGNED field) in the directory entry,
+    // keeping it valid base64 so it parses — only the signature should catch it.
+    const obj = JSON.parse(Buffer.from(backend.bundles.get("bob")!).toString("utf8"));
+    obj.ik = (obj.ik[0] === "A" ? "B" : "A") + obj.ik.slice(1);
+    backend.bundles.set("bob", new Uint8Array(Buffer.from(JSON.stringify(obj), "utf8")));
+
+    await expect(tool("mDM_send")({ to: "bob", text: "intercept me" }, alice)).rejects.toThrow(
+      /signature verification|man-in-the-middle/i,
+    );
+  });
 });

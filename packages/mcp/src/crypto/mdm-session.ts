@@ -25,12 +25,15 @@
 import {
   decryptBytes,
   encryptBytes,
+  generateEd25519KeyPair,
   generateX25519KeyPair,
   initializeRatchet,
   performX3dh,
   performX3dhResponder,
   ratchetReceive,
   ratchetSend,
+  signEd25519,
+  verifyEd25519,
   toBase64,
   fromBase64,
   type EncryptedPayload,
@@ -53,7 +56,14 @@ interface X25519Pair {
 
 /** The local peer's long-term identity + prekeys (private halves included). */
 export interface OwnPrekeyMaterial {
+  /** X25519 DH identity — used in X3DH. */
   identity: X25519Pair;
+  /**
+   * Ed25519 SIGNING identity — the long-term key a peer pins out-of-band
+   * (the "safety number"). Signs the bundle so a network/radio MITM can't swap
+   * the signed prekey or DH identity in transit.
+   */
+  signingIdentity: { publicKey: Uint8Array; privateKey: Uint8Array };
   signedPrekey: { id: number; pair: X25519Pair };
   oneTimePrekeys: Array<{ id: number; pair: X25519Pair }>;
 }
@@ -61,8 +71,12 @@ export interface OwnPrekeyMaterial {
 /** A peer's PUBLIC prekey bundle, as parsed off the wire. */
 export interface PublicPrekeyBundle {
   identityPublicKey: Uint8Array;
+  /** Ed25519 signing-identity public key the signature is verified against. */
+  signingIdentityPublicKey: Uint8Array;
   signedPrekey: { id: number; publicKey: Uint8Array };
   oneTimePrekeys: Array<{ id: number; publicKey: Uint8Array }>;
+  /** Ed25519 signature over (DH identity pub ‖ signed-prekey pub). */
+  signature: Uint8Array;
 }
 
 /** Persisted per-peer ratchet session. Plain data → trivially serializable. */
@@ -96,6 +110,7 @@ export class InMemoryMdmKeyStore implements MdmKeyStore {
   async getOwnMaterial(): Promise<OwnPrekeyMaterial> {
     if (this.material) return this.material;
     const identity = await generateX25519KeyPair();
+    const signingIdentity = await generateEd25519KeyPair();
     const signedPrekeyPair = await generateX25519KeyPair();
     const signedPrekey = { id: randomId(), pair: signedPrekeyPair };
     const oneTimePrekeys: OwnPrekeyMaterial["oneTimePrekeys"] = [];
@@ -105,7 +120,7 @@ export class InMemoryMdmKeyStore implements MdmKeyStore {
       oneTimePrekeys.push({ id, pair });
       this.oneTimeById.set(id, pair.privateKey);
     }
-    this.material = { identity, signedPrekey, oneTimePrekeys };
+    this.material = { identity, signingIdentity, signedPrekey, oneTimePrekeys };
     return this.material;
   }
 
@@ -130,12 +145,30 @@ function randomId(): number {
 
 // ---- Bundle codec (opaque bytes the provider moves) ----
 
+/**
+ * The exact bytes signed by / verified against the Ed25519 signing identity:
+ * the DH identity public key concatenated with the signed-prekey public key.
+ * Binding both means a MITM cannot swap either without invalidating the sig.
+ */
+function bundleSigningMessage(dhIdentityPub: Uint8Array, signedPrekeyPub: Uint8Array): Uint8Array {
+  const msg = new Uint8Array(dhIdentityPub.length + signedPrekeyPub.length);
+  msg.set(dhIdentityPub, 0);
+  msg.set(signedPrekeyPub, dhIdentityPub.length);
+  return msg;
+}
+
 export function serializePublicBundle(material: OwnPrekeyMaterial): Uint8Array {
+  const signature = signEd25519(
+    material.signingIdentity.privateKey,
+    bundleSigningMessage(material.identity.publicKey, material.signedPrekey.pair.publicKey),
+  );
   const json = JSON.stringify({
     v: PREKEY_BUNDLE_VERSION,
     ik: toBase64(material.identity.publicKey),
+    sik: toBase64(material.signingIdentity.publicKey),
     spk: { id: material.signedPrekey.id, pub: toBase64(material.signedPrekey.pair.publicKey) },
     opks: material.oneTimePrekeys.map((k) => ({ id: k.id, pub: toBase64(k.pair.publicKey) })),
+    sig: toBase64(signature),
   });
   return new Uint8Array(Buffer.from(json, "utf8"));
 }
@@ -145,14 +178,36 @@ export function parsePublicBundle(bytes: Uint8Array): PublicPrekeyBundle {
   if (obj?.v !== PREKEY_BUNDLE_VERSION) {
     throw new Error(`Unsupported prekey bundle version: ${obj?.v}`);
   }
+  if (typeof obj.sik !== "string" || typeof obj.sig !== "string") {
+    throw new Error("Prekey bundle is missing its signing identity / signature.");
+  }
   return {
     identityPublicKey: fromBase64(obj.ik),
+    signingIdentityPublicKey: fromBase64(obj.sik),
     signedPrekey: { id: obj.spk.id, publicKey: fromBase64(obj.spk.pub) },
     oneTimePrekeys: (obj.opks ?? []).map((k: { id: number; pub: string }) => ({
       id: k.id,
       publicKey: fromBase64(k.pub),
     })),
+    signature: fromBase64(obj.sig),
   };
+}
+
+/**
+ * Verify the bundle's self-signature: the signing identity must have signed
+ * (DH identity ‖ signed prekey). Rejecting a bad signature is the MITM defense
+ * at X3DH first contact — an attacker who rewrites the bundle in transit cannot
+ * forge this without the peer's Ed25519 signing private key.
+ *
+ * NOTE: this authenticates the bundle UNDER its signing identity. Pinning that
+ * identity (safety numbers / TOFU) is a separate layer, tracked on 2342.
+ */
+export function verifyPublicBundle(bundle: PublicPrekeyBundle): boolean {
+  return verifyEd25519(
+    bundle.signature,
+    bundleSigningMessage(bundle.identityPublicKey, bundle.signedPrekey.publicKey),
+    bundle.signingIdentityPublicKey,
+  );
 }
 
 // ---- Envelope codec ----
@@ -222,6 +277,14 @@ export async function encryptForPeer(
       );
     }
     const peer = parsePublicBundle(raw);
+    // MITM defense: reject a bundle whose self-signature doesn't verify before
+    // we derive any key material from it.
+    if (!verifyPublicBundle(peer)) {
+      throw new Error(
+        `Prekey bundle for "${peerId}" failed signature verification — refusing to start an ` +
+          `encrypted session (possible tampering / man-in-the-middle).`,
+      );
+    }
     const own = await keystore.getOwnMaterial();
     const ephemeral = await generateX25519KeyPair();
     const opk = peer.oneTimePrekeys[0]; // pick one if offered
