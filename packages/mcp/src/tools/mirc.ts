@@ -132,6 +132,7 @@ async function mIRC_delete(
 export const mircTools: MosaddTool[] = [
   {
     name: "mIRC_create",
+    requires: "network",
     description:
       "Create a new persistent channel (Discord/Slack-style). Set access_mode to public for open join, private for password-gated, invite_only for explicit invites. capabilities controls modes (txt/ptt/live).",
     inputSchema: mIRC_create_input,
@@ -139,6 +140,7 @@ export const mircTools: MosaddTool[] = [
   },
   {
     name: "mIRC_list",
+    requires: "network",
     description:
       "List channels available to the current user. Optionally filter by access_mode.",
     inputSchema: mIRC_list_input,
@@ -146,18 +148,21 @@ export const mircTools: MosaddTool[] = [
   },
   {
     name: "mIRC_get",
+    requires: "network",
     description: "Get full details of a single channel by id.",
     inputSchema: mIRC_get_input,
     handler: mIRC_get as MosaddTool["handler"],
   },
   {
     name: "mIRC_update",
+    requires: "network",
     description: "Update channel metadata (name, topic, access_mode, capabilities). Owner only.",
     inputSchema: mIRC_update_input,
     handler: mIRC_update as MosaddTool["handler"],
   },
   {
     name: "mIRC_delete",
+    requires: "network",
     description: "Delete a channel and cascade-remove its members. Owner only.",
     inputSchema: mIRC_delete_input,
     handler: mIRC_delete as MosaddTool["handler"],

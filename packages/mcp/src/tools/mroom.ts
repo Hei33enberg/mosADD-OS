@@ -144,6 +144,7 @@ async function mROOM_create_guest_link(
 export const mroomTools: MosaddTool[] = [
   {
     name: "mROOM_create",
+    requires: "network",
     description:
       "Create an ephemeral private room. Auto-joins the creator. Defaults to 24 h TTL — pass ttl_seconds to override.",
     inputSchema: mROOM_create_input,
@@ -151,6 +152,7 @@ export const mroomTools: MosaddTool[] = [
   },
   {
     name: "mROOM_create_guest_link",
+    requires: "network",
     description:
       "USP: Generate a short-lived join link that lets a person enter the room WITHOUT a mosadd account. Returns { token, join_url, expires_at }. Share the join_url out-of-band (email, SMS, QR). Use case: support call, live-stream after-party, anonymous tipline.",
     inputSchema: mROOM_create_guest_link_input,
@@ -158,24 +160,28 @@ export const mroomTools: MosaddTool[] = [
   },
   {
     name: "mROOM_join",
+    requires: "network",
     description: "Join an existing private room (current user, not a guest).",
     inputSchema: mROOM_join_input,
     handler: mROOM_join as MosaddTool["handler"],
   },
   {
     name: "mROOM_leave",
+    requires: "network",
     description: "Leave a private room.",
     inputSchema: mROOM_leave_input,
     handler: mROOM_leave as MosaddTool["handler"],
   },
   {
     name: "mROOM_close",
+    requires: "network",
     description: "Close a private room and remove all members. Founder only.",
     inputSchema: mROOM_close_input,
     handler: mROOM_close as MosaddTool["handler"],
   },
   {
     name: "mROOM_list",
+    requires: "network",
     description: "List private rooms the current user belongs to.",
     inputSchema: mROOM_list_input,
     handler: mROOM_list as MosaddTool["handler"],

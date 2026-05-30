@@ -12,8 +12,10 @@ import { mircMembersTools } from "./mirc-members.js";
 import { mroomTools } from "./mroom.js";
 import { mroomMessagesTools } from "./mroom-messages.js";
 import { mailTools } from "./mail.js";
+import { makeCapabilitiesTool } from "./capabilities.js";
 
-export const allTools: MosaddTool[] = [
+/** The m* channel tools (everything except the meta discovery tool). */
+const channelTools: MosaddTool[] = [
   ...mdmTools,
   ...mircTools,
   ...mircMembersTools,
@@ -25,4 +27,11 @@ export const allTools: MosaddTool[] = [
   //
   // Each m* module registers its tools here as it ships.
   // RFC required to add a new m* module (see docs/rfcs/0001-module-naming.md).
+];
+
+export const allTools: MosaddTool[] = [
+  ...channelTools,
+  // comms_capabilities: one-call discovery of every tool's `requires` flag,
+  // so carrier-aware hosts (cymru-os) can gate the tool list by transport.
+  makeCapabilitiesTool(channelTools),
 ];

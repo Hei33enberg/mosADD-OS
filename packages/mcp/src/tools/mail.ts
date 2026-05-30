@@ -73,6 +73,7 @@ async function mAIL_view(
 export const mailTools: MosaddTool[] = [
   {
     name: "mAIL_send",
+    requires: "network",
     description:
       "Send an email from the user's mosadd address (<userId>@mosadd.com). Pass body_text or body_html (or both). Supports cc, bcc, reply_to.",
     inputSchema: mAIL_send_input,
@@ -80,6 +81,7 @@ export const mailTools: MosaddTool[] = [
   },
   {
     name: "mAIL_view",
+    requires: "network",
     description: "Read the full body and metadata of an email by message_id.",
     inputSchema: mAIL_view_input,
     handler: mAIL_view as MosaddTool["handler"],
