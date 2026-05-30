@@ -41,6 +41,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
     "@m0ssad/protocol": "workspace:*",
+    "@m0ssad/providers": "workspace:*",
     "@supabase/supabase-js": "^2.48.0",
     "zod": "^4.3.6"
   },

@@ -4,15 +4,33 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { allTools } from "./tools/index.js";
-import type { MosaddServerOptions, MosaddToolContext } from "./types.js";
+import { SupabaseDmProvider } from "./providers/supabase-dm.js";
+import type { MosaddServerOptions, MosaddToolContext, ProviderRegistry } from "./types.js";
+
+/**
+ * Resolve the channel ProviderRegistry: default network adapters merged with
+ * anything the host injects. A carrier-aware host (cymru-os) passes its own
+ * radio DmProvider via `injected.dm`. This is the single place the default
+ * adapters are named — both `createMosaddServer` and the `@m0ssad/ai` adapters
+ * build their context through it so they stay in lockstep.
+ */
+export function defaultProviders(injected?: Partial<ProviderRegistry>): ProviderRegistry {
+  return {
+    dm: injected?.dm ?? new SupabaseDmProvider(),
+  };
+}
 
 export function createMosaddServer(options: MosaddServerOptions = {}) {
   const mode = options.mode ?? (options.apiKey ? "cloud" : "local");
   const hubUrl = options.hubUrl ?? "https://mcp.mosadd.com";
   const logLevel = options.logLevel ?? "info";
 
+  // DI seam: default network adapters, overridden by anything the host injects.
+  const providers = defaultProviders(options.providers);
+
   const ctx: MosaddToolContext = {
     options: { ...options, mode, hubUrl },
+    providers,
     log: (level, msg, extra) => {
       if (shouldLog(level, logLevel)) {
         // MCP servers must write logs to stderr (stdout is the protocol channel).

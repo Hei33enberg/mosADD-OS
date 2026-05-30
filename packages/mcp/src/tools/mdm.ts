@@ -109,7 +109,7 @@ async function resolveSelfIdentityId(): Promise<string> {
  *        Receivers in the m0ssad-3 app understand this `mosadd.chat.v1` shape.
  * V0.2:  replace with @m0ssad/crypto Double Ratchet wrap.
  */
-function packPlaintextPayload(text: string, replyToId?: string): string {
+function packPlaintextPayload(text: string, replyToId?: string): Uint8Array {
   const envelope = {
     v: PROTOCOL_VERSION,
     type: "text",
@@ -117,12 +117,14 @@ function packPlaintextPayload(text: string, replyToId?: string): string {
     reply_to: replyToId ?? null,
     sent_at: new Date().toISOString(),
   };
-  return Buffer.from(JSON.stringify(envelope), "utf8").toString("base64");
+  // OPAQUE bytes handed to the DmProvider — the provider does not interpret
+  // them. Today: utf8 JSON. V0.2: @m0ssad/crypto Double Ratchet ciphertext.
+  return new Uint8Array(Buffer.from(JSON.stringify(envelope), "utf8"));
 }
 
-function unpackPayload(payload: string): { text: string; sent_at?: string; reply_to?: string | null } {
+function unpackPayload(payload: Uint8Array): { text: string; sent_at?: string; reply_to?: string | null } {
   try {
-    const json = Buffer.from(payload, "base64").toString("utf8");
+    const json = Buffer.from(payload).toString("utf8");
     const obj = JSON.parse(json);
     if (typeof obj?.text === "string") return obj;
   } catch {
@@ -137,36 +139,26 @@ async function mDM_send(
   input: z.infer<typeof mDM_send_input>,
   ctx: MosaddToolContext,
 ): Promise<{ message_id: string; delivered_at: string; thread_id: string }> {
-  // Fails fast if env vars missing — agent gets a clear actionable error.
-  readSupabaseEnv();
-
-  const selfId = await resolveSelfIdentityId();
+  // Transport via the injected DmProvider — default network (Supabase), or a
+  // host-supplied radio provider. The tool stays transport-agnostic: it packs
+  // bytes and computes the thread id; the provider moves the bytes.
+  const dm = ctx.providers.dm;
+  const selfId = await dm.selfId();
   const threadId = dmThreadId(selfId, input.to, input.thread_label);
-  const encrypted_payload = packPlaintextPayload(input.text, input.reply_to_id);
+  const payload = packPlaintextPayload(input.text, input.reply_to_id);
 
-  ctx.log("debug", "mDM_send invoking message-send", {
-    thread_id: threadId,
-    bytes: encrypted_payload.length,
+  ctx.log("debug", "mDM_send via DmProvider", { thread_id: threadId, bytes: payload.byteLength });
+
+  const result = await dm.send({
+    to: input.to,
+    threadId,
+    payload,
+    replyToId: input.reply_to_id,
   });
-
-  type MessageSendResponse = { message?: { id: string; created_at: string } };
-  const data = await invokeFunction<MessageSendResponse>("message-send", {
-    space_id: "dm",
-    thread_id: threadId,
-    encrypted_payload,
-    message_type: "text",
-    protocol_version: PROTOCOL_VERSION,
-    recipient_account_id: input.to,
-    reply_to_id: input.reply_to_id ?? null,
-  });
-
-  if (!data?.message?.id) {
-    throw new Error("message-send returned no message id");
-  }
 
   return {
-    message_id: data.message.id,
-    delivered_at: data.message.created_at ?? new Date().toISOString(),
+    message_id: result.id,
+    delivered_at: result.deliveredAt,
     thread_id: threadId,
   };
 }
@@ -185,41 +177,25 @@ async function mDM_list(
   next_cursor: string | null;
   threads: string[];
 }> {
-  readSupabaseEnv();
-  const selfId = await resolveSelfIdentityId();
+  const dm = ctx.providers.dm;
+  const selfId = await dm.selfId();
   const threadId = dmThreadId(selfId, input.contact_id, input.thread_label);
 
-  ctx.log("debug", "mDM_list invoking message-list", { thread_id: threadId });
+  ctx.log("debug", "mDM_list via DmProvider", { thread_id: threadId });
 
-  type MessageListResponse = {
-    messages?: Array<{
-      id: string;
-      sender_identity_id: string;
-      thread_id: string;
-      encrypted_payload: string;
-      created_at: string;
-    }>;
-    next_cursor?: string | null;
-  };
+  const result = await dm.list({ threadId, limit: input.limit ?? 50, cursor: input.cursor });
 
-  const data = await invokeFunction<MessageListResponse>("message-list", {
-    space_id: "dm",
-    thread_id: threadId,
-    limit: input.limit ?? 50,
-    cursor: input.cursor,
-  });
-
-  const messages = (data?.messages ?? []).map((m) => ({
+  const messages = result.messages.map((m) => ({
     id: m.id,
-    sender_identity_id: m.sender_identity_id,
-    text: unpackPayload(m.encrypted_payload).text,
-    timestamp: m.created_at,
-    thread_id: m.thread_id,
+    sender_identity_id: m.senderId,
+    text: unpackPayload(m.payload).text,
+    timestamp: m.timestamp,
+    thread_id: m.threadId,
   }));
 
   return {
     messages,
-    next_cursor: data?.next_cursor ?? null,
+    next_cursor: result.nextCursor,
     threads: [threadId],
   };
 }
