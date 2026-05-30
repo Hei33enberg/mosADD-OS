@@ -5,9 +5,11 @@ describe("@m0ssad/mcp", () => {
   describe("allTools registry", () => {
     it("exposes at least the 4 alpha channels", () => {
       const names = allTools.map((t) => t.name);
-      // mDM (4 tools)
+      // mDM (6 tools)
       expect(names).toContain("mDM_list_contacts");
+      expect(names).toContain("mDM_publish_keys");
       expect(names).toContain("mDM_send");
+      expect(names).toContain("mDM_send_unencrypted");
       expect(names).toContain("mDM_list");
       expect(names).toContain("mDM_respond_request");
       // mIRC (5 tools)

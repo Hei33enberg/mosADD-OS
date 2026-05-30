@@ -71,4 +71,25 @@ export interface DmProvider {
   send(args: DmSendArgs): Promise<DmSendResult>;
   /** Read recent messages on a thread. */
   list(args: DmListArgs): Promise<DmListResult>;
+
+  /**
+   * Publish the LOCAL peer's prekey bundle to the key directory, keyed by this
+   * provider's `selfId()`. The bundle is OPAQUE bytes — the provider does not
+   * parse it. mosadd-os owns the byte format (an X3DH prekey bundle); the
+   * provider only stores/announces it.
+   *
+   * Network adapter: writes a key-directory row. Radio adapter (cymru-os):
+   * periodically announces the signed bundle on a key channel; peers cache it.
+   * This is the cymru-contract-approved seam (decision "1a"): prekey
+   * distribution rides the SAME provider as messages — one contract surface,
+   * identical for network and radio.
+   */
+  publishPrekeyBundle(bundle: Uint8Array): Promise<void>;
+  /**
+   * Fetch a peer's published prekey bundle by their reference (same namespace
+   * as `DmSendArgs.to`). Returns OPAQUE bytes, or `null` if the peer has not
+   * published one yet (first contact not yet possible — caller falls back to
+   * the deprecated unencrypted path or waits).
+   */
+  fetchPrekeyBundle(peerId: string): Promise<Uint8Array | null>;
 }

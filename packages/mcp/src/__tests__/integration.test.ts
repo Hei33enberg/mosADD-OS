@@ -121,7 +121,7 @@ describe("@m0ssad/mcp — integration (real stdio)", () => {
     expect(result.serverInfo?.name).toBe("mosadd");
   });
 
-  it("lists all 17 tools on tools/list", async () => {
+  it("lists all 19 tools on tools/list", async () => {
     await client.send("initialize", {
       protocolVersion: "2024-11-05",
       capabilities: {},
@@ -141,7 +141,7 @@ describe("@m0ssad/mcp — integration (real stdio)", () => {
     expect(names).toContain("mAIL_send");
 
     // Total tool count today
-    expect(names.length).toBeGreaterThanOrEqual(17);
+    expect(names.length).toBeGreaterThanOrEqual(19);
 
     // Every tool has a valid JSON Schema
     for (const tool of result.tools ?? []) {

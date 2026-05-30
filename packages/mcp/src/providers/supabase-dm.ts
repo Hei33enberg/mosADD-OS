@@ -68,6 +68,24 @@ export class SupabaseDmProvider implements DmProvider {
     };
   }
 
+  async publishPrekeyBundle(bundle: Uint8Array): Promise<void> {
+    // Network key directory. Server-side fn (`prekey-bundle-publish`) is the
+    // m0ssad-3 hub's responsibility — it stores the opaque bundle keyed by the
+    // caller's identity (resolved from the JWT). mosadd-os just ships bytes.
+    await invokeFunction<{ ok: boolean }>("prekey-bundle-publish", {
+      bundle: Buffer.from(bundle).toString("base64"),
+    });
+  }
+
+  async fetchPrekeyBundle(peerId: string): Promise<Uint8Array | null> {
+    type FetchResponse = { bundle?: string | null };
+    const data = await invokeFunction<FetchResponse>("prekey-bundle-fetch", {
+      peer_id: peerId,
+    });
+    if (!data?.bundle) return null;
+    return new Uint8Array(Buffer.from(data.bundle, "base64"));
+  }
+
   async list(args: DmListArgs): Promise<DmListResult> {
     type MessageListResponse = {
       messages?: Array<{

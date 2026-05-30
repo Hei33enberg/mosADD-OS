@@ -17,6 +17,12 @@
 import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
 import { invokeFunction, getSupabase, readSupabaseEnv } from "../providers/supabase.js";
+import {
+  encryptForPeer,
+  decryptFromPeer,
+  publishOwnPrekeys,
+  isE2eeEnvelope,
+} from "../crypto/mdm-session.js";
 
 // ---- Constants ----
 
@@ -138,16 +144,51 @@ function unpackPayload(payload: Uint8Array): { text: string; sent_at?: string; r
 async function mDM_send(
   input: z.infer<typeof mDM_send_input>,
   ctx: MosaddToolContext,
-): Promise<{ message_id: string; delivered_at: string; thread_id: string }> {
-  // Transport via the injected DmProvider — default network (Supabase), or a
-  // host-supplied radio provider. The tool stays transport-agnostic: it packs
-  // bytes and computes the thread id; the provider moves the bytes.
+): Promise<{ message_id: string; delivered_at: string; thread_id: string; encrypted: true }> {
+  // E2EE path (default). The plaintext is packed into the inner mosadd.chat.v1
+  // envelope, then SEALED via X3DH + Double Ratchet into an opaque envelope the
+  // DmProvider moves without understanding. First contact fetches the peer's
+  // published prekey bundle through the same provider (decision "1a").
+  const dm = ctx.providers.dm;
+  const selfId = await dm.selfId();
+  const threadId = dmThreadId(selfId, input.to, input.thread_label);
+
+  const inner = packPlaintextPayload(input.text, input.reply_to_id);
+  const sealed = await encryptForPeer(ctx.providers.keys, dm, input.to, inner);
+
+  ctx.log("debug", "mDM_send E2EE via DmProvider", { thread_id: threadId, bytes: sealed.byteLength });
+
+  const result = await dm.send({
+    to: input.to,
+    threadId,
+    payload: sealed,
+    replyToId: input.reply_to_id,
+  });
+
+  return {
+    message_id: result.id,
+    delivered_at: result.deliveredAt,
+    thread_id: threadId,
+    encrypted: true,
+  };
+}
+
+async function mDM_send_unencrypted(
+  input: z.infer<typeof mDM_send_input>,
+  ctx: MosaddToolContext,
+): Promise<{ message_id: string; delivered_at: string; thread_id: string; encrypted: false }> {
+  // DEPRECATED migration path: plaintext mosadd.chat.v1 envelope, no E2EE.
+  // Kept so peers who have not yet published prekeys can still be reached
+  // during the migration window. Will be removed once E2EE is universal.
   const dm = ctx.providers.dm;
   const selfId = await dm.selfId();
   const threadId = dmThreadId(selfId, input.to, input.thread_label);
   const payload = packPlaintextPayload(input.text, input.reply_to_id);
 
-  ctx.log("debug", "mDM_send via DmProvider", { thread_id: threadId, bytes: payload.byteLength });
+  ctx.log("warn", "mDM_send_unencrypted (deprecated, plaintext) via DmProvider", {
+    thread_id: threadId,
+    bytes: payload.byteLength,
+  });
 
   const result = await dm.send({
     to: input.to,
@@ -160,7 +201,19 @@ async function mDM_send(
     message_id: result.id,
     delivered_at: result.deliveredAt,
     thread_id: threadId,
+    encrypted: false,
   };
+}
+
+async function mDM_publish_keys(
+  _input: Record<string, never>,
+  ctx: MosaddToolContext,
+): Promise<{ published: true; one_time_prekeys: number }> {
+  // Publish the local prekey bundle so peers can start encrypted sessions with
+  // us. Rides the same provider as messages (network row / radio announce).
+  const { oneTimePrekeyCount } = await publishOwnPrekeys(ctx.providers.keys, ctx.providers.dm);
+  ctx.log("debug", "mDM_publish_keys", { one_time_prekeys: oneTimePrekeyCount });
+  return { published: true, one_time_prekeys: oneTimePrekeyCount };
 }
 
 async function mDM_list(
@@ -173,6 +226,7 @@ async function mDM_list(
     text: string;
     timestamp: string;
     thread_id: string;
+    encrypted: boolean;
   }>;
   next_cursor: string | null;
   threads: string[];
@@ -185,13 +239,32 @@ async function mDM_list(
 
   const result = await dm.list({ threadId, limit: input.limit ?? 50, cursor: input.cursor });
 
-  const messages = result.messages.map((m) => ({
-    id: m.id,
-    sender_identity_id: m.senderId,
-    text: unpackPayload(m.payload).text,
-    timestamp: m.timestamp,
-    thread_id: m.threadId,
-  }));
+  const messages = await Promise.all(
+    result.messages.map(async (m) => {
+      const base = {
+        id: m.id,
+        sender_identity_id: m.senderId,
+        timestamp: m.timestamp,
+        thread_id: m.threadId,
+      };
+      // Legacy plaintext envelope (deprecated path) — unpack directly.
+      if (!isE2eeEnvelope(m.payload)) {
+        return { ...base, text: unpackPayload(m.payload).text, encrypted: false };
+      }
+      // Our own outgoing ratchet messages aren't decryptable on read (no local
+      // plaintext store yet — tracked follow-up); show a marker, don't fail.
+      if (m.senderId === selfId) {
+        return { ...base, text: "<encrypted · sent by you>", encrypted: true };
+      }
+      try {
+        const inner = await decryptFromPeer(ctx.providers.keys, m.senderId, m.payload);
+        return { ...base, text: unpackPayload(inner).text, encrypted: true };
+      } catch (err) {
+        ctx.log("warn", "mDM_list failed to decrypt a message", { id: m.id, error: String(err) });
+        return { ...base, text: "<undecryptable>", encrypted: true };
+      }
+    }),
+  );
 
   return {
     messages,
@@ -250,6 +323,8 @@ async function mDM_respond_request(
   return { ok: true };
 }
 
+const mDM_publish_keys_input = z.object({});
+
 // ---- Registration ----
 
 export const mdmTools: MosaddTool[] = [
@@ -262,18 +337,34 @@ export const mdmTools: MosaddTool[] = [
     handler: mDM_list_contacts as MosaddTool["handler"],
   },
   {
+    name: "mDM_publish_keys",
+    requires: "any",
+    description:
+      "Publish your mDM prekey bundle so other people can start an end-to-end-encrypted conversation with you. Run this once after sign-in (and to replenish one-time prekeys). Rides the same transport as messages, so it works over network or off-grid radio.",
+    inputSchema: mDM_publish_keys_input,
+    handler: mDM_publish_keys as MosaddTool["handler"],
+  },
+  {
     name: "mDM_send",
     requires: "any",
     description:
-      "Send a direct message via mosadd mDM. Pass `to` as the recipient's mosadd identity_id (look it up with mDM_list_contacts). Optional thread_label puts the message in a named thread within the conversation — mosadd USP: multiple threads per contact, unlike WhatsApp/Telegram. Alpha: payload is plaintext JSON base64-wrapped. Phase 2 swaps in Double Ratchet end-to-end encryption.",
+      "Send an END-TO-END-ENCRYPTED direct message via mosadd mDM. Pass `to` as the recipient's mosadd identity_id (look it up with mDM_list_contacts). Establishes an X3DH + Double Ratchet session on first contact (the recipient must have run mDM_publish_keys). Optional thread_label puts the message in a named thread — mosadd USP: multiple threads per contact, unlike WhatsApp/Telegram. If the recipient has no published keys yet, use mDM_send_unencrypted.",
     inputSchema: mDM_send_input,
     handler: mDM_send as MosaddTool["handler"],
+  },
+  {
+    name: "mDM_send_unencrypted",
+    requires: "any",
+    description:
+      "DEPRECATED migration-window fallback: send a direct message WITHOUT end-to-end encryption (plaintext envelope). Only use when the recipient has not yet published prekeys (mDM_send fails with that hint). Prefer mDM_send. Will be removed once E2EE is universal.",
+    inputSchema: mDM_send_input,
+    handler: mDM_send_unencrypted as MosaddTool["handler"],
   },
   {
     name: "mDM_list",
     requires: "any",
     description:
-      "List recent direct messages with a specific contact. Pass contact_id as the identity_id from mDM_list_contacts. Optionally filter to a single thread_label.",
+      "List recent direct messages with a specific contact. Pass contact_id as the identity_id from mDM_list_contacts. Decrypts end-to-end-encrypted messages from the contact automatically; legacy plaintext messages are shown as-is. Optionally filter to a single thread_label.",
     inputSchema: mDM_list_input,
     handler: mDM_list as MosaddTool["handler"],
   },
