@@ -1,54 +1,53 @@
 import Link from 'next/link';
+import { Logo } from './Logo';
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-neutral-800 text-neutral-500 text-xs">
-      <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-5 gap-8">
-        <div className="col-span-2 md:col-span-2">
-          <div className="text-neutral-200 font-display text-base mb-2">
-            <span className="text-radar-green">m·os·add</span>
-          </div>
-          <div className="text-neutral-500 mb-3">A human OS. Add.</div>
-          <div className="text-neutral-600">Apache-2.0 · Pre-alpha</div>
+    <footer className="border-t border-border text-xs text-muted-foreground">
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-6 py-12 md:grid-cols-5">
+        <div className="col-span-2">
+          <Logo size="base" />
+          <div className="mb-3 mt-3 text-muted-foreground">A human OS. Add.</div>
+          <div className="text-muted-foreground/70">Apache-2.0 · v3.0.0-alpha.0 · Engineered in Switzerland</div>
         </div>
 
         <div>
-          <div className="text-neutral-300 uppercase tracking-widest mb-3">Docs</div>
+          <div className="mb-3 uppercase tracking-[0.25em] text-foreground/80">Docs</div>
           <ul className="space-y-2">
-            <li><Link href="/docs/quickstart" className="hover:text-neutral-300">Quickstart</Link></li>
-            <li><Link href="/docs/mcp" className="hover:text-neutral-300">MCP</Link></li>
-            <li><Link href="/docs/modules" className="hover:text-neutral-300">Modules</Link></li>
-            <li><Link href="/docs/sdk" className="hover:text-neutral-300">SDK</Link></li>
-            <li><Link href="/docs/security" className="hover:text-neutral-300">Security</Link></li>
+            <li><Link href="/docs/quickstart" className="hover:text-foreground">Quickstart</Link></li>
+            <li><Link href="/docs/mcp" className="hover:text-foreground">MCP server</Link></li>
+            <li><Link href="/docs/modules" className="hover:text-foreground">Modules</Link></li>
+            <li><Link href="/docs/sdk" className="hover:text-foreground">SDK</Link></li>
+            <li><Link href="/docs/security" className="hover:text-foreground">Security</Link></li>
           </ul>
         </div>
 
         <div>
-          <div className="text-neutral-300 uppercase tracking-widest mb-3">Community</div>
+          <div className="mb-3 uppercase tracking-[0.25em] text-foreground/80">Community</div>
           <ul className="space-y-2">
-            <li><Link href="/community" className="hover:text-neutral-300">Community</Link></li>
-            <li><Link href="/docs/rfcs" className="hover:text-neutral-300">RFCs</Link></li>
-            <li><Link href="/examples" className="hover:text-neutral-300">Examples</Link></li>
-            <li><a href="https://github.com/Hei33enberg/mosadd-os/discussions" className="hover:text-neutral-300">Discussions</a></li>
+            <li><Link href="/community" className="hover:text-foreground">Community</Link></li>
+            <li><Link href="/docs/rfcs" className="hover:text-foreground">RFCs</Link></li>
+            <li><Link href="/examples" className="hover:text-foreground">Examples</Link></li>
+            <li><a href="https://github.com/Hei33enberg/mosadd-os/discussions" className="hover:text-foreground">Discussions</a></li>
           </ul>
         </div>
 
         <div>
-          <div className="text-neutral-300 uppercase tracking-widest mb-3">Resources</div>
+          <div className="mb-3 uppercase tracking-[0.25em] text-foreground/80">Resources</div>
           <ul className="space-y-2">
-            <li><Link href="/download" className="hover:text-neutral-300">Download</Link></li>
-            <li><Link href="/changelog" className="hover:text-neutral-300">Changelog</Link></li>
-            <li><Link href="/pricing" className="hover:text-neutral-300">Pricing</Link></li>
-            <li><Link href="/status" className="hover:text-neutral-300">Status</Link></li>
+            <li><Link href="/download" className="hover:text-foreground">Download</Link></li>
+            <li><Link href="/changelog" className="hover:text-foreground">Changelog</Link></li>
+            <li><Link href="/pricing" className="hover:text-foreground">Pricing</Link></li>
+            <li><Link href="/status" className="hover:text-foreground">Status</Link></li>
           </ul>
         </div>
       </div>
-      <div className="border-t border-neutral-900 max-w-6xl mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-3">
-        <div>© {new Date().getFullYear()} mosadd contributors</div>
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-border px-6 py-4">
+        <div>© {new Date().getFullYear()} mosadd contributors · TRUST NO TRACE.</div>
         <div className="flex gap-4">
-          <a href="https://mosadd.com" className="hover:text-neutral-300">mosadd.com</a>
-          <a href="https://github.com/Hei33enberg/mosadd-os" className="hover:text-neutral-300">GitHub</a>
-          <a href="https://github.com/Hei33enberg/mosadd-os/security/policy" className="hover:text-neutral-300">Security policy</a>
+          <a href="https://mosadd.com" className="hover:text-foreground">mosadd.com</a>
+          <a href="https://github.com/Hei33enberg/mosadd-os" className="hover:text-foreground">GitHub</a>
+          <a href="https://github.com/Hei33enberg/mosadd-os/security/policy" className="hover:text-foreground">Security</a>
         </div>
       </div>
     </footer>

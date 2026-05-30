@@ -2,23 +2,178 @@
 
 @source '../app/**/*.{ts,tsx}';
 
-@theme {
-  --color-radar-green: #5af082;
-  --color-radar-dim: #2a3a2f;
-  --color-radar-dark: #0a0f0c;
+/*
+ * mosadd brand tokens — source of truth: m0ssad-3/docs/BRANDBOOK.md +
+ * m0ssad-3/apps/web/src/index.css. Dark-only. HSL tokens, never hardcoded hex.
+ * Pure black + neon green, brutalist, JetBrains Mono only.
+ */
+:root {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 3%;
+  --card-foreground: 0 0% 95%;
+  --primary: 145 100% 50%;
+  --primary-foreground: 0 0% 2%;
+  --secondary: 0 0% 8%;
+  --muted: 0 0% 8%;
+  --muted-foreground: 0 0% 55%;
+  --accent: 0 0% 10%;
+  --border: 0 0% 12%;
+  --ring: 145 100% 50%;
+  --destructive: 0 80% 55%;
+  --warning: 38 100% 50%;
+  --info: 210 100% 55%;
+  --sigint: 195 100% 50%;
+  --comint: 270 80% 60%;
+  --masint: 25 100% 55%;
+  --radius: 0.25rem;
 }
 
-html {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-  background: #0a0a0a;
-  color: #ebebeb;
+@theme inline {
+  /* JetBrains Mono is the ONLY font (brandbook). --font-jetbrains injected by next/font in layout.tsx. */
+  --font-sans: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Semantic brand tokens → utilities (bg-background, text-primary, border-border, …) */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-border: hsl(var(--border));
+  --color-ring: hsl(var(--ring));
+  --color-destructive: hsl(var(--destructive));
+  --color-warning: hsl(var(--warning));
+  --color-info: hsl(var(--info));
+  --color-sigint: hsl(var(--sigint));
+  --color-comint: hsl(var(--comint));
+  --color-masint: hsl(var(--masint));
+
+  /* Legacy aliases → brand, so any un-migrated class still renders on-brand. */
+  --color-radar-green: hsl(var(--primary));
+  --color-radar-dim: hsl(var(--muted-foreground));
+  --color-radar-dark: hsl(var(--card));
+
+  /* Override Tailwind's neutral scale → pure brand grayscale (brand uses 0 0% x%, not warm gray). */
+  --color-neutral-950: hsl(0 0% 0%);
+  --color-neutral-900: hsl(0 0% 3%);
+  --color-neutral-800: hsl(0 0% 12%);
+  --color-neutral-700: hsl(0 0% 18%);
+  --color-neutral-600: hsl(0 0% 32%);
+  --color-neutral-500: hsl(0 0% 55%);
+  --color-neutral-400: hsl(0 0% 66%);
+  --color-neutral-300: hsl(0 0% 80%);
+  --color-neutral-200: hsl(0 0% 90%);
+  --color-neutral-100: hsl(0 0% 95%);
+  --color-neutral-50: hsl(0 0% 98%);
 }
 
-body {
-  background: #0a0a0a;
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  html {
+    font-family: var(--font-mono);
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    color-scheme: dark;
+  }
+  body {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: hsl(var(--primary) / 0.3);
+    color: hsl(var(--foreground));
+  }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); }
+  ::-webkit-scrollbar-track { background: hsl(var(--background)); }
 }
 
+/* Brandbook: JetBrains Mono is the only font — .font-display is mono, just tighter. (was Inter — removed) */
 .font-display {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  letter-spacing: -0.02em;
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+}
+
+/* ── Brand motifs (ported from m0ssad-3 apps/web/src/index.css) ── */
+
+/* Faint engineering grid */
+.grid-bg {
+  background-image:
+    linear-gradient(hsl(var(--primary) / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--primary) / 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* Horizontal scanlines overlay (apply to a `relative` container) */
+.scanlines::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 2px,
+    hsl(0 0% 0% / 0.22) 2px 4px
+  );
+  z-index: 1;
+}
+
+/* Radial vignette — darkens edges (apply to a `relative` container) */
+.vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, hsl(0 0% 0% / 0.75) 100%);
+}
+
+/* HUD corner brackets — thin L-frames; parent must be `relative` */
+.hud-bracket {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: hsl(var(--primary) / 0.55);
+  pointer-events: none;
+}
+.hud-tl { top: 0; left: 0; border-top: 1.5px solid; border-left: 1.5px solid; }
+.hud-tr { top: 0; right: 0; border-top: 1.5px solid; border-right: 1.5px solid; }
+.hud-bl { bottom: 0; left: 0; border-bottom: 1.5px solid; border-left: 1.5px solid; }
+.hud-br { bottom: 0; right: 0; border-bottom: 1.5px solid; border-right: 1.5px solid; }
+
+/* Glow */
+.glow-green { box-shadow: 0 0 0 1px hsl(var(--primary) / 0.3), 0 0 28px hsl(var(--primary) / 0.14); }
+.text-glow { text-shadow: 0 0 22px hsl(var(--primary) / 0.45); }
+
+/* Terminal cursor */
+@keyframes term-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.term-cursor::after {
+  content: '▋';
+  margin-left: 1px;
+  color: hsl(var(--primary));
+  animation: term-blink 1.05s step-end infinite;
+}
+
+/* Slow scanline sweep (decorative; parent `relative` + `overflow-hidden`) */
+@keyframes scan-y { 0% { transform: translateY(-120%); } 100% { transform: translateY(120%); } }
+.scan-sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.5), transparent);
+  animation: scan-y 7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .term-cursor::after, .scan-sweep { animation: none; }
+  .scan-sweep { display: none; }
 }
