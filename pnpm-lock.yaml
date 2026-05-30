@@ -165,6 +165,9 @@ importers:
 
   packages/mcp:
     dependencies:
+      '@m0ssad/crypto':
+        specifier: workspace:*
+        version: link:../crypto
       '@m0ssad/protocol':
         specifier: workspace:*
         version: link:../protocol

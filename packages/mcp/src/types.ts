@@ -4,6 +4,7 @@
 
 import type { z } from "zod";
 import type { DmProvider } from "@m0ssad/providers";
+import type { MdmKeyStore } from "./crypto/mdm-session.js";
 
 export type Mode = "cloud" | "local" | "self-host";
 
@@ -12,9 +13,14 @@ export type Mode = "cloud" | "local" | "self-host";
  * default network adapter; a host (e.g. cymru-os) injects alternatives —
  * notably a radio DmProvider — via `MosaddServerOptions.providers`. This is
  * the DI seam that keeps mosadd-os transport-agnostic.
+ *
+ * `keys` is LOCAL crypto custody (identity + prekeys + ratchet sessions) for
+ * mDM E2EE — distinct from transport. Defaults to an in-process keystore; a
+ * host may inject a file/keychain-backed one.
  */
 export interface ProviderRegistry {
   dm: DmProvider;
+  keys: MdmKeyStore;
 }
 
 export interface MosaddServerOptions {

@@ -25,12 +25,14 @@ import { mdmTools } from "../tools/mdm.js";
 import { makeCapabilitiesTool } from "../tools/capabilities.js";
 import { allTools } from "../tools/index.js";
 import { createMosaddServer } from "../server.js";
+import { InMemoryMdmKeyStore } from "../crypto/mdm-session.js";
 import type { MosaddToolContext, ProviderRegistry } from "../types.js";
 
 /** Stand-in for a host-supplied radio transport: captures the bytes it's asked
  *  to send, and replays them on list — i.e. "the message reached the link". */
 class FakeRadioDmProvider implements DmProvider {
   public readonly sent: DmSendArgs[] = [];
+  private bundle: Uint8Array | null = null;
   async selfId(): Promise<string> {
     return "radio:self-callsign";
   }
@@ -52,12 +54,18 @@ class FakeRadioDmProvider implements DmProvider {
       nextCursor: null,
     };
   }
+  async publishPrekeyBundle(bundle: Uint8Array): Promise<void> {
+    this.bundle = bundle;
+  }
+  async fetchPrekeyBundle(): Promise<Uint8Array | null> {
+    return this.bundle;
+  }
 }
 
-function makeCtx(providers: ProviderRegistry): MosaddToolContext {
+function makeCtx(providers: { dm: DmProvider; keys?: ProviderRegistry["keys"] }): MosaddToolContext {
   return {
     options: { mode: "local", hubUrl: "https://mcp.mosadd.com" },
-    providers,
+    providers: { dm: providers.dm, keys: providers.keys ?? new InMemoryMdmKeyStore() },
     log: () => {},
   };
 }
@@ -77,11 +85,14 @@ describe("golden path — host injects transport under mDM", () => {
     expect(manifest.by_requirement.any).toContain("mDM_send");
   });
 
-  it("steps 2-4: mDM_send delivers the opaque payload to the injected provider", async () => {
+  it("steps 2-4: the deprecated plaintext path delivers opaque bytes to the injected provider", async () => {
+    // This proves the TRANSPORT seam (2144): mDM_send_unencrypted packs a
+    // plaintext envelope and the bytes reach the injected provider verbatim.
+    // (mDM_send is now E2EE — its own round-trip is covered in mdm-e2ee.test.ts.)
     const radio = new FakeRadioDmProvider();
     const ctx = makeCtx({ dm: radio });
 
-    const send = getTool("mDM_send");
+    const send = getTool("mDM_send_unencrypted");
     const result = (await send.handler(
       { to: "bob-callsign", text: "rendezvous at grid 4471, 0600" },
       ctx,
@@ -103,7 +114,7 @@ describe("golden path — host injects transport under mDM", () => {
     const radio = new FakeRadioDmProvider();
     const ctx = makeCtx({ dm: radio });
 
-    await getTool("mDM_send").handler({ to: "bob-callsign", text: "ack" }, ctx);
+    await getTool("mDM_send_unencrypted").handler({ to: "bob-callsign", text: "ack" }, ctx);
     const listed = (await getTool("mDM_list").handler({ contact_id: "bob-callsign" }, ctx)) as {
       messages: Array<{ text: string }>;
     };
