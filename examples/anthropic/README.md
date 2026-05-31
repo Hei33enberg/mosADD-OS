@@ -20,7 +20,7 @@ pnpm start
 
 ```ts
 import Anthropic from "@anthropic-ai/sdk";
-import { mosaddTools, executeMosaddToolCall } from "@m0ssad/ai/anthropic";
+import { mosaddTools, executeMosaddToolCall } from "@mosadd/ai/anthropic";
 
 const client = new Anthropic();
 const tools = mosaddTools({ modules: ["mDM", "mROOM"] });

@@ -1,5 +1,5 @@
 /**
- * @m0ssad/threat-engine — defensive decision engine.
+ * @mosadd/threat-engine — defensive decision engine.
  *
  * Ported from m0ssad-3 `supabase/functions/threat-engine/index.ts` (the DECK
  * Security Engine). The Edge Function coupled the decision logic to Supabase

@@ -3,17 +3,17 @@ import { Prose, H1, Lead, H2, H3, P, Ul, Pre, Table, Anchor } from '../../_compo
 
 export const metadata: Metadata = {
   title: 'MCP server',
-  description: 'Tool surface, transports, authentication for @m0ssad/mcp.',
+  description: 'Tool surface, transports, authentication for @mosadd/mcp.',
 };
 
 export default function McpPage() {
   return (
     <Prose>
       <H1>MCP server</H1>
-      <Lead>Tool surface, transports, authentication for <code className="font-mono text-radar-green">@m0ssad/mcp</code>.</Lead>
+      <Lead>Tool surface, transports, authentication for <code className="font-mono text-radar-green">@mosadd/mcp</code>.</Lead>
 
       <P>
-        The <code className="font-mono text-radar-green">@m0ssad/mcp</code> package is the <strong>main artifact</strong> of mosadd-os.
+        The <code className="font-mono text-radar-green">@mosadd/mcp</code> package is the <strong>main artifact</strong> of mosadd-os.
         It covers 11 of 12 LLM clients (Claude Code, Cursor, Windsurf, VS Code, ChatGPT Apps, Lovable, Bolt, Goose, Cline, Manus, custom).
       </P>
 
@@ -47,7 +47,7 @@ export default function McpPage() {
       <H2>Transports</H2>
       <Ul>
         <li>
-          <strong>stdio</strong> (default) — <code className="font-mono text-radar-green">npx @m0ssad/mcp</code>. For Claude Code, Cursor, Cline, Windsurf, Goose, custom local agents.
+          <strong>stdio</strong> (default) — <code className="font-mono text-radar-green">npx @mosadd/mcp</code>. For Claude Code, Cursor, Cline, Windsurf, Goose, custom local agents.
         </li>
         <li>
           <strong>HTTP/SSE</strong> — hosted at <code className="font-mono text-radar-green">https://mcp.mosadd.com</code> (Phase 2). For ChatGPT Apps, Lovable, Bolt.
@@ -69,7 +69,7 @@ export default function McpPage() {
           Agent → MCP server: <code className="font-mono text-radar-green">mTALK_start_session</code> returns <code className="font-mono">&#123; session_id, daemon_socket, livekit_jwt &#125;</code>
         </li>
         <li>
-          Client runs <code className="font-mono text-radar-green">@m0ssad/daemon</code> locally — audio flows direct client ↔ LiveKit, never through MCP
+          Client runs <code className="font-mono text-radar-green">@mosadd/daemon</code> locally — audio flows direct client ↔ LiveKit, never through MCP
         </li>
       </Ul>
       <P>

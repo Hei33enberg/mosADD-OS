@@ -37,7 +37,7 @@ Tracking in [LINEAR-2165](https://linear.app/ip-ra/issue/LINEAR-2165).
 
 Within shells we sequence by **leverage / risk ratio**:
 
-1. **apps/web rebuild on top of @m0ssad/mcp** (`LINEAR-2164`) — most leverage, least risk. Same backend, new UI layer, same dataset. Catches issues with the MCP API in dogfood.
+1. **apps/web rebuild on top of @mosadd/mcp** (`LINEAR-2164`) — most leverage, least risk. Same backend, new UI layer, same dataset. Catches issues with the MCP API in dogfood.
 
 2. **PWA** — almost free with apps/web rebuild. Service Worker + manifest + offline caching. Ship as soon as web is good.
 

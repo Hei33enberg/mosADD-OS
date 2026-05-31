@@ -1,5 +1,5 @@
 /**
- * Vercel AI SDK + @m0ssad/ai/vercel — minimal walkthrough.
+ * Vercel AI SDK + @mosadd/ai/vercel — minimal walkthrough.
  *
  *   pnpm install
  *   export OPENAI_API_KEY=sk-...
@@ -17,7 +17,7 @@
  */
 
 import { openai } from "@ai-sdk/openai";
-import { mosadd } from "@m0ssad/ai/vercel";
+import { mosadd } from "@mosadd/ai/vercel";
 import { generateText } from "ai";
 
 async function main() {

@@ -1,7 +1,7 @@
 {
-  "name": "@m0ssad/core",
+  "name": "@mosadd/core",
   "version": "3.0.0-alpha.0",
-  "description": "Core kernel for mosadd: channel primitives, routing, threat radar hook injection, identity. Used by @m0ssad/mcp and @m0ssad/ai.",
+  "description": "Core kernel for mosadd: channel primitives, routing, threat radar hook injection, identity. Used by @mosadd/mcp and @mosadd/ai.",
   "homepage": "https://github.com/mosadd/os/tree/main/packages/core",
   "repository": { "type": "git", "url": "https://github.com/mosadd/os.git", "directory": "packages/core" },
   "license": "Apache-2.0",
@@ -16,6 +16,6 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "clean": "rm -rf dist"
   },
-  "dependencies": { "@m0ssad/protocol": "workspace:*" },
+  "dependencies": { "@mosadd/protocol": "workspace:*" },
   "devDependencies": { "tsup": "^8.3.5", "typescript": "^5.7.2" }
 }

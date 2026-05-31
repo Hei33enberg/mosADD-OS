@@ -46,7 +46,7 @@ export default function HomePage() {
           </p>
 
           <div className="mt-8 max-w-xl">
-            <Terminal label="claude code">claude mcp add mosadd npx -- -y @m0ssad/mcp</Terminal>
+            <Terminal label="claude code">claude mcp add mosadd npx -- -y @mosadd/mcp</Terminal>
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3">

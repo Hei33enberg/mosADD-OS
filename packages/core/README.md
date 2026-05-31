@@ -1,4 +1,4 @@
-# @m0ssad/core
+# @mosadd/core
 
 Kernel layer for mosadd: channel primitives, routing, threat radar hook injection, identity model.
 

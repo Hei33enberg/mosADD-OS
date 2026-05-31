@@ -5,9 +5,9 @@ Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosa
 ## Phase 1 — Public OS core (6-7 months)
 
 - [x] Monorepo scaffold + Apache-2.0 + governance
-- [ ] `@m0ssad/crypto` ported from m0ssad-3 ([LINEAR-2142](https://linear.app/ip-ra/issue/LINEAR-2142))
-- [ ] `@m0ssad/protocol` ported ([LINEAR-2142](https://linear.app/ip-ra/issue/LINEAR-2142))
-- [ ] `@m0ssad/mcp` stub with `mDM_send` working ([LINEAR-2143](https://linear.app/ip-ra/issue/LINEAR-2143))
+- [ ] `@mosadd/crypto` ported from m0ssad-3 ([LINEAR-2142](https://linear.app/ip-ra/issue/LINEAR-2142))
+- [ ] `@mosadd/protocol` ported ([LINEAR-2142](https://linear.app/ip-ra/issue/LINEAR-2142))
+- [ ] `@mosadd/mcp` stub with `mDM_send` working ([LINEAR-2143](https://linear.app/ip-ra/issue/LINEAR-2143))
 - [ ] Provider abstraction ([LINEAR-2144](https://linear.app/ip-ra/issue/LINEAR-2144))
 - [ ] Control plane / data plane separation ([LINEAR-2145](https://linear.app/ip-ra/issue/LINEAR-2145))
 - [ ] Fork LiveKit → `m0ssad-fabric` ([LINEAR-2169](https://linear.app/ip-ra/issue/LINEAR-2169))

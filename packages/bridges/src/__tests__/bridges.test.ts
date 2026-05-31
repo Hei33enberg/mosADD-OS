@@ -8,7 +8,7 @@ import {
   TelegramBridge,
 } from "../index.js";
 
-describe("@m0ssad/bridges", () => {
+describe("@mosadd/bridges", () => {
   describe("registry", () => {
     it("includes the 3 Phase 1 P0 bridges", () => {
       expect(Object.keys(bridges)).toEqual(["matrix", "discord", "telegram"]);

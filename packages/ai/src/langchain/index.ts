@@ -1,8 +1,8 @@
 /**
- * @m0ssad/ai/langchain — LangChain adapter
+ * @mosadd/ai/langchain — LangChain adapter
  *
  * Usage:
- *   import { mosadd } from "@m0ssad/ai/langchain";
+ *   import { mosadd } from "@mosadd/ai/langchain";
  *   import { DynamicStructuredTool } from "@langchain/core/tools";
  *
  *   const tools = mosadd({ modules: ["mDM"] }).map(

@@ -25,7 +25,7 @@ You need Node ≥20 and pnpm ≥9.
 Open an issue using the **Bug Report** template. Include:
 - Reproduction steps
 - Expected vs actual behavior
-- mosadd version (`pnpm list @m0ssad/mcp`)
+- mosadd version (`pnpm list @mosadd/mcp`)
 - Node version and OS
 
 ### Proposing a new `m*` module

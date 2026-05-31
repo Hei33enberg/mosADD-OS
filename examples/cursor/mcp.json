@@ -2,7 +2,7 @@
   "mcpServers": {
     "mosadd": {
       "command": "npx",
-      "args": ["-y", "@m0ssad/mcp"],
+      "args": ["-y", "@mosadd/mcp"],
       "env": {
         "M0SSAD_SUPABASE_URL": "https://<your-project>.supabase.co",
         "M0SSAD_SUPABASE_ANON_KEY": "<your supabase anon key>",

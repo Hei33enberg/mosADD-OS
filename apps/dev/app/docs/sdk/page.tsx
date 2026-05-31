@@ -13,12 +13,12 @@ export default function SdkPage() {
       <Lead>Adapter pattern for every major agent framework via subpath exports.</Lead>
 
       <P>
-        <code className="font-mono text-radar-green">@m0ssad/ai</code> ships adapters for every major agent framework — as{' '}
+        <code className="font-mono text-radar-green">@mosadd/ai</code> ships adapters for every major agent framework — as{' '}
         <strong>subpath exports</strong>, not separate packages (Stripe Agent Toolkit pattern).
       </P>
 
       <H2>Vercel AI SDK</H2>
-      <Pre lang="ts">{`import { mosadd } from '@m0ssad/ai/vercel';
+      <Pre lang="ts">{`import { mosadd } from '@mosadd/ai/vercel';
 
 const tools = mosadd({
   modules: ['mDM', 'mROOM'],
@@ -27,20 +27,20 @@ const tools = mosadd({
 await streamText({ model, tools });`}</Pre>
 
       <H2>LangChain</H2>
-      <Pre lang="ts">{`import { mosadd } from '@m0ssad/ai/langchain';
+      <Pre lang="ts">{`import { mosadd } from '@mosadd/ai/langchain';
 
 const tools = mosadd({ modules: ['mDM', 'mTALK'] });
 const agent = createReactAgent({ llm, tools });`}</Pre>
 
       <H2>OpenAI Agents SDK</H2>
-      <Pre lang="ts">{`import { mosadd } from '@m0ssad/ai/openai';
+      <Pre lang="ts">{`import { mosadd } from '@mosadd/ai/openai';
 
 const agent = new Agent({
   tools: mosadd({ modules: ['mAIL', 'mCALL'] }),
 });`}</Pre>
 
       <H2>Anthropic Agents</H2>
-      <Pre lang="ts">{`import { mosadd } from '@m0ssad/ai/anthropic';
+      <Pre lang="ts">{`import { mosadd } from '@mosadd/ai/anthropic';
 
 const tools = mosadd({ modules: ['mDM', 'mROOM', 'mTELEGRAM'] });`}</Pre>
 

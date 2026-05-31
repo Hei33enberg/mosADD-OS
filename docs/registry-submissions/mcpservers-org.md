@@ -12,10 +12,10 @@
   "description": "Operating system for human communications. 17 MCP tools across direct messages, ephemeral rooms with no-account guest links, channels, and email.",
   "repo": "https://github.com/Hei33enberg/mosadd-os",
   "homepage": "https://mosadd.dev",
-  "npm": "@m0ssad/mcp",
+  "npm": "@mosadd/mcp",
   "license": "Apache-2.0",
   "author": "mosadd contributors",
-  "install": "npx -y @m0ssad/mcp",
+  "install": "npx -y @mosadd/mcp",
   "tools_count": 17,
   "categories": ["communication", "messaging", "voice", "email"],
   "tags": ["agents", "claude", "cursor", "anthropic", "open-source", "apache-2"]
@@ -31,6 +31,6 @@
 > **Differentiator:** `mROOM_create_guest_link` generates a short-lived no-signup URL — one MCP call from any agent, no other registered server exposes this.
 >
 > Repo: https://github.com/Hei33enberg/mosadd-os
-> NPM: `@m0ssad/mcp`
+> NPM: `@mosadd/mcp`
 > License: Apache-2.0
-> Install: `npx -y @m0ssad/mcp`
+> Install: `npx -y @mosadd/mcp`

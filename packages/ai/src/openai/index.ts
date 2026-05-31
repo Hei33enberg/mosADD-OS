@@ -1,8 +1,8 @@
 /**
- * @m0ssad/ai/openai — OpenAI Agents SDK adapter
+ * @mosadd/ai/openai — OpenAI Agents SDK adapter
  *
  * Usage:
- *   import { mosadd } from "@m0ssad/ai/openai";
+ *   import { mosadd } from "@mosadd/ai/openai";
  *   import { Agent } from "@openai/agents";
  *
  *   const agent = new Agent({

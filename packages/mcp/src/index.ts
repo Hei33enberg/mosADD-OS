@@ -1,5 +1,5 @@
 /**
- * @m0ssad/mcp — Model Context Protocol server for mosadd
+ * @mosadd/mcp — Model Context Protocol server for mosadd
  *
  * Exposes mosadd OS modules (m*) as MCP tools to any agent runtime
  * (Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, etc.).

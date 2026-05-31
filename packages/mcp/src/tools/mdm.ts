@@ -11,7 +11,7 @@
  *
  * Phase 2 will route through the hosted gateway (mcp.mosadd.com) with the
  * 167-event radar middleware in front, and replace the plaintext
- * encrypted_payload with real X3DH + Double Ratchet via @m0ssad/crypto.
+ * encrypted_payload with real X3DH + Double Ratchet via @mosadd/crypto.
  */
 
 import { z } from "zod";
@@ -113,7 +113,7 @@ async function resolveSelfIdentityId(): Promise<string> {
  *
  * ALPHA: not actually encrypted — wraps plaintext in JSON + base64.
  *        Receivers in the m0ssad-3 app understand this `mosadd.chat.v1` shape.
- * V0.2:  replace with @m0ssad/crypto Double Ratchet wrap.
+ * V0.2:  replace with @mosadd/crypto Double Ratchet wrap.
  */
 function packPlaintextPayload(text: string, replyToId?: string): Uint8Array {
   const envelope = {
@@ -124,7 +124,7 @@ function packPlaintextPayload(text: string, replyToId?: string): Uint8Array {
     sent_at: new Date().toISOString(),
   };
   // OPAQUE bytes handed to the DmProvider — the provider does not interpret
-  // them. Today: utf8 JSON. V0.2: @m0ssad/crypto Double Ratchet ciphertext.
+  // them. Today: utf8 JSON. V0.2: @mosadd/crypto Double Ratchet ciphertext.
   return new Uint8Array(Buffer.from(JSON.stringify(envelope), "utf8"));
 }
 

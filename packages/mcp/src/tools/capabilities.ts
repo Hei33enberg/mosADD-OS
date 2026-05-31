@@ -3,7 +3,7 @@
  *
  * THE contract surface between mosadd-os and carrier-aware hosts (e.g.
  * cymru-os, which filters tools by available transports — see cymru-os RFC
- * 0002 D-Bus "Capability-flag bridge"). A host spawns `@m0ssad/mcp` over stdio
+ * 0002 D-Bus "Capability-flag bridge"). A host spawns `@mosadd/mcp` over stdio
  * and calls `comms_capabilities` once to learn which tools are usable on which
  * carrier, then gates the tool list accordingly (e.g. off-grid radio →
  * only `requires: "any" | "radio"` tools are offered).

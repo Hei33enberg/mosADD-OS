@@ -1,10 +1,10 @@
 /**
- * @m0ssad/core — kernel for mosadd
+ * @mosadd/core — kernel for mosadd
  *
  * Channel primitives, routing, identity, threat radar hook injection.
- * Used by @m0ssad/mcp and @m0ssad/ai.
+ * Used by @mosadd/mcp and @mosadd/ai.
  *
- * Phase 1 MVP: interfaces only. Concrete providers live in @m0ssad/providers.
+ * Phase 1 MVP: interfaces only. Concrete providers live in @mosadd/providers.
  */
 
 export const VERSION = "3.0.0-alpha.0" as const;

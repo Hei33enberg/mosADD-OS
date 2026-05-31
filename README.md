@@ -11,7 +11,7 @@ Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha-orange)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-29%20live-5af082)](packages/mcp)
+[![Tools](https://img.shields.io/badge/tools-32%20live-00ff6a)](packages/mcp)
 [![Release](https://img.shields.io/github/v/release/Hei33enberg/mosadd-os?include_prereleases&label=release)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![mosadd.dev](https://img.shields.io/badge/site-mosadd.dev-5af082)](https://mosadd.dev)
 
@@ -24,14 +24,14 @@ Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and 
 **Tagline-to-code real:**
 
 ```bash
-npx -y @m0ssad/mcp
+npx -y @mosadd/mcp
 ```
 
-…starts an MCP server with **29 tools** across four mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, or send email — all through your own mosadd backend (BYOK).
+…starts an MCP server with **32 tools** across four mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, or send email — all through your own mosadd backend (BYOK).
 
 | Channel | Tools | Highlight |
 |---|---|---|
-| **mDM** (4) | `mDM_list_contacts`, `mDM_send`, `mDM_list`, `mDM_respond_request` | Multi-thread per contact (USP — unlike WhatsApp/Telegram) |
+| **mDM** (6) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request` | Multi-thread per contact (USP) + X3DH/Double-Ratchet E2EE |
 | **mIRC** (15) | 5 channel ops (`mIRC_create/list/get/update/delete`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) | Discord/Slack-style persistent channels, full RBAC |
 | **mROOM** (8) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_send_message`, `mROOM_list_messages` | **No other registered MCP server exposes single-call guest links** |
 | **mAIL** (2) | `mAIL_send`, `mAIL_view` | Every user gets `<userId>@mosadd.com` for free |
@@ -40,12 +40,12 @@ Phase 1 follow-ups: **mTALK** (push-to-talk + agent in the room), **mCALL** (PST
 
 ## Quickstart (60 seconds)
 
-> **Alpha distribution:** install directly from GitHub for now (`npx github:...`). Once we claim the `m0ssad` npm org, `npx @m0ssad/mcp@alpha` will Just Work. The tarballs attached to [release v3.0.0-alpha.0](https://github.com/Hei33enberg/mosadd-os/releases/tag/v3.0.0-alpha.0) are identical to what we'll publish.
+> **Alpha distribution:** install directly from GitHub for now (`npx github:...`). Once we claim the `mosadd` npm org, `npx @mosadd/mcp@alpha` will Just Work. The tarballs attached to [release v3.0.0-alpha.0](https://github.com/Hei33enberg/mosadd-os/releases/tag/v3.0.0-alpha.0) are identical to what we'll publish.
 
 ### Claude Code
 
 ```bash
-claude mcp add mosadd npx -- -y github:Hei33enberg/mosadd-os --package=@m0ssad/mcp
+claude mcp add mosadd npx -- -y github:Hei33enberg/mosadd-os --package=@mosadd/mcp
 ```
 
 Then set three env vars in your MCP config — see [`examples/claude-code/`](./examples/claude-code/) for the walkthrough (including how to grab your session JWT from mosadd.com DevTools).
@@ -99,12 +99,12 @@ Community-contributed modules in v3.1+: `mPOST`, `mWALL`, `mBROADCAST`, `mPING`,
 ## Architecture
 
 **Public OSS layer (Apache-2.0, this repo):**
-- [`@m0ssad/mcp`](./packages/mcp) — single MCP server, all channels (THE main artifact)
-- [`@m0ssad/core`](./packages/core) — channel primitives
-- [`@m0ssad/providers`](./packages/providers) — vendor adapters (forked LiveKit, Routr SIP, nwaku p2p, Dendrite Matrix)
-- [`@m0ssad/bridges`](./packages/bridges) — Telegram/Discord/Matrix/Signal/WhatsApp (Hermes-derived)
-- [`@m0ssad/ai`](./packages/ai) — framework adapters (Vercel AI SDK, LangChain, OpenAI Agents, Anthropic Agents)
-- [`@m0ssad/crypto`](./packages/crypto), [`@m0ssad/protocol`](./packages/protocol), [`@m0ssad/threat-engine`](./packages/threat-engine)
+- [`@mosadd/mcp`](./packages/mcp) — single MCP server, all channels (THE main artifact)
+- [`@mosadd/core`](./packages/core) — channel primitives
+- [`@mosadd/providers`](./packages/providers) — vendor adapters (forked LiveKit, Routr SIP, nwaku p2p, Dendrite Matrix)
+- [`@mosadd/bridges`](./packages/bridges) — Telegram/Discord/Matrix/Signal/WhatsApp (Hermes-derived)
+- [`@mosadd/ai`](./packages/ai) — framework adapters (Vercel AI SDK, LangChain, OpenAI Agents, Anthropic Agents)
+- [`@mosadd/crypto`](./packages/crypto), [`@mosadd/protocol`](./packages/protocol), [`@mosadd/threat-engine`](./packages/threat-engine)
 - [`apps/dev`](./apps/dev) — the **[mosadd.dev](https://mosadd.dev)** developer portal (Next.js; deployed standalone via Vercel, Root Directory `apps/dev`). Lives here, alongside the toolkit it documents.
 
 **Commercial hub** (proprietary, hosted at `mcp.mosadd.com` + `hub.mosadd.com`):
@@ -135,5 +135,5 @@ Discord: _coming soon_ · Web: [mosadd.dev](https://mosadd.dev) · Linear: [M5 e
 This project includes or adapts code from:
 - [LiveKit](https://github.com/livekit/livekit) (Apache-2.0) — vendored as `forks/livekit-server/`, rebranded `m0ssad-fabric`
 - [Hermes Agent](https://github.com/NousResearch/Hermes-Agent) (MIT, Nous Research) — `gateway/platforms/` adapted to `packages/bridges/`
-- [@noble/curves, @noble/ciphers, @noble/hashes](https://paulmillr.com/noble/) (MIT) — `@m0ssad/crypto`
+- [@noble/curves, @noble/ciphers, @noble/hashes](https://paulmillr.com/noble/) (MIT) — `@mosadd/crypto`
 - Several other dependencies — see full attribution in [NOTICE](./NOTICE).

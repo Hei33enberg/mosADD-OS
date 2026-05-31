@@ -34,7 +34,7 @@ export default function MtalkPage() {
 → {
   session_id,
   room_id,
-  daemon_socket,    // local Unix socket for the @m0ssad/daemon
+  daemon_socket,    // local Unix socket for the @mosadd/daemon
   livekit_jwt,
   agent_join_url?,  // for LLM to subscribe to audio
 }`}</Pre>

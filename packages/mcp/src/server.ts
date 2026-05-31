@@ -12,7 +12,7 @@ import type { MosaddServerOptions, MosaddToolContext, ProviderRegistry } from ".
  * Resolve the channel ProviderRegistry: default network adapters merged with
  * anything the host injects. A carrier-aware host (cymru-os) passes its own
  * radio DmProvider via `injected.dm`. This is the single place the default
- * adapters are named — both `createMosaddServer` and the `@m0ssad/ai` adapters
+ * adapters are named — both `createMosaddServer` and the `@mosadd/ai` adapters
  * build their context through it so they stay in lockstep.
  */
 export function defaultProviders(injected?: Partial<ProviderRegistry>): ProviderRegistry {

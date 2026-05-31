@@ -33,7 +33,7 @@ We follow CVSS 3.1.
 ## Scope
 
 In scope:
-- `@m0ssad/*` packages on npm
+- `@mosadd/*` packages on npm
 - `forks/livekit-server/` (our fork only — upstream issues go to LiveKit)
 - `forks/` other vendored OSS — upstream-first if applicable
 - mosadd MCP server

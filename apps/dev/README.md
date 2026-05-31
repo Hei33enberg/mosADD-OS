@@ -1,4 +1,4 @@
-# @m0ssad/dev — mosadd.dev developer portal
+# @mosadd/dev — mosadd.dev developer portal
 
 Developer portal at **[mosadd.dev](https://mosadd.dev)**. Next.js 15 (App Router) + Tailwind v4. Standalone app (not part of the pnpm workspace) — built directly by Vercel.
 

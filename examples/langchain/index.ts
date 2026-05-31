@@ -1,5 +1,5 @@
 /**
- * LangChain + @m0ssad/ai/langchain — minimal walkthrough.
+ * LangChain + @mosadd/ai/langchain — minimal walkthrough.
  *
  *   pnpm install
  *   export OPENAI_API_KEY=sk-...
@@ -18,7 +18,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { HumanMessage } from "@langchain/core/messages";
-import { mosadd } from "@m0ssad/ai/langchain";
+import { mosadd } from "@mosadd/ai/langchain";
 
 async function main() {
   const llm = new ChatOpenAI({ model: "gpt-4o", temperature: 0 });

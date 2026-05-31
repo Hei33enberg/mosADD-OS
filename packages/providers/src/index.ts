@@ -1,5 +1,5 @@
 /**
- * @m0ssad/providers — vendor adapters for mosadd
+ * @mosadd/providers — vendor adapters for mosadd
  *
  * Pluggable backends: forked LiveKit (m0ssad-fabric), Routr (SIP),
  * nwaku (p2p messaging), Dendrite (Matrix federation), Telnyx, Twilio,

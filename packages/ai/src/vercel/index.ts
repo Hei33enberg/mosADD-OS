@@ -1,8 +1,8 @@
 /**
- * @m0ssad/ai/vercel — Vercel AI SDK adapter
+ * @mosadd/ai/vercel — Vercel AI SDK adapter
  *
  * Usage:
- *   import { mosadd } from "@m0ssad/ai/vercel";
+ *   import { mosadd } from "@mosadd/ai/vercel";
  *   import { streamText } from "ai";
  *
  *   const tools = mosadd({ modules: ["mDM", "mROOM"] });

@@ -6,7 +6,7 @@
 ## Payload (YAML, draft)
 
 ```yaml
-name: "@m0ssad/mcp"
+name: "@mosadd/mcp"
 displayName: "mosadd — A human OS. Add."
 description: |
   Operating system for human communications. Exposes mosadd OS modules
@@ -21,7 +21,7 @@ author:
   url: "https://mosadd.dev"
 runtime:
   command: "npx"
-  args: ["-y", "@m0ssad/mcp"]
+  args: ["-y", "@mosadd/mcp"]
   env:
     M0SSAD_SUPABASE_URL:
       description: "Supabase project URL (BYOK mode)"
@@ -83,13 +83,13 @@ tags:
 
 ## PR description
 
-> ## Add mosadd MCP server (`@m0ssad/mcp`)
+> ## Add mosadd MCP server (`@mosadd/mcp`)
 >
 > mosadd is an operating system for human communications, distributed as an MCP server that exposes semantic primitives — `mDM` for direct messages, `mROOM` for ephemeral rooms with guest links, `mIRC` for persistent channels, `mAIL` for email — through 17 tools today (more channels coming).
 >
 > **Repo:** https://github.com/Hei33enberg/mosadd-os
 > **License:** Apache-2.0
-> **Install:** `npx -y @m0ssad/mcp`
+> **Install:** `npx -y @mosadd/mcp`
 >
 > Differentiators:
 > - **OS-level semantic primitives**, not vendor wrappers. RFC 0001 formalizes the `m<MODULE>_<operation>` naming convention.

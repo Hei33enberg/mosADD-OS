@@ -2,7 +2,7 @@
  * SupabaseDmProvider — the default (network) DmProvider.
  *
  * Implements the transport-agnostic `DmProvider` contract from
- * `@m0ssad/providers` over the m0ssad-3 Supabase Edge Functions
+ * `@mosadd/providers` over the m0ssad-3 Supabase Edge Functions
  * (`message-send` / `message-list`). This is the strangler-fig network path;
  * a carrier-aware host injects a different DmProvider for radio.
  *
@@ -17,7 +17,7 @@ import type {
   DmSendResult,
   DmListArgs,
   DmListResult,
-} from "@m0ssad/providers";
+} from "@mosadd/providers";
 import { getSupabase, invokeFunction, readSupabaseEnv } from "./supabase.js";
 
 const PROTOCOL_VERSION = "mosadd.chat.v1";

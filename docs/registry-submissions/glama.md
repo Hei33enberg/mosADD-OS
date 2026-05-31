@@ -9,13 +9,13 @@
 |---|---|
 | **Server name** | mosadd |
 | **Display name** | mosadd — A human OS. Add. |
-| **Package** | `@m0ssad/mcp` on npm |
+| **Package** | `@mosadd/mcp` on npm |
 | **Repository** | https://github.com/Hei33enberg/mosadd-os |
 | **Homepage** | https://mosadd.dev |
 | **License** | Apache-2.0 |
 | **Language** | TypeScript |
 | **Status** | 3.0.0-alpha.0 |
-| **Install command** | `npx -y @m0ssad/mcp` |
+| **Install command** | `npx -y @mosadd/mcp` |
 
 ## Summary
 

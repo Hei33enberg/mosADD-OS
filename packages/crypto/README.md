@@ -1,4 +1,4 @@
-# @m0ssad/crypto
+# @mosadd/crypto
 
 End-to-end cryptography primitives for mosadd.
 
@@ -21,9 +21,9 @@ Built on [@noble/curves](https://github.com/paulmillr/noble-curves), [@noble/cip
 ## Install
 
 ```bash
-npm install @m0ssad/crypto
+npm install @mosadd/crypto
 # or
-pnpm add @m0ssad/crypto
+pnpm add @mosadd/crypto
 ```
 
 ## Usage
@@ -34,7 +34,7 @@ import {
   generatePrekeyBundle,
   x3dh,
   DoubleRatchet,
-} from "@m0ssad/crypto";
+} from "@mosadd/crypto";
 
 // Bootstrap an identity
 const alice = await generateIdentityKeys();

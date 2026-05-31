@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { allTools, createMosaddServer } from "../index.js";
 
-describe("@m0ssad/mcp", () => {
+describe("@mosadd/mcp", () => {
   describe("allTools registry", () => {
     it("exposes at least the 4 alpha channels", () => {
       const names = allTools.map((t) => t.name);

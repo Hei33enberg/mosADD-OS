@@ -31,6 +31,6 @@ export function hasWebCrypto(): boolean {
 
 export function assertWebCrypto(): void {
   if (!hasWebCrypto()) {
-    throw new Error("WebCrypto is required for @m0ssad/crypto");
+    throw new Error("WebCrypto is required for @mosadd/crypto");
   }
 }

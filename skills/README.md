@@ -2,7 +2,7 @@
 
 This directory contains [Anthropic Skill](https://docs.anthropic.com/en/docs/agents/skills) files for Claude users. Each `SKILL.md` describes one mosadd OS module — Claude reads the frontmatter (`name`, `description`, optional `allowed-tools`) to know when to invoke the underlying MCP tools.
 
-Skills are a Claude-only convenience layer on top of the [`@m0ssad/mcp`](../packages/mcp) server. The MCP server is the authoritative artifact — Cursor, Cline, Windsurf, ChatGPT Apps, Lovable, Bolt, Goose, Manus, and custom agents all use it directly. Skills here are extra polish for the Claude Code workflow.
+Skills are a Claude-only convenience layer on top of the [`@mosadd/mcp`](../packages/mcp) server. The MCP server is the authoritative artifact — Cursor, Cline, Windsurf, ChatGPT Apps, Lovable, Bolt, Goose, Manus, and custom agents all use it directly. Skills here are extra polish for the Claude Code workflow.
 
 ## Shipped
 
@@ -21,7 +21,7 @@ The [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) bundles
 claude plugin install https://github.com/Hei33enberg/mosadd-os.git
 ```
 
-The plugin pulls the `@m0ssad/mcp` server alongside, so users get one install for both the runtime and the skill descriptions.
+The plugin pulls the `@mosadd/mcp` server alongside, so users get one install for both the runtime and the skill descriptions.
 
 ## Coming next
 

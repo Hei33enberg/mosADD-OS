@@ -1,5 +1,5 @@
 /**
- * Anthropic SDK + @m0ssad/ai/anthropic — minimal tool-loop walkthrough.
+ * Anthropic SDK + @mosadd/ai/anthropic — minimal tool-loop walkthrough.
  *
  *   pnpm install
  *   export ANTHROPIC_API_KEY=sk-ant-...
@@ -20,7 +20,7 @@ import {
   executeMosaddToolCall,
   mosaddTools,
   type AnthropicToolDefinition,
-} from "@m0ssad/ai/anthropic";
+} from "@mosadd/ai/anthropic";
 
 async function main() {
   const client = new Anthropic();

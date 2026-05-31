@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * `mosadd-mcp` (also runnable as `npx @m0ssad/mcp`)
+ * `mosadd-mcp` (also runnable as `npx @mosadd/mcp`)
  *
  * Starts a mosadd MCP server over stdio. The standard transport for local
  * MCP clients (Claude Code, Cursor, Cline, Windsurf, Goose, ...).

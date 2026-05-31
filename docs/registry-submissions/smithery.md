@@ -9,7 +9,7 @@
 startCommand:
   type: stdio
   command: npx
-  args: ["-y", "@m0ssad/mcp"]
+  args: ["-y", "@mosadd/mcp"]
   configSchema:
     type: object
     properties:
