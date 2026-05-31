@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Logo } from './Logo';
+import { MobileNav } from './MobileNav';
 
 const navLinks = [
   { href: '/docs', label: 'Docs' },
@@ -44,19 +45,7 @@ export function SiteHeader() {
             mosadd.com →
           </a>
         </nav>
-        <nav className="flex items-center gap-4 text-sm md:hidden">
-          <Link href="/docs" className="text-muted-foreground hover:text-foreground">
-            Docs
-          </Link>
-          <a
-            href="https://github.com/Hei33enberg/mosadd-os"
-            target="_blank"
-            rel="noreferrer"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            GitHub
-          </a>
-        </nav>
+        <MobileNav />
       </div>
     </header>
   );

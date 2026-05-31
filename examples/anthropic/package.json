@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.40.0",
-    "@mosadd/ai": "workspace:*"
+    "@mosadd/ai": "^3.0.0-alpha.0"
   },
   "devDependencies": {
     "tsx": "^4.19.2",

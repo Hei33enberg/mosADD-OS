@@ -1,4 +1,5 @@
 import type { ReactNode, HTMLAttributes } from 'react';
+import { CopyButton } from './CopyButton';
 
 /**
  * Prose — typographic wrapper for docs pages.
@@ -71,14 +72,14 @@ export function InlineCode({ children }: { children: ReactNode }) {
 }
 
 export function Pre({ children, lang }: { children: ReactNode; lang?: string }) {
+  const copyText = typeof children === 'string' ? children : '';
   return (
-    <div className="my-5 bg-neutral-900/70 border border-neutral-800 rounded-lg overflow-hidden">
-      {lang ? (
-        <div className="px-4 py-1.5 text-[10px] uppercase tracking-widest text-neutral-500 border-b border-neutral-800 bg-neutral-950/50 font-mono">
-          {lang}
-        </div>
-      ) : null}
-      <pre className="overflow-x-auto p-4 text-sm font-mono text-neutral-200 leading-relaxed">
+    <div className="my-5 overflow-hidden rounded-none border border-border bg-card">
+      <div className="flex items-center justify-between border-b border-border bg-background/50 px-4 py-1.5">
+        <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{lang ?? 'code'}</span>
+        {copyText ? <CopyButton text={copyText} /> : null}
+      </div>
+      <pre className="overflow-x-auto p-4 text-sm leading-relaxed text-foreground">
         <code>{children}</code>
       </pre>
     </div>

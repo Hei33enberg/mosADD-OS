@@ -36,8 +36,8 @@ importers:
         specifier: ^0.40.0
         version: 0.40.1
       '@mosadd/ai':
-        specifier: workspace:*
-        version: link:../../packages/ai
+        specifier: ^3.0.0-alpha.0
+        version: 3.0.0-alpha.0(@cfworker/json-schema@4.1.1)
     devDependencies:
       '@types/node':
         specifier: ^22.10.0
@@ -61,8 +61,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.17(@langchain/core@0.3.80(@opentelemetry/api@1.9.0)(openai@4.104.0(zod@3.25.76)))
       '@mosadd/ai':
-        specifier: workspace:*
-        version: link:../../packages/ai
+        specifier: ^3.0.0-alpha.0
+        version: 3.0.0-alpha.0(@cfworker/json-schema@4.1.1)
     devDependencies:
       '@types/node':
         specifier: ^22.10.0
@@ -80,8 +80,8 @@ importers:
         specifier: ^1.0.0
         version: 1.3.24(zod@4.4.3)
       '@mosadd/ai':
-        specifier: workspace:*
-        version: link:../../packages/ai
+        specifier: ^3.0.0-alpha.0
+        version: 3.0.0-alpha.0(@cfworker/json-schema@4.1.1)
       ai:
         specifier: ^4.0.0
         version: 4.3.19(react@19.2.6)(zod@4.4.3)
@@ -870,6 +870,25 @@ packages:
     peerDependenciesMeta:
       '@cfworker/json-schema':
         optional: true
+
+  '@mosadd/ai@3.0.0-alpha.0':
+    resolution: {integrity: sha512-/X+2MuqwAgd7ckH4QlXHMiVwM1uEXyL6Dti4roN9p3nY5Y9ldZTJ2Pua1LglvrZc7ME1eDGPpbcP1BeBXtoVXg==}
+
+  '@mosadd/core@3.0.0-alpha.0':
+    resolution: {integrity: sha512-k+pc+batdYtD6wxKlElNZyNK46llAqazFB56l3+1rP8h7PTxaiWDSUAZLHiSFOK9L3iQCKJ+6ml7JTINlK3YIA==}
+
+  '@mosadd/crypto@3.0.0-alpha.0':
+    resolution: {integrity: sha512-x6bDZGgTyGGABqsCBNhKZeSsTVjq7eH1MSdwDXHAzJYcfDPv5ZTSO74YD9+hS8QK+jG8JcjTmOIBJpf9kOmoBA==}
+
+  '@mosadd/mcp@3.0.0-alpha.0':
+    resolution: {integrity: sha512-vvJd5BA3VhzpxGm39IRlLaLl0huqa/fV/E5Hf1iUmz6BibPqS2Lr4bwu7oxLX0HGmuayST06qBs/qAkle45lvQ==}
+    hasBin: true
+
+  '@mosadd/protocol@3.0.0-alpha.0':
+    resolution: {integrity: sha512-08xjNqGMZbHrTRO8ofstrF/yCl7sBwtkCB2k7mR30xvwGrp2tvh/4yHzV6Aez5IuTrwc7Y6Dcu56HGOFBRlyGA==}
+
+  '@mosadd/providers@3.0.0-alpha.0':
+    resolution: {integrity: sha512-KzqgIkROotP/ESd/cnJjmOnS5unEtyRUzMiydxkeKpTnlblpAYlhqr5HoD5hKYktO2QecbV3Nb0+vpnMD8h47w==}
 
   '@noble/ciphers@2.2.0':
     resolution: {integrity: sha512-Z6pjIZ/8IJcCGzb2S/0Px5J81yij85xASuk1teLNeg75bfT07MV3a/O2Mtn1I2se43k3lkVEcFaR10N4cgQcZA==}
@@ -2825,6 +2844,43 @@ snapshots:
       '@cfworker/json-schema': 4.1.1
     transitivePeerDependencies:
       - supports-color
+
+  '@mosadd/ai@3.0.0-alpha.0(@cfworker/json-schema@4.1.1)':
+    dependencies:
+      '@mosadd/mcp': 3.0.0-alpha.0(@cfworker/json-schema@4.1.1)
+    transitivePeerDependencies:
+      - '@cfworker/json-schema'
+      - supports-color
+
+  '@mosadd/core@3.0.0-alpha.0':
+    dependencies:
+      '@mosadd/protocol': 3.0.0-alpha.0
+
+  '@mosadd/crypto@3.0.0-alpha.0':
+    dependencies:
+      '@noble/ciphers': 2.2.0
+      '@noble/curves': 2.2.0
+      '@noble/hashes': 2.2.0
+
+  '@mosadd/mcp@3.0.0-alpha.0(@cfworker/json-schema@4.1.1)':
+    dependencies:
+      '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(zod@4.4.3)
+      '@mosadd/crypto': 3.0.0-alpha.0
+      '@mosadd/protocol': 3.0.0-alpha.0
+      '@mosadd/providers': 3.0.0-alpha.0
+      '@supabase/supabase-js': 2.106.2
+      zod: 4.4.3
+    transitivePeerDependencies:
+      - '@cfworker/json-schema'
+      - supports-color
+
+  '@mosadd/protocol@3.0.0-alpha.0':
+    dependencies:
+      zod: 4.4.3
+
+  '@mosadd/providers@3.0.0-alpha.0':
+    dependencies:
+      '@mosadd/core': 3.0.0-alpha.0
 
   '@noble/ciphers@2.2.0': {}
 
