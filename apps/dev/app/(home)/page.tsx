@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { Terminal } from '../_components/Terminal';
+import { SocialProof } from '../_components/SocialProof';
+import { ComparisonTable } from '../_components/ComparisonTable';
 
 const modules = [
   { name: 'mDM', desc: 'Direct messages · E2EE', status: 'alpha', tools: 6, url: '/docs/modules/mdm' },
@@ -40,9 +42,9 @@ export default function HomePage() {
             <span className="text-primary text-glow">Add.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            One MCP server gives any agent direct messages, channels, rooms and mail —{' '}
-            <span className="text-foreground">your stack, your keys, your rules.</span> Open source,
-            vendor-agnostic, agent-native.
+            One MCP server gives any agent direct messages, channels, rooms and mail.{' '}
+            <span className="text-foreground">Your keys, or self-host — no vendor lock-in.</span>{' '}
+            The open, Apache-2.0 alternative to single-vendor stacks like Twilio Agent Connect.
           </p>
 
           <div className="mt-8 max-w-xl">
@@ -54,13 +56,7 @@ export default function HomePage() {
               href="/docs/quickstart"
               className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              Quickstart →
-            </Link>
-            <Link
-              href="/docs/mcp"
-              className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
-            >
-              32 tools →
+              Start free →
             </Link>
             <a
               href="https://github.com/Hei33enberg/mosadd-os"
@@ -68,8 +64,14 @@ export default function HomePage() {
               rel="noreferrer"
               className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
             >
-              GitHub ↗
+              Read the code ↗
             </a>
+            <Link
+              href="/pricing"
+              className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
+            >
+              Pricing →
+            </Link>
           </div>
 
           <div className="mt-12 grid max-w-xl grid-cols-4 gap-4">
@@ -81,6 +83,56 @@ export default function HomePage() {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* ── Social proof ── */}
+      <SocialProof />
+
+      {/* ── Problem → solution ── */}
+      <section className="grid gap-8 border-x border-b border-border px-6 py-16 md:grid-cols-2">
+        <div>
+          <div className="mb-2 text-xs uppercase tracking-[0.25em] text-muted-foreground">The old way</div>
+          <h2 className="font-display mb-4 text-2xl font-semibold text-foreground">
+            Stitch LiveKit + Twilio + Resend + Matrix by hand
+          </h2>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li>· Four SDKs, four billing relationships, four sets of webhooks</li>
+            <li>· Weeks of brittle glue code for sessions, identity, turn-taking</li>
+            <li>· Locked into each vendor&apos;s network and pricing</li>
+            <li>· Encryption, threat-scoring, anti-abuse — all on you</li>
+          </ul>
+        </div>
+        <div>
+          <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary">The mosadd way</div>
+          <h2 className="font-display mb-4 text-2xl font-semibold text-foreground">
+            One MCP server. One call. Your keys.
+          </h2>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li>
+              · <span className="font-mono text-primary">mROOM_create_guest_link</span> — one tool, every provider
+            </li>
+            <li>· Bring your own Telnyx / Resend / LiveKit / Supabase — or self-host for $0</li>
+            <li>· E2EE (X3DH + Double Ratchet) and threat radar in the kernel</li>
+            <li>· 32 tools, works in every MCP client, Apache-2.0 forever</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* ── Comparison (RTB) ── */}
+      <section className="border-x border-b border-border px-6 py-16">
+        <div className="mb-8">
+          <h2 className="font-display text-3xl font-semibold">
+            Why <span className="text-primary">mosadd</span> over a single-vendor stack
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            Twilio Agent Connect and Composio lock you into one network behind a closed SDK. mosadd is the
+            open OS underneath — honest comparison:
+          </p>
+        </div>
+        <ComparisonTable />
+        <p className="mt-3 text-xs text-muted-foreground">
+          ✓ yes · ~ partial · ✗ no. Corrections welcome — open an issue.
+        </p>
       </section>
 
       {/* ── OS modules ── */}
