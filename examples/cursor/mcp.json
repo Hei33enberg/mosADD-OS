@@ -4,9 +4,9 @@
       "command": "npx",
       "args": ["-y", "@mosadd/mcp"],
       "env": {
-        "M0SSAD_SUPABASE_URL": "https://<your-project>.supabase.co",
-        "M0SSAD_SUPABASE_ANON_KEY": "<your supabase anon key>",
-        "M0SSAD_USER_JWT": "<your session JWT — see README>"
+        "MOSADD_SUPABASE_URL": "https://<your-project>.supabase.co",
+        "MOSADD_SUPABASE_ANON_KEY": "<your supabase anon key>",
+        "MOSADD_USER_JWT": "<your session JWT — see README>"
       }
     }
   }

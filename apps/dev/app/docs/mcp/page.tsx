@@ -78,7 +78,7 @@ export default function McpPage() {
 
       <H2>Self-host</H2>
       <Pre lang="bash">{`docker run -p 3000:3000 \\
-  -e M0SSAD_SUPABASE_URL=... \\
+  -e MOSADD_SUPABASE_URL=... \\
   ghcr.io/hei33enberg/mosadd-mcp:latest`}</Pre>
       <P>Exposes HTTP/SSE on port 3000. Front with any reverse proxy + OAuth provider of choice.</P>
 

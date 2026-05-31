@@ -32,9 +32,9 @@ describe("@mosadd/ai/core", () => {
     const savedEnv = { ...process.env };
 
     beforeEach(() => {
-      delete process.env.M0SSAD_SUPABASE_URL;
-      delete process.env.M0SSAD_SUPABASE_ANON_KEY;
-      delete process.env.M0SSAD_USER_JWT;
+      delete process.env.MOSADD_SUPABASE_URL;
+      delete process.env.MOSADD_SUPABASE_ANON_KEY;
+      delete process.env.MOSADD_USER_JWT;
     });
 
     afterEach(() => {
@@ -45,9 +45,9 @@ describe("@mosadd/ai/core", () => {
       buildContext({
         supabase: { url: "https://test.supabase.co", anonKey: "anon", userJwt: "jwt" },
       });
-      expect(process.env.M0SSAD_SUPABASE_URL).toBe("https://test.supabase.co");
-      expect(process.env.M0SSAD_SUPABASE_ANON_KEY).toBe("anon");
-      expect(process.env.M0SSAD_USER_JWT).toBe("jwt");
+      expect(process.env.MOSADD_SUPABASE_URL).toBe("https://test.supabase.co");
+      expect(process.env.MOSADD_SUPABASE_ANON_KEY).toBe("anon");
+      expect(process.env.MOSADD_USER_JWT).toBe("jwt");
     });
 
     it("returns a context with log function and options", () => {

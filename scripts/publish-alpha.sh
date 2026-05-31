@@ -12,7 +12,7 @@
 # Access mode is controlled by ACCESS env var. Defaults to "public" because
 # npm Free accounts cannot publish restricted scoped packages. If you have npm
 # Pro/Teams/Enterprise and want true private packages, set ACCESS=restricted.
-# Either way, --tag=alpha keeps `npm install @m0ssad/mcp` (which resolves to
+# Either way, --tag=alpha keeps `npm install @mosadd/mcp` (which resolves to
 # `latest`) from picking this up — users must explicitly install @alpha.
 
 set -euo pipefail
@@ -72,7 +72,7 @@ echo "  Done."
 echo "==========================================="
 if [[ "${PUBLISH}" == "1" ]]; then
   echo "  Try it:"
-  echo "    npx @m0ssad/mcp@${TAG}"
+  echo "    npx @mosadd/mcp@${TAG}"
   echo ""
   echo "  Tag the release in git:"
   echo "    git tag v3.0.0-${TAG}.0 && git push --tags"

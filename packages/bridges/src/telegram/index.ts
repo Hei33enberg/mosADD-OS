@@ -7,10 +7,10 @@
  * when we vendor `telegraf` (bot) and/or `gram.js` / `mtproto-core` (user).
  *
  * Env (BYOK):
- *   - M0SSAD_TELEGRAM_BOT_TOKEN     bot token from @BotFather (bot mode)
- *   - M0SSAD_TELEGRAM_API_ID        MTProto api_id (user mode)
- *   - M0SSAD_TELEGRAM_API_HASH      MTProto api_hash (user mode)
- *   - M0SSAD_TELEGRAM_SESSION       serialized MTProto session string (user mode)
+ *   - MOSADD_TELEGRAM_BOT_TOKEN     bot token from @BotFather (bot mode)
+ *   - MOSADD_TELEGRAM_API_ID        MTProto api_id (user mode)
+ *   - MOSADD_TELEGRAM_API_HASH      MTProto api_hash (user mode)
+ *   - MOSADD_TELEGRAM_SESSION       serialized MTProto session string (user mode)
  */
 
 import {
@@ -86,7 +86,7 @@ export class TelegramBridge implements BridgeProvider {
       };
     }
     throw new Error(
-      "TelegramBridge requires either { bot_token } (bot mode) or { api_id, api_hash, session } (user mode) — see env M0SSAD_TELEGRAM_*",
+      "TelegramBridge requires either { bot_token } (bot mode) or { api_id, api_hash, session } (user mode) — see env MOSADD_TELEGRAM_*",
     );
   }
 }

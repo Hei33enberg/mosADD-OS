@@ -33,7 +33,7 @@ mosadd is an MCP-native operating system for human communications. 17 tools acro
 
 - Smoke test pass — stdio MCP responds correctly to `initialize` + `tools/list`
 - 17 tools registered, schemas validated with Zod
-- BYOK env-var config (M0SSAD_SUPABASE_URL, ANON_KEY, USER_JWT)
+- BYOK env-var config (MOSADD_SUPABASE_URL, ANON_KEY, USER_JWT)
 - Builds clean (tsup + DTS gen)
 - Apache-2.0 with NOTICE for third-party attribution
 - RFC 0001 (m\* module naming) accepted

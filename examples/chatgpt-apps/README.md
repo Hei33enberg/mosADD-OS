@@ -18,9 +18,9 @@ While the hosted gateway is in development, you can bridge the stdio MCP to HTTP
 
 ```bash
 npm install -g mcp-proxy
-M0SSAD_SUPABASE_URL=... \
-M0SSAD_SUPABASE_ANON_KEY=... \
-M0SSAD_USER_JWT=... \
+MOSADD_SUPABASE_URL=... \
+MOSADD_SUPABASE_ANON_KEY=... \
+MOSADD_USER_JWT=... \
 mcp-proxy --sse-port 3333 -- npx -y @mosadd/mcp
 ```
 

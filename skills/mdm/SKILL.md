@@ -28,9 +28,9 @@ Trigger on these user intents:
 The MCP server needs the user's Supabase credentials in env:
 
 ```
-M0SSAD_SUPABASE_URL=https://<their-project>.supabase.co
-M0SSAD_SUPABASE_ANON_KEY=<anon key>
-M0SSAD_USER_JWT=<their session token>
+MOSADD_SUPABASE_URL=https://<their-project>.supabase.co
+MOSADD_SUPABASE_ANON_KEY=<anon key>
+MOSADD_USER_JWT=<their session token>
 ```
 
 If any are missing, `mDM_send` fails fast with an actionable error. Direct the user to https://mosadd.dev for BYOK setup walkthrough.

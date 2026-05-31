@@ -71,7 +71,7 @@ jobs:
           mkdir -p sbom
           syft "dir:packages/${{ matrix.pkg }}" \
             -o spdx-json="sbom/m0ssad-${{ matrix.pkg }}.spdx.json" \
-            --source-name "@m0ssad/${{ matrix.pkg }}" \
+            --source-name "@mosadd/${{ matrix.pkg }}" \
             --source-version "${{ steps.pkg.outputs.version }}"
 
       - name: Upload SBOM artifact

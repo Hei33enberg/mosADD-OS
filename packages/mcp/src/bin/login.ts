@@ -53,15 +53,26 @@ async function login(args: string[]): Promise<void> {
   const flags = parseFlags(args);
   const prev = loadSession();
 
+  // Canonical env is MOSADD_*; legacy M0SSAD_* names stay honored (deprecated).
   const url =
-    flags.url || process.env.M0SSAD_SUPABASE_URL || prev?.url || (await prompt("Supabase URL: "));
+    flags.url ||
+    process.env.MOSADD_SUPABASE_URL ||
+    process.env.M0SSAD_SUPABASE_URL ||
+    prev?.url ||
+    (await prompt("Supabase URL: "));
   const anonKey =
     flags.anon ||
+    process.env.MOSADD_SUPABASE_ANON_KEY ||
     process.env.M0SSAD_SUPABASE_ANON_KEY ||
     prev?.anonKey ||
     (await prompt("Supabase anon key: "));
-  const email = flags.email || process.env.MOSADD_EMAIL || (await prompt("Email: "));
-  const password = flags.password || process.env.MOSADD_PASSWORD || (await prompt("Password: ", true));
+  const email =
+    flags.email || process.env.MOSADD_EMAIL || process.env.M0SSAD_EMAIL || (await prompt("Email: "));
+  const password =
+    flags.password ||
+    process.env.MOSADD_PASSWORD ||
+    process.env.M0SSAD_PASSWORD ||
+    (await prompt("Password: ", true));
 
   if (!url || !anonKey || !email || !password) {
     console.error("\nmosadd login: need Supabase URL, anon key, email and password.");

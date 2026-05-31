@@ -8,9 +8,9 @@ Copy [`mcp.json`](./mcp.json) to `~/.cursor/mcp.json` (or merge if you already h
 
 How to get the values:
 
-- `M0SSAD_SUPABASE_URL`: from https://supabase.com → your project → Settings → API → "Project URL"
-- `M0SSAD_SUPABASE_ANON_KEY`: same page → "anon public" key
-- `M0SSAD_USER_JWT`:
+- `MOSADD_SUPABASE_URL`: from https://supabase.com → your project → Settings → API → "Project URL"
+- `MOSADD_SUPABASE_ANON_KEY`: same page → "anon public" key
+- `MOSADD_USER_JWT`:
   1. Sign in to https://mosadd.com
   2. Open DevTools → Application → Local Storage
   3. Find key `sb-<projectref>-auth-token`

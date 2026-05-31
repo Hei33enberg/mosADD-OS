@@ -13,23 +13,23 @@ startCommand:
   configSchema:
     type: object
     properties:
-      M0SSAD_SUPABASE_URL:
+      MOSADD_SUPABASE_URL:
         type: string
         title: "Supabase project URL"
         description: "Your mosadd Supabase project URL"
-      M0SSAD_SUPABASE_ANON_KEY:
+      MOSADD_SUPABASE_ANON_KEY:
         type: string
         title: "Supabase anon key"
         description: "Anon (public) key from Supabase project settings"
-      M0SSAD_USER_JWT:
+      MOSADD_USER_JWT:
         type: string
         title: "User session JWT"
         description: "Your mosadd session token (Phase 2 replaces with OAuth via hub.mosadd.com)"
         format: password
     required:
-      - M0SSAD_SUPABASE_URL
-      - M0SSAD_SUPABASE_ANON_KEY
-      - M0SSAD_USER_JWT
+      - MOSADD_SUPABASE_URL
+      - MOSADD_SUPABASE_ANON_KEY
+      - MOSADD_USER_JWT
 ```
 
 ## Listing copy

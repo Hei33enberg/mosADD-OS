@@ -123,7 +123,7 @@ npx @mosadd/mcp`}</Pre>
         <H2>Docker (Phase 2)</H2>
         <P>Container images will be published to GHCR once the hosted MCP service lands:</P>
         <Pre lang="bash">{`docker run -p 3000:3000 \\
-  -e M0SSAD_SUPABASE_URL=... \\
+  -e MOSADD_SUPABASE_URL=... \\
   ghcr.io/hei33enberg/mosadd-mcp:latest`}</Pre>
 
         <H2>Verify a download</H2>

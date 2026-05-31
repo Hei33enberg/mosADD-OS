@@ -9,9 +9,9 @@ cd examples/langchain
 pnpm install
 
 export OPENAI_API_KEY=sk-...
-export M0SSAD_SUPABASE_URL=https://<your>.supabase.co
-export M0SSAD_SUPABASE_ANON_KEY=...
-export M0SSAD_USER_JWT=...                  # see /examples/claude-code/README.md
+export MOSADD_SUPABASE_URL=https://<your>.supabase.co
+export MOSADD_SUPABASE_ANON_KEY=...
+export MOSADD_USER_JWT=...                  # see /examples/claude-code/README.md
 
 pnpm start
 ```

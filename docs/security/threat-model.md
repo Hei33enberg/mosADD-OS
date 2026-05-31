@@ -75,7 +75,7 @@ Boundaries:
 | Threat | Vector | Mitigation |
 |---|---|---|
 | **S**poofing | LLM injecting forged tool result | Tool results are validated against the registered schema before the LLM sees them; no untrusted plaintext returned without schema check |
-| **T**ampering | Modified BYOK env var pointing to attacker backend | `env.M0SSAD_*_URL` should be reviewed before deploy; future: pin known providers with allowlist |
+| **T**ampering | Modified BYOK env var pointing to attacker backend | `env.MOSADD_*_URL` should be reviewed before deploy; future: pin known providers with allowlist |
 | **R**epudiation | User claims they didn't issue the tool call | Every tool invocation emits an audit event via `@mosadd/audit-core` (Phase 2 hub middleware) |
 | **I**nformation disclosure | Tool error message leaks API key | All error messages scrubbed via central error formatter; never echo `Authorization` |
 | **D**enial of service | Agent loops calling `mDM_send` 1000x | Rate limit middleware (Phase 2 hub), local stdio caps via daemon-side delay |
