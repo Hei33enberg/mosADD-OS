@@ -63,5 +63,8 @@
     "anthropic",
     "communication",
     "messaging"
-  ]
+  ],
+  "engines": {
+    "node": ">=18"
+  }
 }
