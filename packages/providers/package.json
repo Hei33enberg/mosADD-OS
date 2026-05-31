@@ -17,5 +17,6 @@
     "clean": "rm -rf dist"
   },
   "dependencies": { "@mosadd/core": "workspace:*" },
-  "devDependencies": { "tsup": "^8.3.5", "typescript": "^5.7.2" }
+  "devDependencies": { "tsup": "^8.3.5", "typescript": "^5.7.2" },
+  "engines": { "node": ">=18" }
 }

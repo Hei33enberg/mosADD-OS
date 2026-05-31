@@ -52,5 +52,8 @@
     "x3dh",
     "double-ratchet",
     "signal-protocol"
-  ]
+  ],
+  "engines": {
+    "node": ">=18"
+  }
 }
