@@ -5,8 +5,8 @@
  * the Discord client (discord.js or discord-api-types).
  *
  * Env (BYOK):
- *   - M0SSAD_DISCORD_TOKEN  bot token (Discord Developer Portal)
- *   - M0SSAD_DISCORD_GUILD  default guild id (optional)
+ *   - MOSADD_DISCORD_TOKEN  bot token (Discord Developer Portal)
+ *   - MOSADD_DISCORD_GUILD  default guild id (optional)
  */
 
 import {
@@ -63,7 +63,7 @@ export class DiscordBridge implements BridgeProvider {
 
   private assertConfig(config: BridgeConfig): DiscordConfig {
     if (typeof config?.token !== "string") {
-      throw new Error("DiscordBridge requires { token } — see env M0SSAD_DISCORD_TOKEN");
+      throw new Error("DiscordBridge requires { token } — see env MOSADD_DISCORD_TOKEN");
     }
     return config as unknown as DiscordConfig;
   }

@@ -56,12 +56,12 @@ export default function SecurityPage() {
 
       <H2>Hardening guide for operators</H2>
       <Pre lang="bash">{`# minimum env hygiene
-export M0SSAD_LOG_LEVEL=warn
-export M0SSAD_RATE_LIMIT_MODE=strict
-export M0SSAD_AUDIT_RETENTION_DAYS=2555  # NIS2 7-year minimum
+export MOSADD_LOG_LEVEL=warn
+export MOSADD_RATE_LIMIT_MODE=strict
+export MOSADD_AUDIT_RETENTION_DAYS=2555  # NIS2 7-year minimum
 
 # disable bridges you don't use
-export M0SSAD_DISABLE_BRIDGES=whatsapp,imessage`}</Pre>
+export MOSADD_DISABLE_BRIDGES=whatsapp,imessage`}</Pre>
 
       <H2>Compliance posture</H2>
       <Ul>

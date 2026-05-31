@@ -21,7 +21,7 @@ Self-host alternative: any user can run `npx @mosadd/mcp` + `mcp-proxy` themselv
 
 ### 2. BYOK key brokerage ([LINEAR-2159](https://linear.app/ip-ra/issue/LINEAR-2159))
 
-Today's alpha asks users to paste `M0SSAD_SUPABASE_*` env vars into agent configs. That's friction and a leak surface. The hub:
+Today's alpha asks users to paste `MOSADD_SUPABASE_*` env vars into agent configs. That's friction and a leak surface. The hub:
 
 - Stores user provider keys (Supabase, Telnyx, Twilio, LiveKit, Resend, ElevenLabs) AES-256-GCM at rest, keys never leave the AWS KMS envelope
 - Mints short-lived (≤15 min) provider-scoped JWTs on each `mcp.mosadd.com` request

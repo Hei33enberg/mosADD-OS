@@ -1,4 +1,4 @@
-@m0ssad/bridges
+@mosadd/bridges
 Copyright 2026 mosadd contributors
 
 This package includes code structurally derived from:
@@ -16,7 +16,7 @@ Substantial reworking includes:
 - Migration from Python to TypeScript
 - Adaptation to MCP tool surface
 - Replacement of Hermes' agent loop with mosadd's m* OS module model
-- Integration with @m0ssad/core radar middleware
+- Integration with @mosadd/core radar middleware
 - BYOK credential model
 
 Original MIT license terms preserved.

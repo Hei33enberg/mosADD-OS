@@ -23,13 +23,13 @@ runtime:
   command: "npx"
   args: ["-y", "@mosadd/mcp"]
   env:
-    M0SSAD_SUPABASE_URL:
+    MOSADD_SUPABASE_URL:
       description: "Supabase project URL (BYOK mode)"
       required: true
-    M0SSAD_SUPABASE_ANON_KEY:
+    MOSADD_SUPABASE_ANON_KEY:
       description: "Supabase anon key (BYOK mode)"
       required: true
-    M0SSAD_USER_JWT:
+    MOSADD_USER_JWT:
       description: "User session JWT (BYOK mode — Phase 2 replaces with OAuth)"
       required: true
 tools:

@@ -23,9 +23,9 @@ claude mcp add mosadd npx -- -y @mosadd/mcp
       "command": "npx",
       "args": ["-y", "@mosadd/mcp"],
       "env": {
-        "M0SSAD_SUPABASE_URL": "https://<your-project>.supabase.co",
-        "M0SSAD_SUPABASE_ANON_KEY": "<anon key>",
-        "M0SSAD_USER_JWT": "<your session JWT>"
+        "MOSADD_SUPABASE_URL": "https://<your-project>.supabase.co",
+        "MOSADD_SUPABASE_ANON_KEY": "<anon key>",
+        "MOSADD_USER_JWT": "<your session JWT>"
       }
     }
   }
@@ -35,16 +35,16 @@ claude mcp add mosadd npx -- -y @mosadd/mcp
 ### Standalone
 
 ```bash
-M0SSAD_SUPABASE_URL=... M0SSAD_SUPABASE_ANON_KEY=... M0SSAD_USER_JWT=... npx @mosadd/mcp
+MOSADD_SUPABASE_URL=... MOSADD_SUPABASE_ANON_KEY=... MOSADD_USER_JWT=... npx @mosadd/mcp
 ```
 
 ## BYOK — get your env values
 
 While the hosted gateway is in development, the alpha runs in **local BYOK mode** — you supply your own Supabase credentials to talk to your own m0ssad-3 backend.
 
-- `M0SSAD_SUPABASE_URL` — your Supabase project URL (e.g. `https://abc.supabase.co`)
-- `M0SSAD_SUPABASE_ANON_KEY` — the public anon key from project settings
-- `M0SSAD_USER_JWT` — a Supabase session token for your mosadd user. Get it from the browser:
+- `MOSADD_SUPABASE_URL` — your Supabase project URL (e.g. `https://abc.supabase.co`)
+- `MOSADD_SUPABASE_ANON_KEY` — the public anon key from project settings
+- `MOSADD_USER_JWT` — a Supabase session token for your mosadd user. Get it from the browser:
   1. Sign in to mosadd.com
   2. Open DevTools → Application → Local Storage → `sb-<ref>-auth-token`
   3. Copy the `access_token` field
@@ -84,7 +84,7 @@ Agent (Claude / Cursor / ...)
 @mosadd/mcp server  (this package)
         │
         │ supabase.functions.invoke('message-send', ...)
-        │ + Authorization: Bearer <M0SSAD_USER_JWT>
+        │ + Authorization: Bearer <MOSADD_USER_JWT>
         ▼
 m0ssad-3 Edge Function
         │
@@ -103,9 +103,9 @@ For PTT / CALL / ROOM (real-time media), the architecture separates **control pl
 
 | Env | Description | Required |
 |---|---|---|
-| `M0SSAD_SUPABASE_URL` | Supabase project URL | yes |
-| `M0SSAD_SUPABASE_ANON_KEY` | Supabase anon key | yes |
-| `M0SSAD_USER_JWT` | User session token | yes (for tools that touch user data) |
+| `MOSADD_SUPABASE_URL` | Supabase project URL | yes |
+| `MOSADD_SUPABASE_ANON_KEY` | Supabase anon key | yes |
+| `MOSADD_USER_JWT` | User session token | yes (for tools that touch user data) |
 | `MOSADD_API_KEY` | Hub API key (Phase 2 hosted mode) | no |
 | `MOSADD_HUB_URL` | Override hub url | no |
 | `MOSADD_MODE` | `local` / `cloud` / `self-host` | no (auto-detected) |

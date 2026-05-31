@@ -3,16 +3,16 @@
  *
  *   pnpm install
  *   export OPENAI_API_KEY=sk-...
- *   export M0SSAD_SUPABASE_URL=https://<your>.supabase.co
- *   export M0SSAD_SUPABASE_ANON_KEY=...
- *   export M0SSAD_USER_JWT=...
+ *   export MOSADD_SUPABASE_URL=https://<your>.supabase.co
+ *   export MOSADD_SUPABASE_ANON_KEY=...
+ *   export MOSADD_USER_JWT=...
  *   pnpm start
  *
  * What happens:
  *   1. mosadd() returns a tools object keyed by mDM_* / mROOM_* tool names.
  *   2. generateText() asks the model what to do; the model picks a tool;
  *      AI SDK calls execute(); we print the model's final answer.
- *   3. Without M0SSAD_* env vars set the tool throws MissingSupabaseEnvError —
+ *   3. Without MOSADD_* env vars set the tool throws MissingSupabaseEnvError —
  *      that's the alpha BYOK contract.
  */
 

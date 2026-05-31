@@ -47,9 +47,9 @@ Password:          ••••••••`}</Pre>
       <H2>Env vars (alternative / override)</H2>
       <P>Env vars always take precedence over the saved session — useful for CI or multiple accounts:</P>
       <Ul>
-        <li><code className="font-mono text-primary">M0SSAD_SUPABASE_URL</code> — your Supabase project URL</li>
-        <li><code className="font-mono text-primary">M0SSAD_SUPABASE_ANON_KEY</code> — the public anon key (RLS-gated)</li>
-        <li><code className="font-mono text-primary">M0SSAD_USER_JWT</code> — a session access token</li>
+        <li><code className="font-mono text-primary">MOSADD_SUPABASE_URL</code> — your Supabase project URL</li>
+        <li><code className="font-mono text-primary">MOSADD_SUPABASE_ANON_KEY</code> — the public anon key (RLS-gated)</li>
+        <li><code className="font-mono text-primary">MOSADD_USER_JWT</code> — a session access token</li>
       </Ul>
 
       <H2>Token expiry</H2>

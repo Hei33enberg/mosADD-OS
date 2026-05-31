@@ -27,9 +27,9 @@ import {
  * Matrix-specific config shape.
  *
  * Env (BYOK):
- *   - M0SSAD_MATRIX_HOMESERVER   e.g. https://matrix.example.com
- *   - M0SSAD_MATRIX_ACCESS_TOKEN bot account access token
- *   - M0SSAD_MATRIX_USER_ID      e.g. @mosadd-bridge:matrix.org
+ *   - MOSADD_MATRIX_HOMESERVER   e.g. https://matrix.example.com
+ *   - MOSADD_MATRIX_ACCESS_TOKEN bot account access token
+ *   - MOSADD_MATRIX_USER_ID      e.g. @mosadd-bridge:matrix.org
  */
 export interface MatrixConfig {
   homeserver: string;
@@ -90,7 +90,7 @@ export class MatrixBridge implements BridgeProvider {
       typeof config?.user_id !== "string"
     ) {
       throw new Error(
-        "MatrixBridge requires { homeserver, access_token, user_id } — see env M0SSAD_MATRIX_*",
+        "MatrixBridge requires { homeserver, access_token, user_id } — see env MOSADD_MATRIX_*",
       );
     }
     return config as unknown as MatrixConfig;

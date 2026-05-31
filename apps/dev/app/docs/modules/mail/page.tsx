@@ -44,7 +44,7 @@ export default function MailPage() {
 
       <H2>Providers</H2>
       <Ul>
-        <li><strong>Resend</strong> — default outbound (BYOK <code className="font-mono">M0SSAD_RESEND_API_KEY</code>)</li>
+        <li><strong>Resend</strong> — default outbound (BYOK <code className="font-mono">MOSADD_RESEND_API_KEY</code>)</li>
         <li><strong>SES</strong> — high-volume outbound</li>
         <li><strong>Postfix</strong> — self-host inbound + catch-all</li>
       </Ul>

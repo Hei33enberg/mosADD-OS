@@ -22,26 +22,33 @@ export class MissingSupabaseEnvError extends Error {
   constructor(missing: string[]) {
     super(
       `Missing Supabase credentials: ${missing.join(", ")}. ` +
-        `Run \`mosadd login\`, or set M0SSAD_SUPABASE_URL, M0SSAD_SUPABASE_ANON_KEY and M0SSAD_USER_JWT.`,
+        `Run \`mosadd login\`, or set MOSADD_SUPABASE_URL, MOSADD_SUPABASE_ANON_KEY and MOSADD_USER_JWT.`,
     );
     this.name = "MissingSupabaseEnvError";
   }
 }
 
 export function readSupabaseEnv(): SupabaseEnv {
-  // Env vars take precedence; fall back to the session saved by `mosadd login`.
+  // Canonical env vars are MOSADD_*; the legacy M0SSAD_* names are still
+  // honored (deprecated) so anyone who set them before the brand sweep keeps
+  // working. Env vars take precedence; fall back to the session saved by
+  // `mosadd login`.
+  const env = (canonical: string, legacy: string): string | undefined =>
+    process.env[canonical] ?? process.env[legacy];
+  const userJwtEnv = env("MOSADD_USER_JWT", "M0SSAD_USER_JWT");
+
   const session = loadSession();
-  const url = process.env.M0SSAD_SUPABASE_URL ?? session?.url;
-  const anonKey = process.env.M0SSAD_SUPABASE_ANON_KEY ?? session?.anonKey;
-  const userJwt = process.env.M0SSAD_USER_JWT ?? session?.accessToken;
+  const url = env("MOSADD_SUPABASE_URL", "M0SSAD_SUPABASE_URL") ?? session?.url;
+  const anonKey = env("MOSADD_SUPABASE_ANON_KEY", "M0SSAD_SUPABASE_ANON_KEY") ?? session?.anonKey;
+  const userJwt = userJwtEnv ?? session?.accessToken;
 
   const missing: string[] = [];
-  if (!url) missing.push("M0SSAD_SUPABASE_URL");
-  if (!anonKey) missing.push("M0SSAD_SUPABASE_ANON_KEY");
+  if (!url) missing.push("MOSADD_SUPABASE_URL");
+  if (!anonKey) missing.push("MOSADD_SUPABASE_ANON_KEY");
   if (missing.length) throw new MissingSupabaseEnvError(missing);
 
   // Surface an expired `mosadd login` token early with an actionable message.
-  if (!process.env.M0SSAD_USER_JWT && session && isSessionExpired(session)) {
+  if (!userJwtEnv && session && isSessionExpired(session)) {
     throw new Error("Your mosadd session has expired. Run `mosadd login` again to refresh it.");
   }
   return { url: url!, anonKey: anonKey!, userJwt };

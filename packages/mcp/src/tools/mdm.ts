@@ -94,7 +94,7 @@ async function resolveSelfIdentityId(): Promise<string> {
   const { data: u, error: ue } = await sb.auth.getUser();
   if (ue || !u?.user) {
     throw new Error(
-      "Unable to resolve current user. Ensure M0SSAD_USER_JWT is set to a valid Supabase session token.",
+      "Unable to resolve current user. Ensure MOSADD_USER_JWT is set to a valid Supabase session token.",
     );
   }
   const { data: identity, error } = await sb

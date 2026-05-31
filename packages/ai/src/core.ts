@@ -29,7 +29,7 @@ export interface MosaddOptions {
 
   /**
    * BYOK Supabase credentials. If omitted, the handlers read from env vars
-   * (M0SSAD_SUPABASE_URL, M0SSAD_SUPABASE_ANON_KEY, M0SSAD_USER_JWT).
+   * (MOSADD_SUPABASE_URL, MOSADD_SUPABASE_ANON_KEY, MOSADD_USER_JWT).
    * Passing them programmatically here overrides env for this adapter
    * instance.
    */
@@ -67,14 +67,14 @@ export function filterTools(options: MosaddOptions = {}): MosaddTool[] {
  */
 export function buildContext(options: MosaddOptions = {}): MosaddToolContext {
   // Set BYOK env vars from the programmatic options if provided. This lets the
-  // handler read M0SSAD_SUPABASE_* without the caller having to set them
+  // handler read MOSADD_SUPABASE_* without the caller having to set them
   // shell-level. Idempotent — only sets if not already there or if caller
   // explicitly passes the field.
   if (options.supabase) {
-    if (options.supabase.url) process.env.M0SSAD_SUPABASE_URL = options.supabase.url;
+    if (options.supabase.url) process.env.MOSADD_SUPABASE_URL = options.supabase.url;
     if (options.supabase.anonKey)
-      process.env.M0SSAD_SUPABASE_ANON_KEY = options.supabase.anonKey;
-    if (options.supabase.userJwt) process.env.M0SSAD_USER_JWT = options.supabase.userJwt;
+      process.env.MOSADD_SUPABASE_ANON_KEY = options.supabase.anonKey;
+    if (options.supabase.userJwt) process.env.MOSADD_USER_JWT = options.supabase.userJwt;
   }
 
   const logLevel = options.logLevel ?? "info";

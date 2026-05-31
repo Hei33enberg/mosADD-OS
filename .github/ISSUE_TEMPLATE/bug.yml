@@ -26,7 +26,7 @@ body:
     id: version
     attributes:
       label: mosadd version
-      description: 'Output of: pnpm list @m0ssad/mcp'
+      description: 'Output of: pnpm list @mosadd/mcp'
     validations:
       required: true
   - type: input

@@ -158,7 +158,7 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
       clientInfo: { name: "vitest", version: "1.0" },
     });
 
-    // mDM_send needs M0SSAD_SUPABASE_URL etc. — in test env we don't have them,
+    // mDM_send needs MOSADD_SUPABASE_URL etc. — in test env we don't have them,
     // so the handler will throw MissingSupabaseEnvError. The MCP layer must wrap
     // that in a normal `isError: true` content block, not a JSON-RPC error
     // (that would crash the agent loop).

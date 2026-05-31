@@ -20,9 +20,9 @@ import { streamText } from "ai";
 const tools = mosadd({
   modules: ["mDM", "mROOM"],
   supabase: {
-    url: process.env.M0SSAD_SUPABASE_URL!,
-    anonKey: process.env.M0SSAD_SUPABASE_ANON_KEY!,
-    userJwt: process.env.M0SSAD_USER_JWT!,
+    url: process.env.MOSADD_SUPABASE_URL!,
+    anonKey: process.env.MOSADD_SUPABASE_ANON_KEY!,
+    userJwt: process.env.MOSADD_USER_JWT!,
   },
 });
 
@@ -99,9 +99,9 @@ interface MosaddOptions {
 ```
 
 If `supabase` is omitted, the adapters read from env:
-- `M0SSAD_SUPABASE_URL`
-- `M0SSAD_SUPABASE_ANON_KEY`
-- `M0SSAD_USER_JWT`
+- `MOSADD_SUPABASE_URL`
+- `MOSADD_SUPABASE_ANON_KEY`
+- `MOSADD_USER_JWT`
 
 ## What you don't get
 

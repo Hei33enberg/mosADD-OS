@@ -23,9 +23,9 @@ Edit your Claude Code MCP config (find with `claude mcp list`, then edit the fil
       "command": "npx",
       "args": ["-y", "@mosadd/mcp"],
       "env": {
-        "M0SSAD_SUPABASE_URL": "https://abc.supabase.co",
-        "M0SSAD_SUPABASE_ANON_KEY": "eyJhbGc...",
-        "M0SSAD_USER_JWT": "eyJhbGc..."
+        "MOSADD_SUPABASE_URL": "https://abc.supabase.co",
+        "MOSADD_SUPABASE_ANON_KEY": "eyJhbGc...",
+        "MOSADD_USER_JWT": "eyJhbGc..."
       }
     }
   }
@@ -62,5 +62,5 @@ See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (17
 ## Troubleshooting
 
 - `MissingSupabaseEnvError`: your env vars aren't reaching the MCP server. Verify `claude mcp get mosadd` shows them.
-- `Unable to resolve current user`: your `M0SSAD_USER_JWT` expired. Sign back in to mosadd.com and grab a fresh token.
+- `Unable to resolve current user`: your `MOSADD_USER_JWT` expired. Sign back in to mosadd.com and grab a fresh token.
 - `Access denied`: RLS rejected the call (you don't own the resource). Confirm the contact/channel/room is yours.

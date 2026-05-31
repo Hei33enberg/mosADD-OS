@@ -10,9 +10,9 @@ pnpm install
 
 # Required env vars
 export OPENAI_API_KEY=sk-...                          # your OpenAI key
-export M0SSAD_SUPABASE_URL=https://abc.supabase.co    # your mosadd backend
-export M0SSAD_SUPABASE_ANON_KEY=eyJhbGciOi...
-export M0SSAD_USER_JWT=eyJhbGciOi...                  # see /examples/claude-code/README.md for how to get this
+export MOSADD_SUPABASE_URL=https://abc.supabase.co    # your mosadd backend
+export MOSADD_SUPABASE_ANON_KEY=eyJhbGciOi...
+export MOSADD_USER_JWT=eyJhbGciOi...                  # see /examples/claude-code/README.md for how to get this
 
 pnpm start
 ```

@@ -45,10 +45,10 @@ Env-var convention (for the MCP server to surface):
 
 | Bridge | Env vars |
 |---|---|
-| Matrix | `M0SSAD_MATRIX_HOMESERVER`, `M0SSAD_MATRIX_ACCESS_TOKEN`, `M0SSAD_MATRIX_USER_ID` |
-| Discord | `M0SSAD_DISCORD_TOKEN`, `M0SSAD_DISCORD_GUILD` (optional) |
-| Telegram (bot) | `M0SSAD_TELEGRAM_BOT_TOKEN` |
-| Telegram (user) | `M0SSAD_TELEGRAM_API_ID`, `M0SSAD_TELEGRAM_API_HASH`, `M0SSAD_TELEGRAM_SESSION` |
+| Matrix | `MOSADD_MATRIX_HOMESERVER`, `MOSADD_MATRIX_ACCESS_TOKEN`, `MOSADD_MATRIX_USER_ID` |
+| Discord | `MOSADD_DISCORD_TOKEN`, `MOSADD_DISCORD_GUILD` (optional) |
+| Telegram (bot) | `MOSADD_TELEGRAM_BOT_TOKEN` |
+| Telegram (user) | `MOSADD_TELEGRAM_API_ID`, `MOSADD_TELEGRAM_API_HASH`, `MOSADD_TELEGRAM_SESSION` |
 
 ## Contributing a new bridge
 

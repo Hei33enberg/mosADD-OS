@@ -3,26 +3,26 @@
  *
  * Optional. The MCP server runs entirely as user-supplied stdio — most
  * operators won't want their tool errors phoning home. We expose an opt-in
- * env var (M0SSAD_SENTRY_DSN) so power users / hub-operators can attach.
+ * env var (MOSADD_SENTRY_DSN) so power users / hub-operators can attach.
  *
  * Setup (one-time, hub operators):
  *   1. Create a project in https://papugai.sentry.io named "mosadd-mcp"
  *      with platform = Node.
- *   2. Export M0SSAD_SENTRY_DSN before running the server.
+ *   2. Export MOSADD_SENTRY_DSN before running the server.
  *
  * Without the env var, this module is an inert no-op.
  */
 
-const DSN = process.env.M0SSAD_SENTRY_DSN;
+const DSN = process.env.MOSADD_SENTRY_DSN;
 const ENV =
-  process.env.M0SSAD_SENTRY_ENVIRONMENT ??
+  process.env.MOSADD_SENTRY_ENVIRONMENT ??
   process.env.NODE_ENV ??
   "production";
-const RELEASE = process.env.M0SSAD_SENTRY_RELEASE;
+const RELEASE = process.env.MOSADD_SENTRY_RELEASE;
 
 let initialized = false;
 // @sentry/node is an OPTIONAL peer — operators install it only if they opt in
-// via M0SSAD_SENTRY_DSN. Typed as `any` + loaded via a non-literal specifier so
+// via MOSADD_SENTRY_DSN. Typed as `any` + loaded via a non-literal specifier so
 // the package compiles and ships without the dependency present.
 let sentryRef: any = null;
 
