@@ -26,12 +26,15 @@ type Release = {
 
 async function fetchLatestRelease(): Promise<Release | null> {
   try {
-    const res = await fetch('https://api.github.com/repos/Hei33enberg/mosadd-os/releases/latest', {
+    // Use the releases list (not /releases/latest) because all current releases
+    // are pre-releases, which /releases/latest deliberately skips.
+    const res = await fetch('https://api.github.com/repos/Hei33enberg/mosadd-os/releases?per_page=1', {
       headers: { Accept: 'application/vnd.github+json' },
       next: { revalidate: 300 },
     });
     if (!res.ok) return null;
-    return (await res.json()) as Release;
+    const list = (await res.json()) as Release[];
+    return list[0] ?? null;
   } catch {
     return null;
   }
@@ -51,18 +54,17 @@ export default async function DownloadPage() {
       <Prose>
         <H1>Download</H1>
         <Lead>
-          mosadd OSS is distributed as <strong>GitHub Releases</strong> with signed tarballs + SBOMs.
-          npm publish lands when the <code className="font-mono text-radar-green">@m0ssad</code> org is provisioned.
+          mosadd ships on <strong>npm</strong> as <code className="font-mono text-radar-green">@mosadd/*</code> —
+          that&apos;s the canonical install. GitHub Releases also carry the package tarballs + SBOMs for
+          air-gapped or pinned setups.
         </Lead>
 
-        <H2>Install in Claude Code (recommended)</H2>
-        <Pre lang="bash">{`# 1) Clone or download the tarball
-git clone https://github.com/Hei33enberg/mosadd-os.git
-cd mosadd-os
-pnpm install && pnpm build
+        <H2>Install (recommended)</H2>
+        <Pre lang="bash">{`# Run the MCP server straight from npm — no clone, no build
+npx -y @mosadd/mcp@alpha
 
-# 2) Register the MCP server with Claude Code
-claude mcp add mosadd node -- $(pwd)/packages/mcp/dist/bin/m0ssad-mcp.js`}</Pre>
+# Register it with Claude Code
+claude mcp add mosadd -- npx -y @mosadd/mcp@alpha`}</Pre>
 
         <H2>Install from a release tarball</H2>
         {release ? (
@@ -114,11 +116,11 @@ claude mcp add mosadd node -- $(pwd)/packages/mcp/dist/bin/m0ssad-mcp.js`}</Pre>
         )}
 
         <H2>Manual install from tarball</H2>
-        <Pre lang="bash">{`# Install a specific tarball locally
-npm install ./m0ssad-mcp-3.0.0-alpha.0.tgz
+        <Pre lang="bash">{`# Download a tarball from the release above, then install it locally
+npm install ./mosadd-mcp-3.0.0-alpha.2.tgz
 
-# Then run
-npx @mosadd/mcp`}</Pre>
+# Or pin the exact version straight from npm
+npm install @mosadd/mcp@3.0.0-alpha.2`}</Pre>
 
         <H2>Docker (Phase 2)</H2>
         <P>Container images will be published to GHCR once the hosted MCP service lands:</P>
@@ -132,7 +134,7 @@ npx @mosadd/mcp`}</Pre>
           For now, verify by hash against the GitHub release page:
         </P>
         <Pre lang="bash">{`# Compute SHA-256 of the downloaded asset
-shasum -a 256 m0ssad-mcp-3.0.0-alpha.0.tgz
+shasum -a 256 mosadd-mcp-3.0.0-alpha.2.tgz
 
 # Compare to the value shown on the release page`}</Pre>
 
