@@ -119,7 +119,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Comparison (RTB) ── */}
-      <section className="border-x border-b border-border px-6 py-16">
+      <section id="comparison" className="border-x border-b border-border px-6 py-16 scroll-mt-20">
         <div className="mb-8">
           <h2 className="font-display text-3xl font-semibold">
             Why <span className="text-primary">mosadd</span> over a single-vendor stack
@@ -214,6 +214,29 @@ export default function HomePage() {
             mDM ships X3DH + Double Ratchet end-to-end encryption. The hub threat-engine scores every operation —
             cross-platform, including bridges.
           </p>
+        </div>
+      </section>
+
+      {/* ── How it works ── */}
+      <section className="border-x border-b border-border px-6 py-16">
+        <h2 className="font-display mb-8 text-3xl font-semibold">
+          Live in <span className="text-primary">three steps</span>
+        </h2>
+        <div className="grid gap-6 md:grid-cols-3">
+          {[
+            { n: '1', t: 'Install', d: 'One line in Claude Code, Cursor or any MCP client.', c: 'claude mcp add mosadd npx -- -y @mosadd/mcp' },
+            { n: '2', t: 'Add your keys — or go hosted', d: 'Bring Telnyx / Resend / LiveKit / Supabase, or sign up for the hosted hub. Self-host stays $0.', c: 'mosadd login' },
+            { n: '3', t: 'Call a tool', d: 'Your agent sends a DM, opens a room, posts to a channel — 32 tools, one server.', c: 'mDM_send  ·  mROOM_create_guest_link' },
+          ].map((s) => (
+            <div key={s.n} className="border border-border p-5">
+              <div className="mb-3 font-display text-3xl text-primary/60">{s.n}</div>
+              <h3 className="font-display mb-2 text-lg font-semibold text-foreground">{s.t}</h3>
+              <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{s.d}</p>
+              <code className="block overflow-x-auto border border-border bg-card px-3 py-2 font-mono text-xs text-primary">
+                {s.c}
+              </code>
+            </div>
+          ))}
         </div>
       </section>
 

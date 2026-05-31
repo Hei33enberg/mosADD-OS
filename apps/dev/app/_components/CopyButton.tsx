@@ -1,10 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import posthog from 'posthog-js';
 
-/** Copy-to-clipboard button for code/terminal blocks. Shows ✓ for 1.5s. */
+/** Copy-to-clipboard button for code/terminal blocks. Shows ✓ for 1.5s.
+ *  Fires a PostHog `install_copy` event — top of the activation funnel
+ *  (copy install → quickstart → first tool call). No-op if PostHog unset. */
 export function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
+  const isInstall = /npx|npm i|mcp add|@mosadd\//.test(text);
   return (
     <button
       type="button"
@@ -14,6 +18,11 @@ export function CopyButton({ text }: { text: string }) {
           () => {
             setCopied(true);
             setTimeout(() => setCopied(false), 1500);
+            try {
+              posthog.capture?.(isInstall ? 'install_copy' : 'code_copy', { snippet: text.slice(0, 80) });
+            } catch {
+              /* PostHog not initialized — fine */
+            }
           },
           () => {},
         );

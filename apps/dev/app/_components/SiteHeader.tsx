@@ -7,8 +7,8 @@ const navLinks = [
   { href: '/docs/mcp', label: 'MCP' },
   { href: '/docs/modules', label: 'Modules' },
   { href: '/examples', label: 'Examples' },
-  { href: '/download', label: 'Download' },
-  { href: '/changelog', label: 'Changelog' },
+  { href: '/pricing', label: 'Pricing' },
+  { href: '/blog', label: 'Blog' },
 ];
 
 export function SiteHeader() {
