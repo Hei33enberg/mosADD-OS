@@ -191,6 +191,37 @@ export default function PricingPage() {
         </div>
       </div>
 
+      {/* Enterprise / CISO checklist */}
+      <div className="mt-16 border border-border p-6">
+        <h2 className="font-display text-2xl font-semibold text-foreground">For the security review</h2>
+        <p className="mt-2 mb-5 max-w-2xl text-sm text-muted-foreground">
+          Everything your CISO needs to sign off — open code to audit, and the enterprise controls on top.
+        </p>
+        <div className="grid gap-x-8 gap-y-2 text-sm text-muted-foreground sm:grid-cols-2">
+          {[
+            'Apache-2.0 source — audit every line before you deploy',
+            'Self-host in your own VPC / on-prem',
+            'SSO / SAML + RBAC',
+            'NIS2-grade audit-log retention',
+            'E2EE (X3DH + Double Ratchet) on mDM',
+            'BYOK key broker — your provider keys never leave you',
+            'Threat radar: 167-event scoring across every channel',
+            'DPA + dedicated channel + 99.95% uptime SLO',
+          ].map((f) => (
+            <div key={f} className="flex gap-2">
+              <span className="mt-0.5 text-primary">✓</span>
+              <span>{f}</span>
+            </div>
+          ))}
+        </div>
+        <a
+          href="mailto:hello@mosadd.com?subject=mosadd%20Enterprise%20%2F%20security%20review"
+          className="mt-6 inline-block rounded-none border border-primary/40 px-4 py-2 text-sm text-primary transition-colors hover:bg-primary/10"
+        >
+          Talk to us →
+        </a>
+      </div>
+
       {/* Waitlist */}
       <div id="waitlist" className="mt-16 border border-primary/30 bg-primary/[0.03] p-6 scroll-mt-24">
         <h2 className="font-display text-2xl font-semibold text-foreground">Get hosted access first</h2>
