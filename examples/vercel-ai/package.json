@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.0.0",
-    "@mosadd/ai": "workspace:*",
+    "@mosadd/ai": "^3.0.0-alpha.0",
     "ai": "^4.0.0"
   },
   "devDependencies": {
