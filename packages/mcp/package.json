@@ -20,7 +20,8 @@
     }
   },
   "bin": {
-    "mosadd-mcp": "./dist/bin/mcp.js"
+    "mosadd-mcp": "./dist/bin/mcp.js",
+    "mosadd": "./dist/bin/mcp.js"
   },
   "files": [
     "dist",
@@ -32,7 +33,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsup src/index.ts src/bin/mcp.ts --format esm --dts --clean --shims",
+    "build": "tsup src/index.ts src/bin/mcp.ts src/bin/login.ts --format esm --dts --clean --shims",
     "dev": "tsx src/bin/mcp.ts",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit",

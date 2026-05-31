@@ -13,6 +13,14 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { createMosaddServer } from "../server.js";
 
 async function main(): Promise<void> {
+  // Auth subcommands: `mosadd login | logout | whoami`. Everything else starts the server.
+  const sub = process.argv[2];
+  if (sub === "login" || sub === "logout" || sub === "whoami") {
+    const { runAuthCommand } = await import("./login.js");
+    await runAuthCommand(sub, process.argv.slice(3));
+    return;
+  }
+
   const server = createMosaddServer({
     apiKey: process.env.MOSADD_API_KEY,
     hubUrl: process.env.MOSADD_HUB_URL,

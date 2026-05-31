@@ -16,7 +16,7 @@ on:
 
 jobs:
   publish:
-    name: publish @m0ssad/* to npm
+    name: publish @mosadd/* to npm
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -54,8 +54,8 @@ jobs:
         run: |
           TAG="${{ github.event.inputs.tag || 'alpha' }}"
           ACCESS="${{ github.event.inputs.access || 'public' }}"
-          for pkg in protocol crypto threat-engine mcp; do
-            echo "::group::publish @m0ssad/$pkg"
+          for pkg in protocol crypto providers core threat-engine bridges mcp ai; do
+            echo "::group::publish @mosadd/$pkg"
             pnpm publish "packages/$pkg" \
               --access "$ACCESS" \
               --tag "$TAG" \
@@ -70,6 +70,6 @@ jobs:
           TAG="${{ github.event.inputs.tag || 'alpha' }}"
           mkdir /tmp/smoke && cd /tmp/smoke
           npm init -y > /dev/null
-          npm install "@m0ssad/mcp@$TAG"
-          ls node_modules/@m0ssad/mcp/dist/bin/mcp.js
-          echo "✓ @m0ssad/mcp@$TAG installs and has the bin"
+          npm install "@mosadd/mcp@$TAG"
+          ls node_modules/@mosadd/mcp/dist/bin/mcp.js
+          echo "✓ @mosadd/mcp@$TAG installs and has the bin"
