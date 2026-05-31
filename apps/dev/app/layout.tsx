@@ -2,9 +2,11 @@ import './global.css';
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { JetBrains_Mono } from 'next/font/google';
+import { Suspense } from 'react';
 import { Analytics } from '@vercel/analytics/next';
 import { SiteHeader } from './_components/SiteHeader';
 import { SiteFooter } from './_components/SiteFooter';
+import { PostHogProvider } from './_components/PostHogProvider';
 
 const jetbrains = JetBrains_Mono({
   subsets: ['latin'],
@@ -48,11 +50,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="relative flex min-h-screen flex-col bg-background text-foreground antialiased">
         {/* Fixed brand backdrop: faint engineering grid behind everything */}
         <div aria-hidden className="grid-bg pointer-events-none fixed inset-0 z-0 opacity-60" />
-        <div className="relative z-10 flex min-h-screen flex-col">
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </div>
+        <Suspense fallback={null}>
+          <PostHogProvider>
+            <div className="relative z-10 flex min-h-screen flex-col">
+              <SiteHeader />
+              <main className="flex-1">{children}</main>
+              <SiteFooter />
+            </div>
+          </PostHogProvider>
+        </Suspense>
         <Analytics />
       </body>
     </html>
