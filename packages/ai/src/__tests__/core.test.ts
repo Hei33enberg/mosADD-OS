@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { buildContext, filterTools, invokeMosaddTool } from "../core.js";
 
-describe("@m0ssad/ai/core", () => {
+describe("@mosadd/ai/core", () => {
   describe("filterTools", () => {
     it("returns all tools when no modules specified", () => {
       const all = filterTools({});

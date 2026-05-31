@@ -3,7 +3,7 @@
  */
 
 import type { z } from "zod";
-import type { DmProvider } from "@m0ssad/providers";
+import type { DmProvider } from "@mosadd/providers";
 import type { MdmKeyStore } from "./crypto/mdm-session.js";
 
 export type Mode = "cloud" | "local" | "self-host";

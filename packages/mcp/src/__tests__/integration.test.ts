@@ -91,7 +91,7 @@ class McpClient {
   }
 }
 
-describe("@m0ssad/mcp — integration (real stdio)", () => {
+describe("@mosadd/mcp — integration (real stdio)", () => {
   let client: McpClient;
 
   beforeEach(async () => {

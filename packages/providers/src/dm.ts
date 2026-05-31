@@ -11,7 +11,7 @@
  * Contract rules:
  *  - The provider treats `payload` as OPAQUE BYTES. It does NOT parse, decode,
  *    or interpret them. Message framing / encryption / encoding all live ABOVE
- *    the provider (in the mDM tool + @m0ssad/crypto). The provider only moves
+ *    the provider (in the mDM tool + @mosadd/crypto). The provider only moves
  *    bytes from A to B and back.
  *  - `threadId` and `to` are routing hints. A provider uses what its transport
  *    needs and may ignore the rest (radio may key only on `to`).

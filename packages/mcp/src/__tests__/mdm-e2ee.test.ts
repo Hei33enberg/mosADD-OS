@@ -17,7 +17,7 @@ import type {
   DmListArgs,
   DmSendResult,
   DmListResult,
-} from "@m0ssad/providers";
+} from "@mosadd/providers";
 import { mdmTools } from "../tools/mdm.js";
 import { InMemoryMdmKeyStore } from "../crypto/mdm-session.js";
 import type { MosaddToolContext } from "../types.js";

@@ -13,7 +13,7 @@ export default function QuickstartPage() {
       <Lead>Get the mosadd MCP server running in your agent in 60 seconds.</Lead>
 
       <H2>In Claude Code</H2>
-      <Pre lang="bash">{`claude mcp add mosadd npx -- -y @m0ssad/mcp`}</Pre>
+      <Pre lang="bash">{`claude mcp add mosadd npx -- -y @mosadd/mcp`}</Pre>
       <P>Restart Claude Code. The <code className="font-mono text-radar-green">mosadd</code> MCP server is now connected. Try:</P>
       <Callout type="info">
         Send a DM to <code className="font-mono">alice@m0ssad</code>: "first message from Claude"
@@ -26,13 +26,13 @@ export default function QuickstartPage() {
   "mcpServers": {
     "mosadd": {
       "command": "npx",
-      "args": ["-y", "@m0ssad/mcp"]
+      "args": ["-y", "@mosadd/mcp"]
     }
   }
 }`}</Pre>
 
       <H2>Standalone</H2>
-      <Pre lang="bash">{`npx @m0ssad/mcp`}</Pre>
+      <Pre lang="bash">{`npx @mosadd/mcp`}</Pre>
       <P>
         The server speaks MCP over stdio. Use any MCP client (Cline, Windsurf, Goose, custom).
       </P>

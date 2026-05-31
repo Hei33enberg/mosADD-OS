@@ -19,7 +19,7 @@ pnpm start
 ## What it shows
 
 ```ts
-import { mosadd } from "@m0ssad/ai/langchain";
+import { mosadd } from "@mosadd/ai/langchain";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 
@@ -31,7 +31,7 @@ const agent = createReactAgent({ llm, tools });
 await agent.invoke({ messages: [new HumanMessage("...")] });
 ```
 
-`@m0ssad/ai/langchain` returns plain descriptors — wrap them in `DynamicStructuredTool` (or `StructuredTool` subclass of your choice). Zero peer-dep on LangChain itself; we don't import it.
+`@mosadd/ai/langchain` returns plain descriptors — wrap them in `DynamicStructuredTool` (or `StructuredTool` subclass of your choice). Zero peer-dep on LangChain itself; we don't import it.
 
 ## See also
 

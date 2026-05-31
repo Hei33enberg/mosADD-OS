@@ -5,7 +5,7 @@ import { mosadd as mosaddOpenAI } from "../openai/index.js";
 import { mosaddTools as mosaddAnthropic } from "../anthropic/index.js";
 
 describe("framework adapters", () => {
-  describe("@m0ssad/ai/vercel", () => {
+  describe("@mosadd/ai/vercel", () => {
     it("returns a Record<string, VercelTool> keyed by tool name", () => {
       const tools = mosaddVercel({ modules: ["mDM"] });
       expect(Object.keys(tools)).toContain("mDM_send");
@@ -21,7 +21,7 @@ describe("framework adapters", () => {
     });
   });
 
-  describe("@m0ssad/ai/langchain", () => {
+  describe("@mosadd/ai/langchain", () => {
     it("returns an array of { name, description, schema, func }", () => {
       const tools = mosaddLangchain({ modules: ["mROOM"] });
       expect(Array.isArray(tools)).toBe(true);
@@ -32,7 +32,7 @@ describe("framework adapters", () => {
     });
   });
 
-  describe("@m0ssad/ai/openai", () => {
+  describe("@mosadd/ai/openai", () => {
     it("returns FunctionTool-shaped descriptors", () => {
       const tools = mosaddOpenAI({ modules: ["mIRC"] });
       expect(tools.length).toBe(15); // mIRC = 5 channel ops + 10 member ops
@@ -46,7 +46,7 @@ describe("framework adapters", () => {
     });
   });
 
-  describe("@m0ssad/ai/anthropic", () => {
+  describe("@mosadd/ai/anthropic", () => {
     it("returns Messages-API-shaped tool definitions", () => {
       const tools = mosaddAnthropic({ modules: ["mAIL"] });
       expect(tools.length).toBe(2);

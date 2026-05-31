@@ -71,15 +71,15 @@ This makes the system **extensible**. Community can propose `mPOST` (broadcast p
                      │ MCP / SDK / REST
                      ▼
 ┌─────────────────────────────────────────────────────────┐
-│  System call interface (@m0ssad/mcp + @m0ssad/ai)       │
+│  System call interface (@mosadd/mcp + @mosadd/ai)       │
 │  - Tools: mDM_send, mTALK_start, mCALL_pstn, ...        │
-│  - Adapters: @m0ssad/ai/vercel, /langchain, /openai     │
+│  - Adapters: @mosadd/ai/vercel, /langchain, /openai     │
 └────────────────────┬────────────────────────────────────┘
                      │
                      │ in-process calls
                      ▼
 ┌─────────────────────────────────────────────────────────┐
-│  Kernel (@m0ssad/core + @m0ssad/providers)              │
+│  Kernel (@mosadd/core + @mosadd/providers)              │
 │  - Channel primitives                                   │
 │  - Threat radar middleware (hook on every call)         │
 │  - Identity (anonymous, passphrase-recoverable)         │

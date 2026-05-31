@@ -1,5 +1,5 @@
 /**
- * @m0ssad/bridges — Bridge Provider Pack
+ * @mosadd/bridges — Bridge Provider Pack
  *
  * Reach contacts on existing networks (Matrix, Discord, Telegram, Slack, Signal,
  * WhatsApp, iMessage) WITHOUT forcing them to sign up for mosadd. Solves

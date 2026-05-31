@@ -1,4 +1,4 @@
-# @m0ssad/bridges
+# @mosadd/bridges
 
 Bridge Provider Pack — let mosadd users reach contacts on existing networks (Matrix, Discord, Telegram, Slack, Signal, WhatsApp, iMessage) **without forcing those contacts to sign up for mosadd**.
 
@@ -13,7 +13,7 @@ This package is design-adopted from the [Hermes Agent](https://github.com/NousRe
 ## Shape
 
 ```ts
-import { getBridge, type BridgeProvider } from "@m0ssad/bridges";
+import { getBridge, type BridgeProvider } from "@mosadd/bridges";
 
 const matrix: BridgeProvider = getBridge("matrix");
 await matrix.verifyConfig({ homeserver: "...", access_token: "...", user_id: "@bot:..." });

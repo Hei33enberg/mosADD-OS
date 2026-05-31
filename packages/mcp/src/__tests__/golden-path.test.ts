@@ -20,7 +20,7 @@ import type {
   DmListArgs,
   DmSendResult,
   DmListResult,
-} from "@m0ssad/providers";
+} from "@mosadd/providers";
 import { mdmTools } from "../tools/mdm.js";
 import { makeCapabilitiesTool } from "../tools/capabilities.js";
 import { allTools } from "../tools/index.js";

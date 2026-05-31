@@ -1,4 +1,4 @@
-# @m0ssad/ai
+# @mosadd/ai
 
 Framework adapters for [mosadd](https://mosadd.dev) — use the 17 mosadd OS tools directly from your favorite agent framework without spinning up the MCP server.
 
@@ -6,15 +6,15 @@ Framework adapters for [mosadd](https://mosadd.dev) — use the 17 mosadd OS too
 
 | Subpath | Framework | What you get |
 |---|---|---|
-| `@m0ssad/ai/vercel` | [Vercel AI SDK](https://sdk.vercel.ai) (`ai` package, v4+) | `Record<string, VercelTool>` for `streamText` / `generateText` |
-| `@m0ssad/ai/langchain` | [LangChain](https://js.langchain.com) | Plain descriptors you wrap in `DynamicStructuredTool` |
-| `@m0ssad/ai/openai` | [OpenAI Agents SDK](https://github.com/openai/openai-agents-js) | `FunctionTool[]` for the `tools:` array on `Agent` |
-| `@m0ssad/ai/anthropic` | [Anthropic SDK](https://github.com/anthropics/anthropic-sdk-typescript) | `[{ name, description, input_schema }]` for Messages API |
+| `@mosadd/ai/vercel` | [Vercel AI SDK](https://sdk.vercel.ai) (`ai` package, v4+) | `Record<string, VercelTool>` for `streamText` / `generateText` |
+| `@mosadd/ai/langchain` | [LangChain](https://js.langchain.com) | Plain descriptors you wrap in `DynamicStructuredTool` |
+| `@mosadd/ai/openai` | [OpenAI Agents SDK](https://github.com/openai/openai-agents-js) | `FunctionTool[]` for the `tools:` array on `Agent` |
+| `@mosadd/ai/anthropic` | [Anthropic SDK](https://github.com/anthropics/anthropic-sdk-typescript) | `[{ name, description, input_schema }]` for Messages API |
 
 ## Vercel AI SDK
 
 ```ts
-import { mosadd } from "@m0ssad/ai/vercel";
+import { mosadd } from "@mosadd/ai/vercel";
 import { streamText } from "ai";
 
 const tools = mosadd({
@@ -32,7 +32,7 @@ await streamText({ model: openai("gpt-5"), tools, messages });
 ## LangChain
 
 ```ts
-import { mosadd } from "@m0ssad/ai/langchain";
+import { mosadd } from "@mosadd/ai/langchain";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 
@@ -46,7 +46,7 @@ const agent = createReactAgent({ llm, tools });
 ## OpenAI Agents SDK
 
 ```ts
-import { mosadd } from "@m0ssad/ai/openai";
+import { mosadd } from "@mosadd/ai/openai";
 import { Agent, run } from "@openai/agents";
 
 const agent = new Agent({
@@ -62,7 +62,7 @@ await run(agent, "Send Alice a message saying I'll be late.");
 
 ```ts
 import Anthropic from "@anthropic-ai/sdk";
-import { mosaddTools, executeMosaddToolCall } from "@m0ssad/ai/anthropic";
+import { mosaddTools, executeMosaddToolCall } from "@mosadd/ai/anthropic";
 
 const client = new Anthropic();
 const tools = mosaddTools({ modules: ["mDM", "mROOM"] });

@@ -37,7 +37,7 @@ const examples: {
   {
     slug: 'vercel-ai',
     title: 'Vercel AI SDK · streamText with tools',
-    blurb: 'Node.js demo: import @m0ssad/ai/vercel, pass mosadd tools to streamText with Claude, watch tool calls fly.',
+    blurb: 'Node.js demo: import @mosadd/ai/vercel, pass mosadd tools to streamText with Claude, watch tool calls fly.',
     framework: 'Vercel AI SDK',
     url: 'https://github.com/Hei33enberg/mosadd-os/tree/main/examples/vercel-ai',
   },

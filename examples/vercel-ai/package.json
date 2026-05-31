@@ -2,14 +2,14 @@
   "name": "mosadd-vercel-ai-example",
   "version": "0.0.1",
   "private": true,
-  "description": "Minimal Vercel AI SDK example using @m0ssad/ai/vercel",
+  "description": "Minimal Vercel AI SDK example using @mosadd/ai/vercel",
   "type": "module",
   "scripts": {
     "start": "tsx index.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.0.0",
-    "@m0ssad/ai": "workspace:*",
+    "@mosadd/ai": "workspace:*",
     "ai": "^4.0.0"
   },
   "devDependencies": {

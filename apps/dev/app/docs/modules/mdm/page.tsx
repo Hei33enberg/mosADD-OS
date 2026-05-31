@@ -24,7 +24,7 @@ export default function MdmPage() {
   to: string,           // contact_id | email | phone | mosadd handle
   text: string,
   thread_id?: string,   // null = default thread for this contact
-  encrypted?: boolean,  // E2E via @m0ssad/crypto
+  encrypted?: boolean,  // E2E via @mosadd/crypto
 })
 → { message_id, delivered_at, thread_id }`}</Pre>
 
@@ -46,7 +46,7 @@ export default function MdmPage() {
 
       <H2>E2E encryption</H2>
       <P>
-        With <code className="font-mono text-radar-green">encrypted: true</code>, message body is wrapped via X3DH + Double Ratchet (<code className="font-mono text-radar-green">@m0ssad/crypto</code>). Provider sees ciphertext only.
+        With <code className="font-mono text-radar-green">encrypted: true</code>, message body is wrapped via X3DH + Double Ratchet (<code className="font-mono text-radar-green">@mosadd/crypto</code>). Provider sees ciphertext only.
       </P>
 
       <H2>Providers</H2>

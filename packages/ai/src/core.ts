@@ -1,5 +1,5 @@
 /**
- * @m0ssad/ai/core — internal: shared tool selection and context wiring.
+ * @mosadd/ai/core — internal: shared tool selection and context wiring.
  *
  * All four framework adapters (vercel, langchain, openai, anthropic) call into
  * this module to:
@@ -14,7 +14,7 @@ import {
   defaultProviders,
   type MosaddTool,
   type MosaddToolContext,
-} from "@m0ssad/mcp";
+} from "@mosadd/mcp";
 
 /** Shared options accepted by every framework adapter. */
 export interface MosaddOptions {
@@ -44,7 +44,7 @@ export interface MosaddOptions {
 }
 
 /**
- * Filter the canonical @m0ssad/mcp tools by the user's `modules` selection.
+ * Filter the canonical @mosadd/mcp tools by the user's `modules` selection.
  *
  *   filterTools({})                          // → all shipped tools
  *   filterTools({ modules: ['mDM'] })        // → only mDM_* tools

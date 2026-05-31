@@ -8,10 +8,10 @@ STRIDE-derived threat model for the public Apache-2.0 layer of mosadd. Covers th
 
 In scope:
 
-- `@m0ssad/mcp` server (stdio + future HTTP/SSE)
-- `@m0ssad/ai` framework adapters (Vercel, LangChain, OpenAI Agents, Anthropic)
-- `@m0ssad/bridges` (Matrix, Discord, Telegram MVP)
-- `@m0ssad/crypto`, `@m0ssad/protocol`, `@m0ssad/threat-engine` library code
+- `@mosadd/mcp` server (stdio + future HTTP/SSE)
+- `@mosadd/ai` framework adapters (Vercel, LangChain, OpenAI Agents, Anthropic)
+- `@mosadd/bridges` (Matrix, Discord, Telegram MVP)
+- `@mosadd/crypto`, `@mosadd/protocol`, `@mosadd/threat-engine` library code
 - LiveKit fork (`m0ssad-fabric`) and PTT floor-control middleware
 
 Out of scope:
@@ -40,13 +40,13 @@ Out of scope:
 ┌─────────────────────────────────────────────────────────────┐
 │  END USER ENVIRONMENT (laptop / hardware device)            │
 │  ┌────────────────────────────┐    ┌──────────────────────┐ │
-│  │  LLM client                │    │  @m0ssad/daemon      │ │
+│  │  LLM client                │    │  @mosadd/daemon      │ │
 │  │  (Claude Code, Cursor, …)  │    │  (audio data plane)  │ │
 │  └─────────────┬──────────────┘    └──────────┬───────────┘ │
 └────────────────┼───────────────────────────────┼────────────┘
                  │  MCP stdio                    │  WebRTC
 ┌────────────────┼───────────────────────────────┼────────────┐
-│  @m0ssad/mcp (control plane)                   │            │
+│  @mosadd/mcp (control plane)                   │            │
 │  ┌─────────────────────────────────────┐       │            │
 │  │  Tool registry + dispatcher         │       │            │
 │  └─────────────┬───────────────────────┘       │            │
@@ -76,7 +76,7 @@ Boundaries:
 |---|---|---|
 | **S**poofing | LLM injecting forged tool result | Tool results are validated against the registered schema before the LLM sees them; no untrusted plaintext returned without schema check |
 | **T**ampering | Modified BYOK env var pointing to attacker backend | `env.M0SSAD_*_URL` should be reviewed before deploy; future: pin known providers with allowlist |
-| **R**epudiation | User claims they didn't issue the tool call | Every tool invocation emits an audit event via `@m0ssad/audit-core` (Phase 2 hub middleware) |
+| **R**epudiation | User claims they didn't issue the tool call | Every tool invocation emits an audit event via `@mosadd/audit-core` (Phase 2 hub middleware) |
 | **I**nformation disclosure | Tool error message leaks API key | All error messages scrubbed via central error formatter; never echo `Authorization` |
 | **D**enial of service | Agent loops calling `mDM_send` 1000x | Rate limit middleware (Phase 2 hub), local stdio caps via daemon-side delay |
 | **E**levation | Tool call bypasses RLS to read other users' rows | Always pass user JWT through to Supabase; never use service role in stdio mode |
@@ -95,7 +95,7 @@ Boundaries:
 | Bridge | Threat | Mitigation |
 |---|---|---|
 | Matrix (Dendrite/Synapse) | Federation poisoning — homeserver sends crafted event | Whitelist trusted homeservers; per-homeserver rate limit |
-| Discord bot | Bot token leak from client local storage | Token stored in OS keychain via `@m0ssad/protocol`; never in localStorage |
+| Discord bot | Bot token leak from client local storage | Token stored in OS keychain via `@mosadd/protocol`; never in localStorage |
 | Telegram MTProto | Phone-number harvest | Use bot API where possible; require explicit user OK for personal account linking |
 
 ### LiveKit fork (mTALK / mROOM voice)

@@ -19,12 +19,12 @@ Maintainers can merge PRs in their area, request reviews, and vote on RFCs.
 | Name | GitHub | Area | Status |
 |---|---|---|---|
 | Maciej Damian Białek | [@Hei33enberg](https://github.com/Hei33enberg) | all areas (bootstrap) | active |
-| *(open)* | | `@m0ssad/mcp` — MCP server, tool surface | seeking |
-| *(open)* | | `@m0ssad/ai` — framework adapters | seeking |
-| *(open)* | | `@m0ssad/providers` — provider adapters (Supabase, Telnyx, LiveKit, Routr) | seeking |
-| *(open)* | | `@m0ssad/bridges` — Telegram/Discord/Matrix/Signal | seeking |
-| *(open)* | | `@m0ssad/crypto` — E2E primitives, X3DH, Double Ratchet | seeking |
-| *(open)* | | `@m0ssad/threat-engine` — radar event taxonomy | seeking |
+| *(open)* | | `@mosadd/mcp` — MCP server, tool surface | seeking |
+| *(open)* | | `@mosadd/ai` — framework adapters | seeking |
+| *(open)* | | `@mosadd/providers` — provider adapters (Supabase, Telnyx, LiveKit, Routr) | seeking |
+| *(open)* | | `@mosadd/bridges` — Telegram/Discord/Matrix/Signal | seeking |
+| *(open)* | | `@mosadd/crypto` — E2E primitives, X3DH, Double Ratchet | seeking |
+| *(open)* | | `@mosadd/threat-engine` — radar event taxonomy | seeking |
 | *(open)* | | `apps/dev` — mosadd.dev developer portal | seeking |
 | *(open)* | | docs · RFCs · governance | seeking |
 

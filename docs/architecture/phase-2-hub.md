@@ -10,14 +10,14 @@ The hub exists to do five things the open-source mosadd-os intentionally doesn't
 
 ### 1. Hosted MCP gateway — `mcp.mosadd.com` ([LINEAR-2158](https://linear.app/ip-ra/issue/LINEAR-2158))
 
-`@m0ssad/mcp` ships with stdio transport. ChatGPT Apps, Lovable, Bolt, v0.dev — every browser-first agent runtime — speaks HTTP/SSE. The hub provides:
+`@mosadd/mcp` ships with stdio transport. ChatGPT Apps, Lovable, Bolt, v0.dev — every browser-first agent runtime — speaks HTTP/SSE. The hub provides:
 
 - HTTPS endpoint `https://mcp.mosadd.com/sse` (and `/streaming`)
 - OAuth flow (PKCE) replacing today's BYOK env-var JWT chore
 - mosadd account ⇄ provider key brokerage (see §2)
 - Per-tool rate limits + abuse signal (see §3)
 
-Self-host alternative: any user can run `npx @m0ssad/mcp` + `mcp-proxy` themselves. The hub just removes that step.
+Self-host alternative: any user can run `npx @mosadd/mcp` + `mcp-proxy` themselves. The hub just removes that step.
 
 ### 2. BYOK key brokerage ([LINEAR-2159](https://linear.app/ip-ra/issue/LINEAR-2159))
 
@@ -33,7 +33,7 @@ Today's alpha asks users to paste `M0SSAD_SUPABASE_*` env vars into agent config
 The moat. Every operation through the hub emits one or more events into the radar pipeline:
 
 ```
-operation → @m0ssad/threat-engine → radar event → severity scoring
+operation → @mosadd/threat-engine → radar event → severity scoring
          ↓
     audit_events table          (cold storage, 90-day retention, NIS2-compliant)
          ↓
@@ -42,7 +42,7 @@ operation → @m0ssad/threat-engine → radar event → severity scoring
     block / allow / quarantine  (per-tier policy)
 ```
 
-Open-source `@m0ssad/threat-engine` ships the 167-event taxonomy and scoring primitives. The hub adds:
+Open-source `@mosadd/threat-engine` ships the 167-event taxonomy and scoring primitives. The hub adds:
 
 - Real-time correlation across channels (a single actor sending mDM + mTELEGRAM + mDISCORD spam looks innocent on each channel; correlated, it's abuse)
 - Cross-tenant threat intel feeds (private — paid threat intel partners, MISP feeds, our own observations)
@@ -50,7 +50,7 @@ Open-source `@m0ssad/threat-engine` ships the 167-event taxonomy and scoring pri
 - ML scoring on text (prompt-injection detection — model: distilled adversarial classifier)
 - Quarantine workflow: high-severity operation → human review queue
 
-Self-host: `@m0ssad/threat-engine` runs locally with the open 167-event taxonomy. You won't get cross-tenant intel, but the kernel is the same.
+Self-host: `@mosadd/threat-engine` runs locally with the open 167-event taxonomy. You won't get cross-tenant intel, but the kernel is the same.
 
 ### 4. Billing / metering ([LINEAR-2161](https://linear.app/ip-ra/issue/LINEAR-2161))
 
@@ -93,10 +93,10 @@ The contract between the public OSS layer and the hub:
 ┌─────────────────────────────────────────────────────────────────┐
 │  Public OSS layer (this repo — mosadd-os)                       │
 │                                                                  │
-│  - @m0ssad/mcp     — MCP server, stdio + HTTP (no auth built-in)│
-│  - @m0ssad/providers — direct calls to Supabase/Telnyx/...      │
-│  - @m0ssad/threat-engine — emits events, no scoring decisions   │
-│  - @m0ssad/ai     — framework adapters (no auth, BYOK env vars) │
+│  - @mosadd/mcp     — MCP server, stdio + HTTP (no auth built-in)│
+│  - @mosadd/providers — direct calls to Supabase/Telnyx/...      │
+│  - @mosadd/threat-engine — emits events, no scoring decisions   │
+│  - @mosadd/ai     — framework adapters (no auth, BYOK env vars) │
 │                                                                  │
 │  Anyone can self-host this whole layer. Apache-2.0 forever.     │
 └─────────────────────────────────────┬───────────────────────────┘
@@ -104,7 +104,7 @@ The contract between the public OSS layer and the hub:
 ┌─────────────────────────────────────▼───────────────────────────┐
 │  Commercial hub (proprietary — m0ssad-3)                        │
 │                                                                  │
-│  - mcp.mosadd.com   — HTTP/SSE wrapper around @m0ssad/mcp       │
+│  - mcp.mosadd.com   — HTTP/SSE wrapper around @mosadd/mcp       │
 │  - hub.mosadd.com   — SaaS dashboard                             │
 │  - radar middleware — real-time abuse scoring on top of events  │
 │  - BYOK key broker  — KMS-backed secret store                    │
@@ -134,7 +134,7 @@ These need answers before Phase 2 implementation starts:
 
 Phase 2 work starts when Phase 1 hits all of:
 
-1. `@m0ssad/mcp` published to npm with ≥50 weekly downloads
+1. `@mosadd/mcp` published to npm with ≥50 weekly downloads
 2. 5/5 MCP registries indexed
 3. ≥10 GitHub stars on mosadd-os
 4. ≥3 community contributors with merged PRs

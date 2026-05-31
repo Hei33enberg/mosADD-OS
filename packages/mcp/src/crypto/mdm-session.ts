@@ -3,7 +3,7 @@
  *
  * Sits ABOVE the DmProvider. The provider moves opaque bytes; THIS module
  * decides what those bytes are: an X3DH handshake + Double Ratchet ciphertext
- * envelope, produced from `@m0ssad/crypto` primitives.
+ * envelope, produced from `@mosadd/crypto` primitives.
  *
  * Flow (decision "1a" — prekey distribution rides the DmProvider):
  *   - Each peer publishes a prekey bundle via `dm.publishPrekeyBundle(bytes)`.
@@ -39,8 +39,8 @@ import {
   type EncryptedPayload,
   type RatchetState,
   type SessionRole,
-} from "@m0ssad/crypto";
-import type { DmProvider } from "@m0ssad/providers";
+} from "@mosadd/crypto";
+import type { DmProvider } from "@mosadd/providers";
 
 export const PREKEY_BUNDLE_VERSION = "mosadd.prekeys.v1" as const;
 export const E2EE_ENVELOPE_VERSION = "mosadd.e2ee.v1" as const;

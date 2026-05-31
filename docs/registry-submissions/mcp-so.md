@@ -10,13 +10,13 @@ Server name:    mosadd-mcp
 Display name:   mosadd — A human OS. Add.
 Author:         mosadd contributors
 GitHub:         https://github.com/Hei33enberg/mosadd-os
-NPM:            https://www.npmjs.com/package/@m0ssad/mcp
+NPM:            https://www.npmjs.com/package/@mosadd/mcp
 Website:        https://mosadd.dev
 License:        Apache-2.0
 Language:       TypeScript
 Runtime:        Node.js >=20
 Transport:      stdio (HTTP/SSE via mcp.mosadd.com in Phase 2)
-Install:        npx -y @m0ssad/mcp
+Install:        npx -y @mosadd/mcp
 ```
 
 ## Short description (≤200 chars)

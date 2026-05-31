@@ -1,6 +1,6 @@
 # ChatGPT Apps (HTTP/SSE) example
 
-ChatGPT Apps consume MCP over **HTTP/SSE** rather than stdio. The local `@m0ssad/mcp` stdio runtime won't work directly — you'll wrap it in a hosted endpoint.
+ChatGPT Apps consume MCP over **HTTP/SSE** rather than stdio. The local `@mosadd/mcp` stdio runtime won't work directly — you'll wrap it in a hosted endpoint.
 
 ## Phase 2 — hosted gateway
 
@@ -21,7 +21,7 @@ npm install -g mcp-proxy
 M0SSAD_SUPABASE_URL=... \
 M0SSAD_SUPABASE_ANON_KEY=... \
 M0SSAD_USER_JWT=... \
-mcp-proxy --sse-port 3333 -- npx -y @m0ssad/mcp
+mcp-proxy --sse-port 3333 -- npx -y @mosadd/mcp
 ```
 
 The proxy exposes `http://localhost:3333/sse`. Use a tunneling tool (cloudflared, ngrok) to give it a public URL, then point ChatGPT Apps at that URL.

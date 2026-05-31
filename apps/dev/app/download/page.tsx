@@ -118,7 +118,7 @@ claude mcp add mosadd node -- $(pwd)/packages/mcp/dist/bin/m0ssad-mcp.js`}</Pre>
 npm install ./m0ssad-mcp-3.0.0-alpha.0.tgz
 
 # Then run
-npx @m0ssad/mcp`}</Pre>
+npx @mosadd/mcp`}</Pre>
 
         <H2>Docker (Phase 2)</H2>
         <P>Container images will be published to GHCR once the hosted MCP service lands:</P>

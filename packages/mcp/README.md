@@ -1,4 +1,4 @@
-# @m0ssad/mcp
+# @mosadd/mcp
 
 MCP server for [mosadd](https://mosadd.dev) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
@@ -9,7 +9,7 @@ MCP server for [mosadd](https://mosadd.dev) — exposes the OS modules (m\*) as 
 ### Claude Code
 
 ```bash
-claude mcp add mosadd npx -- -y @m0ssad/mcp
+claude mcp add mosadd npx -- -y @mosadd/mcp
 ```
 
 ### Cursor
@@ -21,7 +21,7 @@ claude mcp add mosadd npx -- -y @m0ssad/mcp
   "mcpServers": {
     "mosadd": {
       "command": "npx",
-      "args": ["-y", "@m0ssad/mcp"],
+      "args": ["-y", "@mosadd/mcp"],
       "env": {
         "M0SSAD_SUPABASE_URL": "https://<your-project>.supabase.co",
         "M0SSAD_SUPABASE_ANON_KEY": "<anon key>",
@@ -35,7 +35,7 @@ claude mcp add mosadd npx -- -y @m0ssad/mcp
 ### Standalone
 
 ```bash
-M0SSAD_SUPABASE_URL=... M0SSAD_SUPABASE_ANON_KEY=... M0SSAD_USER_JWT=... npx @m0ssad/mcp
+M0SSAD_SUPABASE_URL=... M0SSAD_SUPABASE_ANON_KEY=... M0SSAD_USER_JWT=... npx @mosadd/mcp
 ```
 
 ## BYOK — get your env values
@@ -81,7 +81,7 @@ Agent (Claude / Cursor / ...)
         │
         │ stdio MCP
         ▼
-@m0ssad/mcp server  (this package)
+@mosadd/mcp server  (this package)
         │
         │ supabase.functions.invoke('message-send', ...)
         │ + Authorization: Bearer <M0SSAD_USER_JWT>

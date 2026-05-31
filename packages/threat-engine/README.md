@@ -1,4 +1,4 @@
-# @m0ssad/threat-engine
+# @mosadd/threat-engine
 
 167-event threat taxonomy and scoring engine. The kernel-level security primitive that becomes the radar moat in the Phase 2 commercial hub.
 

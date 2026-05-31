@@ -1,5 +1,5 @@
 {
-  "name": "@m0ssad/threat-engine",
+  "name": "@mosadd/threat-engine",
   "version": "3.0.0-alpha.0",
   "description": "167-event threat taxonomy + scoring for mosadd. The kernel-level security primitive that becomes the radar moat in Phase 2 hub.",
   "homepage": "https://github.com/mosadd/os/tree/main/packages/threat-engine",

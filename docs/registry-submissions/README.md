@@ -1,6 +1,6 @@
 # MCP registry submissions
 
-Once `@m0ssad/mcp` is on npm (currently dry-run-ready, waiting on the publish token), submit it to the major MCP registries so people can discover it.
+Once `@mosadd/mcp` is on npm (currently dry-run-ready, waiting on the publish token), submit it to the major MCP registries so people can discover it.
 
 | Registry | URL | Method | Status |
 |---|---|---|---|
@@ -22,13 +22,13 @@ Once `@m0ssad/mcp` is on npm (currently dry-run-ready, waiting on the publish to
 
 Most registries want the same fields. Keep these consistent:
 
-- **Name**: `@m0ssad/mcp`
+- **Name**: `@mosadd/mcp`
 - **Display name**: `mosadd — A human OS. Add.`
 - **One-liner**: `Operating system for human communications. mDM · mTALK · mAIL · mCALL · mIRC · mIRL · mROOM, plus bridges to Telegram, Discord, Matrix.`
 - **Repo**: `https://github.com/Hei33enberg/mosadd-os`
 - **License**: `Apache-2.0`
 - **Author**: `mosadd contributors`
 - **Homepage**: `https://mosadd.dev`
-- **Install**: `npx -y @m0ssad/mcp`
+- **Install**: `npx -y @mosadd/mcp`
 - **Tags**: `messaging`, `voice`, `email`, `agents`, `apache-2`, `open-source`, `bridges`
 - **OS modules listed**: mDM (alpha), mIRC (alpha), mROOM (alpha — incl. guest links USP), mAIL (alpha), mTALK / mCALL / mIRL / bridges (design)

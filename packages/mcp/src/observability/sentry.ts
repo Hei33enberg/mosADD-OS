@@ -1,5 +1,5 @@
 /**
- * Sentry init for @m0ssad/mcp.
+ * Sentry init for @mosadd/mcp.
  *
  * Optional. The MCP server runs entirely as user-supplied stdio — most
  * operators won't want their tool errors phoning home. We expose an opt-in

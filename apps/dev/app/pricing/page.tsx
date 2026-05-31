@@ -24,7 +24,7 @@ const tiers: Tier[] = [
     blurb: 'Run the whole stack yourself. Apache-2.0 forever.',
     price: '$0',
     features: [
-      '@m0ssad/mcp + all SDK adapters',
+      '@mosadd/mcp + all SDK adapters',
       'All 32 tools, all m* modules',
       'Bring your own keys (Telnyx, Resend, LiveKit, Supabase)',
       'Community support — GitHub Discussions',

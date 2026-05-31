@@ -1,4 +1,4 @@
-# @m0ssad/providers
+# @mosadd/providers
 
 Vendor adapters. Pluggable. Choose your transport per channel, or let mosadd auto-route.
 

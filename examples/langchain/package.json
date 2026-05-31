@@ -2,7 +2,7 @@
   "name": "mosadd-langchain-example",
   "version": "0.0.1",
   "private": true,
-  "description": "Minimal LangChain example using @m0ssad/ai/langchain",
+  "description": "Minimal LangChain example using @mosadd/ai/langchain",
   "type": "module",
   "scripts": {
     "start": "tsx index.ts"
@@ -11,7 +11,7 @@
     "@langchain/core": "^0.3.0",
     "@langchain/langgraph": "^0.2.0",
     "@langchain/openai": "^0.3.0",
-    "@m0ssad/ai": "workspace:*"
+    "@mosadd/ai": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.2",

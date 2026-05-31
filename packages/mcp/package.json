@@ -1,5 +1,5 @@
 {
-  "name": "@m0ssad/mcp",
+  "name": "@mosadd/mcp",
   "version": "3.0.0-alpha.0",
   "description": "Model Context Protocol server for mosadd. Exposes m* OS modules (mDM, mTALK, mAIL, mCALL, mIRC, mIRL, mROOM, and bridges) as MCP tools to any agent runtime (Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom).",
   "homepage": "https://github.com/Hei33enberg/mosadd-os/tree/main/packages/mcp",
@@ -40,9 +40,9 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
-    "@m0ssad/crypto": "workspace:*",
-    "@m0ssad/protocol": "workspace:*",
-    "@m0ssad/providers": "workspace:*",
+    "@mosadd/crypto": "workspace:*",
+    "@mosadd/protocol": "workspace:*",
+    "@mosadd/providers": "workspace:*",
     "@supabase/supabase-js": "^2.48.0",
     "zod": "^4.3.6"
   },

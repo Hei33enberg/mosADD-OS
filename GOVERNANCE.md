@@ -42,7 +42,7 @@ Any maintainer can veto a PR within their domain for technical reasons (correctn
 
 For changes that:
 - Add a new `m*` module
-- Change a public API (`@m0ssad/*` exports)
+- Change a public API (`@mosadd/*` exports)
 - Add or remove a provider/bridge
 - Modify governance
 

@@ -51,7 +51,7 @@ export default function SecurityPage() {
         <li>Rate limits — per-user, per-tool, with backoff on radar score</li>
         <li>RLS — every table enforces row-level security; coverage verified in CI</li>
         <li>Supply chain — SBOM (SPDX 2.3) per package, CodeQL, gitleaks, license-check on every PR</li>
-        <li>E2E — X3DH + Double Ratchet via <code className="font-mono text-radar-green">@m0ssad/crypto</code> on opt-in</li>
+        <li>E2E — X3DH + Double Ratchet via <code className="font-mono text-radar-green">@mosadd/crypto</code> on opt-in</li>
       </Ul>
 
       <H2>Hardening guide for operators</H2>

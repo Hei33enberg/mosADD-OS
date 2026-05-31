@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { evaluateEvent, type ThreatDecision } from "../index.js";
 
-describe("@m0ssad/threat-engine — evaluateEvent", () => {
+describe("@mosadd/threat-engine — evaluateEvent", () => {
   // ---- Rule 1: killswitch → lock_account ----
 
   it("locks the account on SIM swap", () => {

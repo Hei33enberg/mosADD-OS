@@ -32,7 +32,7 @@ I checked your contacts. You have 3 accepted contacts: Alice, Bob, and Carol.
 ## What this code shows
 
 ```ts
-import { mosadd } from "@m0ssad/ai/vercel";
+import { mosadd } from "@mosadd/ai/vercel";
 import { generateText } from "ai";
 
 const tools = mosadd({ modules: ["mDM", "mROOM"] });

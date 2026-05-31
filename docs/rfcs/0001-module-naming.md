@@ -18,7 +18,7 @@ mosadd positions itself as the **operating system for human communications**, no
 
 This naming choice has cascading effects on:
 - MCP tool names (`mDM_send`, `mROOM_create_with_link`)
-- Package paths (`@m0ssad/core/modules/mDM`)
+- Package paths (`@mosadd/core/modules/mDM`)
 - LP / marketing copy
 - RFC titles for future modules
 

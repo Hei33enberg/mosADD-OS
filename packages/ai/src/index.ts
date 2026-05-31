@@ -1,11 +1,11 @@
 /**
- * @m0ssad/ai — framework adapters for mosadd
+ * @mosadd/ai — framework adapters for mosadd
  *
  * Don't import from this root — use a subpath:
- *   - `@m0ssad/ai/vercel`     for Vercel AI SDK
- *   - `@m0ssad/ai/langchain`  for LangChain
- *   - `@m0ssad/ai/openai`     for OpenAI Agents SDK
- *   - `@m0ssad/ai/anthropic`  for Anthropic Agent SDK
+ *   - `@mosadd/ai/vercel`     for Vercel AI SDK
+ *   - `@mosadd/ai/langchain`  for LangChain
+ *   - `@mosadd/ai/openai`     for OpenAI Agents SDK
+ *   - `@mosadd/ai/anthropic`  for Anthropic Agent SDK
  *
  * Pattern stolen from Stripe Agent Toolkit (https://github.com/stripe/agent-toolkit).
  */

@@ -10,7 +10,7 @@ import { createVault, verifyVaultPassphrase } from "../vault";
 import { generateX25519KeyPair } from "../x25519";
 import { performX3dh, performX3dhResponder } from "../x3dh";
 
-describe("@m0ssad/crypto", () => {
+describe("@mosadd/crypto", () => {
   beforeAll(() => {
     const txt = readFileSync(resolve(__dirname, "../bip39-english.txt"), "utf-8");
     const words = txt.trim().split(/\r?\n/).filter(Boolean);

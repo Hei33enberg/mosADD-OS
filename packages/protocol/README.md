@@ -1,4 +1,4 @@
-# @m0ssad/protocol
+# @mosadd/protocol
 
 Zod-validated message schemas and codecs for the mosadd protocol. Shared across all `m*` modules and providers.
 
@@ -7,13 +7,13 @@ Zod-validated message schemas and codecs for the mosadd protocol. Shared across 
 ## Install
 
 ```bash
-npm install @m0ssad/protocol
+npm install @mosadd/protocol
 ```
 
 ## Usage
 
 ```ts
-import { Message, encodeMessage, decodeMessage } from "@m0ssad/protocol";
+import { Message, encodeMessage, decodeMessage } from "@mosadd/protocol";
 
 const msg: Message = {
   id: "...",
