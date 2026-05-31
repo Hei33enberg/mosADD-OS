@@ -10,6 +10,7 @@
  */
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { loadSession, isSessionExpired } from "../config.js";
 
 export interface SupabaseEnv {
   url: string;
@@ -20,21 +21,29 @@ export interface SupabaseEnv {
 export class MissingSupabaseEnvError extends Error {
   constructor(missing: string[]) {
     super(
-      `Missing Supabase env vars: ${missing.join(", ")}. ` +
-        `Set M0SSAD_SUPABASE_URL, M0SSAD_SUPABASE_ANON_KEY, and (for authenticated calls) M0SSAD_USER_JWT.`,
+      `Missing Supabase credentials: ${missing.join(", ")}. ` +
+        `Run \`mosadd login\`, or set M0SSAD_SUPABASE_URL, M0SSAD_SUPABASE_ANON_KEY and M0SSAD_USER_JWT.`,
     );
     this.name = "MissingSupabaseEnvError";
   }
 }
 
 export function readSupabaseEnv(): SupabaseEnv {
-  const url = process.env.M0SSAD_SUPABASE_URL;
-  const anonKey = process.env.M0SSAD_SUPABASE_ANON_KEY;
-  const userJwt = process.env.M0SSAD_USER_JWT;
+  // Env vars take precedence; fall back to the session saved by `mosadd login`.
+  const session = loadSession();
+  const url = process.env.M0SSAD_SUPABASE_URL ?? session?.url;
+  const anonKey = process.env.M0SSAD_SUPABASE_ANON_KEY ?? session?.anonKey;
+  const userJwt = process.env.M0SSAD_USER_JWT ?? session?.accessToken;
+
   const missing: string[] = [];
   if (!url) missing.push("M0SSAD_SUPABASE_URL");
   if (!anonKey) missing.push("M0SSAD_SUPABASE_ANON_KEY");
   if (missing.length) throw new MissingSupabaseEnvError(missing);
+
+  // Surface an expired `mosadd login` token early with an actionable message.
+  if (!process.env.M0SSAD_USER_JWT && session && isSessionExpired(session)) {
+    throw new Error("Your mosadd session has expired. Run `mosadd login` again to refresh it.");
+  }
   return { url: url!, anonKey: anonKey!, userJwt };
 }
 

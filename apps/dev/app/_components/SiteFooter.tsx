@@ -15,6 +15,7 @@ export function SiteFooter() {
           <div className="mb-3 uppercase tracking-[0.25em] text-foreground/80">Docs</div>
           <ul className="space-y-2">
             <li><Link href="/docs/quickstart" className="hover:text-foreground">Quickstart</Link></li>
+            <li><Link href="/docs/auth" className="hover:text-foreground">Credentials</Link></li>
             <li><Link href="/docs/mcp" className="hover:text-foreground">MCP server</Link></li>
             <li><Link href="/docs/modules" className="hover:text-foreground">Modules</Link></li>
             <li><Link href="/docs/sdk" className="hover:text-foreground">SDK</Link></li>
