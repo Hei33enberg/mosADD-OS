@@ -31,4 +31,4 @@ Most registries want the same fields. Keep these consistent:
 - **Homepage**: `https://mosadd.dev`
 - **Install**: `npx -y @mosadd/mcp`
 - **Tags**: `messaging`, `voice`, `email`, `agents`, `apache-2`, `open-source`, `bridges`
-- **OS modules listed**: mDM (alpha), mIRC (alpha), mROOM (alpha — incl. guest links USP), mAIL (alpha), mTALK / mCALL / mIRL / bridges (design)
+- **OS modules listed**: mDM (alpha), mIRC (alpha), mROOM (alpha — incl. guest links USP), mAIL (alpha), mTALK (alpha — PTT), mKB (alpha — RAG), mCALL / mIRL / bridges (design)

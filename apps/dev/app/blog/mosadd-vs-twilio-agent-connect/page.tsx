@@ -46,8 +46,8 @@ export default function Post() {
 
         <H2>What an OS does instead</H2>
         <P>
-          mosadd is the layer below the channels. One MCP server exposes 32 tools across DM, channels, rooms and
-          mail. You bring your own keys — Telnyx, Resend, LiveKit, Supabase — or self-host the whole thing for
+          mosadd is the layer below the channels. One MCP server exposes 38 tools across DM, channels, rooms,
+          mail, push-to-talk and knowledge recall. You bring your own keys — Telnyx, Resend, LiveKit, Supabase — or self-host the whole thing for
           $0, forever, under Apache-2.0. The provider is a swappable seam, not a landlord.
         </P>
         <Callout type="success">

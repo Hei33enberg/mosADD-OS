@@ -16,7 +16,7 @@ How to get the values:
   3. Find key `sb-<projectref>-auth-token`
   4. Copy the `access_token` field from the JSON value
 
-Restart Cursor. The agent now has 17 mosadd tools (mDM, mIRC, mROOM, mAIL).
+Restart Cursor. The agent now has 38 mosadd tools (mDM, mIRC, mROOM, mAIL, mTALK, mKB).
 
 ## Try it
 

@@ -11,7 +11,7 @@ Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha-orange)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-32%20live-00ff6a)](packages/mcp)
+[![Tools](https://img.shields.io/badge/tools-38%20live-00ff6a)](packages/mcp)
 [![Release](https://img.shields.io/github/v/release/Hei33enberg/mosadd-os?include_prereleases&label=release)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![mosadd.dev](https://img.shields.io/badge/site-mosadd.dev-5af082)](https://mosadd.dev)
 
@@ -27,11 +27,13 @@ Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and 
 npx -y @mosadd/mcp
 ```
 
-…starts an MCP server with **32 tools** across four mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, or send email — all through your own mosadd backend (BYOK).
+…starts an MCP server with **38 tools** across six mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send email, run a push-to-talk room, or recall facts from its own knowledge base — all through your own mosadd backend (BYOK).
 
 | Channel | Tools | Highlight |
 |---|---|---|
 | **mDM** (6) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request` | Multi-thread per contact (USP) + X3DH/Double-Ratchet E2EE |
+| **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
+| **mKB** (1) | `mKB_search` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
 | **mIRC** (15) | 5 channel ops (`mIRC_create/list/get/update/delete`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) | Discord/Slack-style persistent channels, full RBAC |
 | **mROOM** (8) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_send_message`, `mROOM_list_messages` | **No other registered MCP server exposes single-call guest links** |
 | **mAIL** (2) | `mAIL_send`, `mAIL_view` | Every user gets `<userId>@mosadd.com` for free |

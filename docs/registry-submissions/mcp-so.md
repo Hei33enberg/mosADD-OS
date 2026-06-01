@@ -21,7 +21,7 @@ Install:        npx -y @mosadd/mcp
 
 ## Short description (≤200 chars)
 
-Operating system for human communications. 17 MCP tools across direct messages, ephemeral rooms with no-account guest links, channels, and email. Apache-2.0, vendor-agnostic.
+Operating system for human communications. 38 MCP tools across direct messages, ephemeral rooms with no-account guest links, channels, email, push-to-talk, and knowledge recall. Apache-2.0, vendor-agnostic.
 
 ## Long description
 

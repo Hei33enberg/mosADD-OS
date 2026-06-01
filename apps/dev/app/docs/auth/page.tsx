@@ -67,7 +67,7 @@ Password:          ••••••••`}</Pre>
       </Callout>
 
       <P>
-        Next: <Anchor href="/docs/quickstart">Quickstart</Anchor> · <Anchor href="/docs/mcp">32-tool reference</Anchor>
+        Next: <Anchor href="/docs/quickstart">Quickstart</Anchor> · <Anchor href="/docs/mcp">38-tool reference</Anchor>
       </P>
     </Prose>
   );
