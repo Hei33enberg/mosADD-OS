@@ -98,6 +98,22 @@ export interface MdmKeyStore {
   takeOneTimePrekey(id: number): Promise<Uint8Array | undefined>;
   getSession(peerId: string): Promise<MdmSessionRecord | undefined>;
   putSession(peerId: string, record: MdmSessionRecord): Promise<void>;
+
+  /**
+   * OPTIONAL local "sent items" cache. The Double Ratchet is forward-secret and
+   * asymmetric: once we seal a message for a peer we cannot re-derive its
+   * plaintext from our own ratchet on read. So mDM_list cannot show the sender
+   * their OWN outgoing text unless we keep a local copy. These two methods are
+   * that copy — keyed by the provider-assigned message id.
+   *
+   * Honesty note: this is a LOCAL plaintext cache, not synced across devices.
+   * A second device (or a fresh process) won't have it and will fall back to a
+   * "<encrypted · sent by you>" marker. Cross-device sent-history sync is a
+   * tracked follow-up (would need an encrypt-to-self session). Optional so
+   * existing MdmKeyStore implementations keep compiling.
+   */
+  putSentMessage?(messageId: string, plaintext: Uint8Array): Promise<void>;
+  getSentMessage?(messageId: string): Promise<Uint8Array | undefined>;
 }
 
 // ---- In-memory keystore (default) ----
@@ -106,6 +122,7 @@ export class InMemoryMdmKeyStore implements MdmKeyStore {
   private material: OwnPrekeyMaterial | null = null;
   private readonly oneTimeById = new Map<number, Uint8Array>();
   private readonly sessions = new Map<string, MdmSessionRecord>();
+  private readonly sentMessages = new Map<string, Uint8Array>();
 
   async getOwnMaterial(): Promise<OwnPrekeyMaterial> {
     if (this.material) return this.material;
@@ -136,6 +153,14 @@ export class InMemoryMdmKeyStore implements MdmKeyStore {
 
   async putSession(peerId: string, record: MdmSessionRecord): Promise<void> {
     this.sessions.set(peerId, record);
+  }
+
+  async putSentMessage(messageId: string, plaintext: Uint8Array): Promise<void> {
+    this.sentMessages.set(messageId, plaintext);
+  }
+
+  async getSentMessage(messageId: string): Promise<Uint8Array | undefined> {
+    return this.sentMessages.get(messageId);
   }
 }
 

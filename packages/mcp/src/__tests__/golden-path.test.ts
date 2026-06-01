@@ -26,6 +26,7 @@ import { makeCapabilitiesTool } from "../tools/capabilities.js";
 import { allTools } from "../tools/index.js";
 import { createMosaddServer } from "../server.js";
 import { InMemoryMdmKeyStore } from "../crypto/mdm-session.js";
+import { InMemoryVoiceProvider } from "../providers/memory-voice.js";
 import type { MosaddToolContext, ProviderRegistry } from "../types.js";
 
 /** Stand-in for a host-supplied radio transport: captures the bytes it's asked
@@ -65,7 +66,11 @@ class FakeRadioDmProvider implements DmProvider {
 function makeCtx(providers: { dm: DmProvider; keys?: ProviderRegistry["keys"] }): MosaddToolContext {
   return {
     options: { mode: "local", hubUrl: "https://mcp.mosadd.com" },
-    providers: { dm: providers.dm, keys: providers.keys ?? new InMemoryMdmKeyStore() },
+    providers: {
+      dm: providers.dm,
+      keys: providers.keys ?? new InMemoryMdmKeyStore(),
+      voice: new InMemoryVoiceProvider("radio:self-callsign"),
+    },
     log: () => {},
   };
 }

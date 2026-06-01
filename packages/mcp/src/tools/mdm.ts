@@ -165,6 +165,13 @@ async function mDM_send(
     replyToId: input.reply_to_id,
   });
 
+  // Keep a LOCAL copy of our own outgoing plaintext so mDM_list can show it
+  // back to the sender (the ratchet can't re-derive it on read). Best-effort:
+  // only if the keystore offers the optional sent-items cache.
+  if (ctx.providers.keys.putSentMessage) {
+    await ctx.providers.keys.putSentMessage(result.id, inner);
+  }
+
   return {
     message_id: result.id,
     delivered_at: result.deliveredAt,
@@ -251,9 +258,15 @@ async function mDM_list(
       if (!isE2eeEnvelope(m.payload)) {
         return { ...base, text: unpackPayload(m.payload).text, encrypted: false };
       }
-      // Our own outgoing ratchet messages aren't decryptable on read (no local
-      // plaintext store yet — tracked follow-up); show a marker, don't fail.
+      // Our own outgoing ratchet messages aren't decryptable from our own
+      // ratchet on read. Recover the plaintext from the local sent-items cache
+      // (this process). If absent (e.g. a different device/process), fall back
+      // to a marker instead of failing.
       if (m.senderId === selfId) {
+        const cached = await ctx.providers.keys.getSentMessage?.(m.id);
+        if (cached) {
+          return { ...base, text: unpackPayload(cached).text, encrypted: true };
+        }
         return { ...base, text: "<encrypted · sent by you>", encrypted: true };
       }
       try {
