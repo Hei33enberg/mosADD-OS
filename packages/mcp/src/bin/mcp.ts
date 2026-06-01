@@ -12,6 +12,45 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { createMosaddServer } from "../server.js";
 
+const DEFAULT_EXCHANGE =
+  "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-key-exchange";
+
+/**
+ * Hosted-hub path: when MOSADD_API_KEY is set, exchange it for a short-lived
+ * session (URL + anon key + access token) so the tools act as the key's owner.
+ * Removes the DevTools-JWT wall — paste one stable key, done. Falls through
+ * silently if the key is unset or the exchange is unreachable (so BYOK/self-host
+ * keep working).
+ */
+async function bootstrapFromApiKey(): Promise<void> {
+  const apiKey = process.env.MOSADD_API_KEY;
+  if (!apiKey || process.env.MOSADD_USER_JWT) return;
+  const endpoint = process.env.MOSADD_HUB_URL
+    ? `${process.env.MOSADD_HUB_URL.replace(/\/$/, "")}/hub-key-exchange`
+    : DEFAULT_EXCHANGE;
+  try {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: "{}",
+    });
+    if (!res.ok) {
+      process.stderr.write(
+        JSON.stringify({ level: "warn", msg: "mosadd hub key exchange failed", status: res.status }) + "\n",
+      );
+      return;
+    }
+    const d = (await res.json()) as { url?: string; anon_key?: string; access_token?: string };
+    if (d.url) process.env.MOSADD_SUPABASE_URL = d.url;
+    if (d.anon_key) process.env.MOSADD_SUPABASE_ANON_KEY = d.anon_key;
+    if (d.access_token) process.env.MOSADD_USER_JWT = d.access_token;
+  } catch (err) {
+    process.stderr.write(
+      JSON.stringify({ level: "warn", msg: "mosadd hub unreachable", error: String(err) }) + "\n",
+    );
+  }
+}
+
 async function main(): Promise<void> {
   // Auth subcommands: `mosadd login | logout | whoami`. Everything else starts the server.
   const sub = process.argv[2];
@@ -20,6 +59,9 @@ async function main(): Promise<void> {
     await runAuthCommand(sub, process.argv.slice(3));
     return;
   }
+
+  // Hosted: trade MOSADD_API_KEY for a live session before the server reads env.
+  await bootstrapFromApiKey();
 
   const server = createMosaddServer({
     apiKey: process.env.MOSADD_API_KEY,

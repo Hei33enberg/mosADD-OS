@@ -11,9 +11,9 @@ const CHECKOUT = {
 };
 
 function snippet(key: string) {
-  return `claude mcp add mosadd-hosted \\
-  --transport http https://mcp.mosadd.com/mcp \\
-  --header "Authorization: Bearer ${key}"`;
+  return `claude mcp add mosadd \\
+  --env MOSADD_API_KEY=${key} \\
+  -- npx -y @mosadd/mcp`;
 }
 
 export default function HubPage() {
@@ -200,7 +200,8 @@ export default function HubPage() {
         <a href={CHECKOUT.team} className="rounded-none border border-border px-4 py-2 text-sm text-foreground hover:border-primary/50">Team — $49/mo →</a>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Free tier is active by default. Hosted MCP endpoint <code className="font-mono">mcp.mosadd.com</code> goes live at launch — your key is ready now.
+        Free tier active by default. Your key works with <code className="font-mono">npx -y @mosadd/mcp</code> —
+        no server to run, no Supabase creds, no expiring tokens.
       </p>
     </Shell>
   );
