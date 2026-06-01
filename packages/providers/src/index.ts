@@ -21,3 +21,13 @@ export type {
   DmListResult,
   DmMessage,
 } from "./dm.js";
+
+// mTALK push-to-talk (half-duplex voice). The default network provider
+// coordinates a LiveKit room + authoritative floor state; a radio host injects
+// a provider that maps the floor onto a physical RF channel.
+export type {
+  VoiceProvider,
+  FloorSnapshot,
+  FloorRequestResult,
+  VoiceJoinTicket,
+} from "./voice.js";

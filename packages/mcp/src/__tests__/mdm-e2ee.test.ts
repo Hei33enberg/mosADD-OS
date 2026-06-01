@@ -20,6 +20,7 @@ import type {
 } from "@mosadd/providers";
 import { mdmTools } from "../tools/mdm.js";
 import { InMemoryMdmKeyStore } from "../crypto/mdm-session.js";
+import { InMemoryVoiceProvider } from "../providers/memory-voice.js";
 import type { MosaddToolContext } from "../types.js";
 
 /** Shared store: message log + key directory, both keyed in one place. */
@@ -73,7 +74,11 @@ const tool = (name: string) => {
 function ctxFor(backend: SharedBackend, id: string): MosaddToolContext {
   return {
     options: { mode: "local", hubUrl: "https://mcp.mosadd.com" },
-    providers: { dm: new ClientProvider(backend, id), keys: new InMemoryMdmKeyStore() },
+    providers: {
+      dm: new ClientProvider(backend, id),
+      keys: new InMemoryMdmKeyStore(),
+      voice: new InMemoryVoiceProvider(id),
+    },
     log: () => {},
   };
 }
@@ -112,12 +117,36 @@ describe("mDM E2EE golden path — X3DH handshake + ratchet, both directions", (
     // 5. Bob replies on the now-established session (no new handshake).
     await tool("mDM_send")({ to: "alice", text: "copy that" }, bob);
 
-    // 6. Alice decrypts Bob's reply.
+    // 6. Alice decrypts Bob's reply AND reads back her OWN sent message
+    //    (sent-items cache — the ratchet can't re-derive own plaintext on read).
     const aliceView = (await tool("mDM_list")({ contact_id: "bob" }, alice)) as {
-      messages: Array<{ text: string; sender_identity_id: string }>;
+      messages: Array<{ text: string; sender_identity_id: string; encrypted: boolean }>;
     };
     const fromBob = aliceView.messages.find((m) => m.sender_identity_id === "bob");
     expect(fromBob?.text).toBe("copy that");
+    const ownByAlice = aliceView.messages.find((m) => m.sender_identity_id === "alice");
+    expect(ownByAlice?.text).toBe("first contact"); // not "<encrypted · sent by you>"
+    expect(ownByAlice?.encrypted).toBe(true);
+  });
+
+  it("falls back to a marker for own messages when no sent-items cache exists", async () => {
+    // A keystore WITHOUT the optional sent-items cache must not crash; the
+    // sender simply sees the marker for their own outgoing messages.
+    const backend = new SharedBackend();
+    const alice = ctxFor(backend, "alice");
+    const bob = ctxFor(backend, "bob");
+    // Strip the optional cache methods from alice's keystore.
+    (alice.providers.keys as { putSentMessage?: unknown }).putSentMessage = undefined;
+    (alice.providers.keys as { getSentMessage?: unknown }).getSentMessage = undefined;
+
+    await tool("mDM_publish_keys")({}, bob);
+    await tool("mDM_send")({ to: "bob", text: "no cache here" }, alice);
+
+    const aliceView = (await tool("mDM_list")({ contact_id: "bob" }, alice)) as {
+      messages: Array<{ text: string; sender_identity_id: string }>;
+    };
+    const own = aliceView.messages.find((m) => m.sender_identity_id === "alice");
+    expect(own?.text).toBe("<encrypted · sent by you>");
   });
 
   it("mDM_send fails with an actionable error when the peer has no published keys", async () => {

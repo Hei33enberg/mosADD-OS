@@ -3,7 +3,7 @@
  */
 
 import type { z } from "zod";
-import type { DmProvider } from "@mosadd/providers";
+import type { DmProvider, VoiceProvider } from "@mosadd/providers";
 import type { MdmKeyStore } from "./crypto/mdm-session.js";
 
 export type Mode = "cloud" | "local" | "self-host";
@@ -21,6 +21,12 @@ export type Mode = "cloud" | "local" | "self-host";
 export interface ProviderRegistry {
   dm: DmProvider;
   keys: MdmKeyStore;
+  /**
+   * mTALK push-to-talk transport. Defaults to the network provider (LiveKit
+   * media + authoritative floor state). A radio host injects a provider that
+   * maps the floor onto a physical RF channel.
+   */
+  voice: VoiceProvider;
 }
 
 export interface MosaddServerOptions {

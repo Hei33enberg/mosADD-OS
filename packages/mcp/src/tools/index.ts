@@ -12,6 +12,8 @@ import { mircMembersTools } from "./mirc-members.js";
 import { mroomTools } from "./mroom.js";
 import { mroomMessagesTools } from "./mroom-messages.js";
 import { mailTools } from "./mail.js";
+import { mtalkTools } from "./mtalk.js";
+import { knowledgeTools } from "./knowledge.js";
 import { makeCapabilitiesTool } from "./capabilities.js";
 
 /** The m* channel tools (everything except the meta discovery tool). */
@@ -22,7 +24,9 @@ const channelTools: MosaddTool[] = [
   ...mroomTools,
   ...mroomMessagesTools,
   ...mailTools,
-  // mtalkTools, mcallTools, mirlTools,
+  ...mtalkTools,
+  ...knowledgeTools,
+  // mcallTools, mirlTools,
   // mmatrixTools, mdiscordTools, mtelegramTools, mslackTools, msignalTools,
   //
   // Each m* module registers its tools here as it ships.

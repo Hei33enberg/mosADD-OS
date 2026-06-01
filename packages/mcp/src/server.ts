@@ -5,6 +5,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { allTools } from "./tools/index.js";
 import { SupabaseDmProvider } from "./providers/supabase-dm.js";
+import { SupabaseVoiceProvider } from "./providers/supabase-voice.js";
 import { InMemoryMdmKeyStore } from "./crypto/mdm-session.js";
 import type { MosaddServerOptions, MosaddToolContext, ProviderRegistry } from "./types.js";
 
@@ -19,6 +20,7 @@ export function defaultProviders(injected?: Partial<ProviderRegistry>): Provider
   return {
     dm: injected?.dm ?? new SupabaseDmProvider(),
     keys: injected?.keys ?? new InMemoryMdmKeyStore(),
+    voice: injected?.voice ?? new SupabaseVoiceProvider(),
   };
 }
 

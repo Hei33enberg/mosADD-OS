@@ -121,7 +121,7 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
     expect(result.serverInfo?.name).toBe("mosadd");
   });
 
-  it("lists all 19 tools on tools/list", async () => {
+  it("lists all channel tools on tools/list", async () => {
     await client.send("initialize", {
       protocolVersion: "2024-11-05",
       capabilities: {},
@@ -139,9 +139,11 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
     expect(names).toContain("mIRC_create");
     expect(names).toContain("mROOM_create_guest_link");
     expect(names).toContain("mAIL_send");
+    expect(names).toContain("mTALK_press"); // mTALK PTT now shipped
+    expect(names).toContain("mKB_search"); // mKB RAG-for-devs now shipped
 
-    // Total tool count today
-    expect(names.length).toBeGreaterThanOrEqual(19);
+    // Total tool count today (grows as modules ship)
+    expect(names.length).toBeGreaterThanOrEqual(25);
 
     // Every tool has a valid JSON Schema
     for (const tool of result.tools ?? []) {
