@@ -9,14 +9,14 @@
 {
   "name": "mosadd",
   "displayName": "mosadd — A human OS. Add.",
-  "description": "Operating system for human communications. 17 MCP tools across direct messages, ephemeral rooms with no-account guest links, channels, and email.",
+  "description": "Operating system for human communications. 38 MCP tools across direct messages, ephemeral rooms with no-account guest links, channels, email, push-to-talk, and knowledge recall.",
   "repo": "https://github.com/Hei33enberg/mosadd-os",
   "homepage": "https://mosadd.dev",
   "npm": "@mosadd/mcp",
   "license": "Apache-2.0",
   "author": "mosadd contributors",
   "install": "npx -y @mosadd/mcp",
-  "tools_count": 17,
+  "tools_count": 38,
   "categories": ["communication", "messaging", "voice", "email"],
   "tags": ["agents", "claude", "cursor", "anthropic", "open-source", "apache-2"]
 }
@@ -26,7 +26,7 @@
 
 > ## Add mosadd MCP server
 >
-> An OS for human communications, MCP-native. 17 tools today (mDM, mIRC, mROOM, mAIL), with mTALK / mCALL / mIRL / bridges (Telegram, Discord, Matrix, Slack, Signal) landing in Phase 1 follow-ups.
+> An OS for human communications, MCP-native. 38 tools today (mDM, mIRC, mROOM, mAIL, mTALK, mKB), with mCALL / mIRL / bridges (Telegram, Discord, Matrix, Slack, Signal) landing in Phase 1 follow-ups.
 >
 > **Differentiator:** `mROOM_create_guest_link` generates a short-lived no-signup URL — one MCP call from any agent, no other registered server exposes this.
 >

@@ -57,7 +57,7 @@ Claude calls `mAIL_send`.
 
 ## All tools available
 
-See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (17 tools across mDM / mIRC / mROOM / mAIL).
+See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (38 tools across mDM / mIRC / mROOM / mAIL / mTALK / mKB).
 
 ## Troubleshooting
 

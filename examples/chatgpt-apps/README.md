@@ -36,4 +36,4 @@ Configuration becomes (literally) one line:
 MCP server URL: https://mcp.mosadd.com/sse
 ```
 
-OAuth, your keys server-side, 17 mosadd tools available. Watch the repo for the v0.2 release.
+OAuth, your keys server-side, 38 mosadd tools available. Watch the repo for the v0.2 release.

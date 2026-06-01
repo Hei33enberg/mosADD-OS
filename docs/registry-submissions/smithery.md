@@ -36,7 +36,7 @@ startCommand:
 
 **Title:** mosadd — A human OS. Add.
 
-**Tagline:** Operating system for human communications. DMs, rooms with guest links, channels, email — 17 tools today.
+**Tagline:** Operating system for human communications. DMs, rooms with guest links, channels, email, push-to-talk, knowledge recall — 38 tools today.
 
 **Long description:**
 
