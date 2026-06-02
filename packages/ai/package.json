@@ -1,29 +1,62 @@
 {
   "name": "@mosadd/ai",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.4",
   "description": "Framework adapters for mosadd. Subpath exports: @mosadd/ai/vercel, @mosadd/ai/langchain, @mosadd/ai/openai, @mosadd/ai/anthropic. Single package, atomic releases (Stripe Agent Toolkit pattern).",
   "homepage": "https://github.com/Hei33enberg/mosadd-os/tree/main/packages/ai",
-  "repository": { "type": "git", "url": "https://github.com/Hei33enberg/mosadd-os.git", "directory": "packages/ai" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hei33enberg/mosadd-os.git",
+    "directory": "packages/ai"
+  },
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
-    "./vercel": { "types": "./dist/vercel/index.d.ts", "import": "./dist/vercel/index.js" },
-    "./langchain": { "types": "./dist/langchain/index.d.ts", "import": "./dist/langchain/index.js" },
-    "./openai": { "types": "./dist/openai/index.d.ts", "import": "./dist/openai/index.js" },
-    "./anthropic": { "types": "./dist/anthropic/index.d.ts", "import": "./dist/anthropic/index.js" }
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./vercel": {
+      "types": "./dist/vercel/index.d.ts",
+      "import": "./dist/vercel/index.js"
+    },
+    "./langchain": {
+      "types": "./dist/langchain/index.d.ts",
+      "import": "./dist/langchain/index.js"
+    },
+    "./openai": {
+      "types": "./dist/openai/index.d.ts",
+      "import": "./dist/openai/index.js"
+    },
+    "./anthropic": {
+      "types": "./dist/anthropic/index.d.ts",
+      "import": "./dist/anthropic/index.js"
+    }
   },
-  "files": ["dist", "src", "README.md"],
-  "publishConfig": { "access": "public" },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup src/index.ts src/vercel/index.ts src/langchain/index.ts src/openai/index.ts src/anthropic/index.ts --format esm --dts --clean",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "clean": "rm -rf dist"
   },
-  "dependencies": { "@mosadd/mcp": "workspace:*" },
-  "devDependencies": { "tsup": "^8.3.5", "typescript": "^5.7.2", "vitest": "^2.1.8" },
-  "engines": { "node": ">=18" }
+  "dependencies": {
+    "@mosadd/mcp": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }

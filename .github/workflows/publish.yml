@@ -56,11 +56,19 @@ jobs:
           ACCESS="${{ github.event.inputs.access || 'public' }}"
           for pkg in protocol crypto providers core threat-engine bridges mcp ai; do
             echo "::group::publish @mosadd/$pkg"
-            pnpm publish "packages/$pkg" \
+            if ! pnpm publish "packages/$pkg" \
               --access "$ACCESS" \
               --tag "$TAG" \
               --no-git-checks \
-              --provenance
+              --provenance 2> /tmp/pub.err; then
+              cat /tmp/pub.err
+              if grep -qi "cannot publish over the previously published" /tmp/pub.err; then
+                echo "↷ @mosadd/$pkg already at this version — skipping (not a failure)"
+              else
+                echo "::error::publish @mosadd/$pkg failed"
+                exit 1
+              fi
+            fi
             echo "::endgroup::"
           done
 
