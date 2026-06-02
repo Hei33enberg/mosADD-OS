@@ -23,7 +23,7 @@ const examples: {
   {
     slug: 'cursor',
     title: 'Cursor · MCP config',
-    blurb: 'Drop-in ~/.cursor/mcp.json snippet. Cursor discovers all 38 mosadd tools and exposes them via @-mention.',
+    blurb: 'Drop-in ~/.cursor/mcp.json snippet. Cursor discovers all 40 mosadd tools and exposes them via @-mention.',
     framework: 'Cursor',
     url: 'https://github.com/Hei33enberg/mosadd-os/tree/main/examples/cursor',
   },

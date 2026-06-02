@@ -141,9 +141,10 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
     expect(names).toContain("mAIL_send");
     expect(names).toContain("mTALK_press"); // mTALK PTT now shipped
     expect(names).toContain("mKB_search"); // mKB RAG-for-devs now shipped
+    expect(names).toContain("mIRC_post_message"); // channel messaging now shipped
 
     // Total tool count today (grows as modules ship)
-    expect(names.length).toBeGreaterThanOrEqual(25);
+    expect(names.length).toBeGreaterThanOrEqual(40);
 
     // Every tool has a valid JSON Schema
     for (const tool of result.tools ?? []) {

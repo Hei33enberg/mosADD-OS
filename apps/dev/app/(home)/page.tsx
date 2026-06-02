@@ -17,7 +17,7 @@ const modules = [
 const bridges = ['mMATRIX', 'mDISCORD', 'mTELEGRAM', 'mSLACK', 'mSIGNAL'];
 
 const stats = [
-  { value: '38', label: 'MCP tools' },
+  { value: '40', label: 'MCP tools' },
   { value: '4', label: 'SDK adapters' },
   { value: '6', label: 'example apps' },
   { value: '7', label: 'm* channels' },
@@ -114,7 +114,7 @@ export default function HomePage() {
             </li>
             <li>· Bring your own Telnyx / Resend / LiveKit / Supabase — or self-host for $0</li>
             <li>· E2EE (X3DH + Double Ratchet) and threat radar in the kernel</li>
-            <li>· 38 tools, works in every MCP client, Apache-2.0 forever</li>
+            <li>· 40 tools, works in every MCP client, Apache-2.0 forever</li>
           </ul>
         </div>
       </section>
@@ -227,7 +227,7 @@ export default function HomePage() {
           {[
             { n: '1', t: 'Install', d: 'One line in Claude Code, Cursor or any MCP client.', c: 'claude mcp add mosadd npx -- -y @mosadd/mcp' },
             { n: '2', t: 'Add your keys — or go hosted', d: 'Bring Telnyx / Resend / LiveKit / Supabase, or sign up for the hosted hub. Self-host stays $0.', c: 'mosadd login' },
-            { n: '3', t: 'Call a tool', d: 'Your agent sends a DM, opens a room, posts to a channel — 38 tools, one server.', c: 'mDM_send  ·  mROOM_create_guest_link' },
+            { n: '3', t: 'Call a tool', d: 'Your agent sends a DM, opens a room, posts to a channel — 40 tools, one server.', c: 'mDM_send  ·  mROOM_create_guest_link' },
           ].map((s) => (
             <div key={s.n} className="border border-border p-5">
               <div className="mb-3 font-display text-3xl text-primary/60">{s.n}</div>
@@ -247,7 +247,7 @@ export default function HomePage() {
           Build with us<span className="term-cursor" />
         </h2>
         <p className="mb-6 max-w-2xl text-muted-foreground">
-          mosadd-os is the open Apache-2.0 layer — 38 tools live today, more channels landing. RFCs and contributions
+          mosadd-os is the open Apache-2.0 layer — 40 tools live today, more channels landing. RFCs and contributions
           welcome.
         </p>
         <div className="flex flex-wrap gap-3">

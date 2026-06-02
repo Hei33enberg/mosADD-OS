@@ -21,10 +21,10 @@ Quickstart configs for the agent runtimes that consume `@mosadd/mcp`.
 
 ## What you get
 
-38 MCP tools across 6 modules (+ the `comms_capabilities` discovery tool):
+40 MCP tools across 6 modules (+ the `comms_capabilities` discovery tool):
 
 - **mDM** (6): list_contacts, publish_keys, send, send_unencrypted, list, respond_request
-- **mIRC** (15): create, list, get, update, delete, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt
+- **mIRC** (17): create, list, get, update, delete, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages
 - **mROOM** (8): create, create_guest_link ★, join, leave, close, list, send_message, list_messages
 - **mAIL** (2): send, view
 - **mTALK** (5): open, join, press, release, state — half-duplex push-to-talk
