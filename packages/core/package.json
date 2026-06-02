@@ -2,10 +2,10 @@
   "name": "@mosadd/core",
   "version": "3.0.0-alpha.4",
   "description": "Core kernel for mosadd: channel primitives, routing, threat radar hook injection, identity. Used by @mosadd/mcp and @mosadd/ai.",
-  "homepage": "https://github.com/mosadd/os/tree/main/packages/core",
+  "homepage": "https://github.com/Hei33enberg/mosADD-OS/tree/main/packages/core",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mosadd/os.git",
+    "url": "https://github.com/Hei33enberg/mosADD-OS.git",
     "directory": "packages/core"
   },
   "license": "Apache-2.0",
