@@ -19,7 +19,7 @@
 
 ## Summary
 
-mosadd is an MCP-native operating system for human communications. 38 tools across 6 modules in alpha (mDM, mIRC, mROOM, mAIL, mTALK, mKB), with more landing through Phase 1 (mCALL, mIRL, plus bridges to Telegram, Discord, Matrix, Slack, Signal).
+mosadd is an MCP-native operating system for human communications. 40 tools across 6 modules in alpha (mDM, mIRC, mROOM, mAIL, mTALK, mKB), with more landing through Phase 1 (mCALL, mIRL, plus bridges to Telegram, Discord, Matrix, Slack, Signal).
 
 ## Differentiators
 
@@ -32,7 +32,7 @@ mosadd is an MCP-native operating system for human communications. 38 tools acro
 ## Maturity
 
 - Smoke test pass — stdio MCP responds correctly to `initialize` + `tools/list`
-- 38 tools registered, schemas validated with Zod
+- 40 tools registered, schemas validated with Zod
 - BYOK env-var config (MOSADD_SUPABASE_URL, ANON_KEY, USER_JWT)
 - Builds clean (tsup + DTS gen)
 - Apache-2.0 with NOTICE for third-party attribution

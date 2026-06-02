@@ -68,4 +68,4 @@ mosadd({ modules: ["mDM", "mROOM", "mIRC", "mAIL"] })
 mosadd({})
 ```
 
-Today: 38 tools across mDM / mIRC / mROOM / mAIL / mTALK / mKB. Phase 1 adds mCALL / mIRL + bridges (Matrix / Discord / Telegram).
+Today: 40 tools across mDM / mIRC / mROOM / mAIL / mTALK / mKB. Phase 1 adds mCALL / mIRL + bridges (Matrix / Discord / Telegram).
