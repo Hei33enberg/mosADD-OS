@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getSupabase, HUB_KEYS_ENDPOINT, SUPABASE_CONFIGURED } from './supabaseClient';
 
 type Key = { id: string; name: string; key_prefix: string; plan: string; created_at: string };
@@ -44,15 +44,29 @@ export default function HubPage() {
     return () => sub.subscription.unsubscribe();
   }, [supabase]);
 
+  const [keysLoaded, setKeysLoaded] = useState(false);
+  const autoIssued = useRef(false);
+
   const loadKeys = useCallback(async () => {
     if (!token) return;
     const res = await fetch(HUB_KEYS_ENDPOINT, { headers: { Authorization: `Bearer ${token}` } });
     if (res.ok) setKeys((await res.json()).keys ?? []);
+    setKeysLoaded(true);
   }, [token]);
 
   useEffect(() => {
     if (token) loadKeys();
   }, [token, loadKeys]);
+
+  // Zero-friction onboarding: the moment a signed-in dev has NO key, mint one for
+  // them automatically and show it once. No "Create key" step to hunt for.
+  useEffect(() => {
+    if (token && keysLoaded && keys.length === 0 && !fresh && !busy && !autoIssued.current) {
+      autoIssued.current = true;
+      void createKey();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, keysLoaded, keys.length, fresh, busy]);
 
   async function createKey() {
     if (!token) return;
