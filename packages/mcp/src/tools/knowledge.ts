@@ -84,7 +84,7 @@ export const knowledgeTools: MosaddTool[] = [
     name: "mKB_search",
     requires: "network",
     description:
-      "Search and answer questions over the USER'S OWN mosadd data (messages, emails, calls, notes) with a private RAG index — hybrid vector + keyword retrieval, reranked, grounded in cited sources (no fabrication). Use it to recall 'what did X say about Y', summarize a thread, or pull facts the user has received. Returns an answer plus the source snippets it used. This is agent memory (mKB = knowledge base) over the user's communications, available outside the mosadd app.",
+      "Search and answer questions over the USER'S OWN mosadd data (messages, emails, calls, notes) with a private per-user RAG index — hybrid vector + keyword retrieval, reranked, grounded in cited sources (no fabrication). Use it to recall 'what did X say about Y', summarize a thread, or pull facts the user has received. Returns an answer plus the source snippets it used. This is agent memory (mKB = knowledge base) over the user's communications, available outside the mosadd app. NOTE: RAG requires content to be indexed server-side in plaintext, so anything searchable here is NOT covered by the zero-knowledge / E2EE guarantee — only data the user has explicitly opted into indexing is searchable. See docs/security/e2ee-posture.md.",
     inputSchema: mKB_search_input,
     handler: mKB_search as MosaddTool["handler"],
   },

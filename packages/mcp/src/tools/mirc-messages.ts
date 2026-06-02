@@ -37,6 +37,11 @@ const mIRC_list_messages_input = z.object({
   space_id: z.string().optional().describe("Optional backing space id. Resolved automatically if omitted."),
 });
 
+// ALPHA: channel messages are NOT end-to-end encrypted here — the body is wrapped
+// in a JSON envelope and base64-encoded (server-readable). The mosadd.com app
+// encrypts channel messages with a per-channel group key, so app clients cannot
+// decrypt these dev-posted plaintext payloads (and vice-versa) until the toolkit
+// adopts the same group-key scheme. See docs/security/e2ee-posture.md.
 function packPlaintextPayload(text: string, replyToId?: string): string {
   const envelope = {
     v: PROTOCOL_VERSION,
@@ -136,7 +141,7 @@ export const mircMessagesTools: MosaddTool[] = [
     name: "mIRC_post_message",
     requires: "network",
     description:
-      "Post a text message into a persistent channel (mIRC). Pass channel_id from mIRC_create / mIRC_list; the backing space is resolved automatically. You must be a member of private channels (use mIRC_join first). This is how an agent actually talks in a channel — the other mIRC_* tools only manage it.",
+      "Post a text message into a persistent channel (mIRC). Pass channel_id from mIRC_create / mIRC_list; the backing space is resolved automatically. You must be a member of private channels (use mIRC_join first). This is how an agent actually talks in a channel — the other mIRC_* tools only manage it. NOTE (alpha): the payload is NOT end-to-end encrypted — it is plaintext base64 and is readable by the server; the mosadd.com app uses per-channel group-key encryption, so app clients cannot read these messages yet (and vice-versa). Group-key parity is planned.",
     inputSchema: mIRC_post_message_input,
     handler: mIRC_post_message as MosaddTool["handler"],
   },
