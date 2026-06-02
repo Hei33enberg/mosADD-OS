@@ -22,8 +22,8 @@ const ChannelId = z
   .describe("Channel id (UUID). Use mIRC_list to discover available channels.");
 
 const AccessMode = z
-  .enum(["public", "private", "invite_only"])
-  .describe("public: anyone joins · private: requires invite + password · invite_only: invite only.");
+  .enum(["open", "password", "private"])
+  .describe("open: anyone can join · password: join with a shared password · private: invite-only.");
 
 const Capabilities = z
   .object({
@@ -37,8 +37,8 @@ const Capabilities = z
 const mIRC_create_input = z.object({
   name: z.string().min(1).max(80).describe("Channel display name."),
   topic: z.string().max(500).optional().describe("Optional channel topic/description."),
-  access_mode: AccessMode.default("public"),
-  password: z.string().min(6).max(120).optional().describe("Password (only for access_mode=private)."),
+  access_mode: AccessMode.default("open"),
+  password: z.string().min(6).max(120).optional().describe("Password (only for access_mode=password)."),
   capabilities: Capabilities,
 });
 
@@ -134,7 +134,7 @@ export const mircTools: MosaddTool[] = [
     name: "mIRC_create",
     requires: "network",
     description:
-      "Create a new persistent channel (Discord/Slack-style). Set access_mode to public for open join, private for password-gated, invite_only for explicit invites. capabilities controls modes (txt/ptt/live).",
+      "Create a new persistent channel (Discord/Slack-style). Set access_mode to open (anyone joins), password (shared-password gated), or private (invite-only). capabilities controls modes (txt/ptt/live).",
     inputSchema: mIRC_create_input,
     handler: mIRC_create as MosaddTool["handler"],
   },

@@ -2,10 +2,10 @@
   "name": "@mosadd/ai",
   "version": "3.0.0-alpha.4",
   "description": "Framework adapters for mosadd. Subpath exports: @mosadd/ai/vercel, @mosadd/ai/langchain, @mosadd/ai/openai, @mosadd/ai/anthropic. Single package, atomic releases (Stripe Agent Toolkit pattern).",
-  "homepage": "https://github.com/Hei33enberg/mosadd-os/tree/main/packages/ai",
+  "homepage": "https://github.com/Hei33enberg/mosADD-OS/tree/main/packages/ai",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Hei33enberg/mosadd-os.git",
+    "url": "https://github.com/Hei33enberg/mosADD-OS.git",
     "directory": "packages/ai"
   },
   "license": "Apache-2.0",
