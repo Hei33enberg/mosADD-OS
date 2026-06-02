@@ -1,22 +1,44 @@
 {
   "name": "@mosadd/core",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0-alpha.4",
   "description": "Core kernel for mosadd: channel primitives, routing, threat radar hook injection, identity. Used by @mosadd/mcp and @mosadd/ai.",
   "homepage": "https://github.com/mosadd/os/tree/main/packages/core",
-  "repository": { "type": "git", "url": "https://github.com/mosadd/os.git", "directory": "packages/core" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mosadd/os.git",
+    "directory": "packages/core"
+  },
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
-  "files": ["dist", "src", "README.md"],
-  "publishConfig": { "access": "public" },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --clean",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "clean": "rm -rf dist"
   },
-  "dependencies": { "@mosadd/protocol": "workspace:*" },
-  "devDependencies": { "tsup": "^8.3.5", "typescript": "^5.7.2" },
-  "engines": { "node": ">=18" }
+  "dependencies": {
+    "@mosadd/protocol": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
