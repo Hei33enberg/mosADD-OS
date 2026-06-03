@@ -43,8 +43,7 @@ async function bootstrap(norm: { domain: string; slug: string }): Promise<void> 
     shadow.appendChild(el);
     const handle = mountChat(el, {
       domain: norm.domain,
-      withClose: true,
-      onClose() { inlinePanel = null; },
+      actions: [{ icon: "close", i18nKey: "tooltipClose", onClick: () => { if (inlinePanel) { inlinePanel.handle.destroy(); inlinePanel.el.remove(); inlinePanel = null; } } }],
       onPresence(c) { bubble.setCount(c); },
     });
     inlinePanel = { handle, el };
