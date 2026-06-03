@@ -10,6 +10,7 @@ import { mdmTools } from "./mdm.js";
 import { mircTools } from "./mirc.js";
 import { mircMembersTools } from "./mirc-members.js";
 import { mircMessagesTools } from "./mirc-messages.js";
+import { mircEdgeTools } from "./mirc-edge.js";
 import { mroomTools } from "./mroom.js";
 import { mroomMessagesTools } from "./mroom-messages.js";
 import { mailTools } from "./mail.js";
@@ -23,6 +24,7 @@ const channelTools: MosaddTool[] = [
   ...mircTools,
   ...mircMembersTools,
   ...mircMessagesTools,
+  ...mircEdgeTools,
   ...mroomTools,
   ...mroomMessagesTools,
   ...mailTools,
