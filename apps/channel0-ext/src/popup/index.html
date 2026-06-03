@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>channel 0</title>
+    <style>
+      :root { color-scheme: dark; }
+      body { width: 280px; margin: 0; padding: 16px; background: #0a0a0a; color: #e6e6e6;
+             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; font-size: 13px; }
+      h1 { margin: 0 0 4px; font-size: 14px; }
+      .brand { color: #00ff7a; font-weight: 700; }
+      .domain { font-family: ui-monospace, Menlo, Consolas, monospace; color: #00ff7a; word-break: break-all; }
+      p { color: #c4c4c4; line-height: 1.45; margin: 8px 0; }
+      label { display: block; font-size: 11px; color: #888; margin-top: 12px; }
+      input { width: 100%; background: #111; color: #e6e6e6; border: 1px solid #1a1a1a; border-radius: 6px; padding: 8px; font-size: 13px; outline: none; }
+      input:focus { border-color: #00ff7a; }
+      button { background: #00ff7a; color: #000; border: none; border-radius: 6px; padding: 8px 12px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+      .footer { margin-top: 16px; font-size: 11px; color: #555; }
+    </style>
+  </head>
+  <body>
+    <h1><span class="brand">channel 0</span> [mIRC]</h1>
+    <p>Anonymous live chat for every domain. Open this on any site to join everyone who's there now.</p>
+    <div>
+      You are on <span class="domain" id="domain">…</span>
+    </div>
+    <label for="nick">Your nick on this domain</label>
+    <input id="nick" type="text" maxlength="32" />
+    <button id="save">save nick</button>
+    <div class="footer">with <span class="brand">mosadd</span> inside · v0.1.0</div>
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>
