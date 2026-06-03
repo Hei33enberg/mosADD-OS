@@ -34,6 +34,7 @@ const ROUTES: Array<{ path: string; priority: number; freq: MetadataRoute.Sitema
   { path: '/embed', priority: 0.9, freq: 'weekly' },
   { path: '/embed/install', priority: 0.85, freq: 'weekly' },
   { path: '/channel0', priority: 0.95, freq: 'weekly' },
+  { path: '/domains', priority: 0.85, freq: 'weekly' },
   { path: '/skins', priority: 0.7, freq: 'weekly' },
   { path: '/skins/editor', priority: 0.5, freq: 'monthly' },
   { path: '/status', priority: 0.3, freq: 'monthly' },
