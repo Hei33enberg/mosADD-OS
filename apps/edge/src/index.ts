@@ -25,14 +25,19 @@
 
 export interface Env {
   CHANNEL: DurableObjectNamespace;
-  /** Supabase project base URL, e.g. https://<ref>.supabase.co
-   *  (Set via `wrangler secret put SUPABASE_URL` or via wrangler.toml [vars]). */
+  /** Supabase project base URL — public, in wrangler.toml [vars]. */
   SUPABASE_URL: string;
+  /** Shared secret with the Supabase `message-ingest-batch` fn (LINEAR-2679).
+   *  Set via `wrangler secret put CF_INGEST_SECRET` (CI does it). Same value on
+   *  the Supabase side as an Edge Function secret. */
+  CF_INGEST_SECRET?: string;
 }
 
 const HISTORY_LIMIT = 100;
 const KEY_CACHE_TTL_MS = 60_000; // 60s — fast revocation propagation, big cost saving on hot keys
 const RL_PER_MIN = 600; // text rate limit per hub key per minute
+const FLUSH_INTERVAL_MS = 5_000; // E3: how often the DO drains its pending queue
+const FLUSH_BATCH_MAX = 500;     // matches the ingest endpoint cap
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -65,7 +70,7 @@ export default {
 
     const url = new URL(req.url);
     if (url.pathname === "/" || url.pathname === "/health") {
-      return json({ ok: true, service: "mosadd-edge", phase: "E2-auth" });
+      return json({ ok: true, service: "mosadd-edge", phase: "E3-flush" });
     }
 
     const m = url.pathname.match(/^\/c\/([A-Za-z0-9_-]{1,128})\/(ws|send|history)$/);
@@ -81,6 +86,9 @@ export default {
 // =============================================================================
 
 interface StoredMessage { id: string; ts: number; from?: string | null; text: string; }
+/** Same as StoredMessage but carries channel_id so the ingest endpoint can route to the
+ *  right messages_meta row. The DO knows its channel_id from its idFromName via the URL. */
+interface PendingMessage extends StoredMessage { channel_id: string; }
 interface KeyCacheEntry { hash: string; valid: boolean; user_id?: string; plan?: string; exp: number; }
 interface RLBucket { count: number; window_start: number; }
 
@@ -148,6 +156,12 @@ export class ChannelDO {
   async fetch(req: Request): Promise<Response> {
     const url = new URL(req.url);
     const op = url.pathname.split("/").pop() ?? "";
+    // Cache the channel_id on first hit — needed for E3 ingest routing.
+    const ch = url.pathname.match(/^\/c\/([A-Za-z0-9_-]{1,128})\//)?.[1];
+    if (ch) {
+      const known = await this.state.storage.get<string>("channel_id");
+      if (known !== ch) await this.state.storage.put("channel_id", ch);
+    }
 
     // ── WS upgrade — auth via ?k= because browsers can't set headers on upgrade
     if (op === "ws") {
@@ -227,6 +241,25 @@ export class ChannelDO {
     buf.push(msg);
     if (buf.length > HISTORY_LIMIT) buf.splice(0, buf.length - HISTORY_LIMIT);
     await this.state.storage.put("recent", buf);
+
+    // E3 (LINEAR-2679): queue for async flush to Supabase as system-of-record.
+    // We attach channel_id so the ingest endpoint can route. At-least-once:
+    // if the flush fails (or this DO is evicted mid-flush) the row stays in
+    // `pending` until the next alarm.
+    const channelId = (await this.state.storage.get<string>("channel_id")) ?? "";
+    if (channelId) {
+      const pending = (await this.state.storage.get<PendingMessage[]>("pending")) ?? [];
+      pending.push({ ...msg, channel_id: channelId });
+      await this.state.storage.put("pending", pending);
+      // Schedule an alarm if none is set. setAlarm(absolute ms epoch).
+      const cur = await this.state.storage.getAlarm();
+      if (cur === null) await this.state.storage.setAlarm(Date.now() + FLUSH_INTERVAL_MS);
+      // Burst flush: if we're past the batch cap, drain immediately.
+      if (pending.length >= FLUSH_BATCH_MAX) {
+        // Fire-and-forget; alarm() is still a safety net if this errors.
+        void this.flush().catch(() => {});
+      }
+    }
   }
 
   private broadcast(msg: StoredMessage): void {
@@ -234,6 +267,47 @@ export class ChannelDO {
     for (const ws of this.state.getWebSockets()) {
       try { ws.send(payload); } catch { /* dropped sockets clean themselves up */ }
     }
+  }
+
+  /** Durable Object alarm — Cloudflare runs this even if the DO was hibernated.
+   *  We use it as the periodic flush trigger (LINEAR-2679). */
+  async alarm(): Promise<void> {
+    try {
+      const drained = await this.flush();
+      // Still have pending? Re-arm.
+      const left = (await this.state.storage.get<PendingMessage[]>("pending")) ?? [];
+      if (left.length > 0) await this.state.storage.setAlarm(Date.now() + FLUSH_INTERVAL_MS);
+      // Silent success: drained is logged via Cloudflare observability.
+      void drained;
+    } catch {
+      // On error, re-arm sooner — at-least-once delivery; nothing is lost.
+      await this.state.storage.setAlarm(Date.now() + Math.min(15_000, FLUSH_INTERVAL_MS * 2));
+    }
+  }
+
+  /** Drain up to FLUSH_BATCH_MAX pending messages to Supabase via
+   *  message-ingest-batch. Idempotent: the endpoint upserts by message id.
+   *  On success the batch is removed from `pending`. On failure the batch
+   *  stays and the alarm will retry. */
+  private async flush(): Promise<number> {
+    if (!this.env.SUPABASE_URL || !this.env.CF_INGEST_SECRET) return 0;
+    const pending = (await this.state.storage.get<PendingMessage[]>("pending")) ?? [];
+    if (pending.length === 0) return 0;
+    const batch = pending.slice(0, FLUSH_BATCH_MAX);
+
+    const r = await fetch(`${this.env.SUPABASE_URL}/functions/v1/message-ingest-batch`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.env.CF_INGEST_SECRET}`,
+      },
+      body: JSON.stringify({ messages: batch }),
+    });
+    if (!r.ok) throw new Error(`ingest failed: ${r.status}`);
+
+    const remaining = pending.slice(batch.length);
+    await this.state.storage.put("pending", remaining);
+    return batch.length;
   }
 }
 
