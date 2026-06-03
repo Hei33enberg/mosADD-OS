@@ -32,10 +32,15 @@ export default function NewEmbedKeyForm({ jwt }: { jwt: string }) {
         .split(/[\s,]+/)
         .map((s) => s.trim())
         .filter(Boolean);
+      // LINEAR-2740: send `channels: string[]` (1..10). The `channel` field is
+      // newline/comma-separated; we split + dedupe + cap at 10.
+      const channels = Array.from(new Set(
+        channel.split(/[\s,]+/).map((c) => c.trim()).filter(Boolean),
+      )).slice(0, 10);
       const r = await fetch(`${SUPABASE_URL}/functions/v1/embed-keys`, {
         method: "POST",
         headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ name, channel, allowed_origins, mode }),
+        body: JSON.stringify({ name, channels, allowed_origins, mode }),
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data?.error ?? "create failed");
@@ -126,20 +131,19 @@ export default function NewEmbedKeyForm({ jwt }: { jwt: string }) {
 
       <div>
         <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
-          Channel ID
+          Channel ID(s)
         </label>
-        <input
-          type="text"
+        <textarea
           value={channel}
           onChange={(e) => setChannel(e.target.value)}
-          maxLength={128}
-          pattern="[A-Za-z0-9_-]{1,128}"
+          rows={3}
           required
           className="w-full p-2.5 bg-background border border-border font-mono text-sm focus:outline-none focus:border-primary"
-          placeholder="default"
+          placeholder="default&#10;blog-comments&#10;office-hours"
         />
         <p className="text-xs text-muted-foreground mt-1">
-          Letters, numbers, <code>_</code>, <code>-</code>. Visitors of your site land in this channel. One channel per key.
+          Letters, numbers, <code>_</code>, <code>-</code>. One per line (or comma-separated). Max 10 channels per key —
+          use multiple keys per site if you need more.
         </p>
       </div>
 
