@@ -27,7 +27,9 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          # Wrangler v4 requires Node 22+. Bumped from 20 when the `npx wrangler@latest
+          # secret put` steps started failing (LINEAR-2675/E6 deploy run #26861783449).
+          node-version: "22"
           cache: "npm"
           cache-dependency-path: apps/edge/package.json
 
