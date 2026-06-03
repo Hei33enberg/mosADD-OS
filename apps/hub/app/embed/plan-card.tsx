@@ -8,6 +8,9 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const PRICES = {
   pro: { id: "price_1Te6YLPBGTeHZsZKytNsQfhm", label: "Pro", monthly: 9 },
   team: { id: "price_1Te6YLPBGTeHZsZK1HcuWevX", label: "Team", monthly: 29 },
+  // LINEAR-2753: brand-removal addon — Pro can buy this to drop the
+  // "powered by mosadd" badge. Team+ have it included.
+  brandRemoval: { id: "price_1Te6YMPBGTeHZsZKBCBeyIu5", label: "Remove badge", monthly: 3 },
 };
 
 const CAP = { free: 1000, pro: 10_000, team: 100_000, enterprise: Infinity };
@@ -16,11 +19,30 @@ interface Props {
   jwt: string;
   tier: "free" | "pro" | "team" | "enterprise";
   matCount: number;
+  brandRemovalPaid?: boolean;
 }
 
-export default function PlanCard({ jwt, tier, matCount }: Props) {
-  const [busy, setBusy] = useState<"pro" | "team" | null>(null);
+export default function PlanCard({ jwt, tier, matCount, brandRemovalPaid }: Props) {
+  const [busy, setBusy] = useState<"pro" | "team" | "brand" | null>(null);
   const [err, setErr] = useState("");
+
+  const buyAddon = async () => {
+    setBusy("brand");
+    setErr("");
+    try {
+      const r = await fetch(`${SUPABASE_URL}/functions/v1/create-checkout-session`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ price_id: PRICES.brandRemoval.id, mode: "subscription" }),
+      });
+      const data = await r.json();
+      if (!r.ok || !data?.url) throw new Error(data?.error ?? "checkout failed");
+      window.location.href = data.url;
+    } catch (e: any) {
+      setErr(e?.message ?? "checkout failed");
+      setBusy(null);
+    }
+  };
 
   const upgrade = async (target: "pro" | "team") => {
     setBusy(target);
@@ -111,14 +133,29 @@ export default function PlanCard({ jwt, tier, matCount }: Props) {
         <div>
           <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
             You&apos;re on <strong>Pro</strong>. Overage is billed at $0.001 per extra MAT, capped at 2× plan price ($18/mo max).
+            {brandRemovalPaid ? (
+              <span className="block mt-2 text-primary">✓ Badge removal addon active — embeds run white-label.</span>
+            ) : null}
           </p>
-          <button
-            onClick={() => upgrade("team")}
-            disabled={busy !== null}
-            className="border border-border text-xs uppercase tracking-widest font-bold px-4 py-2 hover:border-primary hover:text-primary disabled:opacity-50"
-          >
-            {busy === "team" ? "Loading…" : `→ Upgrade to Team · $${PRICES.team.monthly}/mo`}
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => upgrade("team")}
+              disabled={busy !== null}
+              className="border border-border text-xs uppercase tracking-widest font-bold px-4 py-2 hover:border-primary hover:text-primary disabled:opacity-50"
+            >
+              {busy === "team" ? "Loading…" : `→ Upgrade to Team · $${PRICES.team.monthly}/mo`}
+            </button>
+            {!brandRemovalPaid && (
+              <button
+                onClick={buyAddon}
+                disabled={busy !== null}
+                className="border border-border text-xs uppercase tracking-widest font-bold px-4 py-2 hover:border-primary hover:text-primary disabled:opacity-50"
+                title='Removes the "powered by mosadd" badge from your embeds'
+              >
+                {busy === "brand" ? "Loading…" : `Remove badge +$${PRICES.brandRemoval.monthly}/mo`}
+              </button>
+            )}
+          </div>
         </div>
       )}
 

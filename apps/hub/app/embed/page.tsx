@@ -20,6 +20,7 @@ export default async function EmbedDashboard() {
   // 20260603030000_embed_keys.sql migration backfills every identity.
   let tier: "free" | "pro" | "team" | "enterprise" = "free";
   let matCount = 0;
+  let brandRemovalPaid = false;
   try {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -33,12 +34,13 @@ export default async function EmbedDashboard() {
       if (identity) {
         const { data: plan } = await admin
           .from("account_plan")
-          .select("tier, mat_count_month")
+          .select("tier, mat_count_month, brand_removal_paid")
           .eq("user_id", identity.id)
           .maybeSingle();
         if (plan) {
           tier = (plan.tier as typeof tier) ?? "free";
           matCount = Number(plan.mat_count_month ?? 0);
+          brandRemovalPaid = Boolean(plan.brand_removal_paid);
         }
       }
     }
@@ -76,7 +78,7 @@ export default async function EmbedDashboard() {
           an allow-list of domains. The hub key never leaves the server; the browser only ever holds a 5-min scoped JWT.
         </p>
 
-        <PlanCard jwt={session.access_token} tier={tier} matCount={matCount} />
+        <PlanCard jwt={session.access_token} tier={tier} matCount={matCount} brandRemovalPaid={brandRemovalPaid} />
 
         <div className="mt-8">
           <EmbedKeysClient jwt={session.access_token} />
