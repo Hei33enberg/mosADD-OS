@@ -9,6 +9,13 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: 'channel0-every-domain-is-a-room',
+    title: 'channel 0: how we turned every domain on the web into a chat room in a weekend',
+    date: '2026-06-03',
+    blurb:
+      'A browser extension. Open it on zalando.pl and you are in #zalando.pl with everyone there right now. It is also a forcing function for the mosadd kernel — same Durable Object per channel, same Supabase ingest. Here is how it works under the hood.',
+  },
+  {
     slug: 'mosadd-vs-twilio-agent-connect',
     title: 'mosadd vs Twilio Agent Connect: open OS vs vendor lock-in',
     date: '2026-06-01',
