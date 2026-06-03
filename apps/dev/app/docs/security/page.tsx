@@ -47,11 +47,24 @@ export default function SecurityPage() {
 
       <H3>Defenses</H3>
       <Ul>
-        <li>Threat radar — 167 event types, every tool call emits structured events with severity + actor + subject</li>
-        <li>Rate limits — per-user, per-tool, with backoff on radar score</li>
+        <li>Rate limits — per-user, per-tool, with backoff</li>
         <li>RLS — every table enforces row-level security; coverage verified in CI</li>
         <li>Supply chain — SBOM (SPDX 2.3) per package, CodeQL, gitleaks, license-check on every PR</li>
-        <li>E2E — X3DH + Double Ratchet via <code className="font-mono text-radar-green">@mosadd/crypto</code> on opt-in</li>
+        <li>Threat radar (~160 event types) is a feature of the <strong>mosadd.com</strong> platform, not the developer toolkit — the toolkit is comms-only by design</li>
+      </Ul>
+
+      <H2>Encryption posture — what is and isn&apos;t E2EE</H2>
+      <Callout type="warn">
+        We state this plainly because alpha software shouldn&apos;t imply guarantees it doesn&apos;t deliver. Full detail in{' '}
+        <Anchor href="https://github.com/Hei33enberg/mosadd-os/blob/main/docs/security/e2ee-posture.md">
+          <code className="font-mono">docs/security/e2ee-posture.md</code>
+        </Anchor>.
+      </Callout>
+      <Ul>
+        <li><strong>mDM (1:1) — end-to-end encrypted.</strong> X3DH + Double Ratchet via <code className="font-mono text-radar-green">@mosadd/crypto</code>. Requires the recipient to have published prekeys (<code className="font-mono">mDM_publish_keys</code>); otherwise <code className="font-mono">mDM_send_unencrypted</code> is a clearly-labelled plaintext fallback.</li>
+        <li><strong>mIRC / mROOM messages — NOT E2EE yet (alpha).</strong> The toolkit currently sends a base64-wrapped <em>plaintext</em> payload, readable by the server. Tool descriptions say so. Per-channel group-key encryption (parity with the mosadd.com app) is planned.</li>
+        <li><strong>mKB / RAG search — plaintext server-side by design.</strong> Vector search needs content indexed in the clear; anything searchable is, by construction, outside the zero-knowledge guarantee. Opt-in, off by default.</li>
+        <li><strong>No third-party audit yet.</strong> mosadd is in active alpha and has not completed an independent cryptographic audit — responsible disclosure welcome at <code className="font-mono text-radar-green">security@mosadd.com</code>.</li>
       </Ul>
 
       <H2>Hardening guide for operators</H2>

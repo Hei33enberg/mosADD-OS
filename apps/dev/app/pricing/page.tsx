@@ -90,7 +90,7 @@ const tiers: Tier[] = [
       'Self-hosted in your VPC / on-prem',
       'BYOK key broker for every provider',
       'SSO / SAML · RBAC · NIS2 audit-log retention',
-      'Threat radar 167-event feed',
+      'Threat radar 160-event feed',
       'Dedicated channel + DPA · 99.95% SLO',
     ],
     cta: { label: 'Talk to us', href: 'mailto:hello@mosadd.com?subject=mosadd%20Enterprise' },
@@ -205,7 +205,7 @@ export default function PricingPage() {
             'NIS2-grade audit-log retention',
             'E2EE (X3DH + Double Ratchet) on mDM',
             'BYOK key broker — your provider keys never leave you',
-            'Threat radar: 167-event scoring across every channel',
+            'Threat radar: 160-event scoring across every channel',
             'DPA + dedicated channel + 99.95% uptime SLO',
           ].map((f) => (
             <div key={f} className="flex gap-2">
@@ -240,7 +240,7 @@ export default function PricingPage() {
         <P><strong>What counts as a message?</strong> Every <code className="font-mono text-primary">mDM_send</code>, <code className="font-mono text-primary">mIRC_post</code>, <code className="font-mono text-primary">mROOM_post</code>, or <code className="font-mono text-primary">mAIL_send</code> outbound. Inbound is free.</P>
         <P><strong>What does BYOK actually save?</strong> Bring your own Telnyx / LiveKit / Resend keys and mosadd charges <strong>$0</strong> for voice &amp; PSTN orchestration — you pay your provider directly at their cost. Messages are still metered (that&apos;s the part mosadd runs).</P>
         <P><strong>Is there a spend cap?</strong> Yes — set a hard monthly cap and we stop before you blow your budget. No silent overage bills.</P>
-        <P><strong>Can I move from self-host to hosted later?</strong> Yes — your data, your keys. The hosted hub is a thin wrapper plus the proprietary 167-event threat radar.</P>
+        <P><strong>Can I move from self-host to hosted later?</strong> Yes — your data, your keys. The hosted hub is a thin wrapper plus the proprietary 160-event threat radar.</P>
         <P><strong>Why meter voice in minutes?</strong> Voice is real cost (LiveKit egress + STT/TTS). Metered for predictability; $0 with BYOK.</P>
         <P><strong>What about PSTN?</strong> Carrier fees are real money (Telnyx). We pass through at-cost with no more than a 10% markup — or $0 with BYOK.</P>
         <P><strong>Where&apos;s the open/paid line?</strong> Everything you need to build and self-host is Apache-2.0 forever. The hosted convenience, BYOK key-broker, threat radar, SSO/RBAC/audit-log and SLAs are the paid layer. We won&apos;t relicense the open core.</P>
