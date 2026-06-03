@@ -1,9 +1,6 @@
-// =============================================================================
-// Side panel entry.
-// =============================================================================
-
+// Side panel entry — brutalist mIRC look.
 import { normalizeDomain } from "../lib/domain";
-import { mountChat, type MountHandle } from "../shared/chat-shell";
+import { mountChat, type MountHandle, type ToolbarAction } from "../shared/chat-shell";
 import { CHAT_CSS } from "../shared/chat-styles";
 import { getSettings, patchSettings, onSettingsChange, DEFAULT_SETTINGS, type OpenMode } from "../lib/settings";
 import { t, type MsgId } from "../lib/i18n";
@@ -18,22 +15,18 @@ for (const el of document.querySelectorAll<HTMLElement>("[data-i18n]")) {
   el.textContent = t(k as MsgId);
 }
 
-const tabChat = document.getElementById("tab-chat") as HTMLButtonElement;
-const tabSettings = document.getElementById("tab-settings") as HTMLButtonElement;
-const paneChat = document.getElementById("pane-chat") as HTMLDivElement;
-const paneSettings = document.getElementById("pane-settings") as HTMLDivElement;
+const host         = document.getElementById("host") as HTMLDivElement;
+const overlay      = document.getElementById("settings-overlay") as HTMLDivElement;
+const overlayClose = document.getElementById("settings-close") as HTMLButtonElement;
+const openModeSeg  = document.getElementById("open-mode") as HTMLDivElement;
+const resetBubble  = document.getElementById("reset-bubble") as HTMLButtonElement;
 
-function showChat(): void {
-  tabChat.classList.add("active"); tabSettings.classList.remove("active");
-  paneChat.style.display = ""; paneSettings.style.display = "none";
+function showSettings(open: boolean): void {
+  overlay.classList.toggle("is-open", open);
+  if (open) void renderSettings();
 }
-function showSettings(): void {
-  tabSettings.classList.add("active"); tabChat.classList.remove("active");
-  paneChat.style.display = "none"; paneSettings.style.display = "block";
-  void renderSettings();
-}
-tabChat.addEventListener("click", showChat);
-tabSettings.addEventListener("click", showSettings);
+overlayClose.addEventListener("click", () => showSettings(false));
+overlay.addEventListener("click", (e) => { if (e.target === overlay) showSettings(false); });
 
 let mounted: { domain: string; handle: MountHandle } | null = null;
 
@@ -49,13 +42,17 @@ async function syncChat(): Promise<void> {
   const norm = await activeTabDomain();
   if (!norm) {
     if (mounted) { mounted.handle.destroy(); mounted = null; }
-    paneChat.innerHTML = `<div style="padding:16px;color:#888;font-size:13px;">${t("popupNotWebsite")}</div>`;
+    host.innerHTML = '<div style="padding:16px;color:rgba(255,255,255,0.5);font-size:13px;">' + t("popupNotWebsite") + '</div>';
     return;
   }
   if (mounted?.domain === norm.domain) return;
   if (mounted) { mounted.handle.destroy(); mounted = null; }
-  paneChat.innerHTML = "";
-  const handle = mountChat(paneChat, { domain: norm.domain });
+  host.innerHTML = "";
+  const actions: ToolbarAction[] = [
+    { icon: "settings", i18nKey: "tooltipSettings", onClick: () => showSettings(true) },
+    { icon: "close",    i18nKey: "tooltipClose",    onClick: () => window.close() },
+  ];
+  const handle = mountChat(host, { domain: norm.domain, actions });
   mounted = { domain: norm.domain, handle };
 }
 
@@ -64,10 +61,7 @@ void syncChat();
 try {
   chrome.tabs.onActivated.addListener(() => { void syncChat(); });
   chrome.tabs.onUpdated.addListener((_id, info) => { if (info.url) void syncChat(); });
-} catch { /* ignore */ }
-
-const openModeSeg = document.getElementById("open-mode") as HTMLDivElement;
-const resetBubbleBtn = document.getElementById("reset-bubble") as HTMLButtonElement;
+} catch { /* */ }
 
 async function renderSettings(): Promise<void> {
   const s = await getSettings();
@@ -84,7 +78,7 @@ for (const btn of openModeSeg.querySelectorAll<HTMLButtonElement>("button[data-m
   });
 }
 
-resetBubbleBtn.addEventListener("click", async () => {
+resetBubble.addEventListener("click", async () => {
   await patchSettings({ bubble: { ...DEFAULT_SETTINGS.bubble } });
 });
 
