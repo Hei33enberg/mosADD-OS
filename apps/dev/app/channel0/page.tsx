@@ -205,8 +205,8 @@ export default function Channel0Page() {
               </li>
             </ul>
             <p className="mt-4 text-xs text-muted-foreground">
-              Verification flow lives at <span className="font-mono">mosadd.dev/domains</span> (shipping next).
-              In the meantime, <a className="text-primary underline" href="mailto:hello@mosadd.dev">email us</a> and we will set it manually.
+              Verification flow lives at <a className="font-mono text-primary underline" href="/domains">mosadd.dev/domains</a> — live now.
+              
             </p>
           </div>
           <div className="rounded-none border border-border p-5">
