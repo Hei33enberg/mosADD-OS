@@ -1,0 +1,50 @@
+/* =============================================================================
+   retro-irc-1990 — full 1990s mIRC vibe. Lifted from strajkpolski.pl style.
+   Beige background, red accent, pixel-y feel. Author: @strajkpolski / mosadd team.
+   ============================================================================= */
+
+:host, .m-root {
+  --m-bg:        #f4eeda;
+  --m-fg:        #1a1a1a;
+  --m-muted:     #5a5550;
+  --m-card:      #ebe4cc;
+  --m-accent:    #e3dcc0;
+  --m-border:    #b91c1c;
+  --m-primary:   #b91c1c;
+  --m-primary-fg: #f4eeda;
+  --m-destructive: #7f1d1d;
+  --m-radius:    0;
+  --m-font:      "VT323", "Courier New", ui-monospace, monospace;
+  --m-font-size: 15px;
+  --m-line:      1.35;
+
+  /* High-saturation IRC palette */
+  --m-nick-1: #b91c1c;
+  --m-nick-2: #b45309;
+  --m-nick-3: #6d28d9;
+  --m-nick-4: #0e7490;
+  --m-nick-5: #9f1239;
+  --m-nick-6: #4338ca;
+  --m-nick-7: #166534;
+  --m-nick-8: #92400e;
+}
+
+/* Drop the scanline + HUD bracket overlay — period-correct mIRC didn't have those. */
+.m-card::before { display: none; }
+.m-bracket { display: none; }
+
+/* Slightly bolder title bar */
+.m-head {
+  background: var(--m-primary);
+  color: var(--m-primary-fg);
+  border-bottom: 2px solid var(--m-primary);
+}
+.m-head .m-chan { color: var(--m-primary-fg); }
+.m-head .m-title { color: var(--m-primary-fg); }
+.m-head .m-status.online { background: #ade80f; box-shadow: none; }
+
+.m-stream { background: var(--m-bg); }
+.m-ts { color: var(--m-muted); }
+.m-nick::before, .m-nick::after { color: var(--m-muted); }
+
+.m-btn { font-weight: 700; letter-spacing: 0.04em; }

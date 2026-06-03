@@ -1,0 +1,71 @@
+/* =============================================================================
+   minimal-light — day-mode counterpart of minimal-dark. Same structure, lighter
+   palette. Good for blogs/news sites that run a light theme.
+   ============================================================================= */
+
+:host, .m-root {
+  --m-bg:        #ffffff;
+  --m-fg:        #18181b;
+  --m-muted:     #71717a;
+  --m-card:      #fafafa;
+  --m-accent:    #f4f4f5;
+  --m-border:    #e4e4e7;
+  --m-primary:   #4f46e5;
+  --m-primary-fg: #ffffff;
+  --m-destructive: #dc2626;
+  --m-radius:    8px;
+  --m-font:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --m-font-size: 14px;
+  --m-line:      1.5;
+
+  --m-nick-1: #4f46e5;
+  --m-nick-2: #ca8a04;
+  --m-nick-3: #db2777;
+  --m-nick-4: #0891b2;
+  --m-nick-5: #ea580c;
+  --m-nick-6: #7c3aed;
+  --m-nick-7: #16a34a;
+  --m-nick-8: #dc2626;
+}
+
+.m-card::before { display: none; }
+.m-bracket { display: none; }
+
+.m-card {
+  border-radius: var(--m-radius);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+}
+.m-head { border-bottom-color: var(--m-border); background: var(--m-card); }
+.m-head .m-chan { color: var(--m-primary); }
+.m-head .m-status.online { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+
+.m-nick { font-weight: 600; }
+.m-nick::before, .m-nick::after { content: ""; }
+.m-nick::after { content: ":"; color: var(--m-muted); font-weight: 400; margin-right: 4px; }
+.m-ts { font-size: 11px; opacity: 0.7; }
+
+.m-stream::-webkit-scrollbar-thumb { background: var(--m-border); }
+.m-stream::-webkit-scrollbar-track { background: var(--m-card); }
+
+.m-input textarea, .m-join input {
+  border-radius: calc(var(--m-radius) - 2px);
+  background: var(--m-bg);
+}
+.m-btn {
+  border-radius: calc(var(--m-radius) - 2px);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
+}
+.m-close {
+  border-radius: 6px;
+  background: var(--m-card);
+}
+
+/* Light skin needs darker launcher pill border for contrast on white pages */
+.m-launcher {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 0 12px rgba(79, 70, 229, 0.15);
+}
+.m-launcher:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12), 0 0 18px rgba(79, 70, 229, 0.25);
+}

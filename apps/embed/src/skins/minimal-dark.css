@@ -1,0 +1,51 @@
+/* =============================================================================
+   minimal-dark — modern dark, no scanlines, no brackets, soft borders.
+   Linear/Notion/Vercel feel. Good for product-y sites that want chat to
+   not scream "retro" but still match a dark theme.
+   ============================================================================= */
+
+:host, .m-root {
+  --m-bg:        #0a0a0b;
+  --m-fg:        #e5e5e7;
+  --m-muted:     #8a8a93;
+  --m-card:      #121215;
+  --m-accent:    #1f1f24;
+  --m-border:    #2a2a31;
+  --m-primary:   #6366f1;
+  --m-primary-fg: #ffffff;
+  --m-destructive: #ef4444;
+  --m-radius:    8px;
+  --m-font:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --m-font-size: 14px;
+  --m-line:      1.5;
+
+  /* Subdued nick palette to match the calm look */
+  --m-nick-1: #818cf8;
+  --m-nick-2: #fbbf24;
+  --m-nick-3: #f472b6;
+  --m-nick-4: #22d3ee;
+  --m-nick-5: #fb923c;
+  --m-nick-6: #c084fc;
+  --m-nick-7: #4ade80;
+  --m-nick-8: #f87171;
+}
+
+.m-card::before { display: none; }
+.m-bracket { display: none; }
+
+.m-card {
+  border-radius: var(--m-radius);
+}
+.m-head { border-bottom-color: var(--m-border); }
+.m-head .m-chan { color: var(--m-primary); }
+
+.m-nick { font-weight: 600; }
+.m-nick::before, .m-nick::after { content: ""; }
+.m-nick::after { content: ":"; color: var(--m-muted); font-weight: 400; margin-right: 4px; }
+.m-ts { font-size: 11px; opacity: 0.7; }
+
+.m-input textarea, .m-join input {
+  border-radius: calc(var(--m-radius) - 2px);
+}
+.m-btn { border-radius: calc(var(--m-radius) - 2px); text-transform: none; letter-spacing: 0; font-weight: 600; }
+.m-close { border-radius: 6px; }

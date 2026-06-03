@@ -24,6 +24,22 @@
 // =============================================================================
 
 import defaultSkinCss from "./skins/default.css";
+import retroIrc1990Css from "./skins/retro-irc-1990.css";
+import terminalCss from "./skins/terminal.css";
+import minimalDarkCss from "./skins/minimal-dark.css";
+import minimalLightCss from "./skins/minimal-light.css";
+
+/** Bundled skin name → CSS override string. The default skin (mosadd-mIRC) is
+ *  always loaded as the base layer (defines all class names + tokens); the
+ *  override layer just retags colors / fonts / borders on top. New community
+ *  skins from mosadd-os/skins/ land here as PRs. LINEAR-2737. */
+const SKIN_OVERRIDES: Record<string, string> = {
+  "default": "",
+  "retro-irc-1990": retroIrc1990Css,
+  "terminal": terminalCss,
+  "minimal-dark": minimalDarkCss,
+  "minimal-light": minimalLightCss,
+};
 
 interface WidgetConfig {
   pk: string;
@@ -241,10 +257,23 @@ export class MosaddMircWidget {
     // Shadow DOM keeps the host page's CSS out (and ours out of theirs).
     this.shadow = host.attachShadow({ mode: "open" });
 
-    // Inject the skin CSS as <style> inside the shadow root.
-    const css = el<HTMLStyleElement>("style");
-    css.textContent = defaultSkinCss;
-    this.shadow.appendChild(css);
+    // default.css = base layer (class structure + tokens, always loaded).
+    // The chosen skin's override CSS is appended on top — it only re-declares
+    // CSS variables + tweaks. Unknown skin names fall back to default with a
+    // console warning so the creator notices.
+    const baseCss = el<HTMLStyleElement>("style");
+    baseCss.textContent = defaultSkinCss;
+    this.shadow.appendChild(baseCss);
+    const override = SKIN_OVERRIDES[this.cfg.skin];
+    if (override === undefined) {
+      console.warn(
+        `[mosadd-embed] unknown data-skin="${this.cfg.skin}". Available: ${Object.keys(SKIN_OVERRIDES).join(", ")}. Using default.`,
+      );
+    } else if (override) {
+      const overCss = el<HTMLStyleElement>("style");
+      overCss.textContent = override;
+      this.shadow.appendChild(overCss);
+    }
 
     this.mount();
     if (this.cfg.mode === "launcher") {
