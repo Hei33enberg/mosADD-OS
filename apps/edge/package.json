@@ -1,0 +1,18 @@
+{
+  "name": "@mosadd/edge",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Cloudflare Worker + Durable Object per channel — the scale backbone for mIRC/mROOM (LINEAR-2675).",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "typecheck": "tsc --noEmit",
+    "loadtest:1ch": "node scripts/loadtest-1channel.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240924.0",
+    "typescript": "^5.5.4",
+    "wrangler": "^3.78.0"
+  }
+}
