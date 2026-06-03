@@ -3,12 +3,12 @@ import { Logo } from './Logo';
 import { MobileNav } from './MobileNav';
 
 const navLinks = [
+  { href: '/embed', label: 'Embed' },
   { href: '/docs', label: 'Docs' },
   { href: '/docs/mcp', label: 'MCP' },
-  { href: '/docs/modules', label: 'Modules' },
+  { href: '/skins', label: 'Skins' },
   { href: '/examples', label: 'Examples' },
   { href: '/pricing', label: 'Pricing' },
-  { href: '/blog', label: 'Blog' },
 ];
 
 export function SiteHeader() {
