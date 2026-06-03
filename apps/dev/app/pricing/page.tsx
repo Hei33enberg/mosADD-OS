@@ -29,7 +29,7 @@ const tiers: Tier[] = [
     price: '$0',
     features: [
       '@mosadd/mcp + all SDK adapters',
-      'All 40 tools, every m* module',
+      'All 43 tools, every m* module',
       'Bring your own keys (Telnyx, Resend, LiveKit, Supabase)',
       'Community support — GitHub Discussions',
       'No telemetry, no phone-home',

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <title>mosadd embed — strajk-style demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #1a0a0a; color: #fff; min-height: 100vh; }
+    .page { max-width: 540px; padding: 40px 24px; }
+    h1 { font-size: 28px; margin: 0 0 16px; color: #ff4444; }
+    p { line-height: 1.6; margin: 0 0 16px; color: #ddd; }
+    .note { background: #2a0a0a; border-left: 3px solid #ff4444; padding: 12px 16px; margin: 24px 0; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>STRAJK POLSKI — symulator</h1>
+    <p>Demo embeda mosadd-mIRC po prawej stronie (sidebar). Otwórz w przeglądarce — widget powinien się załadować, pokazać formularz „DOŁĄCZ ANONIMOWO", a po podaniu nicka — czat.</p>
+    <p>Domyślny skin: <strong>mosadd-mIRC</strong> (rama mosadd-brand + czat retro mIRC w środku). Dla pełnego stylu „strajkpolski-style" (czerwony brand, pełny retro vibe), twórca podstawia <code>data-skin="retro-irc-1990"</code> lub własny `.mosaddskin` URL.</p>
+    <div class="note">
+      <strong>Wymagania testu:</strong> potrzebujesz testowego klucza <code>m_pk_test_…</code> w bazie <code>embed_keys</code>, gdzie <code>allowed_origins</code> zawiera <code>null</code> (file:// nie ma origin) lub URL na jakim hostujesz tę stronę, oraz <code>allowed_channels</code> zawiera <code>strajk-polska-demo</code>.
+    </div>
+  </div>
+
+  <!-- The actual embed (right sidebar). -->
+  <div id="mosadd-mirc"
+       data-channel="strajk-polska-demo"
+       data-position="sidebar-right"
+       data-locale="pl"
+       data-title="mIRC">
+  </div>
+
+  <!-- For local dev we point at the built bundle in dist/. In production
+       this becomes <script src="https://embed.mosadd.com/v1.js" data-key="m_pk_live_…">. -->
+  <script src="../dist/v1.js"
+          data-key="m_pk_test_REPLACE_WITH_REAL_TEST_KEY">
+  </script>
+</body>
+</html>

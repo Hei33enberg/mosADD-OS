@@ -1,0 +1,278 @@
+/* =============================================================================
+   Default skin — "mosadd-mIRC" (the out-of-the-box look for every embed).
+   FRAME (border, header, input, buttons)   = mosadd brand:
+     pure black, neon green primary, JetBrains Mono, scanlines, HUD brackets.
+     This is the growth-loop brand — every embed without `data-skin` looks like
+     mosadd, so creators using us = walking ads.
+   INNER (the chat lines themselves)        = mIRC retro:
+     [hh:mm] <~nick> text, nicks colored per-hash, message body in mono.
+     Same conventions strajkpolski styled into; we ship as the default.
+
+   All class names are namespaced `.m-*` so we cannot collide with the host
+   page's CSS. The widget lives inside a Shadow DOM (see widget.ts) so even
+   without namespacing the host page can't reach in — but the names are kept
+   readable so the live editor can target them.
+   ============================================================================= */
+
+:host, .m-root {
+  --m-bg:        #000000;
+  --m-fg:        #f2f2f2;
+  --m-muted:     hsl(0 0% 55%);
+  --m-card:      hsl(0 0% 3%);
+  --m-accent:    hsl(0 0% 10%);
+  --m-border:    hsl(0 0% 12%);
+  --m-primary:   hsl(145 100% 50%);     /* neon green */
+  --m-primary-fg: hsl(0 0% 2%);
+  --m-destructive: hsl(0 80% 55%);
+  --m-radius:    2px;                    /* sharp corners, terminal feel */
+  --m-font:      "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --m-font-size: 13px;
+  --m-line:      1.45;
+
+  /* Nick color palette for the per-hash assignment. 8 distinct hues that
+     read well on pure black. Order matters — picked deliberately. */
+  --m-nick-1: #00ff7f;   /* mosadd green */
+  --m-nick-2: #ffcc00;   /* amber */
+  --m-nick-3: #ff66cc;   /* magenta */
+  --m-nick-4: #66ccff;   /* cyan */
+  --m-nick-5: #ff9966;   /* warm orange */
+  --m-nick-6: #cc99ff;   /* lavender */
+  --m-nick-7: #99ff99;   /* mint */
+  --m-nick-8: #ff6666;   /* warm red */
+
+  all: initial;
+  display: block;
+  box-sizing: border-box;
+  color: var(--m-fg);
+  background: var(--m-bg);
+  font-family: var(--m-font);
+  font-size: var(--m-font-size);
+  line-height: var(--m-line);
+}
+
+.m-root *, .m-root *::before, .m-root *::after { box-sizing: border-box; }
+
+/* ── outer card (the FRAME — mosadd brand) ────────────────────────────────── */
+.m-card {
+  background: var(--m-bg);
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius);
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Subtle scanline overlay (very low opacity — should never compete with text). */
+.m-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.015) 0,
+    rgba(255, 255, 255, 0.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* HUD corner brackets */
+.m-bracket {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--m-primary);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.6;
+}
+.m-bracket.tl { top: 4px; left: 4px; border-right: 0; border-bottom: 0; }
+.m-bracket.tr { top: 4px; right: 4px; border-left: 0; border-bottom: 0; }
+.m-bracket.bl { bottom: 4px; left: 4px; border-right: 0; border-top: 0; }
+.m-bracket.br { bottom: 4px; right: 4px; border-left: 0; border-top: 0; }
+
+/* ── header (channel + status) ───────────────────────────────────────────── */
+.m-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--m-border);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 11px;
+  position: relative;
+  z-index: 3;
+}
+.m-head .m-title { flex: 1; color: var(--m-fg); }
+.m-head .m-chan { color: var(--m-primary); font-weight: 700; }
+.m-head .m-status {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--m-muted);
+}
+.m-head .m-status.online { background: var(--m-primary); box-shadow: 0 0 6px var(--m-primary); }
+.m-head .m-status.connecting { background: hsl(38 100% 50%); animation: m-blink 1s linear infinite; }
+.m-head .m-status.error { background: var(--m-destructive); }
+@keyframes m-blink { 50% { opacity: 0.3; } }
+
+/* ── chat stream (INNER — mIRC retro) ────────────────────────────────────── */
+.m-stream {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+  z-index: 2;
+  scrollbar-width: thin;
+  scrollbar-color: var(--m-border) transparent;
+}
+.m-stream::-webkit-scrollbar { width: 6px; }
+.m-stream::-webkit-scrollbar-thumb { background: var(--m-border); }
+
+.m-msg {
+  display: block;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
+  font-family: var(--m-font);
+}
+.m-ts {
+  color: var(--m-muted);
+  font-weight: 400;
+  margin-right: 4px;
+  user-select: none;
+}
+.m-nick {
+  font-weight: 700;
+  margin-right: 4px;
+}
+.m-nick::before { content: "<~"; color: var(--m-muted); font-weight: 400; }
+.m-nick::after  { content: ">";  color: var(--m-muted); font-weight: 400; }
+.m-text { color: var(--m-fg); }
+
+/* Nick colors per-hash (set by widget.ts as --m-nick-i on each .m-msg). */
+.m-msg[data-nick-color="1"] .m-nick { color: var(--m-nick-1); }
+.m-msg[data-nick-color="2"] .m-nick { color: var(--m-nick-2); }
+.m-msg[data-nick-color="3"] .m-nick { color: var(--m-nick-3); }
+.m-msg[data-nick-color="4"] .m-nick { color: var(--m-nick-4); }
+.m-msg[data-nick-color="5"] .m-nick { color: var(--m-nick-5); }
+.m-msg[data-nick-color="6"] .m-nick { color: var(--m-nick-6); }
+.m-msg[data-nick-color="7"] .m-nick { color: var(--m-nick-7); }
+.m-msg[data-nick-color="8"] .m-nick { color: var(--m-nick-8); }
+
+/* System notices (joined / left / queue / error) */
+.m-sys {
+  color: var(--m-muted);
+  font-style: italic;
+  font-size: 12px;
+  padding: 2px 0;
+}
+
+/* ── join form (anonymous nick) ──────────────────────────────────────────── */
+.m-join {
+  flex: 0 0 auto;
+  padding: 10px;
+  border-top: 1px solid var(--m-border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  z-index: 3;
+}
+.m-join label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--m-muted);
+}
+.m-join .m-row { display: flex; gap: 6px; }
+.m-join input {
+  flex: 1;
+  padding: 6px 8px;
+  background: var(--m-card);
+  color: var(--m-fg);
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius);
+  font-family: var(--m-font);
+  font-size: 13px;
+  outline: none;
+}
+.m-join input:focus { border-color: var(--m-primary); }
+.m-btn {
+  padding: 6px 14px;
+  background: var(--m-primary);
+  color: var(--m-primary-fg);
+  border: 1px solid var(--m-primary);
+  border-radius: var(--m-radius);
+  font-family: var(--m-font);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+.m-btn:hover { filter: brightness(1.1); }
+.m-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── input row (when joined) ─────────────────────────────────────────────── */
+.m-input {
+  flex: 0 0 auto;
+  padding: 8px 10px;
+  border-top: 1px solid var(--m-border);
+  display: flex;
+  gap: 6px;
+  position: relative;
+  z-index: 3;
+}
+.m-input textarea {
+  flex: 1;
+  padding: 6px 8px;
+  background: var(--m-card);
+  color: var(--m-fg);
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius);
+  font-family: var(--m-font);
+  font-size: 13px;
+  outline: none;
+  resize: none;
+  min-height: 28px;
+  max-height: 80px;
+  line-height: 1.4;
+}
+.m-input textarea:focus { border-color: var(--m-primary); }
+
+/* ── badge (powered by mosadd) ───────────────────────────────────────────── */
+.m-badge {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  border-top: 1px solid var(--m-border);
+  font-size: 10px;
+  color: var(--m-muted);
+  text-align: right;
+  letter-spacing: 0.05em;
+  position: relative;
+  z-index: 3;
+}
+.m-badge a {
+  color: var(--m-primary);
+  text-decoration: none;
+}
+.m-badge a:hover { text-decoration: underline; }
+
+/* ── positioning modes (controlled by data-position) ─────────────────────── */
+.m-root.m-pos-inline   { position: relative; width: 100%; height: 400px; }
+.m-root.m-pos-fullscreen { position: fixed; inset: 0; z-index: 2147483640; }
+.m-root.m-pos-floating-br { position: fixed; right: 16px; bottom: 16px; width: 320px; height: 480px; z-index: 2147483640; }
+.m-root.m-pos-floating-bl { position: fixed; left: 16px; bottom: 16px; width: 320px; height: 480px; z-index: 2147483640; }
+.m-root.m-pos-sidebar-right { position: fixed; right: 0; top: 0; bottom: 0; width: 340px; z-index: 2147483640; }
+.m-root.m-pos-sidebar-left  { position: fixed; left: 0; top: 0; bottom: 0; width: 340px; z-index: 2147483640; }
