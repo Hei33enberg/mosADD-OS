@@ -18,6 +18,11 @@ bindings = [
   { name = "CHANNEL", class_name = "ChannelDO" },
 ]
 
+# Supabase project URL — public, not a secret. The Worker calls
+# /functions/v1/hub-key-verify on cache miss to validate hub keys.
+[vars]
+SUPABASE_URL = "https://rooffhgbxafyjcwmwpsy.supabase.co"
+
 # Observability — Workers Logs (Tail) for free.
 [observability]
 enabled = true
