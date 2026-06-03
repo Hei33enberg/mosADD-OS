@@ -89,6 +89,43 @@ export default function HomePage() {
       {/* ── Social proof ── */}
       <SocialProof />
 
+      {/* ── channel 0 energizer ── */}
+      <section className="relative overflow-hidden border-x border-b border-border">
+        <span className="hud-bracket hud-tl" />
+        <span className="hud-bracket hud-tr" />
+        <span className="hud-bracket hud-bl" />
+        <span className="hud-bracket hud-br" />
+        <div className="grid gap-6 px-6 py-12 md:grid-cols-[1fr_auto] md:items-center">
+          <div>
+            <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary">
+              NEW · the same kernel, in your browser
+            </div>
+            <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl">
+              channel 0 <span className="text-primary">[mIRC]</span> — with mosadd inside
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              Anonymous live chat scoped to whatever domain you&apos;re on. Open it on zalando.pl and talk
+              to every other shopper there right now. Same Cloudflare Worker + Durable Object backbone
+              as the mosadd SDK — proven at internet scale, one extension at a time.
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Link
+              href="/channel0"
+              className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Install →
+            </Link>
+            <Link
+              href="/channel0#own-a-domain"
+              className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
+            >
+              Own a domain →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── Problem → solution ── */}
       <section className="grid gap-8 border-x border-b border-border px-6 py-16 md:grid-cols-2">
         <div>
@@ -114,7 +151,7 @@ export default function HomePage() {
             </li>
             <li>· Bring your own Telnyx / Resend / LiveKit / Supabase — or self-host for $0</li>
             <li>· E2EE (X3DH + Double Ratchet) and threat radar in the kernel</li>
-            <li>· 43 tools, works in every MCP client, Apache-2.0 forever</li>
+            <li>· 40 tools, works in every MCP client, Apache-2.0 forever</li>
           </ul>
         </div>
       </section>
@@ -227,7 +264,7 @@ export default function HomePage() {
           {[
             { n: '1', t: 'Install', d: 'One line in Claude Code, Cursor or any MCP client.', c: 'claude mcp add mosadd npx -- -y @mosadd/mcp' },
             { n: '2', t: 'Add your keys — or go hosted', d: 'Bring Telnyx / Resend / LiveKit / Supabase, or sign up for the hosted hub. Self-host stays $0.', c: 'mosadd login' },
-            { n: '3', t: 'Call a tool', d: 'Your agent sends a DM, opens a room, posts to a channel — 43 tools, one server.', c: 'mDM_send  ·  mROOM_create_guest_link' },
+            { n: '3', t: 'Call a tool', d: 'Your agent sends a DM, opens a room, posts to a channel — 40 tools, one server.', c: 'mDM_send  ·  mROOM_create_guest_link' },
           ].map((s) => (
             <div key={s.n} className="border border-border p-5">
               <div className="mb-3 font-display text-3xl text-primary/60">{s.n}</div>
@@ -247,7 +284,7 @@ export default function HomePage() {
           Build with us<span className="term-cursor" />
         </h2>
         <p className="mb-6 max-w-2xl text-muted-foreground">
-          mosadd-os is the open Apache-2.0 layer — 43 tools live today, more channels landing. RFCs and contributions
+          mosadd-os is the open Apache-2.0 layer — 40 tools live today, more channels landing. RFCs and contributions
           welcome.
         </p>
         <div className="flex flex-wrap gap-3">

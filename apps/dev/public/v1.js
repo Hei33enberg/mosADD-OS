@@ -1,4 +1,4 @@
-var MosaddEmbed=(function(){'use strict';var g=`/* =============================================================================\r
+var MosaddEmbed=(function(){'use strict';var b=`/* =============================================================================\r
    Default skin \u2014 "mosadd-mIRC" (the out-of-the-box look for every embed).\r
    FRAME (border, header, input, buttons)   = mosadd brand:\r
      pure black, neon green primary, JetBrains Mono, scanlines, HUD brackets.\r
@@ -381,241 +381,289 @@ var MosaddEmbed=(function(){'use strict';var g=`/* =============================
     max-height: none;\r
   }\r
 }\r
-`;var b=`/* =============================================================================
-   retro-irc-1990 \u2014 full 1990s mIRC vibe. Lifted from strajkpolski.pl style.
-   Beige background, red accent, pixel-y feel. Author: @strajkpolski / mosadd team.
-   ============================================================================= */
-
-:host, .m-root {
-  --m-bg:        #f4eeda;
-  --m-fg:        #1a1a1a;
-  --m-muted:     #5a5550;
-  --m-card:      #ebe4cc;
-  --m-accent:    #e3dcc0;
-  --m-border:    #b91c1c;
-  --m-primary:   #b91c1c;
-  --m-primary-fg: #f4eeda;
-  --m-destructive: #7f1d1d;
-  --m-radius:    0;
-  --m-font:      "VT323", "Courier New", ui-monospace, monospace;
-  --m-font-size: 15px;
-  --m-line:      1.35;
-
-  /* High-saturation IRC palette */
-  --m-nick-1: #b91c1c;
-  --m-nick-2: #b45309;
-  --m-nick-3: #6d28d9;
-  --m-nick-4: #0e7490;
-  --m-nick-5: #9f1239;
-  --m-nick-6: #4338ca;
-  --m-nick-7: #166534;
-  --m-nick-8: #92400e;
-}
-
-/* Drop the scanline + HUD bracket overlay \u2014 period-correct mIRC didn't have those. */
-.m-card::before { display: none; }
-.m-bracket { display: none; }
-
-/* Slightly bolder title bar */
-.m-head {
-  background: var(--m-primary);
-  color: var(--m-primary-fg);
-  border-bottom: 2px solid var(--m-primary);
-}
-.m-head .m-chan { color: var(--m-primary-fg); }
-.m-head .m-title { color: var(--m-primary-fg); }
-.m-head .m-status.online { background: #ade80f; box-shadow: none; }
-
-.m-stream { background: var(--m-bg); }
-.m-ts { color: var(--m-muted); }
-.m-nick::before, .m-nick::after { color: var(--m-muted); }
-
-.m-btn { font-weight: 700; letter-spacing: 0.04em; }
-`;var v=`/* =============================================================================
-   terminal \u2014 green-on-black hacker terminal. CRT vibes, blinking cursor.
-   For dev blogs, sec-research sites, terminal-themed personal pages.
-   ============================================================================= */
-
-:host, .m-root {
-  --m-bg:        #000000;
-  --m-fg:        #00ff00;
-  --m-muted:     #009900;
-  --m-card:      #001100;
-  --m-accent:    #002200;
-  --m-border:    #006600;
-  --m-primary:   #00ff00;
-  --m-primary-fg: #000000;
-  --m-destructive: #ff3333;
-  --m-radius:    0;
-  --m-font:      "VT323", "Courier New", ui-monospace, monospace;
-  --m-font-size: 14px;
-  --m-line:      1.3;
-
-  --m-nick-1: #00ff00;
-  --m-nick-2: #00ffaa;
-  --m-nick-3: #aaff00;
-  --m-nick-4: #00ffff;
-  --m-nick-5: #ffff00;
-  --m-nick-6: #ff00ff;
-  --m-nick-7: #ffaa00;
-  --m-nick-8: #ffaaff;
-}
-
-.m-card {
-  /* Subtle CRT glow */
-  text-shadow: 0 0 1px currentColor;
-}
-
-/* Stronger scanlines for the CRT feel */
-.m-card::before {
-  background-image: repeating-linear-gradient(
-    180deg,
-    rgba(0, 255, 0, 0.04) 0,
-    rgba(0, 255, 0, 0.04) 1px,
-    transparent 1px,
-    transparent 2px
-  );
-}
-
-/* Drop HUD brackets \u2014 minimal terminal aesthetic */
-.m-bracket { display: none; }
-
-/* Blinking cursor on the input */
-.m-input textarea {
-  caret-color: var(--m-primary);
-}
-.m-input textarea:focus {
-  animation: m-cursor-blink 1s steps(2) infinite;
-}
-@keyframes m-cursor-blink {
-  50% { caret-color: transparent; }
-}
-
-/* \`$ \` prompt prefix in front of the nick \u2014 adds the CLI vibe */
-.m-nick::before { content: "$ "; color: var(--m-muted); }
-.m-nick::after  { content: ""; }
-`;var x=`/* =============================================================================
-   minimal-dark \u2014 modern dark, no scanlines, no brackets, soft borders.
-   Linear/Notion/Vercel feel. Good for product-y sites that want chat to
-   not scream "retro" but still match a dark theme.
-   ============================================================================= */
-
-:host, .m-root {
-  --m-bg:        #0a0a0b;
-  --m-fg:        #e5e5e7;
-  --m-muted:     #8a8a93;
-  --m-card:      #121215;
-  --m-accent:    #1f1f24;
-  --m-border:    #2a2a31;
-  --m-primary:   #6366f1;
-  --m-primary-fg: #ffffff;
-  --m-destructive: #ef4444;
-  --m-radius:    8px;
-  --m-font:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --m-font-size: 14px;
-  --m-line:      1.5;
-
-  /* Subdued nick palette to match the calm look */
-  --m-nick-1: #818cf8;
-  --m-nick-2: #fbbf24;
-  --m-nick-3: #f472b6;
-  --m-nick-4: #22d3ee;
-  --m-nick-5: #fb923c;
-  --m-nick-6: #c084fc;
-  --m-nick-7: #4ade80;
-  --m-nick-8: #f87171;
-}
-
-.m-card::before { display: none; }
-.m-bracket { display: none; }
-
-.m-card {
-  border-radius: var(--m-radius);
-}
-.m-head { border-bottom-color: var(--m-border); }
-.m-head .m-chan { color: var(--m-primary); }
-
-.m-nick { font-weight: 600; }
-.m-nick::before, .m-nick::after { content: ""; }
-.m-nick::after { content: ":"; color: var(--m-muted); font-weight: 400; margin-right: 4px; }
-.m-ts { font-size: 11px; opacity: 0.7; }
-
-.m-input textarea, .m-join input {
-  border-radius: calc(var(--m-radius) - 2px);
-}
-.m-btn { border-radius: calc(var(--m-radius) - 2px); text-transform: none; letter-spacing: 0; font-weight: 600; }
-.m-close { border-radius: 6px; }
-`;var k=`/* =============================================================================
-   minimal-light \u2014 day-mode counterpart of minimal-dark. Same structure, lighter
-   palette. Good for blogs/news sites that run a light theme.
-   ============================================================================= */
-
-:host, .m-root {
-  --m-bg:        #ffffff;
-  --m-fg:        #18181b;
-  --m-muted:     #71717a;
-  --m-card:      #fafafa;
-  --m-accent:    #f4f4f5;
-  --m-border:    #e4e4e7;
-  --m-primary:   #4f46e5;
-  --m-primary-fg: #ffffff;
-  --m-destructive: #dc2626;
-  --m-radius:    8px;
-  --m-font:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --m-font-size: 14px;
-  --m-line:      1.5;
-
-  --m-nick-1: #4f46e5;
-  --m-nick-2: #ca8a04;
-  --m-nick-3: #db2777;
-  --m-nick-4: #0891b2;
-  --m-nick-5: #ea580c;
-  --m-nick-6: #7c3aed;
-  --m-nick-7: #16a34a;
-  --m-nick-8: #dc2626;
-}
-
-.m-card::before { display: none; }
-.m-bracket { display: none; }
-
-.m-card {
-  border-radius: var(--m-radius);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
-}
-.m-head { border-bottom-color: var(--m-border); background: var(--m-card); }
-.m-head .m-chan { color: var(--m-primary); }
-.m-head .m-status.online { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
-
-.m-nick { font-weight: 600; }
-.m-nick::before, .m-nick::after { content: ""; }
-.m-nick::after { content: ":"; color: var(--m-muted); font-weight: 400; margin-right: 4px; }
-.m-ts { font-size: 11px; opacity: 0.7; }
-
-.m-stream::-webkit-scrollbar-thumb { background: var(--m-border); }
-.m-stream::-webkit-scrollbar-track { background: var(--m-card); }
-
-.m-input textarea, .m-join input {
-  border-radius: calc(var(--m-radius) - 2px);
-  background: var(--m-bg);
-}
-.m-btn {
-  border-radius: calc(var(--m-radius) - 2px);
-  text-transform: none;
-  letter-spacing: 0;
-  font-weight: 600;
-}
-.m-close {
-  border-radius: 6px;
-  background: var(--m-card);
-}
-
-/* Light skin needs darker launcher pill border for contrast on white pages */
-.m-launcher {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 0 12px rgba(79, 70, 229, 0.15);
-}
-.m-launcher:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12), 0 0 18px rgba(79, 70, 229, 0.25);
-}
-`;var y={default:"","retro-irc-1990":b,terminal:v,"minimal-dark":x,"minimal-light":k},p={mintUrl:"https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/mirc-embed-token",edgeUrl:"wss://mosadd-edge.mr-brics-33.workers.dev",position:"inline",skin:"default",locale:"en",launcherPosition:"br"},w=3e4,I=8,E={en:{join_label:"JOIN ANONYMOUSLY \u2014 PICK A NICK",join_placeholder:"e.g. Jane_from_Boston",join_button:"JOIN",input_placeholder:"Say something\u2026",connecting:"Connecting\u2026",queued:"This channel is at capacity. The creator can upgrade for more \u2014 please try again later.",error_origin:"This domain isn't authorized for this embed.",error_key:"This embed key is invalid.",sys_joined:"Joined the channel.",sys_disconnected:"Disconnected. Reconnecting\u2026",powered:"powered by"},pl:{join_label:"DO\u0141\u0104CZ ANONIMOWO \u2014 PODAJ NICK",join_placeholder:"np. Janek_z_Krakowa",join_button:"WEJD\u0179",input_placeholder:"Napisz co\u015B\u2026",connecting:"\u0141\u0105czenie\u2026",queued:"Kana\u0142 osi\u0105gn\u0105\u0142 limit. Tw\xF3rca mo\u017Ce zwi\u0119kszy\u0107 plan \u2014 spr\xF3buj p\xF3\u017Aniej.",error_origin:"Ta domena nie jest autoryzowana dla tego embeda.",error_key:"Klucz embeda jest nieprawid\u0142owy.",sys_joined:"Do\u0142\u0105czono do kana\u0142u.",sys_disconnected:"Roz\u0142\u0105czono. \u0141\u0105czenie ponownie\u2026",powered:"powered by"}};function c(r,e){return E[r]?.[e]??E.en[e]??e}function N(r,e){let t=`mosadd:embed:${r.slice(0,24)}:${e}`;return {getNick:()=>M(`${t}:nick`),setNick:n=>C(`${t}:nick`,n),getSub:()=>M(`${t}:sub`),setSub:n=>C(`${t}:sub`,n)}}function M(r){try{return localStorage.getItem(r)}catch{return null}}function C(r,e){try{localStorage.setItem(r,e);}catch{}}function O(r){let e=0;for(let t=0;t<r.length;t++)e=e*31+r.charCodeAt(t)|0;return Math.abs(e)%I+1}function P(r){let e=new Date(r),t=String(e.getHours()).padStart(2,"0"),n=String(e.getMinutes()).padStart(2,"0");return `[${t}:${n}]`}function i(r,e,t){let n=document.createElement(r);return e&&(n.className=e),t!==void 0&&(n.textContent=t),n}function $(r,e){let t=r.dataset,n=t.mode==="launcher"?"launcher":"inline",o=(()=>{let a=(t.launcherPosition||p.launcherPosition).toLowerCase();return ["br","bl","tr","tl"].includes(a)?a:"br"})();return {pk:e,channel:t.channel||"default",position:(t.position||p.position).toLowerCase(),skin:(t.skin||p.skin).toLowerCase(),mintUrl:t.mintUrl||p.mintUrl,edgeUrl:t.edgeUrl||p.edgeUrl,anon:t.anon!=="false",locale:(t.locale||p.locale).toLowerCase(),title:t.title,mode:n,launcherPosition:o,launcherLabel:t.launcherLabel}}async function A(r,e){try{let t=r.replace(/^ws/,"http"),n=await fetch(`${t}/c/${encodeURIComponent(e)}/presence`,{method:"GET"});if(!n.ok)return null;let o=await n.json();return {count:typeof o.count=="number"?o.count:0,status:o.status??"open"}}catch{return null}}var u=class{constructor(e,t){this.launcherEl=null;this.launcherDotEl=null;this.launcherCountEl=null;this.panelOpen=false;this.presencePollHandle=null;this.onlineCount=0;this.ws=null;this.mint=null;this.nick="";this.reconnectAttempts=0;this.host=e,this.cfg=$(e,t),this.storage=N(this.cfg.pk,this.cfg.channel),this.shadow=e.attachShadow({mode:"open"});let n=i("style");n.textContent=g,this.shadow.appendChild(n);let o=y[this.cfg.skin];if(o===void 0)console.warn(`[mosadd-embed] unknown data-skin="${this.cfg.skin}". Available: ${Object.keys(y).join(", ")}. Using default.`);else if(o){let a=i("style");a.textContent=o,this.shadow.appendChild(a);}this.mount(),this.cfg.mode==="launcher"?(this.mountLauncher(),this.cardEl.style.display="none",this.refreshPresence(),this.presencePollHandle=window.setInterval(()=>{this.refreshPresence();},w)):this.restore();}mount(){let e=this.cfg.mode==="launcher"?`m-pos-launcher m-launcher-pos-${this.cfg.launcherPosition}`:`m-pos-${this.cfg.position}`;this.root=i("div",`m-root ${e}`);let t=i("div","m-card");this.cardEl=t;for(let s of ["tl","tr","bl","br"])t.appendChild(i("div",`m-bracket ${s}`));let n=i("div","m-head");this.headStatusEl=i("span","m-status connecting");let o=i("span","m-title");if(o.innerHTML=`${this.cfg.title??"mIRC"} <span class="m-chan">#${U(this.cfg.channel)}</span>`,n.appendChild(this.headStatusEl),n.appendChild(o),this.cfg.mode==="launcher"){let s=i("button","m-close");s.type="button",s.innerHTML="\xD7",s.setAttribute("aria-label","Close chat"),s.addEventListener("click",()=>this.collapse()),n.appendChild(s);}t.appendChild(n),this.streamEl=i("div","m-stream"),t.appendChild(this.streamEl),this.joinEl=i("div","m-join");let a=i("label","",c(this.cfg.locale,"join_label")),l=i("div","m-row"),m=i("input");m.placeholder=c(this.cfg.locale,"join_placeholder"),m.autocomplete="off",m.maxLength=32;let f=i("button","m-btn",c(this.cfg.locale,"join_button"));m.addEventListener("keydown",s=>{s.key==="Enter"&&(s.preventDefault(),f.click());}),f.addEventListener("click",()=>this.handleJoin(m.value)),l.appendChild(m),l.appendChild(f),this.joinEl.appendChild(a),this.joinEl.appendChild(l),t.appendChild(this.joinEl),this.inputEl=i("div","m-input"),this.inputEl.style.display="none";let d=i("textarea");d.placeholder=c(this.cfg.locale,"input_placeholder"),d.rows=1,d.addEventListener("keydown",s=>{s.key==="Enter"&&!s.shiftKey&&(s.preventDefault(),this.handleSend(d.value),d.value="");}),this.inputEl.appendChild(d),t.appendChild(this.inputEl),this.badgeEl=i("div","m-badge"),this.badgeEl.innerHTML=`${c(this.cfg.locale,"powered")} <a href="https://mosadd.dev" target="_blank" rel="noopener">mosadd</a>`,t.appendChild(this.badgeEl),this.root.appendChild(t),this.shadow.appendChild(this.root);}mountLauncher(){let e=i("button","m-launcher");e.type="button";let t=i("span","m-launcher-dot"),n=i("span","m-launcher-label"),o=this.cfg.launcherLabel??`mIRC #${this.cfg.channel}`;n.textContent=o;let a=i("span","m-launcher-sep");a.textContent="\xB7";let l=i("span","m-launcher-count");l.textContent="\u2014",e.appendChild(t),e.appendChild(n),e.appendChild(a),e.appendChild(l),e.addEventListener("click",()=>this.expand()),this.launcherEl=e,this.launcherDotEl=t,this.launcherCountEl=l,this.root.appendChild(e);}setOnlineCount(e){this.onlineCount=Math.max(0,Math.floor(e)),this.launcherCountEl&&(this.launcherCountEl.textContent=this.onlineCount>=100?"99+ online":`${this.onlineCount} online`,this.launcherDotEl&&this.launcherDotEl.classList.toggle("active",this.onlineCount>0));}async refreshPresence(){if(this.panelOpen)return;let e=await A(this.cfg.edgeUrl,this.cfg.channel);e&&this.setOnlineCount(e.count);}expand(){this.panelOpen||(this.panelOpen=true,this.launcherEl&&(this.launcherEl.style.display="none"),this.cardEl.style.display="",this.root.classList.add("m-launcher-open"),this.presencePollHandle!==null&&(clearInterval(this.presencePollHandle),this.presencePollHandle=null),this.restore());}collapse(){this.panelOpen&&(this.panelOpen=false,this.cardEl.style.display="none",this.launcherEl&&(this.launcherEl.style.display=""),this.root.classList.remove("m-launcher-open"),(!this.ws||this.ws.readyState!==WebSocket.OPEN)&&this.presencePollHandle===null&&(this.presencePollHandle=window.setInterval(()=>{this.refreshPresence();},w)));}restore(){let e=this.storage.getNick();e&&this.handleJoin(e);}handleJoin(e){let t=e.trim().slice(0,32);t&&(this.nick=t,this.storage.setNick(t),this.joinEl.style.display="none",this.inputEl.style.display="flex",this.sysMessage(c(this.cfg.locale,"sys_joined")),this.connect());}async connect(){this.setStatus("connecting");try{let e=this.storage.getSub()??null,t={pk:this.cfg.pk,channel_id:this.cfg.channel};e&&(t.sub=e);let n=await fetch(this.cfg.mintUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(t)}),o=await n.json().catch(()=>null);if(!n.ok||!o||!("token"in o)){let l=o?.error??`http_${n.status}`;this.handleMintError(l);return}this.mint=o,this.storage.setSub(o.sub),o.badge_required||(this.badgeEl.style.display="none");let a=`${this.cfg.edgeUrl}/c/${encodeURIComponent(this.cfg.channel)}/ws`;this.ws=new WebSocket(a,["mosadd.v1",`bearer.${o.token}`]),this.ws.addEventListener("open",()=>{this.setStatus("online"),this.reconnectAttempts=0;}),this.ws.addEventListener("message",l=>this.onWsMessage(l)),this.ws.addEventListener("close",()=>this.onWsClose()),this.ws.addEventListener("error",()=>this.setStatus("error"));}catch{this.handleMintError("network");}}handleMintError(e){e==="plan_exhausted"?this.sysMessage(c(this.cfg.locale,"queued")):e==="origin_not_allowed"?this.sysMessage(c(this.cfg.locale,"error_origin")):e==="invalid_key"?this.sysMessage(c(this.cfg.locale,"error_key")):this.sysMessage(`error: ${e}`),this.setStatus("error");}onWsMessage(e){if(typeof e.data!="string")return;let t;try{t=JSON.parse(e.data);}catch{return}if(t){if(t.type==="presence"&&typeof t.count=="number"){this.setOnlineCount(t.count);return}!t.id||typeof t.text!="string"||this.renderMessage(t);}}onWsClose(){this.setStatus("connecting"),this.sysMessage(c(this.cfg.locale,"sys_disconnected"));let e=Math.min(16e3,1e3*Math.pow(2,this.reconnectAttempts));this.reconnectAttempts++,window.setTimeout(()=>{this.connect();},e);}handleSend(e){let t=e.trim();if(!(!t||!this.ws||this.ws.readyState!==WebSocket.OPEN))try{this.ws.send(JSON.stringify({text:t,from:this.nick}));}catch{}}renderMessage(e){let t=this.isStreamAtBottom(),n=i("div","m-msg"),o=e.from??"anon";n.dataset.nickColor=String(O(o));let a=i("span","m-ts",P(e.ts)),l=i("span","m-nick",o),m=i("span","m-text",e.text);n.appendChild(a),n.appendChild(l),n.appendChild(m),this.streamEl.appendChild(n),t&&this.scrollToBottom();}sysMessage(e){let t=i("div","m-sys",e);this.streamEl.appendChild(t),this.scrollToBottom();}setStatus(e){this.headStatusEl.className=`m-status ${e}`;}isStreamAtBottom(){let e=this.streamEl;return e.scrollHeight-e.scrollTop-e.clientHeight<40}scrollToBottom(){this.streamEl.scrollTop=this.streamEl.scrollHeight;}};function U(r){return r.replace(/[&<>"']/g,e=>e==="&"?"&amp;":e==="<"?"&lt;":e===">"?"&gt;":e==='"'?"&quot;":"&#39;")}var B="0.1.0";function T(){let r=document.currentScript;if(r?.dataset?.key)return r.dataset.key;let e=Array.from(document.getElementsByTagName("script"));for(let t of e)if(t.src&&/\/(v1)\.js(\?|$)/.test(t.src)&&t.dataset?.key)return t.dataset.key;return null}function W(){let r=new Set,e=[],t=o=>{r.has(o)||(r.add(o),e.push(o));},n=document.getElementById("mosadd-mirc");return n&&t(n),document.querySelectorAll("[data-mosadd-mirc]").forEach(t),document.querySelectorAll('[data-mosadd-embed="mirc"]').forEach(t),e}var h=null,L=new WeakSet;function H(r){if(L.has(r))return null;if(h||(h=T()),!h)return console.warn("[mosadd-embed] missing data-key on the <script> tag \u2014 widget not mounted."),null;try{let e=new u(r,h);return L.add(r),e}catch(e){return console.error("[mosadd-embed] mount failed:",e),null}}function S(){if(h=T(),!h){console.warn('[mosadd-embed] missing data-key on the <script> tag \u2014 set <script src="\u2026/v1.js" data-key="m_pk_live_\u2026">.');return}for(let r of W())H(r);}var J={mount:H,version:B};document.readyState==="loading"?document.addEventListener("DOMContentLoaded",S,{once:true}):queueMicrotask(S);var re=J;
-return re;})();//# sourceMappingURL=v1.js.map
+\r
+/* \u2500\u2500 queue overlay (LINEAR-2744) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\r
+.m-queue {\r
+  display: flex;\r
+  flex-direction: column;\r
+  align-items: center;\r
+  justify-content: center;\r
+  gap: 12px;\r
+  padding: 24px;\r
+  max-width: 280px;\r
+  margin: auto;\r
+  text-align: center;\r
+}\r
+.m-queue-icon {\r
+  font-size: 32px;\r
+  color: var(--m-primary);\r
+  opacity: 0.85;\r
+  line-height: 1;\r
+}\r
+.m-queue-title {\r
+  font-family: var(--m-font);\r
+  font-weight: 700;\r
+  font-size: 14px;\r
+  letter-spacing: 0.06em;\r
+  text-transform: uppercase;\r
+  color: var(--m-fg);\r
+}\r
+.m-queue-sub {\r
+  font-size: 12px;\r
+  color: var(--m-muted);\r
+  line-height: 1.5;\r
+}\r
+.m-queue-cta {\r
+  display: inline-block;\r
+  margin-top: 6px;\r
+  padding: 8px 14px;\r
+  background: var(--m-primary);\r
+  color: var(--m-primary-fg);\r
+  border: 1px solid var(--m-primary);\r
+  border-radius: var(--m-radius);\r
+  font-family: var(--m-font);\r
+  font-weight: 700;\r
+  font-size: 11px;\r
+  letter-spacing: 0.08em;\r
+  text-transform: uppercase;\r
+  text-decoration: none;\r
+}\r
+.m-queue-cta:hover { filter: brightness(1.12); }\r
+`;var v=`/* =============================================================================\r
+   retro-irc-1990 \u2014 full 1990s mIRC vibe. Lifted from strajkpolski.pl style.\r
+   Beige background, red accent, pixel-y feel. Author: @strajkpolski / mosadd team.\r
+   ============================================================================= */\r
+\r
+:host, .m-root {\r
+  --m-bg:        #f4eeda;\r
+  --m-fg:        #1a1a1a;\r
+  --m-muted:     #5a5550;\r
+  --m-card:      #ebe4cc;\r
+  --m-accent:    #e3dcc0;\r
+  --m-border:    #b91c1c;\r
+  --m-primary:   #b91c1c;\r
+  --m-primary-fg: #f4eeda;\r
+  --m-destructive: #7f1d1d;\r
+  --m-radius:    0;\r
+  --m-font:      "VT323", "Courier New", ui-monospace, monospace;\r
+  --m-font-size: 15px;\r
+  --m-line:      1.35;\r
+\r
+  /* High-saturation IRC palette */\r
+  --m-nick-1: #b91c1c;\r
+  --m-nick-2: #b45309;\r
+  --m-nick-3: #6d28d9;\r
+  --m-nick-4: #0e7490;\r
+  --m-nick-5: #9f1239;\r
+  --m-nick-6: #4338ca;\r
+  --m-nick-7: #166534;\r
+  --m-nick-8: #92400e;\r
+}\r
+\r
+/* Drop the scanline + HUD bracket overlay \u2014 period-correct mIRC didn't have those. */\r
+.m-card::before { display: none; }\r
+.m-bracket { display: none; }\r
+\r
+/* Slightly bolder title bar */\r
+.m-head {\r
+  background: var(--m-primary);\r
+  color: var(--m-primary-fg);\r
+  border-bottom: 2px solid var(--m-primary);\r
+}\r
+.m-head .m-chan { color: var(--m-primary-fg); }\r
+.m-head .m-title { color: var(--m-primary-fg); }\r
+.m-head .m-status.online { background: #ade80f; box-shadow: none; }\r
+\r
+.m-stream { background: var(--m-bg); }\r
+.m-ts { color: var(--m-muted); }\r
+.m-nick::before, .m-nick::after { color: var(--m-muted); }\r
+\r
+.m-btn { font-weight: 700; letter-spacing: 0.04em; }\r
+`;var x=`/* =============================================================================\r
+   terminal \u2014 green-on-black hacker terminal. CRT vibes, blinking cursor.\r
+   For dev blogs, sec-research sites, terminal-themed personal pages.\r
+   ============================================================================= */\r
+\r
+:host, .m-root {\r
+  --m-bg:        #000000;\r
+  --m-fg:        #00ff00;\r
+  --m-muted:     #009900;\r
+  --m-card:      #001100;\r
+  --m-accent:    #002200;\r
+  --m-border:    #006600;\r
+  --m-primary:   #00ff00;\r
+  --m-primary-fg: #000000;\r
+  --m-destructive: #ff3333;\r
+  --m-radius:    0;\r
+  --m-font:      "VT323", "Courier New", ui-monospace, monospace;\r
+  --m-font-size: 14px;\r
+  --m-line:      1.3;\r
+\r
+  --m-nick-1: #00ff00;\r
+  --m-nick-2: #00ffaa;\r
+  --m-nick-3: #aaff00;\r
+  --m-nick-4: #00ffff;\r
+  --m-nick-5: #ffff00;\r
+  --m-nick-6: #ff00ff;\r
+  --m-nick-7: #ffaa00;\r
+  --m-nick-8: #ffaaff;\r
+}\r
+\r
+.m-card {\r
+  /* Subtle CRT glow */\r
+  text-shadow: 0 0 1px currentColor;\r
+}\r
+\r
+/* Stronger scanlines for the CRT feel */\r
+.m-card::before {\r
+  background-image: repeating-linear-gradient(\r
+    180deg,\r
+    rgba(0, 255, 0, 0.04) 0,\r
+    rgba(0, 255, 0, 0.04) 1px,\r
+    transparent 1px,\r
+    transparent 2px\r
+  );\r
+}\r
+\r
+/* Drop HUD brackets \u2014 minimal terminal aesthetic */\r
+.m-bracket { display: none; }\r
+\r
+/* Blinking cursor on the input */\r
+.m-input textarea {\r
+  caret-color: var(--m-primary);\r
+}\r
+.m-input textarea:focus {\r
+  animation: m-cursor-blink 1s steps(2) infinite;\r
+}\r
+@keyframes m-cursor-blink {\r
+  50% { caret-color: transparent; }\r
+}\r
+\r
+/* \`$ \` prompt prefix in front of the nick \u2014 adds the CLI vibe */\r
+.m-nick::before { content: "$ "; color: var(--m-muted); }\r
+.m-nick::after  { content: ""; }\r
+`;var k=`/* =============================================================================\r
+   minimal-dark \u2014 modern dark, no scanlines, no brackets, soft borders.\r
+   Linear/Notion/Vercel feel. Good for product-y sites that want chat to\r
+   not scream "retro" but still match a dark theme.\r
+   ============================================================================= */\r
+\r
+:host, .m-root {\r
+  --m-bg:        #0a0a0b;\r
+  --m-fg:        #e5e5e7;\r
+  --m-muted:     #8a8a93;\r
+  --m-card:      #121215;\r
+  --m-accent:    #1f1f24;\r
+  --m-border:    #2a2a31;\r
+  --m-primary:   #6366f1;\r
+  --m-primary-fg: #ffffff;\r
+  --m-destructive: #ef4444;\r
+  --m-radius:    8px;\r
+  --m-font:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;\r
+  --m-font-size: 14px;\r
+  --m-line:      1.5;\r
+\r
+  /* Subdued nick palette to match the calm look */\r
+  --m-nick-1: #818cf8;\r
+  --m-nick-2: #fbbf24;\r
+  --m-nick-3: #f472b6;\r
+  --m-nick-4: #22d3ee;\r
+  --m-nick-5: #fb923c;\r
+  --m-nick-6: #c084fc;\r
+  --m-nick-7: #4ade80;\r
+  --m-nick-8: #f87171;\r
+}\r
+\r
+.m-card::before { display: none; }\r
+.m-bracket { display: none; }\r
+\r
+.m-card {\r
+  border-radius: var(--m-radius);\r
+}\r
+.m-head { border-bottom-color: var(--m-border); }\r
+.m-head .m-chan { color: var(--m-primary); }\r
+\r
+.m-nick { font-weight: 600; }\r
+.m-nick::before, .m-nick::after { content: ""; }\r
+.m-nick::after { content: ":"; color: var(--m-muted); font-weight: 400; margin-right: 4px; }\r
+.m-ts { font-size: 11px; opacity: 0.7; }\r
+\r
+.m-input textarea, .m-join input {\r
+  border-radius: calc(var(--m-radius) - 2px);\r
+}\r
+.m-btn { border-radius: calc(var(--m-radius) - 2px); text-transform: none; letter-spacing: 0; font-weight: 600; }\r
+.m-close { border-radius: 6px; }\r
+`;var y=`/* =============================================================================\r
+   minimal-light \u2014 day-mode counterpart of minimal-dark. Same structure, lighter\r
+   palette. Good for blogs/news sites that run a light theme.\r
+   ============================================================================= */\r
+\r
+:host, .m-root {\r
+  --m-bg:        #ffffff;\r
+  --m-fg:        #18181b;\r
+  --m-muted:     #71717a;\r
+  --m-card:      #fafafa;\r
+  --m-accent:    #f4f4f5;\r
+  --m-border:    #e4e4e7;\r
+  --m-primary:   #4f46e5;\r
+  --m-primary-fg: #ffffff;\r
+  --m-destructive: #dc2626;\r
+  --m-radius:    8px;\r
+  --m-font:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;\r
+  --m-font-size: 14px;\r
+  --m-line:      1.5;\r
+\r
+  --m-nick-1: #4f46e5;\r
+  --m-nick-2: #ca8a04;\r
+  --m-nick-3: #db2777;\r
+  --m-nick-4: #0891b2;\r
+  --m-nick-5: #ea580c;\r
+  --m-nick-6: #7c3aed;\r
+  --m-nick-7: #16a34a;\r
+  --m-nick-8: #dc2626;\r
+}\r
+\r
+.m-card::before { display: none; }\r
+.m-bracket { display: none; }\r
+\r
+.m-card {\r
+  border-radius: var(--m-radius);\r
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);\r
+}\r
+.m-head { border-bottom-color: var(--m-border); background: var(--m-card); }\r
+.m-head .m-chan { color: var(--m-primary); }\r
+.m-head .m-status.online { background: #22c55e; box-shadow: 0 0 6px #22c55e; }\r
+\r
+.m-nick { font-weight: 600; }\r
+.m-nick::before, .m-nick::after { content: ""; }\r
+.m-nick::after { content: ":"; color: var(--m-muted); font-weight: 400; margin-right: 4px; }\r
+.m-ts { font-size: 11px; opacity: 0.7; }\r
+\r
+.m-stream::-webkit-scrollbar-thumb { background: var(--m-border); }\r
+.m-stream::-webkit-scrollbar-track { background: var(--m-card); }\r
+\r
+.m-input textarea, .m-join input {\r
+  border-radius: calc(var(--m-radius) - 2px);\r
+  background: var(--m-bg);\r
+}\r
+.m-btn {\r
+  border-radius: calc(var(--m-radius) - 2px);\r
+  text-transform: none;\r
+  letter-spacing: 0;\r
+  font-weight: 600;\r
+}\r
+.m-close {\r
+  border-radius: 6px;\r
+  background: var(--m-card);\r
+}\r
+\r
+/* Light skin needs darker launcher pill border for contrast on white pages */\r
+.m-launcher {\r
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 0 12px rgba(79, 70, 229, 0.15);\r
+}\r
+.m-launcher:hover {\r
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12), 0 0 18px rgba(79, 70, 229, 0.25);\r
+}\r
+`;var w={default:"","retro-irc-1990":v,terminal:x,"minimal-dark":k,"minimal-light":y},p={mintUrl:"https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/mirc-embed-token",edgeUrl:"wss://mosadd-edge.mr-brics-33.workers.dev",position:"inline",skin:"default",locale:"en",launcherPosition:"br"},E=3e4,I=8,g={en:{join_label:"JOIN ANONYMOUSLY \u2014 PICK A NICK",join_placeholder:"e.g. Jane_from_Boston",join_button:"JOIN",input_placeholder:"Say something\u2026",connecting:"Connecting\u2026",queued:"This channel is at capacity. The creator can upgrade for more \u2014 please try again later.",queue_title:"Channel at capacity",queue_sub:"This chat reached its monthly limit. The creator can upgrade to let more people in.",queue_cta:"About upgrading \u2192",rate_limited:"Too many requests. Try again in a minute.",error_origin:"This domain isn't authorized for this embed.",error_key:"This embed key is invalid.",sys_joined:"Joined the channel.",sys_disconnected:"Disconnected. Reconnecting\u2026",powered:"powered by"},pl:{join_label:"DO\u0141\u0104CZ ANONIMOWO \u2014 PODAJ NICK",join_placeholder:"np. Janek_z_Krakowa",join_button:"WEJD\u0179",input_placeholder:"Napisz co\u015B\u2026",connecting:"\u0141\u0105czenie\u2026",queued:"Kana\u0142 osi\u0105gn\u0105\u0142 limit. Tw\xF3rca mo\u017Ce zwi\u0119kszy\u0107 plan \u2014 spr\xF3buj p\xF3\u017Aniej.",queue_title:"Kana\u0142 pe\u0142ny",queue_sub:"Ten czat osi\u0105gn\u0105\u0142 miesi\u0119czny limit. Tw\xF3rca mo\u017Ce podnie\u015B\u0107 plan \u017Ceby wpu\u015Bci\u0107 wi\u0119cej os\xF3b.",queue_cta:"Zobacz tier-y \u2192",rate_limited:"Zbyt wiele pr\xF3b. Spr\xF3buj za minut\u0119.",error_origin:"Ta domena nie jest autoryzowana dla tego embeda.",error_key:"Klucz embeda jest nieprawid\u0142owy.",sys_joined:"Do\u0142\u0105czono do kana\u0142u.",sys_disconnected:"Roz\u0142\u0105czono. \u0141\u0105czenie ponownie\u2026",powered:"powered by"}};function c(i,e){return g[i]?.[e]??g.en[e]??e}function N(i,e){let t=`mosadd:embed:${i.slice(0,24)}:${e}`;return {getNick:()=>C(`${t}:nick`),setNick:n=>M(`${t}:nick`,n),getSub:()=>C(`${t}:sub`),setSub:n=>M(`${t}:sub`,n)}}function C(i){try{return localStorage.getItem(i)}catch{return null}}function M(i,e){try{localStorage.setItem(i,e);}catch{}}function O(i){let e=0;for(let t=0;t<i.length;t++)e=e*31+i.charCodeAt(t)|0;return Math.abs(e)%I+1}function A(i){let e=new Date(i),t=String(e.getHours()).padStart(2,"0"),n=String(e.getMinutes()).padStart(2,"0");return `[${t}:${n}]`}function o(i,e,t){let n=document.createElement(i);return e&&(n.className=e),t!==void 0&&(n.textContent=t),n}function q(i){let e=Object.keys(g);if(i){let t=i.toLowerCase();if(e.includes(t))return t}try{let t=(navigator?.language??"").split("-")[0]?.toLowerCase();if(t&&e.includes(t))return t}catch{}return p.locale}function $(i,e){let t=i.dataset,n=t.mode==="launcher"?"launcher":"inline",r=(()=>{let a=(t.launcherPosition||p.launcherPosition).toLowerCase();return ["br","bl","tr","tl"].includes(a)?a:"br"})();return {pk:e,channel:t.channel||"default",position:(t.position||p.position).toLowerCase(),skin:(t.skin||p.skin).toLowerCase(),mintUrl:t.mintUrl||p.mintUrl,edgeUrl:t.edgeUrl||p.edgeUrl,anon:t.anon!=="false",locale:q(t.locale),title:t.title,sound:t.sound==="true",mode:n,launcherPosition:r,launcherLabel:t.launcherLabel}}async function P(i,e){try{let t=i.replace(/^ws/,"http"),n=await fetch(`${t}/c/${encodeURIComponent(e)}/presence`,{method:"GET"});if(!n.ok)return null;let r=await n.json();return {count:typeof r.count=="number"?r.count:0,status:r.status??"open"}}catch{return null}}var u=class{constructor(e,t){this.launcherEl=null;this.launcherDotEl=null;this.launcherCountEl=null;this.panelOpen=false;this.presencePollHandle=null;this.onlineCount=0;this.ws=null;this.mint=null;this.nick="";this.reconnectAttempts=0;this.host=e,this.cfg=$(e,t),this.storage=N(this.cfg.pk,this.cfg.channel),this.shadow=e.attachShadow({mode:"open"});let n=o("style");n.textContent=b,this.shadow.appendChild(n);let r=w[this.cfg.skin];if(r===void 0)console.warn(`[mosadd-embed] unknown data-skin="${this.cfg.skin}". Available: ${Object.keys(w).join(", ")}. Using default.`);else if(r){let a=o("style");a.textContent=r,this.shadow.appendChild(a);}this.mount(),this.cfg.mode==="launcher"?(this.mountLauncher(),this.cardEl.style.display="none",this.refreshPresence(),this.presencePollHandle=window.setInterval(()=>{this.refreshPresence();},E)):this.restore(),this.bindMobileKeyboard();}bindMobileKeyboard(){let e=window.visualViewport;if(!e||typeof e.addEventListener!="function")return;let t=()=>{if(!/m-pos-(launcher|floating|fullscreen|sidebar)/.test(this.root.className))return;let r=this.cardEl;if(!r)return;let a=Math.max(0,window.innerHeight-e.height);if(r.style.maxHeight=a>80?`calc(100vh - ${a+24}px)`:"",a>80)try{this.streamEl?.scrollTo({top:this.streamEl.scrollHeight});}catch{}};e.addEventListener("resize",t),e.addEventListener("scroll",t);}mount(){let e=this.cfg.mode==="launcher"?`m-pos-launcher m-launcher-pos-${this.cfg.launcherPosition}`:`m-pos-${this.cfg.position}`;this.root=o("div",`m-root ${e}`);let t=o("div","m-card");this.cardEl=t;for(let s of ["tl","tr","bl","br"])t.appendChild(o("div",`m-bracket ${s}`));let n=o("div","m-head");this.headStatusEl=o("span","m-status connecting");let r=o("span","m-title");if(r.innerHTML=`${this.cfg.title??"mIRC"} <span class="m-chan">#${U(this.cfg.channel)}</span>`,n.appendChild(this.headStatusEl),n.appendChild(r),this.cfg.mode==="launcher"){let s=o("button","m-close");s.type="button",s.innerHTML="\xD7",s.setAttribute("aria-label","Close chat"),s.addEventListener("click",()=>this.collapse()),n.appendChild(s);}t.appendChild(n),this.streamEl=o("div","m-stream"),t.appendChild(this.streamEl),this.joinEl=o("div","m-join");let a=o("label","",c(this.cfg.locale,"join_label")),l=o("div","m-row"),m=o("input");m.placeholder=c(this.cfg.locale,"join_placeholder"),m.autocomplete="off",m.maxLength=32;let f=o("button","m-btn",c(this.cfg.locale,"join_button"));m.addEventListener("keydown",s=>{s.key==="Enter"&&(s.preventDefault(),f.click());}),f.addEventListener("click",()=>this.handleJoin(m.value)),l.appendChild(m),l.appendChild(f),this.joinEl.appendChild(a),this.joinEl.appendChild(l),t.appendChild(this.joinEl),this.inputEl=o("div","m-input"),this.inputEl.style.display="none";let d=o("textarea");d.placeholder=c(this.cfg.locale,"input_placeholder"),d.rows=1,d.addEventListener("keydown",s=>{s.key==="Enter"&&!s.shiftKey&&(s.preventDefault(),this.handleSend(d.value),d.value="");}),this.inputEl.appendChild(d),t.appendChild(this.inputEl),this.badgeEl=o("div","m-badge"),this.badgeEl.innerHTML=`${c(this.cfg.locale,"powered")} <a href="https://mosadd.dev" target="_blank" rel="noopener">mosadd</a>`,t.appendChild(this.badgeEl),this.root.appendChild(t),this.shadow.appendChild(this.root);}mountLauncher(){let e=o("button","m-launcher");e.type="button";let t=o("span","m-launcher-dot"),n=o("span","m-launcher-label"),r=this.cfg.launcherLabel??`mIRC #${this.cfg.channel}`;n.textContent=r;let a=o("span","m-launcher-sep");a.textContent="\xB7";let l=o("span","m-launcher-count");l.textContent="\u2014",e.appendChild(t),e.appendChild(n),e.appendChild(a),e.appendChild(l),e.addEventListener("click",()=>this.expand()),this.launcherEl=e,this.launcherDotEl=t,this.launcherCountEl=l,this.root.appendChild(e);}setOnlineCount(e){this.onlineCount=Math.max(0,Math.floor(e)),this.launcherCountEl&&(this.launcherCountEl.textContent=this.onlineCount>=100?"99+ online":`${this.onlineCount} online`,this.launcherDotEl&&this.launcherDotEl.classList.toggle("active",this.onlineCount>0));}async refreshPresence(){if(this.panelOpen)return;let e=await P(this.cfg.edgeUrl,this.cfg.channel);e&&this.setOnlineCount(e.count);}expand(){this.panelOpen||(this.panelOpen=true,this.launcherEl&&(this.launcherEl.style.display="none"),this.cardEl.style.display="",this.root.classList.add("m-launcher-open"),this.presencePollHandle!==null&&(clearInterval(this.presencePollHandle),this.presencePollHandle=null),this.restore());}collapse(){this.panelOpen&&(this.panelOpen=false,this.cardEl.style.display="none",this.launcherEl&&(this.launcherEl.style.display=""),this.root.classList.remove("m-launcher-open"),(!this.ws||this.ws.readyState!==WebSocket.OPEN)&&this.presencePollHandle===null&&(this.presencePollHandle=window.setInterval(()=>{this.refreshPresence();},E)));}restore(){let e=this.storage.getNick();e&&this.handleJoin(e);}handleJoin(e){let t=e.trim().slice(0,32);t&&(this.nick=t,this.storage.setNick(t),this.joinEl.style.display="none",this.inputEl.style.display="flex",this.sysMessage(c(this.cfg.locale,"sys_joined")),this.connect());}async connect(){this.setStatus("connecting");try{let e=this.storage.getSub()??null,t={pk:this.cfg.pk,channel_id:this.cfg.channel};e&&(t.sub=e);let n=await fetch(this.cfg.mintUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(t)}),r=await n.json().catch(()=>null);if(!n.ok||!r||!("token"in r)){let l=r?.error??`http_${n.status}`;this.handleMintError(l);return}this.mint=r,this.storage.setSub(r.sub),r.badge_required||(this.badgeEl.style.display="none");let a=`${this.cfg.edgeUrl}/c/${encodeURIComponent(this.cfg.channel)}/ws`;this.ws=new WebSocket(a,["mosadd.v1",`bearer.${r.token}`]),this.ws.addEventListener("open",()=>{this.setStatus("online"),this.reconnectAttempts=0;}),this.ws.addEventListener("message",l=>this.onWsMessage(l)),this.ws.addEventListener("close",()=>this.onWsClose()),this.ws.addEventListener("error",()=>this.setStatus("error"));}catch{this.handleMintError("network");}}handleMintError(e){if(e==="plan_exhausted"){this.renderQueueOverlay(),this.setStatus("error");return}e==="origin_not_allowed"?this.sysMessage(c(this.cfg.locale,"error_origin")):e==="invalid_key"?this.sysMessage(c(this.cfg.locale,"error_key")):e==="rate_limited"?this.sysMessage(c(this.cfg.locale,"rate_limited")):this.sysMessage(`error: ${e}`),this.setStatus("error");}renderQueueOverlay(){this.inputEl.style.display="none",this.joinEl.style.display="none",this.streamEl.innerHTML="",this.streamEl.style.display="flex",this.streamEl.style.alignItems="center",this.streamEl.style.justifyContent="center",this.streamEl.style.textAlign="center";let e=o("div","m-queue"),t=o("div","m-queue-icon");t.textContent="\u25F7";let n=o("div","m-queue-title");n.textContent=c(this.cfg.locale,"queue_title");let r=o("div","m-queue-sub");r.textContent=c(this.cfg.locale,"queue_sub");let a=o("a","m-queue-cta");a.href="https://mosadd.dev/pricing",a.target="_blank",a.rel="noopener noreferrer",a.textContent=c(this.cfg.locale,"queue_cta"),e.appendChild(t),e.appendChild(n),e.appendChild(r),e.appendChild(a),this.streamEl.appendChild(e);}playBeep(){if(this.cfg.sound)try{let e=window.AudioContext??window.webkitAudioContext;if(!e)return;let t=new e,n=t.createOscillator(),r=t.createGain();n.connect(r),r.connect(t.destination),n.type="sine",n.frequency.value=880,r.gain.setValueAtTime(0,t.currentTime),r.gain.linearRampToValueAtTime(.08,t.currentTime+.01),r.gain.exponentialRampToValueAtTime(.001,t.currentTime+.12),n.start(),n.stop(t.currentTime+.13),setTimeout(()=>{try{t.close();}catch{}},200);}catch{}}onWsMessage(e){if(typeof e.data!="string")return;let t;try{t=JSON.parse(e.data);}catch{return}if(!t)return;if(t.type==="presence"&&typeof t.count=="number"){this.setOnlineCount(t.count);return}if(!t.id||typeof t.text!="string")return;let n=t;this.renderMessage(n),n.from&&this.nick&&n.from!==this.nick&&this.playBeep();}onWsClose(){this.setStatus("connecting"),this.sysMessage(c(this.cfg.locale,"sys_disconnected"));let e=Math.min(16e3,1e3*Math.pow(2,this.reconnectAttempts));this.reconnectAttempts++,window.setTimeout(()=>{this.connect();},e);}handleSend(e){let t=e.trim();if(!(!t||!this.ws||this.ws.readyState!==WebSocket.OPEN))try{this.ws.send(JSON.stringify({text:t,from:this.nick}));}catch{}}renderMessage(e){let t=this.isStreamAtBottom(),n=o("div","m-msg"),r=e.from??"anon";n.dataset.nickColor=String(O(r));let a=o("span","m-ts",A(e.ts)),l=o("span","m-nick",r),m=o("span","m-text",e.text);n.appendChild(a),n.appendChild(l),n.appendChild(m),this.streamEl.appendChild(n),t&&this.scrollToBottom();}sysMessage(e){let t=o("div","m-sys",e);this.streamEl.appendChild(t),this.scrollToBottom();}setStatus(e){this.headStatusEl.className=`m-status ${e}`;}isStreamAtBottom(){let e=this.streamEl;return e.scrollHeight-e.scrollTop-e.clientHeight<40}scrollToBottom(){this.streamEl.scrollTop=this.streamEl.scrollHeight;}};function U(i){return i.replace(/[&<>"']/g,e=>e==="&"?"&amp;":e==="<"?"&lt;":e===">"?"&gt;":e==='"'?"&quot;":"&#39;")}var B="0.1.0";function S(){let i=document.currentScript;if(i?.dataset?.key)return i.dataset.key;let e=Array.from(document.getElementsByTagName("script"));for(let t of e)if(t.src&&/\/(v1)\.js(\?|$)/.test(t.src)&&t.dataset?.key)return t.dataset.key;return null}function W(){let i=new Set,e=[],t=r=>{i.has(r)||(i.add(r),e.push(r));},n=document.getElementById("mosadd-mirc");return n&&t(n),document.querySelectorAll("[data-mosadd-mirc]").forEach(t),document.querySelectorAll('[data-mosadd-embed="mirc"]').forEach(t),e}var h=null,T=new WeakSet;function H(i){if(T.has(i))return null;if(h||(h=S()),!h)return console.warn("[mosadd-embed] missing data-key on the <script> tag \u2014 widget not mounted."),null;try{let e=new u(i,h);return T.add(i),e}catch(e){return console.error("[mosadd-embed] mount failed:",e),null}}function L(){if(h=S(),!h){console.warn('[mosadd-embed] missing data-key on the <script> tag \u2014 set <script src="\u2026/v1.js" data-key="m_pk_live_\u2026">.');return}for(let i of W())H(i);}var J={mount:H,version:B};document.readyState==="loading"?document.addEventListener("DOMContentLoaded",L,{once:true}):queueMicrotask(L);var ie=J;
+return ie;})();//# sourceMappingURL=v1.js.map
 //# sourceMappingURL=v1.js.map

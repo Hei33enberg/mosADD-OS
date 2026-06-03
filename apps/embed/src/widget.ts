@@ -60,6 +60,9 @@ interface WidgetConfig {
   /** Label shown on the launcher pill, e.g. "mIRC #strajkpolski". Defaults to
    *  `mIRC #${channel}`. */
   launcherLabel?: string;
+  /** LINEAR-2749: play a short beep on incoming messages from OTHER senders.
+   *  Off by default to be polite. data-sound="true" turns it on. */
+  sound: boolean;
 }
 
 interface Message {
@@ -110,6 +113,10 @@ const I18N: Record<string, Record<string, string>> = {
     input_placeholder: "Say something…",
     connecting: "Connecting…",
     queued: "This channel is at capacity. The creator can upgrade for more — please try again later.",
+    queue_title: "Channel at capacity",
+    queue_sub: "This chat reached its monthly limit. The creator can upgrade to let more people in.",
+    queue_cta: "About upgrading →",
+    rate_limited: "Too many requests. Try again in a minute.",
     error_origin: "This domain isn't authorized for this embed.",
     error_key: "This embed key is invalid.",
     sys_joined: "Joined the channel.",
@@ -123,6 +130,10 @@ const I18N: Record<string, Record<string, string>> = {
     input_placeholder: "Napisz coś…",
     connecting: "Łączenie…",
     queued: "Kanał osiągnął limit. Twórca może zwiększyć plan — spróbuj później.",
+    queue_title: "Kanał pełny",
+    queue_sub: "Ten czat osiągnął miesięczny limit. Twórca może podnieść plan żeby wpuścić więcej osób.",
+    queue_cta: "Zobacz tier-y →",
+    rate_limited: "Zbyt wiele prób. Spróbuj za minutę.",
     error_origin: "Ta domena nie jest autoryzowana dla tego embeda.",
     error_key: "Klucz embeda jest nieprawidłowy.",
     sys_joined: "Dołączono do kanału.",
@@ -179,6 +190,21 @@ function el<T extends HTMLElement>(tag: string, className?: string, text?: strin
   return node;
 }
 
+/** LINEAR-2750: pick a locale. data-locale wins; otherwise navigator.language
+ *  primary subtag if we have a translation for it; otherwise DEFAULTS.locale. */
+function detectLocale(explicit?: string): string {
+  const supported = Object.keys(I18N);
+  if (explicit) {
+    const lower = explicit.toLowerCase();
+    if (supported.includes(lower)) return lower;
+  }
+  try {
+    const nav = (navigator?.language ?? "").split("-")[0]?.toLowerCase();
+    if (nav && supported.includes(nav)) return nav;
+  } catch { /* SSR / no navigator */ }
+  return DEFAULTS.locale;
+}
+
 function readConfig(host: HTMLElement, scriptKey: string): WidgetConfig {
   const a = host.dataset;
   const mode = (a.mode === "launcher" ? "launcher" : "inline") as "inline" | "launcher";
@@ -194,8 +220,9 @@ function readConfig(host: HTMLElement, scriptKey: string): WidgetConfig {
     mintUrl: a.mintUrl || DEFAULTS.mintUrl,
     edgeUrl: a.edgeUrl || DEFAULTS.edgeUrl,
     anon: a.anon !== "false",
-    locale: (a.locale || DEFAULTS.locale).toLowerCase(),
+    locale: detectLocale(a.locale),
     title: a.title,
+    sound: a.sound === "true",
     mode,
     launcherPosition,
     launcherLabel: a.launcherLabel,
@@ -290,6 +317,34 @@ export class MosaddMircWidget {
     } else {
       this.restore();
     }
+    // LINEAR-2745: on mobile (iOS Safari especially) the soft keyboard shifts
+    // the layout viewport and hides our input. Listen to visualViewport and
+    // resize the card height so the input stays above the keyboard.
+    this.bindMobileKeyboard();
+  }
+
+  /** LINEAR-2745: keep the chat card height above the soft keyboard. */
+  private bindMobileKeyboard(): void {
+    const vv = (window as any).visualViewport as VisualViewport | undefined;
+    if (!vv || typeof vv.addEventListener !== "function") return;
+    const apply = () => {
+      // Only meaningful in floating/launcher/fullscreen modes — inline is just
+      // a normal page element so the browser's own scroll handles it.
+      const isOverlay = /m-pos-(launcher|floating|fullscreen|sidebar)/.test(this.root.className);
+      if (!isOverlay) return;
+      const card = this.cardEl;
+      if (!card) return;
+      // Difference between layout vs visual viewport = the keyboard area.
+      const kbHeight = Math.max(0, window.innerHeight - vv.height);
+      card.style.maxHeight = kbHeight > 80 ? `calc(100vh - ${kbHeight + 24}px)` : "";
+      if (kbHeight > 80) {
+        // Force the stream to scroll its bottom into view so the user sees
+        // their own message land while typing.
+        try { this.streamEl?.scrollTo({ top: this.streamEl.scrollHeight }); } catch {}
+      }
+    };
+    vv.addEventListener("resize", apply);
+    vv.addEventListener("scroll", apply);
   }
 
   private mount(): void {
@@ -520,15 +575,78 @@ export class MosaddMircWidget {
 
   private handleMintError(code: string): void {
     if (code === "plan_exhausted") {
-      this.sysMessage(t(this.cfg.locale, "queued"));
-    } else if (code === "origin_not_allowed") {
+      // LINEAR-2744: dedicated full-card overlay with an upgrade CTA so the
+      // visitor understands it's the CREATOR's plan, not their internet.
+      this.renderQueueOverlay();
+      this.setStatus("error");
+      return;
+    }
+    if (code === "origin_not_allowed") {
       this.sysMessage(t(this.cfg.locale, "error_origin"));
     } else if (code === "invalid_key") {
       this.sysMessage(t(this.cfg.locale, "error_key"));
+    } else if (code === "rate_limited") {
+      this.sysMessage(t(this.cfg.locale, "rate_limited"));
     } else {
       this.sysMessage(`error: ${code}`);
     }
     this.setStatus("error");
+  }
+
+  /** LINEAR-2744: hide stream + render a "channel at capacity" panel with a
+   *  link to mosadd.dev/pricing (the OWNER upgrades, not the visitor). */
+  private renderQueueOverlay(): void {
+    // Hide the input row + the join form — there's nothing to send.
+    this.inputEl.style.display = "none";
+    this.joinEl.style.display = "none";
+    // Clear the stream and replace with a dedicated overlay.
+    this.streamEl.innerHTML = "";
+    this.streamEl.style.display = "flex";
+    this.streamEl.style.alignItems = "center";
+    this.streamEl.style.justifyContent = "center";
+    this.streamEl.style.textAlign = "center";
+    const wrap = el<HTMLDivElement>("div", "m-queue");
+    const icon = el<HTMLDivElement>("div", "m-queue-icon");
+    icon.textContent = "◷";
+    const title = el<HTMLDivElement>("div", "m-queue-title");
+    title.textContent = t(this.cfg.locale, "queue_title");
+    const sub = el<HTMLDivElement>("div", "m-queue-sub");
+    sub.textContent = t(this.cfg.locale, "queue_sub");
+    const link = el<HTMLAnchorElement>("a", "m-queue-cta");
+    link.href = "https://mosadd.dev/pricing";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = t(this.cfg.locale, "queue_cta");
+    wrap.appendChild(icon);
+    wrap.appendChild(title);
+    wrap.appendChild(sub);
+    wrap.appendChild(link);
+    this.streamEl.appendChild(wrap);
+  }
+
+  /** LINEAR-2749: short beep on incoming messages. WebAudio API — no asset
+   *  download, ~0 bytes. Skipped if data-sound is false (default) or if the
+   *  sender is ourselves. */
+  private playBeep(): void {
+    if (!this.cfg.sound) return;
+    try {
+      const AC = (window as any).AudioContext ?? (window as any).webkitAudioContext;
+      if (!AC) return;
+      const ctx = new AC();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.13);
+      // Close the context shortly after so we don't leak audio handles.
+      setTimeout(() => { try { ctx.close(); } catch {} }, 200);
+    } catch { /* audio is best-effort */ }
   }
 
   private onWsMessage(e: MessageEvent): void {
@@ -548,7 +666,11 @@ export class MosaddMircWidget {
 
     // Regular message frame: {id, ts, from, text}.
     if (!parsed.id || typeof (parsed as Message).text !== "string") return;
-    this.renderMessage(parsed as Message);
+    const m = parsed as Message;
+    this.renderMessage(m);
+    // LINEAR-2749: beep only when the sender isn't us. Compares by nick which
+    // is good enough for the polite "ding from someone else" UX.
+    if (m.from && this.nick && m.from !== this.nick) this.playBeep();
   }
 
   private onWsClose(): void {

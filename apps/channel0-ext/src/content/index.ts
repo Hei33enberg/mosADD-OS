@@ -1,0 +1,170 @@
+// =============================================================================
+// channel0 content script (v0.2): draggable bubble + side-panel open via SW.
+// =============================================================================
+
+import { normalizeDomain } from "../lib/domain";
+import { getSettings, patchSettings, type Settings } from "../lib/settings";
+import { mountChat, type MountHandle } from "../shared/chat-shell";
+import { CHAT_CSS } from "../shared/chat-styles";
+import { t } from "../lib/i18n";
+
+const norm = normalizeDomain(location.href);
+if (norm) void bootstrap(norm);
+
+async function bootstrap(norm: { domain: string; slug: string }): Promise<void> {
+  const settings = await getSettings();
+
+  const host = document.createElement("div");
+  host.setAttribute("data-mosadd-channel0", "");
+  host.style.cssText = "all: initial; position: fixed; inset: 0; pointer-events: none; z-index: 2147483647;";
+  const shadow = host.attachShadow({ mode: "closed" });
+  shadow.appendChild(buildStyles());
+
+  if (document.body) document.body.appendChild(host);
+  else document.addEventListener("DOMContentLoaded", () => document.body?.appendChild(host));
+
+  const bubble = renderBubble(shadow, settings);
+  let inlinePanel: { handle: MountHandle; el: HTMLElement } | null = null;
+
+  bubble.onClick = async () => {
+    const s = await getSettings();
+    if (s.openMode === "side") {
+      const ok = await tryOpenSidePanel();
+      if (!ok) toggleInline();
+    } else {
+      toggleInline();
+    }
+  };
+
+  function toggleInline(): void {
+    if (inlinePanel) { inlinePanel.handle.destroy(); inlinePanel.el.remove(); inlinePanel = null; return; }
+    const el = document.createElement("div");
+    el.className = "c0-inline";
+    shadow.appendChild(el);
+    const handle = mountChat(el, {
+      domain: norm.domain,
+      actions: [{ icon: "close", i18nKey: "tooltipClose", onClick: () => { if (inlinePanel) { inlinePanel.handle.destroy(); inlinePanel.el.remove(); inlinePanel = null; } } }],
+      onPresence(c) { bubble.setCount(c); },
+    });
+    inlinePanel = { handle, el };
+  }
+}
+
+interface BubbleHandle {
+  setCount(c: number): void;
+  onClick: () => void;
+}
+
+function renderBubble(shadow: ShadowRoot, settings: Settings): BubbleHandle {
+  const wrap = document.createElement("div");
+  wrap.className = "c0-bubble-wrap";
+  applyBubblePos(wrap, settings.bubbleVisible ? settings.bubble : null);
+  shadow.appendChild(wrap);
+
+  const btn = document.createElement("button");
+  btn.className = "c0-bubble";
+  btn.title = t("actionTitle");
+  btn.innerHTML = `<span class="c0-bubble-dot"></span><span class="c0-bubble-count" data-count>0</span>`;
+  wrap.appendChild(btn);
+
+  const handle: BubbleHandle = {
+    setCount(c: number) {
+      const el = btn.querySelector("[data-count]") as HTMLSpanElement;
+      el.textContent = String(Math.max(0, c - 1));
+      btn.classList.toggle("has-people", c > 1);
+    },
+    onClick: () => { /* set by caller */ },
+  };
+
+  let dragStart: { x: number; y: number; ox: number; oy: number } | null = null;
+  let moved = false;
+
+  btn.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    const r = wrap.getBoundingClientRect();
+    dragStart = { x: e.clientX, y: e.clientY, ox: r.left, oy: r.top };
+    moved = false;
+    btn.setPointerCapture(e.pointerId);
+  });
+
+  btn.addEventListener("pointermove", (e) => {
+    if (!dragStart) return;
+    const dx = e.clientX - dragStart.x;
+    const dy = e.clientY - dragStart.y;
+    if (!moved && Math.hypot(dx, dy) < 5) return;
+    moved = true;
+    wrap.style.left = `${dragStart.ox + dx}px`;
+    wrap.style.top  = `${dragStart.oy + dy}px`;
+    wrap.style.right = "auto"; wrap.style.bottom = "auto";
+  });
+
+  btn.addEventListener("pointerup", async (e) => {
+    if (!dragStart) return;
+    const wasDrag = moved;
+    dragStart = null;
+    btn.releasePointerCapture(e.pointerId);
+    if (wasDrag) {
+      const r = wrap.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const W = window.innerWidth, H = window.innerHeight;
+      const anchor: Settings["bubble"]["anchor"] =
+        cy > H / 2 ? (cx > W / 2 ? "br" : "bl") : (cx > W / 2 ? "tr" : "tl");
+      const margin = 16;
+      const x = anchor.endsWith("r") ? Math.max(margin, W - r.right) : Math.max(margin, r.left);
+      const y = anchor.startsWith("b") ? Math.max(margin, H - r.bottom) : Math.max(margin, r.top);
+      const next = await patchSettings({ bubble: { anchor, x, y } });
+      applyBubblePos(wrap, next.bubble);
+    } else {
+      handle.onClick();
+    }
+  });
+
+  return handle;
+}
+
+function applyBubblePos(wrap: HTMLElement, pos: Settings["bubble"] | null): void {
+  wrap.style.left = "auto"; wrap.style.right = "auto"; wrap.style.top = "auto"; wrap.style.bottom = "auto";
+  if (!pos) { wrap.style.display = "none"; return; }
+  wrap.style.display = "block";
+  if (pos.anchor.endsWith("r")) wrap.style.right = `${pos.x}px`; else wrap.style.left = `${pos.x}px`;
+  if (pos.anchor.startsWith("b")) wrap.style.bottom = `${pos.y}px`; else wrap.style.top = `${pos.y}px`;
+}
+
+async function tryOpenSidePanel(): Promise<boolean> {
+  try {
+    const resp = await chrome.runtime.sendMessage({ type: "channel0:open-side-panel" });
+    return !!resp?.ok;
+  } catch { return false; }
+}
+
+function buildStyles(): HTMLStyleElement {
+  const style = document.createElement("style");
+  style.textContent = `
+    :host { all: initial; }
+    .c0-bubble-wrap { position: fixed; pointer-events: auto; z-index: 2147483646; }
+    .c0-bubble {
+      width: 56px; height: 56px; border-radius: 28px;
+      background: #0a0a0a; color: #00ff7a; border: 1px solid #1a1a1a;
+      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+      cursor: grab; display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 16px; letter-spacing: .5px; user-select: none;
+      touch-action: none;
+    }
+    .c0-bubble:hover { background: #111; }
+    .c0-bubble:active { cursor: grabbing; }
+    .c0-bubble-dot { width: 8px; height: 8px; border-radius: 4px; background: #00ff7a; margin-right: 6px; box-shadow: 0 0 8px #00ff7a; }
+    .c0-bubble.has-people { box-shadow: 0 0 0 2px #00ff7a inset, 0 8px 24px rgba(0,0,0,.35); }
+    .c0-inline {
+      position: fixed; right: 16px; bottom: 84px; pointer-events: auto;
+      width: 360px; max-height: 520px; height: 70vh;
+      border: 1px solid #1a1a1a; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0,0,0,.5);
+      z-index: 2147483647;
+      display: flex;
+    }
+    .c0-inline > * { flex: 1; }
+    ${CHAT_CSS}
+  `;
+  return style;
+}

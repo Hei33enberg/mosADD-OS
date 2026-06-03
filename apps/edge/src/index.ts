@@ -45,6 +45,11 @@ const KEY_CACHE_TTL_MS = 60_000; // 60s — fast revocation propagation, big cos
 const RL_PER_MIN = 600; // text rate limit per hub key per minute
 const FLUSH_INTERVAL_MS = 5_000; // E3: how often the DO drains its pending queue
 const FLUSH_BATCH_MAX = 500;     // matches the ingest endpoint cap
+// channel0 (LINEAR-2693): how long the DO trusts a domain-status check (open/claimed/blocked)
+// before re-asking domain-channel-ensure. Long enough to absorb all hot traffic; short
+// enough for a verified-owner block to propagate worldwide in under a minute.
+const ENSURE_CACHE_TTL_MS = 60_000;
+const NICK_TAG_PREFIX = "nick:"; // second WS tag holds the presence nick
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -156,7 +161,7 @@ export default {
       return json({ ok: true, service: "mosadd-edge", phase: "E6-scoped-jwt" });
     }
 
-    const m = url.pathname.match(/^\/c\/([A-Za-z0-9_-]{1,128})\/(ws|send|history)$/);
+    const m = url.pathname.match(/^\/c\/([A-Za-z0-9_-]{1,128})\/(ws|send|history|presence)$/);
     if (!m) return json({ error: "not_found" }, { status: 404 });
     const [, channelId] = m;
     const stub = env.CHANNEL.get(env.CHANNEL.idFromName(channelId));
@@ -172,8 +177,11 @@ interface StoredMessage { id: string; ts: number; from?: string | null; text: st
 /** Same as StoredMessage but carries channel_id so the ingest endpoint can route to the
  *  right messages_meta row. The DO knows its channel_id from its idFromName via the URL. */
 interface PendingMessage extends StoredMessage { channel_id: string; }
-interface KeyCacheEntry { hash: string; valid: boolean; user_id?: string; plan?: string; exp: number; }
+interface KeyCacheEntry { hash: string; valid: boolean; user_id?: string; plan?: string; exp: number; nick?: string }
 interface RLBucket { count: number; window_start: number; }
+/** channel0 (LINEAR-2693): cached result of the domain-channel-ensure call so the
+ *  DO can refuse `blocked` domains without a Supabase round-trip on every join. */
+interface EnsureCache { status: "open" | "claimed" | "blocked"; branding: Record<string, unknown>; exp: number; }
 
 export class ChannelDO {
   private state: DurableObjectState;
@@ -181,10 +189,61 @@ export class ChannelDO {
   /** In-memory key cache (cleared on hibernation; falls back to fresh verify). */
   private keyCache = new Map<string, KeyCacheEntry>();
   private rl = new Map<string, RLBucket>();
+  /** channel0: domain-status cache (one entry — the DO is per-channel). */
+  private ensure: EnsureCache | null = null;
 
   constructor(state: DurableObjectState, env: Env) {
     this.state = state;
     this.env = env;
+  }
+
+  /** channel0: ask Supabase once per ENSURE_CACHE_TTL_MS whether this domain is
+   *  open / claimed / blocked, and what branding to apply. On any error we
+   *  fail OPEN (treat as `open`) — viral path stays unblocked if Supabase
+   *  hiccups; the channel0-join edge fn is the authoritative check at mint time
+   *  and re-runs every 5 minutes anyway. */
+  private async ensureDomainStatus(slug: string): Promise<EnsureCache> {
+    const now = Date.now();
+    if (this.ensure && this.ensure.exp > now) return this.ensure;
+    const fallback: EnsureCache = { status: "open", branding: {}, exp: now + ENSURE_CACHE_TTL_MS };
+    if (!this.env.SUPABASE_URL || !this.env.CF_INGEST_SECRET) { this.ensure = fallback; return fallback; }
+    try {
+      const r = await fetch(`${this.env.SUPABASE_URL}/functions/v1/domain-channel-ensure`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.env.CF_INGEST_SECRET}` },
+        body: JSON.stringify({ slug, domain: slug.replace(/-/g, ".") }),
+      });
+      if (!r.ok) { this.ensure = fallback; return fallback; }
+      const data = await r.json().catch(() => null) as { status?: string; branding?: Record<string, unknown> } | null;
+      const status = (data?.status === "claimed" || data?.status === "blocked") ? data.status : "open";
+      this.ensure = { status, branding: data?.branding ?? {}, exp: now + ENSURE_CACHE_TTL_MS };
+      return this.ensure;
+    } catch {
+      this.ensure = fallback;
+      return fallback;
+    }
+  }
+
+  /** Read the current presence roster from open WebSockets (their nick tag). */
+  private rosterFromSockets(): { nicks: string[]; count: number } {
+    const seen = new Set<string>();
+    for (const ws of this.state.getWebSockets()) {
+      const tags = this.state.getTags(ws) ?? [];
+      const t = tags.find((x) => typeof x === "string" && x.startsWith(NICK_TAG_PREFIX));
+      if (t) seen.add(t.slice(NICK_TAG_PREFIX.length));
+    }
+    // Cap the broadcast roster size — privacy & payload bound for hot rooms.
+    const nicks = Array.from(seen).slice(0, 100);
+    return { nicks, count: seen.size };
+  }
+
+  /** Broadcast a `{type:"presence", count, roster}` frame to all open sockets. */
+  private broadcastPresence(): void {
+    const { nicks, count } = this.rosterFromSockets();
+    const frame = JSON.stringify({ type: "presence", count, roster: nicks });
+    for (const ws of this.state.getWebSockets()) {
+      try { ws.send(frame); } catch { /* dropped */ }
+    }
   }
 
   // ── Auth ──────────────────────────────────────────────────────────────────
@@ -251,6 +310,12 @@ export class ChannelDO {
       if (req.headers.get("Upgrade") !== "websocket") return json({ error: "expected_websocket_upgrade" }, { status: 426 });
       const channelId = ch ?? "";
 
+      // channel0 defense-in-depth: if a verified owner blocked this domain, the
+      // mint endpoint already 451'd — but a leaked-but-unexpired token could
+      // still arrive. Refuse here too.
+      const ensured = await this.ensureDomainStatus(channelId);
+      if (ensured.status === "blocked") return json({ error: "domain_blocked" }, { status: 451 });
+
       // (1) Scoped JWT via Sec-WebSocket-Protocol — the recommended path.
       const jwt = extractScopedJwt(req);
       if (jwt && this.env.CHANNEL_TOKEN_SECRET) {
@@ -258,12 +323,15 @@ export class ChannelDO {
         if (!v.ok) return json({ error: "invalid_token", reason: v.reason }, { status: 401 });
         // For rate-limiting we tag by sub (the end-user) — generous limits handle
         // the relay-multiplexes-many-users case at the mint endpoint, not here.
+        // channel0: extract the nick from sub ("anon:<nick>") for presence + display.
+        const nick = v.claims.sub.startsWith("anon:") ? v.claims.sub.slice(5) : v.claims.sub.slice(0, 32);
         const entry: KeyCacheEntry = {
           hash: await sha256Hex(`jwt:${v.claims.sub}`),
           valid: true,
           user_id: v.claims.sub,
           plan: v.claims.plan ?? "free",
           exp: v.claims.exp * 1000,
+          nick,
         };
         return this.handleWsUpgrade(entry, /*echoProto*/ "mosadd.v1");
       }
@@ -273,6 +341,16 @@ export class ChannelDO {
       const entry = await this.verifyKey(apiKey ?? "");
       if (!entry.valid) return json({ error: "invalid_key" }, { status: 401 });
       return this.handleWsUpgrade(entry, null);
+    }
+
+    // channel0 (LINEAR-2693): `GET /presence` returns the live roster without
+    // requiring a WS upgrade. Anyone can read presence for an open channel —
+    // it's the discovery surface ("how many people are on zalando.pl right now").
+    if (op === "presence" && req.method === "GET") {
+      const ensured = await this.ensureDomainStatus(ch ?? "");
+      if (ensured.status === "blocked") return json({ error: "domain_blocked" }, { status: 451 });
+      const { nicks, count } = this.rosterFromSockets();
+      return json({ count, roster: nicks, branding: ensured.branding, status: ensured.status });
     }
 
     if (op === "send" && req.method === "POST") {
@@ -315,9 +393,15 @@ export class ChannelDO {
     const pair = new WebSocketPair();
     const client = pair[0];
     const server = pair[1];
-    // Tag the socket with the caller so inbound messages are rate-limited per identity.
-    this.state.acceptWebSocket(server, [entry.hash]);
+    // Tags[0] = rate-limit key (back-compat).
+    // Tags[1] = "nick:<presence-nick>" (channel0). Hub-key callers have no nick;
+    // we tag them with a deterministic stub so presence-roster still works.
+    const tags = [entry.hash, `${NICK_TAG_PREFIX}${entry.nick ?? `dev-${entry.hash.slice(0, 6)}`}`];
+    this.state.acceptWebSocket(server, tags);
     const headers = echoProto ? { "Sec-WebSocket-Protocol": echoProto } : undefined;
+    // Broadcast updated presence to everyone (including the new joiner — the
+    // client uses this frame to render the initial roster).
+    queueMicrotask(() => this.broadcastPresence());
     return new Response(null, { status: 101, webSocket: client, headers });
   }
 
@@ -340,6 +424,8 @@ export class ChannelDO {
 
   async webSocketClose(ws: WebSocket, code: number, _reason: string, _wasClean: boolean): Promise<void> {
     try { ws.close(code, "closing"); } catch { /* idempotent */ }
+    // channel0: drop the socket THEN announce. getWebSockets() reflects post-close.
+    queueMicrotask(() => this.broadcastPresence());
   }
 
   async webSocketError(_ws: WebSocket, _err: unknown): Promise<void> { /* swallow */ }

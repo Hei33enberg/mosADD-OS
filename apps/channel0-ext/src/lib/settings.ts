@@ -1,0 +1,59 @@
+// =============================================================================
+// User preferences. chrome.storage.sync so they roam between browsers.
+// =============================================================================
+
+export type OpenMode = "side" | "inline";
+
+export interface BubblePos {
+  anchor: "bl" | "br" | "tl" | "tr";
+  x: number;
+  y: number;
+}
+
+export interface Settings {
+  openMode: OpenMode;
+  bubbleVisible: boolean;
+  bubble: BubblePos;
+}
+
+export const DEFAULT_SETTINGS: Settings = {
+  openMode: "side",
+  bubbleVisible: true,
+  bubble: { anchor: "br", x: 16, y: 16 },
+};
+
+const KEY = "channel0.settings";
+
+let memCache: Settings | null = null;
+
+export async function getSettings(): Promise<Settings> {
+  if (memCache) return memCache;
+  try {
+    const got = await chrome.storage.sync.get(KEY);
+    const s = (got?.[KEY] ?? {}) as Partial<Settings>;
+    memCache = { ...DEFAULT_SETTINGS, ...s, bubble: { ...DEFAULT_SETTINGS.bubble, ...(s.bubble ?? {}) } };
+    return memCache;
+  } catch {
+    memCache = { ...DEFAULT_SETTINGS };
+    return memCache;
+  }
+}
+
+export async function patchSettings(patch: Partial<Settings>): Promise<Settings> {
+  const cur = await getSettings();
+  const next: Settings = { ...cur, ...patch, bubble: { ...cur.bubble, ...(patch.bubble ?? {}) } };
+  memCache = next;
+  try { await chrome.storage.sync.set({ [KEY]: next }); } catch { /* memory only */ }
+  return next;
+}
+
+export function onSettingsChange(cb: (s: Settings) => void): () => void {
+  const handler = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
+    if (area !== "sync") return;
+    if (!(KEY in changes)) return;
+    memCache = null;
+    void getSettings().then(cb);
+  };
+  try { chrome.storage.onChanged.addListener(handler); } catch { /* ignore */ }
+  return () => { try { chrome.storage.onChanged.removeListener(handler); } catch { /* ignore */ } };
+}

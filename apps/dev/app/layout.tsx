@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: '%s · mosadd.dev',
   },
   description:
-    'Developer portal for the mosadd OS. One MCP server gives any agent DM, channels, rooms, mail, push-to-talk and knowledge recall — 43 tools, 4 SDK adapters, 6 examples. Open source, Apache-2.0.',
+    'Developer portal for the mosadd OS. One MCP server gives any agent DM, channels, rooms, mail, push-to-talk and knowledge recall — 40 tools, 4 SDK adapters, 6 examples. Open source, Apache-2.0.',
   applicationName: 'mosadd.dev',
   openGraph: {
     title: 'mosadd.dev — A human OS. Add.',

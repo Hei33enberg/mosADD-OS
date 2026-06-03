@@ -381,3 +381,51 @@
     max-height: none;
   }
 }
+
+/* ── queue overlay (LINEAR-2744) ─────────────────────────────────────────── */
+.m-queue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  max-width: 280px;
+  margin: auto;
+  text-align: center;
+}
+.m-queue-icon {
+  font-size: 32px;
+  color: var(--m-primary);
+  opacity: 0.85;
+  line-height: 1;
+}
+.m-queue-title {
+  font-family: var(--m-font);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--m-fg);
+}
+.m-queue-sub {
+  font-size: 12px;
+  color: var(--m-muted);
+  line-height: 1.5;
+}
+.m-queue-cta {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 8px 14px;
+  background: var(--m-primary);
+  color: var(--m-primary-fg);
+  border: 1px solid var(--m-primary);
+  border-radius: var(--m-radius);
+  font-family: var(--m-font);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.m-queue-cta:hover { filter: brightness(1.12); }

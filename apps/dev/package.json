@@ -5,7 +5,6 @@
   "description": "mosadd.dev — Developer portal for the mosadd OS",
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node ../../scripts/sync-embed-bundle.mjs || true",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
