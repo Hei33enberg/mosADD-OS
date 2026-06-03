@@ -35,6 +35,15 @@ interface WidgetConfig {
   anon: boolean;
   locale: string;
   title?: string;
+  /** "inline" (default — chat rendered into the host div as-is) or "launcher"
+   *  (collapses to a small "mIRC #channel ● N online" pill; click to expand
+   *  into a floating panel). LINEAR-2735/2682-A. */
+  mode: "inline" | "launcher";
+  /** Where the launcher pill sits when mode=launcher. Ignored otherwise. */
+  launcherPosition: "br" | "bl" | "tr" | "tl";
+  /** Label shown on the launcher pill, e.g. "mIRC #strajkpolski". Defaults to
+   *  `mIRC #${channel}`. */
+  launcherLabel?: string;
 }
 
 interface Message {
@@ -65,7 +74,15 @@ const DEFAULTS = {
   skin: "default",
   anon: true,
   locale: "en",
+  mode: "inline" as const,
+  launcherPosition: "br" as const,
 };
+
+/** Poll interval (ms) for the launcher presence count when WS is NOT open.
+ *  30s = fresh-enough for a "23 online" badge without bothering the DO too often.
+ *  When the chat panel is expanded the WS broadcasts presence frames in
+ *  real-time so we clear this poll. */
+const PRESENCE_POLL_MS = 30_000;
 
 const NICK_COLORS = 8;
 
@@ -148,6 +165,11 @@ function el<T extends HTMLElement>(tag: string, className?: string, text?: strin
 
 function readConfig(host: HTMLElement, scriptKey: string): WidgetConfig {
   const a = host.dataset;
+  const mode = (a.mode === "launcher" ? "launcher" : "inline") as "inline" | "launcher";
+  const launcherPosition = (() => {
+    const v = (a.launcherPosition || DEFAULTS.launcherPosition).toLowerCase();
+    return (["br", "bl", "tr", "tl"] as const).includes(v as any) ? (v as "br" | "bl" | "tr" | "tl") : "br";
+  })();
   return {
     pk: scriptKey,                                                // from the <script data-key>
     channel: a.channel || "default",
@@ -158,7 +180,32 @@ function readConfig(host: HTMLElement, scriptKey: string): WidgetConfig {
     anon: a.anon !== "false",
     locale: (a.locale || DEFAULTS.locale).toLowerCase(),
     title: a.title,
+    mode,
+    launcherPosition,
+    launcherLabel: a.launcherLabel,
   };
+}
+
+/** Read the live presence count over the read-only REST endpoint (no WS needed).
+ *  Returns null if the channel is blocked / unreachable. Used by the launcher
+ *  pill when the chat panel is collapsed — we want the badge to update without
+ *  forcing every page visitor to open a WebSocket. */
+async function fetchPresence(
+  edgeUrl: string,
+  channel: string,
+): Promise<{ count: number; status: string } | null> {
+  try {
+    // edgeUrl is wss://… for WS upgrade; the REST endpoint is http(s)://…
+    const httpBase = edgeUrl.replace(/^ws/, "http");
+    const r = await fetch(`${httpBase}/c/${encodeURIComponent(channel)}/presence`, {
+      method: "GET",
+    });
+    if (!r.ok) return null;
+    const data = await r.json() as { count?: number; status?: string };
+    return { count: typeof data.count === "number" ? data.count : 0, status: data.status ?? "open" };
+  } catch {
+    return null;
+  }
 }
 
 export class MosaddMircWidget {
@@ -166,11 +213,20 @@ export class MosaddMircWidget {
   private cfg: WidgetConfig;
   private shadow: ShadowRoot;
   private root!: HTMLDivElement;
+  private cardEl!: HTMLDivElement;          // the full chat card (frame + stream + input)
   private streamEl!: HTMLDivElement;
   private joinEl!: HTMLDivElement;
   private inputEl!: HTMLDivElement;
   private badgeEl!: HTMLDivElement;
   private headStatusEl!: HTMLSpanElement;
+  // Launcher (mode === "launcher" only). Always-visible pill that toggles the card.
+  private launcherEl: HTMLDivElement | null = null;
+  private launcherDotEl: HTMLSpanElement | null = null;
+  private launcherCountEl: HTMLSpanElement | null = null;
+  private panelOpen = false;
+  private presencePollHandle: number | null = null;
+  private onlineCount = 0;
+
   private ws: WebSocket | null = null;
   private mint: MintResponse | null = null;
   private nick: string = "";
@@ -191,12 +247,31 @@ export class MosaddMircWidget {
     this.shadow.appendChild(css);
 
     this.mount();
-    this.restore();
+    if (this.cfg.mode === "launcher") {
+      this.mountLauncher();
+      // Hide the card until clicked. We still build it eagerly so the click
+      // expansion is instant; only the WS + presence poll start lazily.
+      this.cardEl.style.display = "none";
+      // Start lightweight presence polling so the badge shows online count
+      // even before the user opens the chat.
+      void this.refreshPresence();
+      this.presencePollHandle = window.setInterval(() => {
+        void this.refreshPresence();
+      }, PRESENCE_POLL_MS);
+    } else {
+      this.restore();
+    }
   }
 
   private mount(): void {
-    this.root = el<HTMLDivElement>("div", `m-root m-pos-${this.cfg.position}`);
+    // In launcher mode the root is fixed-positioned (one of 4 corners); in
+    // inline / sidebar / fullscreen / floating-*, m-pos-<x> handles it.
+    const rootPos = this.cfg.mode === "launcher"
+      ? `m-pos-launcher m-launcher-pos-${this.cfg.launcherPosition}`
+      : `m-pos-${this.cfg.position}`;
+    this.root = el<HTMLDivElement>("div", `m-root ${rootPos}`);
     const card = el<HTMLDivElement>("div", "m-card");
+    this.cardEl = card;
 
     // HUD brackets
     for (const c of ["tl", "tr", "bl", "br"]) {
@@ -210,6 +285,15 @@ export class MosaddMircWidget {
     title.innerHTML = `${this.cfg.title ?? "mIRC"} <span class="m-chan">#${escapeHtml(this.cfg.channel)}</span>`;
     head.appendChild(this.headStatusEl);
     head.appendChild(title);
+    // In launcher mode the header gets an X to collapse back to the pill.
+    if (this.cfg.mode === "launcher") {
+      const closeBtn = el<HTMLButtonElement>("button", "m-close");
+      closeBtn.type = "button";
+      closeBtn.innerHTML = "×";
+      closeBtn.setAttribute("aria-label", "Close chat");
+      closeBtn.addEventListener("click", () => this.collapse());
+      head.appendChild(closeBtn);
+    }
     card.appendChild(head);
 
     // Stream
@@ -258,6 +342,91 @@ export class MosaddMircWidget {
 
     this.root.appendChild(card);
     this.shadow.appendChild(this.root);
+  }
+
+  /** Launcher mode — render a small "mIRC #channel ● 23 online" pill anchored
+   *  to one of 4 page corners. Click opens the full chat card. We poll the
+   *  read-only `/presence` REST endpoint every 30s so the badge updates even
+   *  while the chat is collapsed (no WS — lurkers don't burn DO compute). */
+  private mountLauncher(): void {
+    const pill = el<HTMLButtonElement>("button", "m-launcher");
+    pill.type = "button";
+
+    const dot = el<HTMLSpanElement>("span", "m-launcher-dot");
+    const label = el<HTMLSpanElement>("span", "m-launcher-label");
+    const labelText = this.cfg.launcherLabel ?? `mIRC #${this.cfg.channel}`;
+    label.textContent = labelText;
+    const sep = el<HTMLSpanElement>("span", "m-launcher-sep");
+    sep.textContent = "·";
+    const count = el<HTMLSpanElement>("span", "m-launcher-count");
+    count.textContent = "—";
+
+    pill.appendChild(dot);
+    pill.appendChild(label);
+    pill.appendChild(sep);
+    pill.appendChild(count);
+    pill.addEventListener("click", () => this.expand());
+
+    this.launcherEl = pill;
+    this.launcherDotEl = dot;
+    this.launcherCountEl = count;
+
+    // The launcher lives inside the SAME m-root so the corner-position rule
+    // applies to both pill and card. CSS swaps which one is visible.
+    this.root.appendChild(pill);
+  }
+
+  /** Update the launcher count badge from the live presence (REST or WS). */
+  private setOnlineCount(n: number): void {
+    this.onlineCount = Math.max(0, Math.floor(n));
+    if (!this.launcherCountEl) return;
+    this.launcherCountEl.textContent =
+      this.onlineCount >= 100 ? "99+ online" : `${this.onlineCount} online`;
+    if (this.launcherDotEl) {
+      this.launcherDotEl.classList.toggle("active", this.onlineCount > 0);
+    }
+  }
+
+  private async refreshPresence(): Promise<void> {
+    if (this.panelOpen) return; // WS is the source of truth when chat is open
+    const p = await fetchPresence(this.cfg.edgeUrl, this.cfg.channel);
+    if (!p) return;
+    this.setOnlineCount(p.count);
+  }
+
+  /** Expand the launcher → show the full chat card. If the user already has a
+   *  saved nick we auto-join + connect; otherwise the join form prompts. */
+  private expand(): void {
+    if (this.panelOpen) return;
+    this.panelOpen = true;
+    if (this.launcherEl) this.launcherEl.style.display = "none";
+    this.cardEl.style.display = "";
+    this.root.classList.add("m-launcher-open");
+    // Stop polling — the WS will broadcast presence in real time once open.
+    if (this.presencePollHandle !== null) {
+      clearInterval(this.presencePollHandle);
+      this.presencePollHandle = null;
+    }
+    // First open: restore saved nick OR show join form.
+    this.restore();
+  }
+
+  /** Collapse back to the pill. Keep the WS open if it's connected so
+   *  reopening the chat is instant + presence frames keep flowing. */
+  private collapse(): void {
+    if (!this.panelOpen) return;
+    this.panelOpen = false;
+    this.cardEl.style.display = "none";
+    if (this.launcherEl) this.launcherEl.style.display = "";
+    this.root.classList.remove("m-launcher-open");
+    // If WS is closed (user never joined OR it dropped), resume REST polling.
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      if (this.presencePollHandle === null) {
+        this.presencePollHandle = window.setInterval(() => {
+          void this.refreshPresence();
+        }, PRESENCE_POLL_MS);
+      }
+    }
   }
 
   private restore(): void {
@@ -335,10 +504,22 @@ export class MosaddMircWidget {
 
   private onWsMessage(e: MessageEvent): void {
     if (typeof e.data !== "string") return;
-    let m: Message | null = null;
-    try { m = JSON.parse(e.data) as Message; } catch { return; }
-    if (!m || !m.id) return;
-    this.renderMessage(m);
+    let parsed: { type?: string; count?: number; id?: string } & Partial<Message>;
+    try { parsed = JSON.parse(e.data) as any; } catch { return; }
+    if (!parsed) return;
+
+    // Presence frame from channel0 ({type:"presence", count, roster}). We update
+    // the launcher badge even when the chat panel is open (so the count stays
+    // truthful) and ignore the roster array — we don't render it as a sidebar
+    // (yet — that's 2682-Q follow-up).
+    if (parsed.type === "presence" && typeof parsed.count === "number") {
+      this.setOnlineCount(parsed.count);
+      return;
+    }
+
+    // Regular message frame: {id, ts, from, text}.
+    if (!parsed.id || typeof (parsed as Message).text !== "string") return;
+    this.renderMessage(parsed as Message);
   }
 
   private onWsClose(): void {

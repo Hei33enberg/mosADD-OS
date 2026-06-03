@@ -276,3 +276,108 @@
 .m-root.m-pos-floating-bl { position: fixed; left: 16px; bottom: 16px; width: 320px; height: 480px; z-index: 2147483640; }
 .m-root.m-pos-sidebar-right { position: fixed; right: 0; top: 0; bottom: 0; width: 340px; z-index: 2147483640; }
 .m-root.m-pos-sidebar-left  { position: fixed; left: 0; top: 0; bottom: 0; width: 340px; z-index: 2147483640; }
+
+/* ── launcher mode (data-mode="launcher") ────────────────────────────────────
+   Collapsed = small pill button anchored to one of 4 corners.
+   Expanded  = floating chat card anchored to the same corner.
+   When expanded the launcher pill hides; when collapsed the card hides.
+   See widget.ts → expand()/collapse(). LINEAR-2735/2682-A.
+   ──────────────────────────────────────────────────────────────────────── */
+.m-root.m-pos-launcher {
+  position: fixed;
+  z-index: 2147483640;
+  /* No width/height here — the launcher pill and the card both manage their own.
+     When the card is shown (m-launcher-open) we anchor it to the same corner. */
+}
+.m-root.m-launcher-pos-br { right: 16px; bottom: 16px; }
+.m-root.m-launcher-pos-bl { left:  16px; bottom: 16px; }
+.m-root.m-launcher-pos-tr { right: 16px; top:    16px; }
+.m-root.m-launcher-pos-tl { left:  16px; top:    16px; }
+
+/* The launcher pill itself — mIRC tag styling, brand-correct */
+.m-launcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--m-bg);
+  color: var(--m-fg);
+  border: 1px solid var(--m-primary);
+  border-radius: var(--m-radius);
+  font-family: var(--m-font);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4),
+              0 0 12px rgba(0, 255, 127, 0.15);
+  transition: transform 90ms ease, box-shadow 90ms ease, filter 90ms ease;
+}
+.m-launcher:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 4px 14px rgba(0,0,0,0.5),
+              0 0 18px rgba(0, 255, 127, 0.28);
+}
+.m-launcher:focus-visible { outline: 1px solid var(--m-primary); outline-offset: 2px; }
+
+.m-launcher-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--m-muted);
+  flex: 0 0 8px;
+}
+.m-launcher-dot.active {
+  background: var(--m-primary);
+  box-shadow: 0 0 8px var(--m-primary);
+  animation: m-pulse 2s ease-in-out infinite;
+}
+@keyframes m-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+
+.m-launcher-label { color: var(--m-primary); }
+.m-launcher-sep   { color: var(--m-muted); margin: 0 2px; }
+.m-launcher-count { color: var(--m-fg); font-weight: 700; }
+
+/* When expanded, anchor the card to the launcher's corner.
+   The launcher pill is hidden by widget.ts (display:none) on expand. */
+.m-root.m-pos-launcher .m-card {
+  position: relative;
+  width: 340px;
+  height: 480px;
+  /* Max viewport bounds so the card never overflows on small screens. */
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+}
+
+/* Close X in the header (launcher mode only) */
+.m-close {
+  background: transparent;
+  color: var(--m-muted);
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius);
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 6px;
+  font-family: var(--m-font);
+}
+.m-close:hover { color: var(--m-fg); border-color: var(--m-fg); }
+
+/* Mobile: pin the launcher card to the safe area instead of corner-anchored */
+@media (max-width: 480px) {
+  .m-root.m-pos-launcher.m-launcher-open .m-card {
+    position: fixed !important;
+    inset: 8px;
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+  }
+}
