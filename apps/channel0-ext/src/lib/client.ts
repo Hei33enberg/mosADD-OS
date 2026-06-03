@@ -1,20 +1,9 @@
-// =============================================================================
-// channel0 client (LINEAR-2694).
-//
-// Two-step:
-//   1) POST channel0-join → { token, channel_id, status, branding }
-//   2) Open WS to Worker `/c/<channel_id>/ws` with sub-protocols:
-//        Sec-WebSocket-Protocol: mosadd.v1, bearer.<token>
-//      The Worker echoes "mosadd.v1" to confirm. We never put the token in
-//      the URL — query strings leak to CDN/CF access logs.
-//
-// Inbound frames the Worker emits:
-//   { id, ts, from, text }                                — chat message
-//   { type:"presence", count, roster:string[] }           — presence update
-//   { error, retry_after? }                               — soft errors
-// =============================================================================
+// channel0 client. join → WSS via Sec-WebSocket-Protocol mosadd.v1, bearer.<jwt>.
+// PoW (C1-1): the join endpoint may answer 428 with {pow_bits, server_ts}; we
+// solve the hashcash locally and retry once.
 
 import { getEndpoints } from "./config";
+import { solvePow } from "./pow";
 
 export interface JoinResult {
   token: string;
@@ -36,16 +25,39 @@ export class JoinError extends Error {
 }
 
 export async function joinDomain(args: {
-  domain: string;
-  deviceToken: string;
-  nick: string;
+  domain: string; deviceToken: string; nick: string;
 }): Promise<JoinResult> {
   const { joinUrl } = await getEndpoints();
-  const r = await fetch(joinUrl, {
+
+  // First attempt — no PoW. Server tells us the difficulty if it wants one.
+  let r = await fetch(joinUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ domain: args.domain, device_token: args.deviceToken, nick: args.nick }),
   });
+
+  // 428 Precondition Required → PoW gate. Solve and retry once.
+  if (r.status === 428) {
+    const challenge = await r.json().catch(() => null) as { pow_bits?: number; server_ts?: number; error?: string } | null;
+    const bits = challenge?.pow_bits ?? 0;
+    if (bits > 0) {
+      const sol = await solvePow({
+        domain: args.domain,
+        device_token: args.deviceToken,
+        bits,
+        ts: challenge?.server_ts ?? undefined,
+      });
+      r = await fetch(joinUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          domain: args.domain, device_token: args.deviceToken, nick: args.nick,
+          pow_ts: sol.ts, pow_nonce: sol.nonce,
+        }),
+      });
+    }
+  }
+
   if (r.status === 451) throw new JoinError("domain_blocked", "Channel disabled by domain owner");
   if (r.status === 429) throw new JoinError("rate_limited", "Joining too fast — try again in a moment");
   if (!r.ok) {
@@ -69,9 +81,6 @@ export async function openChannelSocket(
 ): Promise<WebSocket> {
   const { edgeBase } = await getEndpoints();
   const wsUrl = edgeBase.replace(/^http/, "ws") + `/c/${encodeURIComponent(join.channel_id)}/ws`;
-  // The Sec-WebSocket-Protocol carries our handshake + the token. This is the
-  // ONLY supported auth path for the WS — the browser can't set custom headers
-  // on upgrade and ?k= leaks to CF logs.
   const ws = new WebSocket(wsUrl, ["mosadd.v1", `bearer.${join.token}`]);
   ws.addEventListener("open", () => { handlers.onOpen?.(); });
   ws.addEventListener("close", (e) => { handlers.onClose?.(e.code, e.reason); });
@@ -83,7 +92,6 @@ export async function openChannelSocket(
     if (!parsed) return;
     if ("type" in parsed && parsed.type === "presence") { handlers.onPresence(parsed); return; }
     if ("id" in parsed && "text" in parsed) { handlers.onMessage(parsed); return; }
-    // Errors are surfaced via onError on the socket; we just log here.
     if ("error" in parsed) console.warn("[channel0]", parsed);
   });
   return ws;
