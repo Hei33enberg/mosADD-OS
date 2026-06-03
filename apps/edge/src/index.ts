@@ -1,26 +1,29 @@
 /**
  * mosadd-edge — Cloudflare Worker + Durable Object per channel.
  *
- * E1 (proven LIVE): one ChannelDO per channel name, Hibernatable WS fan-out,
- *   ring buffer of recent messages in DO storage.
- * E2 (this build, LINEAR-2678): edge auth via hub key (mosadd_sk_live_…) +
- *   per-key rate limit (anti-DoS) + DO-local key cache (60s). Calls Supabase
- *   `hub-key-verify` ONLY on cache miss — Supabase isn't on the hot path.
+ * E1 (LIVE): one ChannelDO per channel name, Hibernatable WS fan-out, ring buffer.
+ * E2 (LIVE, LINEAR-2678): edge auth via hub key + per-key rate limit + DO-local
+ *   key cache (60s). Supabase `hub-key-verify` only on cache miss.
+ * E3 (LIVE, LINEAR-2679): async flush DO → Supabase as system-of-record.
+ * E6 (this build, LINEAR-2675): scoped per-channel JWT auth via
+ *   `Sec-WebSocket-Protocol`, so browsers + external relays NEVER need to ship
+ *   the hub key. Strajk HANDOFF-14 surfaced two real flaws in our prior recipe:
+ *     1. `?k=mosadd_sk_live_…` leaks the hub key to CF access logs.
+ *     2. External relays are often serverless — they can't hold a stateful WS.
+ *   E6 fixes both: server-side mints a 5-min channel-scoped JWT via Supabase
+ *   `hub-mint-channel-token` (hub-key Bearer in → JWT out), the client (browser
+ *   or relay) opens the DO WS with `Sec-WebSocket-Protocol: mosadd.v1, bearer.<jwt>`,
+ *   the Worker validates HS256 locally (no Supabase hop), echoes `mosadd.v1`
+ *   in the upgrade response.
  *
- * Auth model:
- *   - Send: client passes `Authorization: Bearer mosadd_sk_live_…` (or query `?k=…`).
- *   - WebSocket: same, via query `?k=…` (browsers can't send headers on upgrade).
- *   - Free plan = text channels are allowed (mIRC/mROOM text is free). The hard
- *     paid gates (mKB / mTALK) are enforced where the paid product lives.
+ * Auth model (precedence order on the WS upgrade):
+ *   1. `Sec-WebSocket-Protocol: mosadd.v1, bearer.<jwt>` (E6, RECOMMENDED).
+ *   2. `Authorization: Bearer mosadd_sk_live_…` (server-side relays / MCP).
+ *   3. `?k=mosadd_sk_live_…` (DEPRECATED — kept for backward compat; CF logs
+ *      the URL, so this leaks the key. Stop using it.)
  *
- * Rate limit:
- *   - Per hub key per minute (token-bucket in DO state, 600/min by default).
- *     Generous: a relay multiplexes many end-users through one key.
- *
- * Not in E2 (next):
- *   - E3 async flush DO → Supabase messages_meta.
- *   - E4 client cut-over (apps/web + mcp + strajk relay).
- *   - E5 DNS chat.mosadd.com via Vercel CNAME.
+ * Rate limit unchanged: 600/min per identity (key-hash for hub keys, jwt.sub
+ *   for scoped tokens), token bucket in DO state.
  */
 
 export interface Env {
@@ -31,6 +34,10 @@ export interface Env {
    *  Set via `wrangler secret put CF_INGEST_SECRET` (CI does it). Same value on
    *  the Supabase side as an Edge Function secret. */
   CF_INGEST_SECRET?: string;
+  /** HS256 secret for short-lived per-channel JWTs minted by hub-mint-channel-token
+   *  (LINEAR-2675/E6). Lets the browser hold a SCOPED token instead of a hub key.
+   *  Set via `wrangler secret put CHANNEL_TOKEN_SECRET`. */
+  CHANNEL_TOKEN_SECRET?: string;
 }
 
 const HISTORY_LIMIT = 100;
@@ -52,13 +59,89 @@ const json = (b: unknown, init: ResponseInit = {}): Response =>
     headers: { "Content-Type": "application/json", ...CORS, ...(init.headers ?? {}) },
   });
 
-/** Pulls the API key from Authorization OR ?k= (latter is the only way for browser WS upgrade). */
+/** Pulls a hub key from Authorization OR ?k= (the latter is DEPRECATED — leaks to CF logs). */
 function extractKey(req: Request, url: URL): string | null {
   const authz = req.headers.get("Authorization") ?? "";
   const fromHeader = authz.replace(/^Bearer\s+/i, "").trim();
   if (fromHeader) return fromHeader;
   const fromQuery = url.searchParams.get("k") ?? "";
   return fromQuery || null;
+}
+
+/** Parses `Sec-WebSocket-Protocol` looking for the E6 mosadd handshake.
+ *  Browsers can't set arbitrary headers on a WS upgrade, but they CAN set the
+ *  sub-protocol — that's why this lives there. Format we accept (case-insensitive):
+ *    Sec-WebSocket-Protocol: mosadd.v1, bearer.<jwt>
+ *  Returns the bare JWT if present, else null. */
+function extractScopedJwt(req: Request): string | null {
+  const raw = req.headers.get("Sec-WebSocket-Protocol");
+  if (!raw) return null;
+  const parts = raw.split(",").map((s) => s.trim()).filter(Boolean);
+  let sawMosadd = false;
+  let token: string | null = null;
+  for (const p of parts) {
+    if (/^mosadd\.v1$/i.test(p)) sawMosadd = true;
+    else if (/^bearer\./i.test(p)) token = p.slice("bearer.".length);
+  }
+  return sawMosadd && token ? token : null;
+}
+
+const b64urlDecodeToBytes = (s: string): Uint8Array => {
+  const pad = "=".repeat((4 - (s.length % 4)) % 4);
+  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/") + pad);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+};
+const b64urlDecodeToStr = (s: string): string => new TextDecoder().decode(b64urlDecodeToBytes(s));
+
+interface ScopedJwtClaims {
+  iss?: string;
+  sub: string;
+  iat: number;
+  exp: number;
+  channel_id: string;
+  scope: string;
+  plan?: string;
+  key_id?: string;
+}
+
+/** Verifies an HS256 JWT minted by Supabase `hub-mint-channel-token`. Validates
+ *  signature, exp, iss, and that the token's channel_id matches the path. No
+ *  Supabase round-trip — the shared secret is enough. */
+async function verifyScopedJwt(
+  jwt: string,
+  secret: string,
+  expectedChannelId: string,
+): Promise<{ ok: true; claims: ScopedJwtClaims } | { ok: false; reason: string }> {
+  const parts = jwt.split(".");
+  if (parts.length !== 3) return { ok: false, reason: "malformed" };
+  const [h, p, s] = parts;
+  let header: { alg?: string; typ?: string };
+  let claims: ScopedJwtClaims;
+  try { header = JSON.parse(b64urlDecodeToStr(h)); } catch { return { ok: false, reason: "bad_header" }; }
+  try { claims = JSON.parse(b64urlDecodeToStr(p)) as ScopedJwtClaims; } catch { return { ok: false, reason: "bad_payload" }; }
+  if (header.alg !== "HS256") return { ok: false, reason: "bad_alg" };
+
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["verify"],
+  );
+  const sigOk = await crypto.subtle.verify("HMAC", key, b64urlDecodeToBytes(s), new TextEncoder().encode(`${h}.${p}`));
+  if (!sigOk) return { ok: false, reason: "bad_sig" };
+
+  const now = Math.floor(Date.now() / 1000);
+  if (typeof claims.exp !== "number" || claims.exp < now) return { ok: false, reason: "expired" };
+  if (claims.iss && claims.iss !== "mosadd-hub") return { ok: false, reason: "bad_iss" };
+  if (!claims.channel_id || claims.channel_id !== expectedChannelId) return { ok: false, reason: "channel_mismatch" };
+  // Accept either the bare scope "chat:rw" or a comma-separated scope list containing it.
+  const scopes = (claims.scope ?? "").split(/[\s,]+/).filter(Boolean);
+  if (!scopes.includes("chat:rw")) return { ok: false, reason: "bad_scope" };
+  if (!claims.sub) return { ok: false, reason: "no_sub" };
+  return { ok: true, claims };
 }
 
 // =============================================================================
@@ -70,7 +153,7 @@ export default {
 
     const url = new URL(req.url);
     if (url.pathname === "/" || url.pathname === "/health") {
-      return json({ ok: true, service: "mosadd-edge", phase: "E3-flush" });
+      return json({ ok: true, service: "mosadd-edge", phase: "E6-scoped-jwt" });
     }
 
     const m = url.pathname.match(/^\/c\/([A-Za-z0-9_-]{1,128})\/(ws|send|history)$/);
@@ -163,13 +246,33 @@ export class ChannelDO {
       if (known !== ch) await this.state.storage.put("channel_id", ch);
     }
 
-    // ── WS upgrade — auth via ?k= because browsers can't set headers on upgrade
+    // ── WS upgrade — E6 precedence: scoped JWT > Authorization > ?k= (deprecated)
     if (op === "ws") {
       if (req.headers.get("Upgrade") !== "websocket") return json({ error: "expected_websocket_upgrade" }, { status: 426 });
+      const channelId = ch ?? "";
+
+      // (1) Scoped JWT via Sec-WebSocket-Protocol — the recommended path.
+      const jwt = extractScopedJwt(req);
+      if (jwt && this.env.CHANNEL_TOKEN_SECRET) {
+        const v = await verifyScopedJwt(jwt, this.env.CHANNEL_TOKEN_SECRET, channelId);
+        if (!v.ok) return json({ error: "invalid_token", reason: v.reason }, { status: 401 });
+        // For rate-limiting we tag by sub (the end-user) — generous limits handle
+        // the relay-multiplexes-many-users case at the mint endpoint, not here.
+        const entry: KeyCacheEntry = {
+          hash: await sha256Hex(`jwt:${v.claims.sub}`),
+          valid: true,
+          user_id: v.claims.sub,
+          plan: v.claims.plan ?? "free",
+          exp: v.claims.exp * 1000,
+        };
+        return this.handleWsUpgrade(entry, /*echoProto*/ "mosadd.v1");
+      }
+
+      // (2,3) Hub key fallback (header preferred, ?k= deprecated).
       const apiKey = extractKey(req, url);
       const entry = await this.verifyKey(apiKey ?? "");
       if (!entry.valid) return json({ error: "invalid_key" }, { status: 401 });
-      return this.handleWsUpgrade(entry);
+      return this.handleWsUpgrade(entry, null);
     }
 
     if (op === "send" && req.method === "POST") {
@@ -203,13 +306,19 @@ export class ChannelDO {
   }
 
   // ── WS lifecycle ──────────────────────────────────────────────────────────
-  private async handleWsUpgrade(entry: KeyCacheEntry): Promise<Response> {
+  /** Accepts the WS, tags it for rate-limiting, and (E6) echoes the chosen
+   *  sub-protocol when the client requested it. Echoing matters: the WS spec
+   *  says the server MUST echo one of the offered protocols if it wants the
+   *  client to consider the handshake successful. Without echo, browsers
+   *  reject the connection. */
+  private async handleWsUpgrade(entry: KeyCacheEntry, echoProto: string | null): Promise<Response> {
     const pair = new WebSocketPair();
     const client = pair[0];
     const server = pair[1];
-    // Tag the socket with the caller so inbound messages are rate-limited per key.
+    // Tag the socket with the caller so inbound messages are rate-limited per identity.
     this.state.acceptWebSocket(server, [entry.hash]);
-    return new Response(null, { status: 101, webSocket: client });
+    const headers = echoProto ? { "Sec-WebSocket-Protocol": echoProto } : undefined;
+    return new Response(null, { status: 101, webSocket: client, headers });
   }
 
   async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): Promise<void> {

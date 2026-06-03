@@ -53,6 +53,20 @@ jobs:
           fi
           npx wrangler@latest secret put CF_INGEST_SECRET <<< "$CF_INGEST_SECRET"
 
+      # E6 (LINEAR-2675): HS256 secret used to verify per-channel scoped JWTs
+      # minted by Supabase `hub-mint-channel-token`. Same value lives in
+      # Supabase Edge Function secrets so mint + verify share a key.
+      - name: Push CHANNEL_TOKEN_SECRET to Worker (if set)
+        env:
+          CHANNEL_TOKEN_SECRET: ${{ secrets.CHANNEL_TOKEN_SECRET }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CHANNEL_TOKEN_SECRET" ]; then
+            echo "::notice::CHANNEL_TOKEN_SECRET not set in repo secrets; skipping (E6 scoped-token auth disabled — clients must use ?k= / Authorization)"
+            exit 0
+          fi
+          npx wrangler@latest secret put CHANNEL_TOKEN_SECRET <<< "$CHANNEL_TOKEN_SECRET"
+
       - name: Deploy with Wrangler
         uses: cloudflare/wrangler-action@v3
         with:
