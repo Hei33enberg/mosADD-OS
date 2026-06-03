@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 const links = [
+  { href: '/channel0', label: 'channel 0 [mIRC] →', primary: true },
   { href: '/docs', label: 'Docs' },
   { href: '/docs/quickstart', label: 'Quickstart' },
   { href: '/docs/auth', label: 'Credentials' },
@@ -36,7 +37,11 @@ export function MobileNav() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="border-b border-border/50 py-2.5 text-muted-foreground last:border-0 hover:text-foreground"
+                className={
+                  l.primary
+                    ? 'border-b border-border/50 py-2.5 text-primary last:border-0 hover:text-primary/80'
+                    : 'border-b border-border/50 py-2.5 text-muted-foreground last:border-0 hover:text-foreground'
+                }
               >
                 {l.label}
               </Link>

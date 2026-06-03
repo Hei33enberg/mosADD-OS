@@ -3,12 +3,13 @@ import { Logo } from './Logo';
 import { MobileNav } from './MobileNav';
 
 const navLinks = [
+  { href: '/embed', label: 'Embed' },
+  { href: '/channel0', label: 'channel 0', primary: true },
   { href: '/docs', label: 'Docs' },
   { href: '/docs/mcp', label: 'MCP' },
-  { href: '/docs/modules', label: 'Modules' },
+  { href: '/skins', label: 'Skins' },
   { href: '/examples', label: 'Examples' },
   { href: '/pricing', label: 'Pricing' },
-  { href: '/blog', label: 'Blog' },
 ];
 
 export function SiteHeader() {
@@ -25,7 +26,11 @@ export function SiteHeader() {
             <Link
               key={l.href}
               href={l.href}
-              className="text-muted-foreground transition-colors hover:text-foreground"
+              className={
+                l.primary
+                  ? 'text-primary transition-colors hover:text-primary/80'
+                  : 'text-muted-foreground transition-colors hover:text-foreground'
+              }
             >
               {l.label}
             </Link>

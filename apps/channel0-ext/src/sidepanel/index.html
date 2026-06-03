@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>channel 0</title>
+    <style>
+      :root { color-scheme: dark; }
+      html, body { margin: 0; padding: 0; height: 100%; background: #0a0a0a; color: #e6e6e6;
+                   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+      body { display: flex; flex-direction: column; }
+      .c0-tabs { display: flex; gap: 0; border-bottom: 1px solid #1a1a1a; background: #0a0a0a; }
+      .c0-tabs button { flex: 1; padding: 10px 8px; background: none; color: #888; border: none; cursor: pointer; font-size: 13px; font-weight: 600; border-bottom: 2px solid transparent; }
+      .c0-tabs button.active { color: #00ff7a; border-bottom-color: #00ff7a; }
+      #pane-chat, #pane-settings { flex: 1; min-height: 0; overflow: hidden; }
+      #pane-settings { display: none; padding: 16px; overflow-y: auto; }
+      #pane-settings h2 { margin: 0 0 8px; font-size: 14px; color: #e6e6e6; }
+      .row { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; }
+      .row label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
+      .seg { display: flex; gap: 0; border: 1px solid #1a1a1a; border-radius: 6px; overflow: hidden; }
+      .seg button { flex: 1; padding: 8px 12px; background: #111; color: #e6e6e6; border: none; cursor: pointer; font-size: 13px; }
+      .seg button.active { background: #00ff7a; color: #000; font-weight: 700; }
+      .help { font-size: 12px; color: #888; line-height: 1.4; }
+      .danger { background: none; color: #888; border: 1px solid #1a1a1a; border-radius: 6px;
+                padding: 8px 12px; cursor: pointer; font-size: 13px; margin-top: 8px; }
+      .danger:hover { color: #fff; border-color: #00ff7a; }
+      .brand { color: #00ff7a; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <div class="c0-tabs">
+      <button id="tab-chat" class="active">channel 0</button>
+      <button id="tab-settings">⚙</button>
+    </div>
+    <div id="pane-chat"></div>
+    <div id="pane-settings">
+      <h2 data-i18n="settingsTitle">Settings</h2>
+      <div class="row">
+        <label data-i18n="settingOpenMode">Open chat in</label>
+        <div class="seg" id="open-mode">
+          <button data-mode="side"   data-i18n="settingOpenModeSide">Side panel</button>
+          <button data-mode="inline" data-i18n="settingOpenModeInline">Floating panel</button>
+        </div>
+      </div>
+      <div class="row">
+        <label data-i18n="settingBubblePos">Bubble position</label>
+        <div class="help" data-i18n="settingBubbleDrag">Drag the bubble to reposition.</div>
+        <button class="danger" id="reset-bubble" data-i18n="settingBubbleReset">Reset bubble position</button>
+      </div>
+      <div class="row">
+        <div class="help">with <span class="brand">mosadd</span> inside · v0.2.0</div>
+      </div>
+    </div>
+    <script type="module" src="./sidepanel.ts"></script>
+  </body>
+</html>

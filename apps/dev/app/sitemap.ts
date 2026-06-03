@@ -5,7 +5,7 @@ const BASE = 'https://mosadd.dev';
 // Kept in sync with the route tree. lastModified is a build-time constant
 // (Date.now() is unavailable in some build sandboxes; a stable date is fine
 // for a docs portal and avoids churn in the generated sitemap).
-const LAST_MODIFIED = '2026-05-31';
+const LAST_MODIFIED = '2026-06-03';
 
 const ROUTES: Array<{ path: string; priority: number; freq: MetadataRoute.Sitemap[number]['changeFrequency'] }> = [
   { path: '/', priority: 1.0, freq: 'weekly' },
@@ -29,6 +29,10 @@ const ROUTES: Array<{ path: string; priority: number; freq: MetadataRoute.Sitema
   { path: '/community', priority: 0.6, freq: 'monthly' },
   { path: '/changelog', priority: 0.6, freq: 'weekly' },
   { path: '/pricing', priority: 0.5, freq: 'monthly' },
+  { path: '/embed', priority: 0.9, freq: 'weekly' },
+  { path: '/channel0', priority: 0.95, freq: 'weekly' },
+  { path: '/skins', priority: 0.7, freq: 'weekly' },
+  { path: '/skins/editor', priority: 0.5, freq: 'monthly' },
   { path: '/status', priority: 0.3, freq: 'monthly' },
 ];
 

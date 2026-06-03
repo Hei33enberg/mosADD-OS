@@ -1,19 +1,35 @@
 // =============================================================================
-// MV3 service worker — minimal for the P0 viral loop.
-//
-// Responsibilities (today):
-//   - On install, seed the deviceToken so other surfaces (popup, content
-//     script) never see an empty value.
-//
-// Future (post-P0):
-//   - Background presence polling for the "trending domains" board (C1-4).
-//   - Notification routing for "ping me when someone joins {domain}" (C1-4).
+// MV3 service worker (v0.2).
+//   (1) Klik ikony → side panel auto-open (setPanelBehavior).
+//   (2) Klik bąbla w content → message → sidePanel.open({tabId}) (Chrome 116+).
+//   (3) Po install: warm-up device token.
 // =============================================================================
 
 import { getDeviceToken } from "../lib/identity-store";
 
 chrome.runtime.onInstalled.addListener(async () => {
-  // Best-effort warm-up. Errors are non-fatal; the content script will
-  // generate a token if storage misbehaves.
   try { await getDeviceToken(); } catch { /* ignore */ }
+  try {
+    await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+  } catch { /* ignore — older Chrome may not have side panel API */ }
+});
+
+chrome.runtime.onStartup?.addListener(async () => {
+  try { await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }); }
+  catch { /* ignore */ }
+});
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg?.type === "channel0:open-side-panel" && sender.tab?.id !== undefined) {
+    const tabId = sender.tab.id;
+    (async () => {
+      try {
+        await chrome.sidePanel.open({ tabId });
+        sendResponse({ ok: true });
+      } catch (e) {
+        sendResponse({ ok: false, error: String(e) });
+      }
+    })();
+    return true;
+  }
 });
