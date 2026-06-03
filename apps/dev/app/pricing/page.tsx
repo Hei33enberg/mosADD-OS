@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Prose, H1, Lead, H2, P, Callout, Anchor } from '../_components/Prose';
 import { Calculator } from '../_components/Calculator';
 import { ComparisonTable } from '../_components/ComparisonTable';
-import { WaitlistForm } from '../_components/WaitlistForm';
 
 export const metadata: Metadata = {
   title: 'Pricing',
@@ -31,67 +30,68 @@ const tiers: Tier[] = [
       '@mosadd/mcp + all SDK adapters',
       'All 43 tools, every m* module',
       'Bring your own keys (Telnyx, Resend, LiveKit, Supabase)',
-      'Community support — GitHub Discussions',
-      'No telemetry, no phone-home',
+      'Unlimited MAT, msg, search — you pay your own infra',
+      'Community support · GitHub Discussions',
     ],
     cta: { label: 'Get started', href: '/docs/quickstart' },
   },
   {
     id: 'free',
     name: 'Free',
-    blurb: 'Hosted MCP, no setup. Ship in 60 seconds.',
+    blurb: 'Hosted — ship in 60 seconds. One plan unlocks every product.',
     price: '$0',
+    unit: '/ mo (hosted)',
     features: [
-      'Hosted MCP at mcp.mosadd.com',
-      '100 messages included / mo',
-      '30 min mTALK / mo',
-      'Single project · best-effort uptime',
-      'Overage billed per use — no surprise caps',
+      '1,000 MAT (embed talkers) / mo',
+      '1,000 outbound messages / mo (MCP toolkit)',
+      'RAG search: off',
+      '1 embed key · 1 hub key',
+      '"powered by mosadd" badge shown',
     ],
-    cta: { label: 'Join waitlist', waitlist: true },
+    cta: { label: 'Sign up', href: 'https://hub.mosadd.com' },
   },
   {
     id: 'pro',
     name: 'Pro',
-    blurb: 'For solo builders shipping production agents.',
+    blurb: 'For active creators + solo devs shipping production agents.',
     price: '$9',
-    unit: '/mo + usage',
+    unit: '/ mo',
     highlight: true,
     features: [
-      'Everything in Free',
-      '10,000 messages included, then $0.0006 ea',
-      '600 min mTALK included · BYOK = $0',
-      '60 PSTN min included (≤10% over carrier)',
-      'Single anonymous DID · email support · 99.5% SLO',
+      '10,000 MAT · 10,000 outbound messages',
+      '1,000 RAG searches / mo',
+      '5 embed keys · 5 hub keys · custom CSS skin',
+      'PAYG overage at $0.001 / extra MAT, capped 2× plan price',
+      'Badge removal +$3/mo addon (or keep it)',
     ],
-    cta: { label: 'Join waitlist', waitlist: true },
+    cta: { label: 'Start Pro', href: 'https://hub.mosadd.com/embed/new?plan=pro' },
   },
   {
     id: 'team',
     name: 'Team',
-    blurb: 'For startup teams running multiple agents.',
-    price: '$49',
-    unit: '/mo + usage',
+    blurb: 'For newsrooms, agencies, creator companies.',
+    price: '$29',
+    unit: '/ mo',
     features: [
-      'Everything in Pro',
-      '100,000 messages included, then $0.0006 ea',
-      '6,000 min mTALK · 600 PSTN min included',
-      'Up to 5 DIDs · shared projects + RBAC',
-      '99.9% uptime SLO',
+      '100,000 MAT · 100,000 outbound messages',
+      '10,000 RAG searches / mo',
+      'Unlimited embed + hub keys · white-label (badge off)',
+      'Webhooks · audit log · multi-tenant',
+      'PAYG overage at $0.001 / extra MAT, capped 2× plan price',
     ],
-    cta: { label: 'Join waitlist', waitlist: true },
+    cta: { label: 'Start Team', href: 'https://hub.mosadd.com/embed/new?plan=team' },
   },
   {
     id: 'enterprise',
     name: 'Enterprise',
-    blurb: 'Self-host in your VPC + BYOK + SLA + audit.',
+    blurb: 'Dedicated infra + SSO/DPA/NIS2 + SLA.',
     price: 'Custom',
     features: [
-      'Self-hosted in your VPC / on-prem',
-      'BYOK key broker for every provider',
+      'Unlimited MAT / messages / RAG searches',
       'SSO / SAML · RBAC · NIS2 audit-log retention',
+      'DPA · dedicated infra · 99.95% SLO',
       'Threat radar 160-event feed',
-      'Dedicated channel + DPA · 99.95% SLO',
+      'Self-host in your VPC also supported',
     ],
     cta: { label: 'Talk to us', href: 'mailto:hello@mosadd.com?subject=mosadd%20Enterprise' },
   },
@@ -103,14 +103,14 @@ export default function PricingPage() {
       <Prose>
         <H1>Pricing</H1>
         <Lead>
-          Open-source forever. The hosted hub is usage-based with a generous free tier — and{' '}
-          <strong>bring-your-own-keys means $0 on voice &amp; PSTN orchestration</strong>. You only ever pay
-          for what you send.
+          <strong>One plan unlocks every product</strong> — embed widget, MCP toolkit, RAG, hub keys. Open-source
+          self-host is free forever. Hosted starts at $0 with generous limits, hard cap = 2× plan price.
+          You never get a surprise bill.
         </Lead>
-        <Callout type="info" id="status">
-          <strong>Phase 2 preview.</strong> The hosted hub at{' '}
-          <code className="font-mono text-primary">hub.mosadd.com</code> is in build. Self-host is available
-          today via <Anchor href="/download">Download</Anchor> — join the waitlist below to get hosted access first.
+        <Callout type="success" id="status">
+          <strong>LIVE now.</strong> Self-serve sign-up at{' '}
+          <Anchor href="https://hub.mosadd.com">hub.mosadd.com</Anchor> — create a key, copy the snippet, paste
+          on your blog (embed) or run <code className="font-mono text-primary">npx -y @mosadd/mcp</code> (toolkit).
         </Callout>
       </Prose>
 
@@ -144,25 +144,16 @@ export default function PricingPage() {
                 </li>
               ))}
             </ul>
-            {t.cta.waitlist ? (
-              <a
-                href="#waitlist"
-                className={`block text-center px-3 py-2 rounded-none text-sm font-medium transition ${
-                  t.highlight
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                    : 'border border-border text-foreground hover:border-primary/50'
-                }`}
-              >
-                {t.cta.label} →
-              </a>
-            ) : (
-              <a
-                href={t.cta.href}
-                className="block text-center px-3 py-2 rounded-none text-sm font-medium border border-border text-foreground hover:border-primary/50 transition"
-              >
-                {t.cta.label} →
-              </a>
-            )}
+            <a
+              href={t.cta.href}
+              className={`block text-center px-3 py-2 rounded-none text-sm font-medium transition ${
+                t.highlight
+                  ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                  : 'border border-border text-foreground hover:border-primary/50'
+              }`}
+            >
+              {t.cta.label} →
+            </a>
           </div>
         ))}
       </div>
@@ -222,27 +213,15 @@ export default function PricingPage() {
         </a>
       </div>
 
-      {/* Waitlist */}
-      <div id="waitlist" className="mt-16 border border-primary/30 bg-primary/[0.03] p-6 scroll-mt-24">
-        <h2 className="font-display text-2xl font-semibold text-foreground">Get hosted access first</h2>
-        <p className="mt-2 mb-5 max-w-2xl text-sm text-muted-foreground">
-          The hosted hub opens in Phase 2. Drop your work email and we&apos;ll let you in early — no spam,
-          one launch email.
-        </p>
-        <div className="max-w-xl">
-          <WaitlistForm source="pricing" />
-        </div>
-      </div>
-
       {/* FAQ */}
       <Prose className="mt-16">
         <H2>FAQ</H2>
-        <P><strong>What counts as a message?</strong> Every <code className="font-mono text-primary">mDM_send</code>, <code className="font-mono text-primary">mIRC_post</code>, <code className="font-mono text-primary">mROOM_post</code>, or <code className="font-mono text-primary">mAIL_send</code> outbound. Inbound is free.</P>
-        <P><strong>What does BYOK actually save?</strong> Bring your own Telnyx / LiveKit / Resend keys and mosadd charges <strong>$0</strong> for voice &amp; PSTN orchestration — you pay your provider directly at their cost. Messages are still metered (that&apos;s the part mosadd runs).</P>
-        <P><strong>Is there a spend cap?</strong> Yes — set a hard monthly cap and we stop before you blow your budget. No silent overage bills.</P>
-        <P><strong>Can I move from self-host to hosted later?</strong> Yes — your data, your keys. The hosted hub is a thin wrapper plus the proprietary 160-event threat radar.</P>
-        <P><strong>Why meter voice in minutes?</strong> Voice is real cost (LiveKit egress + STT/TTS). Metered for predictability; $0 with BYOK.</P>
-        <P><strong>What about PSTN?</strong> Carrier fees are real money (Telnyx). We pass through at-cost with no more than a 10% markup — or $0 with BYOK.</P>
+        <P><strong>What is a MAT?</strong> <em>Monthly Active Talker</em> — a unique visitor that <em>sends at least one message</em> to one of your embeds in a calendar month. Viewers, reconnects, lurkers — all free. Repeat senders in the same month count once. We dedupe in Postgres, idempotent.</P>
+        <P><strong>What counts as a message?</strong> Every <code className="font-mono text-primary">mDM_send</code>, <code className="font-mono text-primary">mIRC_post</code>, <code className="font-mono text-primary">mROOM_post</code>, or <code className="font-mono text-primary">mAIL_send</code> outbound from the MCP toolkit. Inbound is free.</P>
+        <P><strong>Why one unified plan instead of separate prices?</strong> Most users want both: a creator wants the embed for visitors AND the MCP toolkit for their own bots. Charging once is simpler. Pro $9 unlocks 10k MAT + 10k msg + 1k RAG — pick whichever fits and the others come along.</P>
+        <P><strong>Is there a spend cap?</strong> Yes — hard cap = 2× your plan price. When you hit it, the mint endpoint refuses new joiners with a "queue / upgrade" UI. No silent overage bills, ever.</P>
+        <P><strong>Can I move from self-host to hosted later?</strong> Yes — your data, your keys. The Apache-2.0 self-host has the same data model; just point your Stripe-paid account at the hosted hub.</P>
+        <P><strong>What about PSTN / voice (mCALL / mTALK)?</strong> Carrier fees are pass-through at-cost (≤10% markup) or $0 with BYOK (your own Telnyx / LiveKit keys). Same logic for Resend (email).</P>
         <P><strong>Where&apos;s the open/paid line?</strong> Everything you need to build and self-host is Apache-2.0 forever. The hosted convenience, BYOK key-broker, threat radar, SSO/RBAC/audit-log and SLAs are the paid layer. We won&apos;t relicense the open core.</P>
       </Prose>
     </div>
