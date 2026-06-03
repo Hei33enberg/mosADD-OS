@@ -1,4 +1,6 @@
-// Side panel entry — brutalist mIRC look.
+// v0.4 — dynamiczny <title> = "mIRC #domain" tak żeby natywny Chrome
+// side panel chrome (Pasek "channel 0 [pin] [x]") pokazywał czym jest pokój.
+
 import { normalizeDomain } from "../lib/domain";
 import { mountChat, type MountHandle, type ToolbarAction } from "../shared/chat-shell";
 import { CHAT_CSS } from "../shared/chat-styles";
@@ -42,15 +44,16 @@ async function syncChat(): Promise<void> {
   const norm = await activeTabDomain();
   if (!norm) {
     if (mounted) { mounted.handle.destroy(); mounted = null; }
-    host.innerHTML = '<div style="padding:16px;color:rgba(255,255,255,0.5);font-size:13px;">' + t("popupNotWebsite") + '</div>';
+    host.innerHTML = '<div style="padding:12px;color:rgba(255,255,255,0.4);font-size:11px;font-family:ui-monospace,monospace;">' + t("popupNotWebsite") + '</div>';
+    document.title = "channel 0";
     return;
   }
+  document.title = "mIRC #" + norm.domain;
   if (mounted?.domain === norm.domain) return;
   if (mounted) { mounted.handle.destroy(); mounted = null; }
   host.innerHTML = "";
   const actions: ToolbarAction[] = [
     { icon: "settings", i18nKey: "tooltipSettings", onClick: () => showSettings(true) },
-    { icon: "close",    i18nKey: "tooltipClose",    onClick: () => window.close() },
   ];
   const handle = mountChat(host, { domain: norm.domain, actions });
   mounted = { domain: norm.domain, handle };
