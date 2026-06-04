@@ -12,6 +12,7 @@ const links = [
   { href: '/docs/modules', label: 'Modules' },
   { href: '/docs/sdk', label: 'SDK' },
   { href: '/examples', label: 'Examples' },
+  { href: '/pricing', label: 'Pricing' },
   { href: '/download', label: 'Download' },
   { href: '/changelog', label: 'Changelog' },
 ];
