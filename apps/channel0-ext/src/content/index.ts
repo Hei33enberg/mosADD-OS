@@ -20,7 +20,40 @@ window.addEventListener("message", (e: MessageEvent) => {
 });
 
 const norm = normalizeDomain(location.href);
-if (norm) void bootstrap(norm);
+if (norm) void ageGateAndBootstrap(norm);
+
+const AGE_KEY = "channel0.over16Confirmed";
+
+async function ageGateAndBootstrap(norm: { domain: string; slug: string }): Promise<void> {
+  // C1-6: one-time age gate. Stored per-install. The settings overlay surfaces
+  // a "reset age confirmation" link for users who change browsers.
+  try {
+    const got = await chrome.storage.local.get(AGE_KEY);
+    if (got?.[AGE_KEY] === true) { void bootstrap(norm); return; }
+    if (got?.[AGE_KEY] === false) return; // hard-decline: user said under-16
+  } catch { /* storage flaky, default open */ void bootstrap(norm); return; }
+  // Inline mini-prompt (top-right toast) without mounting the full panel.
+  const prompt = document.createElement("div");
+  prompt.setAttribute("data-mosadd-c0-age", "");
+  prompt.style.cssText = "all: initial; position: fixed; right: 16px; top: 16px; z-index: 2147483647; max-width: 320px; background: #0a0a0a; color: #fff; border: 1px solid #00ff7a; padding: 12px 14px; font-family: ui-monospace, monospace; font-size: 12px; line-height: 1.4; box-shadow: 0 8px 24px rgba(0,0,0,.5);";
+  prompt.innerHTML = '<div style="font-weight:700; color:#00ff7a; margin-bottom:6px;">channel 0 [mIRC]</div>' +
+    '<div style="margin-bottom:8px;">Anonymous live chat overlaid on this domain. Adult-only conversations may appear. Please confirm you are 16+.</div>' +
+    '<div style="display:flex; gap:6px;">' +
+    '<button data-yes style="flex:1; background:#00ff7a; color:#000; border:0; padding:6px 8px; font-weight:700; cursor:pointer; font-family:inherit; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;">I am 16+</button>' +
+    '<button data-no  style="flex:1; background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.3); padding:6px 8px; font-weight:700; cursor:pointer; font-family:inherit; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;">I am not</button>' +
+    '</div>';
+  if (document.body) document.body.appendChild(prompt);
+  else document.addEventListener("DOMContentLoaded", () => document.body?.appendChild(prompt));
+  prompt.querySelector("[data-yes]")?.addEventListener("click", async () => {
+    try { await chrome.storage.local.set({ [AGE_KEY]: true }); } catch { /* */ }
+    prompt.remove();
+    void bootstrap(norm);
+  });
+  prompt.querySelector("[data-no]")?.addEventListener("click", async () => {
+    try { await chrome.storage.local.set({ [AGE_KEY]: false }); } catch { /* */ }
+    prompt.remove();
+  });
+}
 
 async function bootstrap(norm: { domain: string; slug: string }): Promise<void> {
   const settings = await getSettings();

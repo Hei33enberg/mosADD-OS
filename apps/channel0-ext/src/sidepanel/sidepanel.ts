@@ -88,6 +88,13 @@ resetBubble.addEventListener("click", async () => {
   await patchSettings({ bubble: { ...DEFAULT_SETTINGS.bubble } });
 });
 
+const resetAge = document.getElementById("reset-age") as HTMLButtonElement | null;
+resetAge?.addEventListener("click", async () => {
+  try { await chrome.storage.local.remove("channel0.over16Confirmed"); } catch { /* */ }
+  resetAge.textContent = "reset — reload the page";
+  resetAge.disabled = true;
+});
+
 onSettingsChange(() => { void renderSettings(); });
 
 
