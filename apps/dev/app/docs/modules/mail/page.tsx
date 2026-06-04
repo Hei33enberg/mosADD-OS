@@ -19,28 +19,35 @@ export default function MailPage() {
 
       <H2>Tools</H2>
 
+      <H3>mAIL_list</H3>
+      <Pre lang="ts">{`mAIL_list({
+  direction?: 'inbound' | 'outbound',  // omit for both
+  limit?: number,                       // default 50, max 200
+  before?: string,                      // pagination: pass prior next_cursor
+})
+→ {
+  emails: {
+    message_id, direction, from, to, subject,
+    priority, status, sent_at, snippet,
+  }[],
+  next_cursor: string | null,
+}`}</Pre>
+
       <H3>mAIL_send</H3>
       <Pre lang="ts">{`mAIL_send({
-  to: string | string[],
+  to: string | string[],   // single, or array of up to 50
   subject: string,
-  text: string,
-  html?: string,
+  body_text?: string,      // plain text body (one of body_text/body_html required)
+  body_html?: string,      // HTML body
+  cc?: string[],
+  bcc?: string[],
   reply_to?: string,
-  attachments?: Attachment[],
 })
 → { message_id, queued_at }`}</Pre>
 
-      <H3>mAIL_list_inbox</H3>
-      <Pre lang="ts">{`mAIL_list_inbox({
-  folder?: 'inbox' | 'sent' | 'spam',
-  limit?: number,
-  cursor?: string,
-})
-→ { messages: EmailHeader[], next_cursor }`}</Pre>
-
-      <H3>mAIL_read</H3>
-      <Pre lang="ts">{`mAIL_read({ message_id })
-→ { from, to, subject, body_text, body_html, headers, attachments }`}</Pre>
+      <H3>mAIL_view</H3>
+      <Pre lang="ts">{`mAIL_view({ message_id })
+→ { message_id, from, to, subject, body_text, body_html, received_at }`}</Pre>
 
       <H2>Providers</H2>
       <Ul>

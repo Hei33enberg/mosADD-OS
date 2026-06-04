@@ -37,6 +37,30 @@ const mAIL_view_input = z.object({
   message_id: MessageId,
 });
 
+const mAIL_list_input = z.object({
+  direction: z
+    .enum(["inbound", "outbound"])
+    .optional()
+    .describe("Filter to received (inbound) or sent (outbound) mail. Omit for both."),
+  limit: z.number().int().min(1).max(200).optional().describe("Max emails to return. Default 50."),
+  before: z
+    .string()
+    .optional()
+    .describe("Pagination cursor: pass the previous response's next_cursor to get the next (older) page."),
+});
+
+interface MailListItem {
+  message_id: string;
+  direction: "inbound" | "outbound";
+  from: string;
+  to: string;
+  subject: string;
+  priority: string;
+  status: string;
+  sent_at: string;
+  snippet: string;
+}
+
 // ---- Handlers ----
 
 async function mAIL_send(
@@ -68,9 +92,30 @@ async function mAIL_view(
   return await invokeFunction("mp0st-view", { message_id: input.message_id });
 }
 
+async function mAIL_list(
+  input: z.infer<typeof mAIL_list_input>,
+  ctx: MosaddToolContext,
+): Promise<{ emails: MailListItem[]; next_cursor: string | null }> {
+  readSupabaseEnv();
+  ctx.log("debug", "mAIL_list invoking mp0st-list", { direction: input.direction });
+  return await invokeFunction<{ emails: MailListItem[]; next_cursor: string | null }>("mp0st-list", {
+    direction: input.direction ?? null,
+    limit: input.limit ?? 50,
+    before: input.before ?? null,
+  });
+}
+
 // ---- Registration ----
 
 export const mailTools: MosaddTool[] = [
+  {
+    name: "mAIL_list",
+    requires: "network",
+    description:
+      "List the user's mailbox (their <userId>@mosadd.com inbox/outbox) newest-first, with sender, subject, status and a short snippet. Filter by direction ('inbound' = received, 'outbound' = sent). Use the returned next_cursor with `before` to page through older mail. Call mAIL_view to read a full message body.",
+    inputSchema: mAIL_list_input,
+    handler: mAIL_list as MosaddTool["handler"],
+  },
   {
     name: "mAIL_send",
     requires: "network",

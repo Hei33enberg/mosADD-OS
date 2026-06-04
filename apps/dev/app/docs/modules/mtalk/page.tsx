@@ -25,36 +25,39 @@ export default function MtalkPage() {
         Audio never flows through MCP — see <Anchor href="/docs/mcp">MCP server / Long-running sessions</Anchor>.
       </P>
 
-      <H3>mTALK_start_session</H3>
-      <Pre lang="ts">{`mTALK_start_session({
-  room_id?: string,           // null = create new
-  vocoder_preset?: 'none' | 'pitch_shift' | 'rvc:<voice_id>',
-  agent_participant?: boolean, // attach Claude/Cursor as participant
+      <H3>mTALK_open</H3>
+      <Pre lang="ts">{`mTALK_open({
+  label?: string,    // e.g. 'ops', 'field-team'. Omit for a personal room.
 })
+→ { room_id }`}</Pre>
+
+      <H3>mTALK_join</H3>
+      <Pre lang="ts">{`mTALK_join({ room_id })   // credentials for a human/bot client to connect
+→ { room_id, token, url, identity }`}</Pre>
+
+      <H3>mTALK_press</H3>
+      <Pre lang="ts">{`mTALK_press({ room_id })   // request the floor (half-duplex)
 → {
-  session_id,
-  room_id,
-  daemon_socket,    // local Unix socket for the @mosadd/daemon
-  livekit_jwt,
-  agent_join_url?,  // for LLM to subscribe to audio
+  granted: boolean,   // true = you hold the floor and may speak
+  position: number,   // your place in the FIFO queue if not granted
+  holder: string | null,
+  queue: string[],
 }`}</Pre>
 
-      <H3>mTALK_get_status</H3>
-      <Pre lang="ts">{`mTALK_get_status({ session_id })
-→ {
-  participants: [{ id, name, speaking: boolean, mic_open: boolean }],
-  agent: { listening: boolean, last_transcript: string },
-}`}</Pre>
+      <H3>mTALK_release</H3>
+      <Pre lang="ts">{`mTALK_release({ room_id })   // give up the floor or cancel a queued request
+→ { holder: string | null, queue: string[] }`}</Pre>
 
-      <H3>mTALK_end_session</H3>
-      <Pre lang="ts">{`mTALK_end_session({ session_id })`}</Pre>
+      <H3>mTALK_state</H3>
+      <Pre lang="ts">{`mTALK_state({ room_id })   // read floor state without changing it
+→ { holder: string | null, since: string | null, queue: string[] }`}</Pre>
 
       <H2>How LLM-in-room works</H2>
       <Ol>
-        <li>User joins PTT room via <code className="font-mono text-radar-green">mTALK_start_session(&#123; agent_participant: true &#125;)</code></li>
-        <li>MCP server reserves an "agent slot" in the LiveKit room</li>
-        <li>Agent subscribes to audio via LiveKit Agents framework, with VAD + STT</li>
-        <li>Agent can call <code className="font-mono text-radar-green">mTALK_speak(&#123; text &#125;)</code> to TTS into the room (counts as user PTT push)</li>
+        <li>Agent opens (or joins) a PTT room via <code className="font-mono text-radar-green">mTALK_open</code>, then mints client credentials with <code className="font-mono text-radar-green">mTALK_join</code></li>
+        <li>The credentials let an agent participant subscribe to the room&apos;s audio transport (LiveKit Agents framework, with VAD + STT)</li>
+        <li>Agent takes the floor with <code className="font-mono text-radar-green">mTALK_press</code> (granted when no one is transmitting), TTS&apos;s into the room, then calls <code className="font-mono text-radar-green">mTALK_release</code></li>
+        <li>Floor discipline is half-duplex FIFO with an anti-hog timeout — inspect it any time with <code className="font-mono text-radar-green">mTALK_state</code></li>
       </Ol>
       <P>
         This is <strong>the killer feature</strong>. Walkie-talkie group + AI participant in the same room.

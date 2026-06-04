@@ -13,9 +13,9 @@ export default function McallPage() {
       <Lead>PSTN out with anonymous numbers and an optional vocoder — real phone calls from an agent, over an encrypted SIP relay.</Lead>
 
       <P>
-        <code className="font-mono text-radar-green">mCALL</code> dials real phone numbers (E.164) from a pooled or
-        dedicated DID, bridges the media over an encrypted SIP relay, and can disguise the caller&apos;s voice with a
-        vocoder. The control plane is MCP; audio never flows through the tool call (see{' '}
+        <code className="font-mono text-radar-green">mCALL</code> dials real phone numbers (E.164) from a
+        carrier-provisioned number, bridges the media over an encrypted SIP relay, and can disguise the caller&apos;s
+        voice with a vocoder. The control plane is MCP; audio never flows through the tool call (see{' '}
         <Anchor href="/docs/mcp">MCP server / long-running sessions</Anchor>).
       </P>
 
@@ -28,31 +28,35 @@ export default function McallPage() {
         See <Anchor href="/pricing">pricing</Anchor> for metered minutes.
       </Callout>
 
-      <H2>Tools (planned surface)</H2>
+      <H2>Tools</H2>
 
       <H3>mCALL_start_pstn</H3>
       <Pre lang="ts">{`mCALL_start_pstn({
-  to: string,                 // E.164, e.g. +14155550123
-  from?: string,              // your DID, or pooled number
-  vocoder_preset?: 'none' | 'pitch_shift' | 'rvc:<voice_id>',
+  to: string,         // E.164, e.g. +14155550123
+  vocoder?: boolean,  // disguise the caller's voice (anonymous). Default false
 })
-→ { session_id, daemon_socket, sip_jwt }`}</Pre>
-
-      <H3>mCALL_list_did / mCALL_acquire_did</H3>
-      <Pre lang="ts">{`mCALL_list_did({})
-→ { numbers: [{ phone_number, country, monthly_cost_usd }], remaining_minutes }
-
-mCALL_acquire_did({ country, area_code? })
-→ { phone_number, monthly_cost_usd }`}</Pre>
+→ {
+  session_id,
+  room_name,
+  destination_number,
+  vocoder_enabled,
+  minutes_remaining,
+  zone,
+  zone_label,
+}`}</Pre>
+      <P>
+        The caller number is carrier-provisioned server-side (LiveKit SIP trunk or Telnyx). There is no
+        number-acquisition tool: the sending DID is set by the wired carrier, not chosen per call.
+      </P>
 
       <H3>mCALL_end_pstn</H3>
-      <Pre lang="ts">{`mCALL_end_pstn({ session_id })
+      <Pre lang="ts">{`mCALL_end_pstn({ session_id })   // session_id from mCALL_start_pstn
 → { duration_ms, cost_credits }`}</Pre>
 
       <H2>BYOC — bring your own carrier</H2>
       <Ul>
-        <li>Point mCALL at your own Telnyx/Twilio trunk: transmission bills to your account, mosadd takes a thin hub fee, zero markup on minutes.</li>
-        <li>Or use the pooled DIDs + metered minutes once carrier onboarding completes.</li>
+        <li>Point mCALL at your own Telnyx/LiveKit SIP trunk: transmission bills to your account, mosadd takes a thin hub fee, zero markup on minutes.</li>
+        <li>Per-tenant DID self-service (buy/list numbers from MCP) is on the roadmap — not yet a tool.</li>
       </Ul>
 
       <H2>Threat radar hooks</H2>
