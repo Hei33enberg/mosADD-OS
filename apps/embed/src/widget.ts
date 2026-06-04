@@ -122,6 +122,12 @@ const I18N: Record<string, Record<string, string>> = {
     sys_joined: "Joined the channel.",
     sys_disconnected: "Disconnected. Reconnecting…",
     powered: "powered by",
+    settings: "Settings",
+    delete_data: "Delete my data",
+    delete_confirm: "Permanently delete all your messages and your participation record in this chat? This can't be undone.",
+    delete_working: "Deleting your data…",
+    delete_done: "Your data has been deleted.",
+    delete_fail: "Couldn't delete your data. Please try again.",
   },
   pl: {
     join_label: "DOŁĄCZ ANONIMOWO — PODAJ NICK",
@@ -139,6 +145,12 @@ const I18N: Record<string, Record<string, string>> = {
     sys_joined: "Dołączono do kanału.",
     sys_disconnected: "Rozłączono. Łączenie ponownie…",
     powered: "powered by",
+    settings: "Ustawienia",
+    delete_data: "Usuń moje dane",
+    delete_confirm: "Trwale usunąć wszystkie Twoje wiadomości i zapis udziału w tym czacie? Tego nie da się cofnąć.",
+    delete_working: "Usuwanie Twoich danych…",
+    delete_done: "Twoje dane zostały usunięte.",
+    delete_fail: "Nie udało się usunąć danych. Spróbuj ponownie.",
   },
 };
 
@@ -159,7 +171,13 @@ function storage(pk: string, channel: string) {
     setNick: (v: string) => safeWrite(`${root}:nick`, v),
     getSub:  () => safeRead(`${root}:sub`),
     setSub:  (v: string) => safeWrite(`${root}:sub`, v),
+    /** GDPR erasure (LINEAR-2742): forget this visitor entirely so they aren't
+     *  auto-rejoined under the same sub after deleting their data. */
+    clear:   () => { safeRemove(`${root}:nick`); safeRemove(`${root}:sub`); },
   };
+}
+function safeRemove(k: string): void {
+  try { localStorage.removeItem(k); } catch { /* ignore */ }
 }
 function safeRead(k: string): string | null {
   try { return localStorage.getItem(k); } catch { return null; }
@@ -262,6 +280,7 @@ export class MosaddMircWidget {
   private inputEl!: HTMLDivElement;
   private badgeEl!: HTMLDivElement;
   private headStatusEl!: HTMLSpanElement;
+  private settingsMenuEl: HTMLDivElement | null = null;
   // Launcher (mode === "launcher" only). Always-visible pill that toggles the card.
   private launcherEl: HTMLDivElement | null = null;
   private launcherDotEl: HTMLSpanElement | null = null;
@@ -369,6 +388,33 @@ export class MosaddMircWidget {
     title.innerHTML = `${this.cfg.title ?? "mIRC"} <span class="m-chan">#${escapeHtml(this.cfg.channel)}</span>`;
     head.appendChild(this.headStatusEl);
     head.appendChild(title);
+
+    // Settings (⚙) menu — currently holds the GDPR "Delete my data" action
+    // (LINEAR-2742). Built for every mode so an EU visitor can always exercise
+    // their right to erasure (Art. 17) without leaving the widget.
+    const gear = el<HTMLButtonElement>("button", "m-gear");
+    gear.type = "button";
+    gear.innerHTML = "⚙";
+    gear.setAttribute("aria-label", t(this.cfg.locale, "settings"));
+    const menu = el<HTMLDivElement>("div", "m-menu");
+    menu.style.display = "none";
+    const delItem = el<HTMLButtonElement>("button", "m-menu-item", t(this.cfg.locale, "delete_data"));
+    delItem.type = "button";
+    delItem.addEventListener("click", () => {
+      menu.style.display = "none";
+      void this.handleDeleteMyData();
+    });
+    menu.appendChild(delItem);
+    gear.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.style.display = menu.style.display === "none" ? "block" : "none";
+    });
+    // Click anywhere else closes the menu.
+    this.shadow.addEventListener("click", () => { menu.style.display = "none"; });
+    this.settingsMenuEl = menu;
+    head.appendChild(gear);
+    head.appendChild(menu);
+
     // In launcher mode the header gets an X to collapse back to the pill.
     if (this.cfg.mode === "launcher") {
       const closeBtn = el<HTMLButtonElement>("button", "m-close");
@@ -519,6 +565,73 @@ export class MosaddMircWidget {
       // Auto-join with the previous nick.
       this.handleJoin(savedNick);
     }
+  }
+
+  /** GDPR Art. 17 "right to erasure" (LINEAR-2742). The visitor's own signed
+   *  channel token is the proof they control their sub: we mint a fresh one (or
+   *  reuse the live one) and POST it to embed-dsr-delete, which erases their
+   *  embed_mat_seen + messages_meta rows server-side. Then we wipe local state
+   *  and return to the join screen so they aren't silently re-tracked. */
+  private async handleDeleteMyData(): Promise<void> {
+    let confirmed = true;
+    try { confirmed = window.confirm(t(this.cfg.locale, "delete_confirm")); } catch { confirmed = true; }
+    if (!confirmed) return;
+
+    this.sysMessage(t(this.cfg.locale, "delete_working"));
+    try {
+      const sub = this.storage.getSub();
+      // Reuse the live token if we have one (the endpoint tolerates a 24h-stale
+      // token); otherwise mint a fresh proof token for the stored sub.
+      let token = this.mint?.token ?? null;
+      if (!token && sub) token = await this.mintProofToken(sub);
+
+      // No sub was ever minted → nothing persisted server-side. Clear local + done.
+      if (!token) {
+        this.wipeLocal();
+        this.sysMessage(t(this.cfg.locale, "delete_done"));
+        return;
+      }
+
+      const dsrUrl = this.cfg.mintUrl.replace("mirc-embed-token", "embed-dsr-delete");
+      const r = await fetch(dsrUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+      if (!r.ok) throw new Error(`http_${r.status}`);
+
+      this.wipeLocal();
+      this.sysMessage(t(this.cfg.locale, "delete_done"));
+    } catch {
+      this.sysMessage(t(this.cfg.locale, "delete_fail"));
+    }
+  }
+
+  /** Mint a channel token for `sub` solely as DSR proof-of-control. Same
+   *  endpoint connect() uses; we only need the token string back. */
+  private async mintProofToken(sub: string): Promise<string | null> {
+    try {
+      const r = await fetch(this.cfg.mintUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pk: this.cfg.pk, channel_id: this.cfg.channel, sub }),
+      });
+      const data = await r.json().catch(() => null) as MintResponse | ErrorResponse | null;
+      return data && "token" in data ? data.token : null;
+    } catch {
+      return null;
+    }
+  }
+
+  /** Drop the local footprint (WS + nick + sub) and reset to the pre-join UI. */
+  private wipeLocal(): void {
+    try { this.ws?.close(1000); } catch { /* ignore */ }
+    this.ws = null;
+    this.mint = null;
+    this.nick = "";
+    this.storage.clear();
+    this.inputEl.style.display = "none";
+    this.joinEl.style.display = "";
   }
 
   private handleJoin(rawNick: string): void {

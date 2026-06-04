@@ -370,6 +370,52 @@
 }
 .m-close:hover { color: var(--m-fg); border-color: var(--m-fg); }
 
+/* Settings (⚙) button + dropdown — holds the GDPR "Delete my data" action
+   (LINEAR-2742). Mirrors the .m-close affordance; the menu is absolutely
+   positioned under the gear within the relative .m-head. */
+.m-gear {
+  background: transparent;
+  color: var(--m-muted);
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius);
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--m-font);
+}
+.m-gear:hover { color: var(--m-fg); border-color: var(--m-fg); }
+.m-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 8px;
+  z-index: 6;
+  background: var(--m-bg);
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  min-width: 160px;
+  padding: 4px;
+}
+.m-menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: var(--m-fg);
+  border: none;
+  border-radius: var(--m-radius);
+  padding: 7px 9px;
+  font-size: 11px;
+  font-family: var(--m-font);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  cursor: pointer;
+}
+.m-menu-item:hover { background: var(--m-border); color: var(--m-destructive); }
+
 /* Mobile: pin the launcher card to the safe area instead of corner-anchored */
 @media (max-width: 480px) {
   .m-root.m-pos-launcher.m-launcher-open .m-card {
