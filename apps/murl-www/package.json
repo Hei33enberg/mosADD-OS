@@ -1,6 +1,6 @@
 {
   "name": "@mosadd/murl-www",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "murl.mosadd.com — consumer landing for mURL, anonymous live chat for every website. Powered by mosADD.",
   "scripts": {
