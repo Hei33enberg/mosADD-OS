@@ -102,6 +102,12 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
   feed.className = "c0-feed";
   root.appendChild(feed);
 
+  // Branding placeholder (filled after join returns branding payload).
+  const pinSlot = document.createElement("div");
+  pinSlot.className = "c0-pin";
+  pinSlot.style.display = "none";
+  root.insertBefore(pinSlot, feed);
+
   // Pre-join nick gate.
   const prejoin = document.createElement("div");
   prejoin.className = "c0-prejoin";
@@ -203,6 +209,7 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
     try {
       const join: JoinResult = await joinDomain({ domain, deviceToken, nick });
       if (destroyed) return;
+      applyBranding(head, pinSlot, join.branding ?? {}, join.status);
       if (join.status === "blocked") {
         pushSystem(feed, t("errBlocked"));
         if (sendBtn) sendBtn.disabled = true;
@@ -324,4 +331,31 @@ function pushSystem(feed: HTMLElement, text: string): void {
   row.appendChild(tSpan); row.appendChild(nSpan); row.appendChild(xSpan);
   feed.appendChild(row);
   feed.scrollTop = feed.scrollHeight;
+}
+
+
+function applyBranding(head: HTMLElement, pinSlot: HTMLElement, branding: Record<string, unknown>, status?: string): void {
+  const accent = typeof branding.accent_color === "string" ? branding.accent_color : null;
+  if (accent && /^#[0-9a-f]{6}$/i.test(accent)) {
+    head.style.borderBottomColor = accent;
+    head.style.boxShadow = "0 1px 0 0 " + accent + " inset";
+  }
+  if (status === "claimed" && branding.official_badge) {
+    const badge = document.createElement("span");
+    badge.className = "c0-badge";
+    badge.textContent = "OFFICIAL";
+    badge.title = typeof branding.owner_name === "string" && branding.owner_name
+      ? "Claimed by " + branding.owner_name
+      : "Claimed by verified domain owner";
+    head.querySelector(".c0-head-title")?.appendChild(badge);
+  }
+  const pinned = typeof branding.pinned_message === "string" ? branding.pinned_message.slice(0, 280) : "";
+  if (pinned) {
+    pinSlot.textContent = "";
+    const pin = document.createElement("div");
+    pin.className = "c0-pin-body";
+    pin.textContent = "📌 " + pinned;
+    pinSlot.appendChild(pin);
+    pinSlot.style.display = "block";
+  }
 }

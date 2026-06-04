@@ -16,13 +16,20 @@ interface ChallengeResponse {
   verified_at?: string | null;
 }
 
-async function postVerify(body: { domain: string; action: 'challenge' | 'verify' | 'disable' | 'open'; owner_email?: string }): Promise<{ res: Response; data: ChallengeResponse }> {
+interface BrandingPayload {
+  accent_color?: string;
+  pinned_message?: string;
+  official_badge?: boolean;
+  owner_name?: string;
+}
+
+async function postVerify(body: { domain: string; action: 'challenge' | 'verify' | 'disable' | 'open' | 'brand'; owner_email?: string; branding?: BrandingPayload }): Promise<{ res: Response; data: ChallengeResponse & { branding?: BrandingPayload } }> {
   const res = await fetch(VERIFY_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
-  const data = (await res.json()) as ChallengeResponse;
+  const data = (await res.json()) as ChallengeResponse & { branding?: BrandingPayload };
   return { res, data };
 }
 
@@ -75,6 +82,17 @@ export default function DomainsPage() {
     } catch (e) {
       setErr(String(e)); setPhase('err');
     }
+  }
+
+  async function saveBranding(branding: BrandingPayload) {
+    if (!data) return;
+    setErr(null);
+    setPhase('loading');
+    try {
+      const { res, data: nd } = await postVerify({ domain: data.domain, action: 'brand', branding });
+      setData(nd as ChallengeResponse);
+      setPhase(nd.status === 'blocked' ? 'blocked' : (nd.status === 'open' ? 'open' : 'verified'));
+    } catch (e) { setErr(String(e)); setPhase('err'); }
   }
 
   async function mutate(action: 'disable' | 'open') {
@@ -220,10 +238,16 @@ export default function DomainsPage() {
                 </>
               )}
               <div className="mt-4 text-xs text-muted-foreground">
-                Removing the TXT record removes your verification on the next mutating call.
-                Branded &ldquo;official&rdquo; channels with theme + pinned message + analytics are a paid tier — coming soon.
+                Removing the TXT record drops your verification on the next mutating call.
               </div>
             </div>
+          )}
+
+          {data.verified_at && (
+            <BrandingPanel
+              current={(data as ChallengeResponse & { branding?: BrandingPayload }).branding ?? {}}
+              onSave={saveBranding}
+            />
           )}
 
           <button
@@ -258,6 +282,88 @@ export default function DomainsPage() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ── Branding panel (C2-2). Free for verified owners (no Stripe in MVP). ──
+function BrandingPanel({ current, onSave }: { current: BrandingPayload; onSave: (b: BrandingPayload) => void }) {
+  const [accent, setAccent] = useState(current.accent_color ?? '#00ff7a');
+  const [pinned, setPinned] = useState(current.pinned_message ?? '');
+  const [owner, setOwner]   = useState(current.owner_name ?? '');
+  const [badge, setBadge]   = useState(current.official_badge ?? false);
+  const [saved, setSaved]   = useState(false);
+
+  const dirty =
+    accent !== (current.accent_color ?? '#00ff7a') ||
+    pinned !== (current.pinned_message ?? '') ||
+    owner  !== (current.owner_name ?? '') ||
+    badge  !== (current.official_badge ?? false);
+
+  return (
+    <div className="rounded-none border border-border p-6">
+      <div className="mb-2 text-xs uppercase tracking-[0.2em] text-primary">4. Brand your channel · free</div>
+      <p className="text-xs text-muted-foreground">
+        Theme color, pinned message, official badge. Visible to everyone who joins the chat on your domain.
+        Free for verified owners — no Stripe in MVP.
+      </p>
+
+      <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <div>
+          <label className="block text-xs uppercase tracking-[0.15em] text-muted-foreground">Accent color</label>
+          <div className="mt-2 flex items-center gap-3">
+            <input
+              type="color"
+              value={accent}
+              onChange={(e) => setAccent(e.target.value)}
+              className="h-9 w-12 cursor-pointer rounded-none border border-border bg-background"
+            />
+            <span className="font-mono text-xs text-muted-foreground">{accent}</span>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs uppercase tracking-[0.15em] text-muted-foreground">Owner name (for badge tooltip)</label>
+          <input
+            type="text"
+            value={owner}
+            onChange={(e) => setOwner(e.target.value.slice(0, 64))}
+            placeholder="e.g. Zalando SE"
+            className="mt-2 w-full rounded-none border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          />
+        </div>
+      </div>
+
+      <div className="mt-4">
+        <label className="block text-xs uppercase tracking-[0.15em] text-muted-foreground">Pinned message (max 280)</label>
+        <textarea
+          value={pinned}
+          onChange={(e) => setPinned(e.target.value.slice(0, 280))}
+          rows={3}
+          placeholder="e.g. Welcome to our community room. Be kind. Be helpful."
+          className="mt-2 w-full resize-y rounded-none border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+        />
+        <div className="mt-1 text-right text-xs text-muted-foreground">{pinned.length}/280</div>
+      </div>
+
+      <div className="mt-4 flex items-center gap-2">
+        <input
+          id="badge"
+          type="checkbox"
+          checked={badge}
+          onChange={(e) => setBadge(e.target.checked)}
+          className="h-4 w-4 accent-primary"
+        />
+        <label htmlFor="badge" className="text-sm text-foreground">Show <span className="font-mono text-primary">OFFICIAL</span> badge in the chat header</label>
+      </div>
+
+      <button
+        disabled={!dirty}
+        onClick={() => { onSave({ accent_color: accent, pinned_message: pinned, owner_name: owner, official_badge: badge }); setSaved(true); setTimeout(() => setSaved(false), 1500); }}
+        className="mt-4 rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-40"
+      >
+        {saved ? 'saved ✓' : 'Save branding'}
+      </button>
     </div>
   );
 }

@@ -103,6 +103,17 @@ export const CHAT_CSS = `
   cursor: pointer; font-family: inherit; }
 .c0-compose button:hover:not(:disabled) { background: #fff; border-color: #fff; }
 .c0-compose button:disabled { opacity: 0.3; cursor: not-allowed; }
+/* Branding (C2-2) - official badge + pinned message. */
+.c0-badge { display: inline-block; margin-left: 8px; padding: 1px 5px;
+  background: rgba(0,255,122,0.18); color: #00ff7a;
+  border: 1px solid rgba(0,255,122,0.4);
+  font-size: 8.5px; font-weight: 900; letter-spacing: 0.12em;
+  text-transform: uppercase; vertical-align: middle; }
+.c0-pin { padding: 8px 12px; background: rgba(0,255,122,0.05);
+  border-bottom: 1px solid rgba(0,255,122,0.25);
+  font-size: 11.5px; color: #fff; line-height: 1.45; }
+.c0-pin-body { white-space: pre-wrap; word-break: break-word; }
+
 /* Report button — appears on row hover. */
 .c0-row { position: relative; }
 .c0-rep { opacity: 0; transition: opacity 120ms; margin-left: auto;
