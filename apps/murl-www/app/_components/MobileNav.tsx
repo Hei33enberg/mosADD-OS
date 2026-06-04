@@ -9,6 +9,7 @@ const links = [
   { href: '/#use-cases', label: 'Use cases' },
   { href: '/#trending', label: 'Trending rooms' },
   { href: '/#faq', label: 'FAQ' },
+  { href: '/developers', label: 'Developers' },
   { href: '/privacy', label: 'Privacy' },
   { href: '/abuse', label: 'Report abuse' },
 ];

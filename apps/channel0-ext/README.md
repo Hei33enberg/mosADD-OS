@@ -1,30 +1,65 @@
-# @mosadd/channel0-ext — "channel 0 [mIRC]" browser extension
+# mURL — anonymous live chat for every website
 
-Anonymous live chat scoped to the domain you're on. Walk onto `zalando.pl` → instantly in `#zalando.pl` with everyone else who's there right now, regardless of subpage. **The channel auto-creates the moment the first user joins.**
+[![License](https://img.shields.io/badge/license-Apache--2.0-00ff7f)](../../LICENSE) ·
+**Site:** [murl.mosadd.com](https://murl.mosadd.com) ·
+**By:** [mosADD](https://mosadd.dev) ·
+Codename `channel0` (internal — see [naming](#naming))
 
-> Store name: **channel 0 [mIRC] — with mosadd inside**
-> Codename: `channel0` · Epic: [LINEAR-2688](https://linear.app/ip-ra/issue/LINEAR-2688)
+> Open the extension on any website and you join a live, anonymous chat **scoped
+> to that site's domain**. Walk onto `nike.com` → instantly in `#nike.com` with
+> everyone else who's there right now, regardless of sub-page. The room
+> **auto-creates the moment the first person arrives**. No account, no email, one click.
 
-## How it works (P0)
+This is the open-source heart of mURL: a Chrome MV3 extension plus a small,
+stateless backend that rides the same real-time backbone as the [mosADD](https://mosadd.dev)
+comms toolkit (Cloudflare Workers + Durable Objects, Supabase as system-of-record).
+
+- 📦 **Extension** — this folder (`apps/channel0-ext/`)
+- 🌐 **Edge worker** — [`apps/edge`](../edge) (Cloudflare Worker + `ChannelDO`)
+- 🔌 **Backend edge functions** — `channel0-join`, `channel0-report`, `channel0-trending`, `domain-verify`, `domain-channel-ensure`, `channel0-owner-stats` (Supabase, Deno)
+- 🖥️ **Consumer site** — [`apps/murl-www`](../murl-www) → murl.mosadd.com
+
+## Docs for developers
+
+| Doc | What |
+|---|---|
+| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | How the whole thing fits together, end to end |
+| [API.md](./docs/API.md) | Public HTTP + WebSocket API reference (join, trending, report, WSS protocol, domain control) |
+| [SELF-HOSTING.md](./docs/SELF-HOSTING.md) | Run your own mURL backend |
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | How to build, test, and contribute |
+| [MODERATION-SOP.md](./docs/MODERATION-SOP.md) | Trust & safety operator runbook |
+
+## Architecture at a glance
 
 ```
-content script ─► channel0-join (Supabase edge fn) ─► HS256 channel token (5 min)
-              ─► WSS to Cloudflare Worker /c/<slug>/ws (token in Sec-WebSocket-Protocol)
-              ─► live messages + presence (ChannelDO ring + WS fan-out)
-              ─► flushed async to messages_meta (durable system-of-record)
+ Browser extension                Cloudflare edge                 Supabase
+ ┌──────────────────┐  join+PoW   ┌────────────────────┐  ensure  ┌──────────────────┐
+ │ content script   │ ──────────► │ channel0-join       │ ───────► │ domain_controls  │
+ │  • normalize URL │  anon JWT   │  mints 5-min HS256  │  block?  │ channels         │
+ │  • device token  │ ◄────────── │  channel-scoped JWT │          │ rate_limit_*     │
+ │  • nick/avatar   │   WSS (token via Sec-WebSocket-Protocol)     │ messages_meta    │
+ └────────┬─────────┘ ──────────► ┌────────────────────┐  flush   └──────────────────┘
+          │  live msgs + presence │ Worker → ChannelDO  │ ───────► message-ingest-batch
+          └───────────────────────│  idFromName(slug)   │
+                                  │  WS fan-out + ring  │  GET /c/:slug/presence
+                                  └────────────────────┘
 ```
 
-A registrable domain (eTLD+1) like `zalando.pl` becomes the Worker route slug `zalando-pl`. `ChannelDO.idFromName(slug)` is what gives us auto-create at zero cost.
+A registrable domain (eTLD+1) like `nike.com` becomes the Worker route slug
+`nike-com`; `ChannelDO.idFromName(slug)` gives auto-create at zero cost. The
+browser never holds a secret key — it only ever gets a short-lived,
+channel-scoped JWT. Full detail in [ARCHITECTURE.md](./docs/ARCHITECTURE.md).
 
-## Local dev
+## Quick start (build + sideload)
 
 ```bash
-pnpm -C apps/channel0-ext install
-pnpm -C apps/channel0-ext build        # → dist/
+npm --prefix apps/channel0-ext install
+npm --prefix apps/channel0-ext run build      # → apps/channel0-ext/dist/
 # Chrome → chrome://extensions → enable Developer mode → Load unpacked → pick dist/
 ```
 
-Point at `wrangler dev` + a local Supabase by overriding endpoints in `chrome.storage.sync`:
+Point a local install at `wrangler dev` + a local Supabase without rebuilding —
+override the endpoints in extension storage:
 
 ```js
 chrome.storage.sync.set({
@@ -35,33 +70,34 @@ chrome.storage.sync.set({
 });
 ```
 
-## P0 verification (two-browser smoke)
+## What's shipped (v0.14)
 
-1. `wrangler dev` the Worker (`apps/edge`).
-2. `supabase functions serve channel0-join` (m0ssad-3 repo, with `CHANNEL_TOKEN_SECRET`).
-3. Load `dist/` as unpacked extension in two Chrome profiles.
-4. Open the same domain in both → confirm:
-   - Each side sees the other in the presence count.
-   - Messages appear live both ways.
-   - Reloading shows recent history (DO ring buffer).
-   - A row lands in `messages_meta` with `thread_id=chat:<slug>` (after flush).
+- ✅ Anonymous per-domain rooms, auto-create, presence ("who's here now")
+- ✅ Deterministic nick + per-install device token (rate-limit/ban key, **not** a fingerprint)
+- ✅ Proof-of-work on join (hashcash, `crypto.getRandomValues`)
+- ✅ WS auto-reconnect with backoff + token re-mint (no dropped sessions)
+- ✅ Report → auto-hide at 3 distinct reporters; per-device + per-IP + per-WS rate limits
+- ✅ Server-side flood/spam filters + global & per-domain kill switches
+- ✅ Non-affiliation banner + 16+ age gate + abuse/DMCA + GDPR delete-by-sub
+- ✅ Domain owners can verify (DNS TXT) → claim/brand or disable their room
+- ✅ i18n (en, pl)
 
-## Trust & safety (what's in P0 vs P1)
+## Self-hosting
 
-- ✅ Non-affiliation banner in every panel.
-- ✅ "Powered by mosadd" badge — the brand-energizer.
-- ✅ Per-device + per-IP rate-limit at the mint endpoint.
-- ✅ Per-WS rate-limit in the Worker.
-- ✅ 451 propagation if a verified domain owner has disabled the channel.
-- ⏳ Proof-of-work (P1, [LINEAR-2696](https://linear.app/ip-ra/issue/LINEAR-2696)).
-- ⏳ Report/moderation (P1, [LINEAR-2697](https://linear.app/ip-ra/issue/LINEAR-2697)).
-- ⏳ Profanity + link-flood filter (P1, [LINEAR-2698](https://linear.app/ip-ra/issue/LINEAR-2698)).
-- ⏳ Age gate + DMCA/abuse contact UI (P1, [LINEAR-2701](https://linear.app/ip-ra/issue/LINEAR-2701)) — **public-launch gate**.
+mURL's backend is a handful of stateless Deno edge functions + one Cloudflare
+Worker. You can run the whole thing on your own Cloudflare + Supabase. See
+[SELF-HOSTING.md](./docs/SELF-HOSTING.md).
 
-## Legal posture
+## Naming
 
-The extension overlays a chat scoped to a third-party domain. Every panel renders:
+User-facing brand is **mURL**. The codebase keeps the original `channel0-*`
+identifiers (file paths, edge-fn slugs, env vars, DB tables, the
+`_mosadd-channel0` DNS verify record, `thread_id = chat:<slug>`). This split is
+deliberate — renaming the internals would mean migrating live secrets, redeploying
+the Worker, and invalidating verified-owner DNS records, for zero user value.
 
-> Niezależny czat — niezwiązany z {domain}. Powered by mosadd.
+## License
 
-Verified domain owners can disable their channel for free via [mosadd.dev/domains](https://mosadd.dev) (C2-1, [LINEAR-2702](https://linear.app/ip-ra/issue/LINEAR-2702)). Paid Claim/Brand is the monetization track — owner verification gate at DNS TXT, never inference.
+Apache-2.0. Part of the [mosADD-OS](https://github.com/Hei33enberg/mosadd-os)
+monorepo. Built by [mosADD](https://mosadd.dev). Independent of the websites the
+extension appears on.
