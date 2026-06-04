@@ -8,6 +8,17 @@ import { mountChat, type MountHandle } from "../shared/chat-shell";
 import { CHAT_CSS } from "../shared/chat-styles";
 import { t } from "../lib/i18n";
 
+// Listen for the deep-link page (mosadd.dev/c/<domain>) ping so the landing
+// page can detect that the extension is installed and show "Open" instead of
+// "Install". (LINEAR-2700 / C1-5).
+window.addEventListener("message", (e: MessageEvent) => {
+  if (e.source !== window) return;
+  if (!e.data || typeof e.data !== "object") return;
+  if (e.data.kind === "mosadd-channel0:ping") {
+    try { window.postMessage({ kind: "mosadd-channel0:pong", v: "0.7" }, "*"); } catch { /* */ }
+  }
+});
+
 const norm = normalizeDomain(location.href);
 if (norm) void bootstrap(norm);
 

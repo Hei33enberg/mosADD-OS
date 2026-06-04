@@ -8,10 +8,10 @@ import { t } from "../lib/i18n";
 import { reportMessage, type ReportReason, shouldThrottleLinks, pushLinkHistory } from "../lib/moderation";
 
 export interface ToolbarAction {
-  icon: "dock-left" | "dock-right" | "settings" | "close" | "flame";
+  icon: "dock-left" | "dock-right" | "settings" | "close" | "flame" | "share";
   active?: boolean;
   onClick(): void;
-  i18nKey: "tooltipDockLeft" | "tooltipDockRight" | "tooltipSettings" | "tooltipClose" | "tooltipTrending";
+  i18nKey: "tooltipDockLeft" | "tooltipDockRight" | "tooltipSettings" | "tooltipClose" | "tooltipTrending" | "tooltipShare";
 }
 
 export interface MountOptions {
@@ -30,6 +30,7 @@ const ICON_SVG: Record<ToolbarAction["icon"], string> = {
   "dock-right": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"square\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\"/><line x1=\"15\" y1=\"3\" x2=\"15\" y2=\"21\"/></svg>",
   "settings":   "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"square\"><circle cx=\"12\" cy=\"12\" r=\"3\"/></svg>",
   "flame":      "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z\"/></svg>",
+  "share":      "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"18\" cy=\"5\" r=\"3\"/><circle cx=\"6\" cy=\"12\" r=\"3\"/><circle cx=\"18\" cy=\"19\" r=\"3\"/><line x1=\"8.59\" y1=\"13.51\" x2=\"15.42\" y2=\"17.49\"/><line x1=\"15.41\" y1=\"6.51\" x2=\"8.59\" y2=\"10.49\"/></svg>",
   "close":      "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"square\"><line x1=\"6\" y1=\"6\" x2=\"18\" y2=\"18\"/><line x1=\"18\" y1=\"6\" x2=\"6\" y2=\"18\"/></svg>",
 };
 

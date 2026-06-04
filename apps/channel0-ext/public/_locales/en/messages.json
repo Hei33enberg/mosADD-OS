@@ -149,5 +149,8 @@
   },
   "tooltipTrending": {
     "message": "Trending rooms"
+  },
+  "tooltipShare": {
+    "message": "Share this room"
   }
 }

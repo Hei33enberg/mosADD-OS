@@ -54,6 +54,7 @@ async function syncChat(): Promise<void> {
   if (mounted) { mounted.handle.destroy(); mounted = null; }
   host.innerHTML = "";
   const actions: ToolbarAction[] = [
+    { icon: "share",    i18nKey: "tooltipShare",    onClick: () => shareRoom(norm.domain) },
     { icon: "flame",    i18nKey: "tooltipTrending", onClick: () => showTrending(true) },
     { icon: "settings", i18nKey: "tooltipSettings", onClick: () => showSettings(true) },
   ];
@@ -145,4 +146,21 @@ async function loadTrending(): Promise<void> {
   } catch (e) {
     trendingStatus.textContent = "couldn't load — try again in a sec";
   }
+}
+
+
+// ── Share room (LINEAR-2700 / C1-5) ─────────────────────────────────────────
+function shareRoom(domain: string): void {
+  const url = "https://mosadd.dev/c/" + domain;
+  const text = "Join #" + domain + " on channel 0 — anonymous live chat for everyone on this site right now: " + url;
+  const navAny = navigator as Navigator & { share?: (d: ShareData) => Promise<void>; clipboard?: Clipboard };
+  if (navAny.share) {
+    void navAny.share({ title: "channel 0 #" + domain, text, url }).catch(() => { void copyShare(url); });
+  } else {
+    void copyShare(url);
+  }
+}
+async function copyShare(url: string): Promise<void> {
+  try { await navigator.clipboard.writeText(url); }
+  catch { /* no clipboard, give up silently */ }
 }

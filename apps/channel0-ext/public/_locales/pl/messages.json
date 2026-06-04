@@ -149,5 +149,8 @@
   },
   "tooltipTrending": {
     "message": "Trendujące pokoje"
+  },
+  "tooltipShare": {
+    "message": "Udostępnij ten pokój"
   }
 }

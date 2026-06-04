@@ -10,7 +10,7 @@ export type MsgId =
   | "settingsTitle" | "settingOpenMode" | "settingOpenModeSide" | "settingOpenModeInline"
   | "settingBubblePos" | "settingBubbleDrag" | "settingBubbleReset"
   | "prejoinLabel" | "prejoinPlaceholder" | "prejoinGo" | "prejoinAlt"
-  | "tooltipDockLeft" | "tooltipDockRight" | "tooltipSettings" | "tooltipClose" | "tooltipTrending";
+  | "tooltipDockLeft" | "tooltipDockRight" | "tooltipSettings" | "tooltipClose" | "tooltipTrending" | "tooltipShare";
 
 const FALLBACK: Record<MsgId, string> = {
   extName: "channel 0 [mIRC] — with mosadd inside",
@@ -54,6 +54,7 @@ const FALLBACK: Record<MsgId, string> = {
   tooltipSettings: "Settings",
   tooltipClose: "Close",
   tooltipTrending: "Trending rooms",
+  tooltipShare: "Share this room",
 };
 
 export function t(id: MsgId, ...subs: string[]): string {
