@@ -503,8 +503,14 @@ export class ChannelDO {
     const burst = this.checkBurst(keyHash);
     if (burst !== null) { try { ws.send(JSON.stringify({ error: "burst", retry_after: burst })); } catch {} return; }
 
-    const ceiling = this.checkChannelCeiling();
-    if (!ceiling.ok) { try { ws.send(JSON.stringify({ error: "channel_ceiling", retry_after: ceiling.retry_after })); } catch {} return; }
+    // Channel ceiling applies only to anon (channel0) rooms — paid hub-key
+    // callers (strajkpolski, mIRC embed devs) are gated by their own 600/min
+    // per-key limit + plan quotas, not by a one-size DO ceiling that would
+    // brick a 50k-user strike day.
+    if (isAnon) {
+      const ceiling = this.checkChannelCeiling();
+      if (!ceiling.ok) { try { ws.send(JSON.stringify({ error: "channel_ceiling", retry_after: ceiling.retry_after })); } catch {} return; }
+    }
 
     let parsed: { text?: string; from?: string } | null = null;
     try { parsed = JSON.parse(message); } catch { return; }
