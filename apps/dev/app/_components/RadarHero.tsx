@@ -11,78 +11,83 @@ const stats = [
 export function RadarHero() {
   return (
     <section className="relative overflow-hidden border-x border-border">
-      {/* grid backdrop */}
-      <div aria-hidden className="grid-bg pointer-events-none absolute inset-0 opacity-40" />
+      {/* faint engineering grid */}
+      <div aria-hidden className="grid-bg pointer-events-none absolute inset-0 opacity-30" />
 
       {/* descending scan line */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="radar-scanline absolute left-0 top-0 h-px w-full bg-primary/20" />
+        <div className="radar-scanline absolute left-0 top-0 h-px w-full bg-primary/15" />
       </div>
 
-      {/* full-bleed threat radar, anchored right */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* radar — right half, subtle, centered; on mobile it sits faint behind */}
+      <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-[90%] overflow-hidden sm:w-[70%] md:w-[60%]">
         <div
-          className="absolute"
-          style={{ width: '118vmax', height: '118vmax', top: '50%', left: '80%', transform: 'translate(-50%,-50%)' }}
+          className="absolute opacity-70 md:opacity-100"
+          style={{ width: '92vmax', height: '92vmax', top: '50%', left: '72%', transform: 'translate(-50%,-50%)' }}
         >
           <RadarField />
         </div>
-        <div className="absolute right-0 top-1/2 h-[620px] w-[760px] -translate-y-1/2 rounded-full bg-primary/10 blur-[130px]" />
+        <div className="absolute right-0 top-1/2 h-[640px] w-[640px] -translate-y-1/2 rounded-full bg-primary/[0.06] blur-[150px]" />
       </div>
 
-      {/* left-to-right fade keeps copy legible over the radar */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-background/85 to-transparent" />
+      {/* left→right fade keeps the copy crisp over the radar */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-background/92 to-transparent sm:via-background/75" />
 
       <span className="hud-bracket hud-tl" />
       <span className="hud-bracket hud-tr" />
       <span className="hud-bracket hud-bl" />
       <span className="hud-bracket hud-br" />
 
-      <div className="relative z-10 px-6 py-24 md:py-32">
-        <div className="mb-5 text-xs uppercase tracking-[0.35em] text-primary/80">mosadd.dev · MCP · Apache-2.0</div>
-        <h1 className="font-display text-4xl font-bold leading-[1.02] tracking-[0.03em] text-foreground md:text-6xl">
-          IRONDOME
-          <br />
-          MULTI-CHANNEL MESSENGER <span className="text-primary text-glow">· MCP</span>
+      <div className="relative z-10 px-6 py-24 sm:py-28 md:py-36 lg:py-44">
+        <div className="mb-6 text-[11px] uppercase tracking-[0.35em] text-primary/80">
+          mosadd.dev · MCP · Apache-2.0
+        </div>
+
+        <h1
+          className="max-w-4xl font-display font-bold uppercase text-foreground"
+          style={{ fontSize: 'clamp(2.1rem, 5.4vw, 4.5rem)', lineHeight: 1.05, letterSpacing: '0.045em' }}
+        >
+          Irondome Multi-Channel Messenger{' '}
+          <span className="whitespace-nowrap text-primary text-glow">· MCP</span>
         </h1>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          Threat-aware, zero-knowledge comms for AI agents. One MCP server covers direct messages, channels,
-          rooms, encrypted mail and voice — with the{' '}
+
+        <p className="mt-7 max-w-xl text-balance text-lg text-foreground/90 sm:text-xl">
+          Threat-aware, zero-knowledge comms for AI agents.
+        </p>
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
+          One MCP server — direct messages, channels, rooms, encrypted mail and voice, with the{' '}
           <span className="text-foreground">Iron Dome threat radar in the kernel</span>. Your keys or self-host.
           Apache-2.0.
         </p>
-        <p className="mt-3 font-mono text-xs uppercase tracking-[0.25em] text-primary/70">
-          40 tools · 7 channels · zero vendor lock-in · TRUST NO TRACE
-        </p>
 
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-9 flex flex-wrap gap-3">
           <Link
             href="/docs/quickstart"
-            className="rounded-none bg-primary px-5 py-3 text-xs font-medium uppercase tracking-widest text-primary-foreground transition-colors hover:bg-primary/90"
+            className="rounded-none bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Start free →
+            [ Start free ]
           </Link>
           <a
             href="https://github.com/Hei33enberg/mosadd-os"
             target="_blank"
             rel="noreferrer"
-            className="rounded-none border border-border px-5 py-3 text-xs uppercase tracking-widest text-foreground transition-colors hover:border-primary/50"
+            className="rounded-none border border-border px-6 py-3 text-xs uppercase tracking-[0.2em] text-foreground transition-colors hover:border-primary/50 hover:text-primary"
           >
-            Read the code ↗
+            [ Read the code ]
           </a>
           <Link
             href="/pricing"
-            className="rounded-none border border-border px-5 py-3 text-xs uppercase tracking-widest text-foreground transition-colors hover:border-primary/50"
+            className="rounded-none border border-border px-6 py-3 text-xs uppercase tracking-[0.2em] text-foreground transition-colors hover:border-primary/50 hover:text-primary"
           >
-            Pricing →
+            [ Pricing ]
           </Link>
         </div>
 
-        <div className="mt-12 grid max-w-xl grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="mt-14 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-5 sm:grid-cols-4">
           {stats.map((s) => (
             <div key={s.l}>
-              <div className="font-display text-xl text-primary md:text-2xl">{s.v}</div>
-              <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{s.l}</div>
+              <div className="font-display text-2xl text-primary">{s.v}</div>
+              <div className="mt-0.5 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">{s.l}</div>
             </div>
           ))}
         </div>
