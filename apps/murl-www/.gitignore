@@ -1,0 +1,7 @@
+/node_modules
+/.next
+/.next-build
+/.vercel
+*.tsbuildinfo
+next-env.d.ts.timestamp
+.env*.local

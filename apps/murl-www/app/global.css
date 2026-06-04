@@ -1,0 +1,151 @@
+@import 'tailwindcss';
+
+@source '../app/**/*.{ts,tsx}';
+
+/*
+ * mURL consumer site — built on mosadd brand tokens (source of truth:
+ * m0ssad-3/docs/BRANDBOOK.md + apps/dev/app/global.css). Dark-only, HSL tokens,
+ * pure black + neon green, JetBrains Mono. PLUS a consumer-warmth layer at the
+ * bottom: vibrant per-room accent palette + live-chat animations. Green stays
+ * the single brand primary; room colours are decoration only.
+ */
+:root {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 3%;
+  --card-foreground: 0 0% 95%;
+  --primary: 145 100% 50%;
+  --primary-foreground: 0 0% 2%;
+  --secondary: 0 0% 8%;
+  --muted: 0 0% 8%;
+  --muted-foreground: 0 0% 55%;
+  --accent: 0 0% 10%;
+  --border: 0 0% 12%;
+  --ring: 145 100% 50%;
+  --destructive: 0 80% 55%;
+  --warning: 38 100% 50%;
+  --info: 210 100% 55%;
+  --radius: 0.25rem;
+  --ease-snap: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Consumer-warmth: vibrant per-room accent hues (decoration only, never the
+     brand primary). Used for nick/avatar colours in the live-chat hero + use-cases. */
+  --room-1: 145 100% 50%;  /* mosadd green   */
+  --room-2: 195 100% 55%;  /* cyan           */
+  --room-3: 280 90% 68%;   /* violet         */
+  --room-4: 32 100% 58%;   /* amber          */
+  --room-5: 330 90% 65%;   /* pink           */
+  --room-6: 50 100% 60%;   /* yellow         */
+}
+
+@theme inline {
+  --font-sans: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-border: hsl(var(--border));
+  --color-ring: hsl(var(--ring));
+  --color-destructive: hsl(var(--destructive));
+  --color-warning: hsl(var(--warning));
+  --color-info: hsl(var(--info));
+
+  --color-neutral-950: hsl(0 0% 0%);
+  --color-neutral-900: hsl(0 0% 3%);
+  --color-neutral-800: hsl(0 0% 12%);
+  --color-neutral-700: hsl(0 0% 18%);
+  --color-neutral-600: hsl(0 0% 32%);
+  --color-neutral-500: hsl(0 0% 55%);
+  --color-neutral-400: hsl(0 0% 66%);
+  --color-neutral-300: hsl(0 0% 80%);
+  --color-neutral-200: hsl(0 0% 90%);
+  --color-neutral-100: hsl(0 0% 95%);
+  --color-neutral-50: hsl(0 0% 98%);
+}
+
+@layer base {
+  * { border-color: hsl(var(--border)); }
+  html {
+    font-family: var(--font-mono);
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    color-scheme: dark;
+  }
+  body {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: hsl(var(--primary) / 0.3); color: hsl(var(--foreground)); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); }
+  ::-webkit-scrollbar-track { background: hsl(var(--background)); }
+}
+
+/* JetBrains Mono is the only font — .font-display is mono, just tighter. */
+.font-display { font-family: var(--font-mono); letter-spacing: -0.01em; }
+
+/* ── Brand motifs (from apps/dev) ── */
+.grid-bg {
+  background-image:
+    linear-gradient(hsl(var(--primary) / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--primary) / 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.scanlines::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent 0 2px, hsl(0 0% 0% / 0.22) 2px 4px);
+  z-index: 1;
+}
+.hud-bracket { position: absolute; width: 14px; height: 14px; border-color: hsl(var(--primary) / 0.55); pointer-events: none; }
+.hud-tl { top: 0; left: 0; border-top: 1.5px solid; border-left: 1.5px solid; }
+.hud-tr { top: 0; right: 0; border-top: 1.5px solid; border-right: 1.5px solid; }
+.hud-bl { bottom: 0; left: 0; border-bottom: 1.5px solid; border-left: 1.5px solid; }
+.hud-br { bottom: 0; right: 0; border-bottom: 1.5px solid; border-right: 1.5px solid; }
+.glow-green { box-shadow: 0 0 0 1px hsl(var(--primary) / 0.3), 0 0 28px hsl(var(--primary) / 0.14); }
+.text-glow { text-shadow: 0 0 22px hsl(var(--primary) / 0.45); }
+
+@keyframes fade-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.fade-up { animation: fade-up 0.6s var(--ease-snap) both; }
+
+/* ── Consumer-warmth layer (mURL only) ── */
+
+/* Faint green grid is the brand backdrop; add a soft green radial glow up top
+   so the consumer hero feels less "void", more "inviting". */
+.hero-glow {
+  background:
+    radial-gradient(60% 50% at 50% 0%, hsl(var(--primary) / 0.10), transparent 70%);
+}
+
+/* Live dot — the "people are here now" pulse. */
+@keyframes live-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.live-dot {
+  width: 7px; height: 7px; border-radius: 9999px;
+  background: hsl(var(--primary)); box-shadow: 0 0 8px hsl(var(--primary));
+  animation: live-pulse 1.6s ease-in-out infinite;
+}
+
+/* Chat message enters — used by the animated hero. */
+@keyframes msg-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.msg-in { animation: msg-in 0.32s var(--ease-snap) both; }
+
+/* Typing caret in the hero composer. */
+@keyframes caret-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.caret::after { content: '▋'; margin-left: 1px; color: hsl(var(--primary)); animation: caret-blink 1.05s step-end infinite; }
+
+/* Soft float for floating bubbles / decorative chips. */
+@keyframes soft-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.soft-float { animation: soft-float 4.5s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up, .live-dot, .msg-in, .caret::after, .soft-float { animation: none; }
+  .fade-up, .msg-in { opacity: 1; transform: none; }
+}

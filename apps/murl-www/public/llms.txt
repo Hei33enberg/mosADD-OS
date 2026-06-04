@@ -1,0 +1,27 @@
+# mURL
+
+> A free browser extension that drops you into a live, anonymous chat for
+> whatever website you are currently on. Everyone using mURL on the same site
+> shares one real-time room. No account, no email, one click. Powered by mosADD.
+
+## What it is
+- A consumer browser extension (Chrome first). Open it on any website and you join
+  that site's room (e.g. nike.com -> #nike.com). All sub-pages of a site collapse
+  into one shared room.
+- Anonymous: a random nickname per install, no sign-up, no email, no fingerprint.
+- Free for everyone. Website owners may optionally claim, brand, or disable the
+  room on a domain they verify (DNS) — the only paid, opt-in part.
+
+## Audience
+- Anyone, any age 16+, who wants to talk to other people on the site they're on:
+  shoppers, readers of an article, people on a service/institution site.
+
+## Key pages
+- / : landing — how it works, use cases, live trending rooms, FAQ
+- /privacy : privacy policy
+- /abuse : report abuse / DMCA, and how owners disable a room
+- /<domain> : deep-link landing for a specific room, e.g. /nike.com
+
+## Relationship to mosADD
+mURL is made by mosADD (mosadd.dev / mosadd.com) and runs on the same real-time
+backbone as the mosADD comms toolkit. Independent of the websites it appears on.
