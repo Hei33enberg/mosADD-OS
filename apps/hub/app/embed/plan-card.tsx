@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
@@ -176,6 +176,101 @@ export default function PlanCard({ jwt, tier, matCount, brandRemovalPaid }: Prop
           Enterprise plan active. Contact your account manager for changes.
         </p>
       )}
+
+      {(tier === "pro" || tier === "team") && <PaygSettings jwt={jwt} />}
+    </div>
+  );
+}
+
+interface PaygState {
+  payg_enabled: boolean;
+  spend_cap_usd_month: number | null;
+  default_cap_usd: number;
+  paid_usd_month: number;
+}
+
+function PaygSettings({ jwt }: { jwt: string }) {
+  const [s, setS] = useState<PaygState | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  const call = async (method: "GET" | "POST", body?: Record<string, unknown>) => {
+    const r = await fetch(`${SUPABASE_URL}/functions/v1/embed-plan-settings`, {
+      method,
+      headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data?.error ?? "failed");
+    return data as PaygState;
+  };
+
+  useEffect(() => {
+    call("GET").then(setS).catch((e) => setErr(e?.message ?? "load failed"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const update = async (patch: Record<string, unknown>) => {
+    setBusy(true);
+    setErr("");
+    try {
+      setS(await call("POST", patch));
+    } catch (e: any) {
+      setErr(e?.message ?? "save failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (!s) return null;
+
+  return (
+    <div className="mt-4 border-t border-border pt-4">
+      <label className="flex items-start gap-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={s.payg_enabled}
+          disabled={busy}
+          onChange={(e) => update({ payg_enabled: e.target.checked })}
+          className="mt-0.5"
+        />
+        <span className="text-xs leading-relaxed">
+          <strong className="uppercase tracking-widest">Pay-as-you-go</strong> — keep serving past your MAT cap at{" "}
+          <span className="font-mono text-primary">$0.001/MAT</span>, billed monthly. Off = hard stop at the cap (never any overage charge).
+        </span>
+      </label>
+
+      {s.payg_enabled && (
+        <div className="mt-3 pl-6 text-xs text-muted-foreground leading-relaxed">
+          Hard spend cap:{" "}
+          <span className="font-mono text-foreground">
+            ${(s.spend_cap_usd_month ?? s.default_cap_usd).toFixed(2)}/mo
+          </span>{" "}
+          {s.spend_cap_usd_month == null && <span>(default = 2× plan price)</span>}
+          <div className="mt-2 flex items-center gap-2">
+            <input
+              type="number"
+              min={0}
+              step={1}
+              placeholder={`${s.default_cap_usd}`}
+              disabled={busy}
+              defaultValue={s.spend_cap_usd_month ?? ""}
+              onBlur={(e) => {
+                const v = e.target.value.trim();
+                update({ spend_cap_usd_month: v === "" ? null : Number(v) });
+              }}
+              className="w-24 bg-background border border-border px-2 py-1 font-mono text-xs"
+              aria-label="Monthly overage spend cap in USD"
+            />
+            <span>USD/mo cap — billing stops here.</span>
+          </div>
+          {s.paid_usd_month > 0 && (
+            <div className="mt-1 text-primary">This month&apos;s overage so far: ${s.paid_usd_month.toFixed(3)}</div>
+          )}
+        </div>
+      )}
+
+      {err && <div className="mt-2 text-xs text-destructive">{err}</div>}
     </div>
   );
 }
