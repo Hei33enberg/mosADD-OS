@@ -5,7 +5,7 @@ import { deterministicIdentity } from "../lib/nick";
 import { getDeviceToken, getNickFor, setNickFor } from "../lib/identity-store";
 import { joinDomain, openChannelSocket, sendChat, type ChatMessage, type JoinResult } from "../lib/client";
 import { t } from "../lib/i18n";
-import { reportMessage, type ReportReason, shouldThrottleLinks, pushLinkHistory } from "../lib/moderation";
+import { reportMessage, type ReportReason } from "../lib/moderation";
 
 export interface ToolbarAction {
   icon: "dock-left" | "dock-right" | "settings" | "close" | "flame" | "share";
@@ -140,6 +140,21 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
   prejoin.appendChild(altA);
   root.appendChild(prejoin);
 
+  // Footer — the brand billboard. "you are <nick>" + "powered by mosadd".
+  const footer = document.createElement("div");
+  footer.className = "c0-footer";
+  const youAre = document.createElement("span");
+  youAre.className = "c0-foot-you";
+  const brandLink = document.createElement("a");
+  brandLink.className = "c0-foot-brand";
+  brandLink.href = "https://mosadd.dev/murl";
+  brandLink.target = "_blank";
+  brandLink.rel = "noreferrer";
+  brandLink.textContent = t("poweredBy");
+  footer.appendChild(youAre);
+  footer.appendChild(brandLink);
+  root.appendChild(footer);
+
   void (async () => {
     const deviceToken = await getDeviceToken();
     const detNick = deterministicIdentity(deviceToken, domain).nick;
@@ -170,6 +185,10 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
       try { await setNickFor(domain, nick); } catch { /* */ }
       try { await chrome.storage.sync.set({ [NICK_SEEN_KEY + ":" + domain]: 1 }); } catch { /* */ }
     }
+    youAre.textContent = t("youAre") + " ";
+    const nickStrong = document.createElement("b");
+    nickStrong.textContent = nick;
+    youAre.appendChild(nickStrong);
     swapPrejoinForCompose();
     await connect(deviceToken);
   }

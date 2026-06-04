@@ -114,6 +114,17 @@ export const CHAT_CSS = `
   font-size: 11.5px; color: #fff; line-height: 1.45; }
 .c0-pin-body { white-space: pre-wrap; word-break: break-word; }
 
+/* Footer — brand billboard (the "powered by mosadd" impression). */
+.c0-footer { display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 5px 8px; background: #000;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; }
+.c0-foot-you { color: rgba(255,255,255,0.4); min-width: 0; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; }
+.c0-foot-you b { color: rgba(255,255,255,0.7); }
+.c0-foot-brand { color: #00ff7a; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.c0-foot-brand:hover { text-decoration: underline; }
+
 /* Report button — appears on row hover. */
 .c0-row { position: relative; }
 .c0-rep { opacity: 0; transition: opacity 120ms; margin-left: auto;

@@ -14,8 +14,11 @@ import { t } from "../lib/i18n";
 window.addEventListener("message", (e: MessageEvent) => {
   if (e.source !== window) return;
   if (!e.data || typeof e.data !== "object") return;
+  // Only the mURL landing page may probe for the extension — refusing other
+  // origins avoids being a generic "is mURL installed?" fingerprinting bit.
+  if (e.origin !== "https://mosadd.dev") return;
   if (e.data.kind === "mosadd-channel0:ping") {
-    try { window.postMessage({ kind: "mosadd-channel0:pong", v: "0.7" }, "*"); } catch { /* */ }
+    try { window.postMessage({ kind: "mosadd-channel0:pong", v: "0.11" }, "https://mosadd.dev"); } catch { /* */ }
   }
 });
 
@@ -36,7 +39,7 @@ async function ageGateAndBootstrap(norm: { domain: string; slug: string }): Prom
   const prompt = document.createElement("div");
   prompt.setAttribute("data-mosadd-c0-age", "");
   prompt.style.cssText = "all: initial; position: fixed; right: 16px; top: 16px; z-index: 2147483647; max-width: 320px; background: #0a0a0a; color: #fff; border: 1px solid #00ff7a; padding: 12px 14px; font-family: ui-monospace, monospace; font-size: 12px; line-height: 1.4; box-shadow: 0 8px 24px rgba(0,0,0,.5);";
-  prompt.innerHTML = '<div style="font-weight:700; color:#00ff7a; margin-bottom:6px;">channel 0 [mIRC]</div>' +
+  prompt.innerHTML = '<div style="font-weight:700; color:#00ff7a; margin-bottom:6px;">mURL · by mosadd</div>' +
     '<div style="margin-bottom:8px;">Anonymous live chat overlaid on this domain. Adult-only conversations may appear. Please confirm you are 16+.</div>' +
     '<div style="display:flex; gap:6px;">' +
     '<button data-yes style="flex:1; background:#00ff7a; color:#000; border:0; padding:6px 8px; font-weight:700; cursor:pointer; font-family:inherit; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;">I am 16+</button>' +

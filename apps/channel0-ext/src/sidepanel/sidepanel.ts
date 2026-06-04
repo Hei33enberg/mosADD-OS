@@ -100,7 +100,6 @@ onSettingsChange(() => { void renderSettings(); });
 
 // ── Trending overlay (LINEAR-2699) ──────────────────────────────────────────
 const trendingOverlay = document.getElementById("trending-overlay") as HTMLDivElement;
-const trendingPane    = document.getElementById("trending-pane")    as HTMLDivElement;
 const trendingClose   = document.getElementById("trending-close")   as HTMLButtonElement;
 const trendingList    = document.getElementById("trending-list")    as HTMLDivElement;
 const trendingStatus  = document.getElementById("trending-status")  as HTMLDivElement;
@@ -158,11 +157,11 @@ async function loadTrending(): Promise<void> {
 
 // ── Share room (LINEAR-2700 / C1-5) ─────────────────────────────────────────
 function shareRoom(domain: string): void {
-  const url = "https://mosadd.dev/c/" + domain;
-  const text = "Join #" + domain + " on channel 0 — anonymous live chat for everyone on this site right now: " + url;
+  const url = "https://mosadd.dev/murl/" + domain;
+  const text = "Join #" + domain + " on mURL — anonymous IRC for everyone on this site right now: " + url;
   const navAny = navigator as Navigator & { share?: (d: ShareData) => Promise<void>; clipboard?: Clipboard };
   if (navAny.share) {
-    void navAny.share({ title: "channel 0 #" + domain, text, url }).catch(() => { void copyShare(url); });
+    void navAny.share({ title: "mURL #" + domain, text, url }).catch(() => { void copyShare(url); });
   } else {
     void copyShare(url);
   }
