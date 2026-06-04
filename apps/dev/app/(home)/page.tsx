@@ -101,7 +101,7 @@ export default function HomePage() {
               NEW · the same kernel, in your browser
             </div>
             <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl">
-              channel 0 <span className="text-primary">[mIRC]</span> — with mosadd inside
+              <span className="text-primary">mURL</span> — anonymous IRC for every URL
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               Anonymous live chat scoped to whatever domain you&apos;re on. Open it on zalando.pl and talk
@@ -111,13 +111,13 @@ export default function HomePage() {
           </div>
           <div className="flex gap-3">
             <Link
-              href="/channel0"
+              href="/murl"
               className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
               Install →
             </Link>
             <Link
-              href="/channel0#own-a-domain"
+              href="/murl#own-a-domain"
               className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
             >
               Own a domain →

@@ -46,10 +46,10 @@ async function syncChat(): Promise<void> {
   if (!norm) {
     if (mounted) { mounted.handle.destroy(); mounted = null; }
     host.innerHTML = '<div style="padding:12px;color:rgba(255,255,255,0.4);font-size:11px;font-family:ui-monospace,monospace;">' + t("popupNotWebsite") + '</div>';
-    document.title = "channel 0";
+    document.title = "mURL";
     return;
   }
-  document.title = "mIRC #" + norm.domain;
+  document.title = "mURL #" + norm.domain;
   if (mounted?.domain === norm.domain) return;
   if (mounted) { mounted.handle.destroy(); mounted = null; }
   host.innerHTML = "";

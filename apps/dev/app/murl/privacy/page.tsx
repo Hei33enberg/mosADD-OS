@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'channel 0 [mIRC] — privacy policy | mosadd',
+  title: 'mURL — privacy policy | mosadd',
   description:
-    'Privacy policy for the channel 0 [mIRC] browser extension. What data we collect, what we do not, and how to delete it.',
+    'Privacy policy for the mURL browser extension. What data we collect, what we do not, and how to delete it.',
   robots: { index: true, follow: true },
 };
 
 export default function Channel0PrivacyPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-14">
-      <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">channel 0 [mIRC] · privacy policy</div>
+      <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">mURL · privacy policy</div>
       <h1 className="font-display mt-2 text-4xl font-bold text-foreground">Privacy policy</h1>
       <p className="mt-2 text-sm text-muted-foreground">Effective: 2026-06-03 · Last updated: 2026-06-03</p>
 
@@ -52,11 +52,11 @@ export default function Channel0PrivacyPage() {
 
         <section>
           <h2 className="font-display mb-3 text-xl font-semibold text-foreground">Why we need the &ldquo;all URLs&rdquo; permission</h2>
-          <p>channel 0 is a chat scoped to whichever domain you are currently on. To run the chat panel on that page, the extension must be able to inject a content script there — that is what the <span className="font-mono">&lt;all_urls&gt;</span> host permission grants. The script only does the following:</p>
+          <p>mURL is a chat scoped to whichever domain you are currently on. To run the chat panel on that page, the extension must be able to inject a content script there — that is what the <span className="font-mono">&lt;all_urls&gt;</span> host permission grants. The script only does the following:</p>
           <ul className="mt-3 space-y-2">
             <li>· Reads <span className="font-mono">document.location.hostname</span> to compute the room name.</li>
             <li>· Renders a chat panel in a closed shadow root.</li>
-            <li>· Opens a WebSocket to the channel 0 backbone (Cloudflare Worker).</li>
+            <li>· Opens a WebSocket to the mURL backbone (Cloudflare Worker).</li>
           </ul>
           <p className="mt-3">It does NOT read the page DOM, page text, form values, or anything else from the host site.</p>
         </section>
@@ -88,7 +88,7 @@ export default function Channel0PrivacyPage() {
 
         <section>
           <h2 className="font-display mb-3 text-xl font-semibold text-foreground">Domain owners</h2>
-          <p>If you own a domain and want to disable the channel 0 chat on it, you can do so for free by proving ownership via DNS TXT record (<span className="font-mono">_mosadd-channel0</span>) at <a className="text-primary underline" href="/channel0#own-a-domain">mosadd.dev/channel0</a>. For abuse or DMCA requests, email <a className="text-primary underline" href="mailto:abuse@mosadd.dev">abuse@mosadd.dev</a>.</p>
+          <p>If you own a domain and want to disable the mURL chat on it, you can do so for free by proving ownership via DNS TXT record (<span className="font-mono">_mosadd-murl</span>) at <a className="text-primary underline" href="/murl#own-a-domain">mosadd.dev/murl</a>. For abuse or DMCA requests, email <a className="text-primary underline" href="mailto:abuse@mosadd.dev">abuse@mosadd.dev</a>.</p>
         </section>
 
         <section>
@@ -101,7 +101,7 @@ export default function Channel0PrivacyPage() {
           <p>
             Privacy: <a className="text-primary underline" href="mailto:privacy@mosadd.dev">privacy@mosadd.dev</a><br />
             Abuse: <a className="text-primary underline" href="mailto:abuse@mosadd.dev">abuse@mosadd.dev</a><br />
-            Source: <a className="text-primary underline" href="https://github.com/Hei33enberg/mosADD-OS/tree/main/apps/channel0-ext">github.com/Hei33enberg/mosADD-OS/apps/channel0-ext</a> (Apache-2.0)
+            Source: <a className="text-primary underline" href="https://github.com/Hei33enberg/mosADD-OS/tree/main/apps/murl-ext">github.com/Hei33enberg/mosADD-OS/apps/murl-ext</a> (Apache-2.0)
           </p>
         </section>
       </div>

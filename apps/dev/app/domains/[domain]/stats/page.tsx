@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-const STATS_URL = 'https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/channel0-owner-stats';
+const STATS_URL = 'https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/murl-owner-stats';
 
 interface Stats {
   domain: string;
@@ -47,13 +47,13 @@ export default function OwnerStatsPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-14">
-      <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">channel 0 · owner analytics · free</div>
+      <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">mURL · mURL owner analytics · free</div>
       <h1 className="font-display mt-2 text-4xl font-bold text-foreground">
         Stats for <span className="text-primary">#{rawDomain}</span>
       </h1>
       <p className="mt-3 max-w-xl text-sm text-muted-foreground">
         Aggregate activity for the channel on your domain. Ownership re-verified
-        against your <span className="font-mono">_mosadd-channel0</span> TXT at every load — remove the
+        against your <span className="font-mono">_mosadd-murl</span> TXT at every load — remove the
         record to revoke access.
       </p>
 

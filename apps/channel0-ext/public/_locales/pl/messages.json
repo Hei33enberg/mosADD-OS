@@ -1,24 +1,24 @@
 {
   "extName": {
-    "message": "channel 0 [mIRC] â€” with mosadd inside"
+    "message": "mURL — anonimowy IRC dla każdego URL · mosadd"
   },
   "extShortName": {
-    "message": "channel 0"
+    "message": "mURL"
   },
   "extDescription": {
-    "message": "Anonimowy czat na ĹĽywo dla kaĹĽdej domeny. Powered by mosadd."
+    "message": "Anonimowy czat na żywo dla URL na którym jesteś. Jeden pokój na domenę. Powered by mosadd."
   },
   "actionTitle": {
-    "message": "channel 0 â€” otwĂłrz czat dla tej domeny"
+    "message": "mURL — otwórz pokój dla tego URL"
   },
   "channelLabel": {
-    "message": "channel 0"
+    "message": "mURL"
   },
   "headerMirc": {
-    "message": "mIRC"
+    "message": "mURL"
   },
   "disclaimer": {
-    "message": "NiezaleĹĽny czat â€” niezwiÄ…zany z $domain$. Powered by $mosadd$.",
+    "message": "Niezależny czat — niezwiązany z $domain$. Powered by $mosadd$.",
     "placeholders": {
       "domain": {
         "content": "$1"
@@ -57,7 +57,7 @@
     "message": "jesteĹ› jako"
   },
   "poweredBy": {
-    "message": "powered by mosadd"
+    "message": "mURL · z mIRC w środku · mosadd.dev"
   },
   "send": {
     "message": "wyĹ›lij"
@@ -85,7 +85,7 @@
     }
   },
   "popupTagline": {
-    "message": "Anonimowy czat na ĹĽywo dla kaĹĽdej domeny."
+    "message": "mURL — anonimowy IRC dla każdego URL."
   },
   "popupYouAreOn": {
     "message": "JesteĹ› na"
@@ -133,7 +133,7 @@
     "message": "WejdĹş"
   },
   "prejoinAlt": {
-    "message": "albo zaĹ‚ĂłĹĽ staĹ‚e konto mosadd"
+    "message": "albo załóż stałe konto mosadd"
   },
   "tooltipDockLeft": {
     "message": "Zadokuj po lewej"

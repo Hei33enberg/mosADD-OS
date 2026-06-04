@@ -6,8 +6,8 @@ import Link from 'next/link';
 // Window-message protocol: the extension's content script (running on this
 // page because it injects on <all_urls>) listens for our "ping" and replies
 // with a "pong" so we can show "Open extension" instead of "Install".
-const MOSADD_EVENT_PING = 'mosadd-channel0:ping';
-const MOSADD_EVENT_PONG = 'mosadd-channel0:pong';
+const MOSADD_EVENT_PING = 'mosadd-murl:ping';
+const MOSADD_EVENT_PONG = 'mosadd-murl:pong';
 
 interface Props { domain: string; slug: string }
 
@@ -66,7 +66,7 @@ export function JoinController({ domain }: Props) {
       {hasExt === false && (
         <>
           <a
-            href="https://github.com/Hei33enberg/mosADD-OS/tree/main/apps/channel0-ext"
+            href="https://github.com/Hei33enberg/mosADD-OS/tree/main/apps/murl-ext"
             target="_blank"
             rel="noreferrer"
             className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
@@ -74,10 +74,10 @@ export function JoinController({ domain }: Props) {
             Install the extension →
           </a>
           <Link
-            href="/channel0"
+            href="/murl"
             className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
           >
-            What is channel 0?
+            What is mURL?
           </Link>
         </>
       )}

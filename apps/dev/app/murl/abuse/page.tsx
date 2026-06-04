@@ -2,19 +2,19 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'channel 0 [mIRC] — report abuse / DMCA | mosadd',
+  title: 'mURL — report abuse / DMCA | mosadd',
   description:
-    'How to report abuse, harassment, illegal content, or DMCA violations on channel 0 [mIRC]. Domain-level disable for owners.',
+    'How to report abuse, harassment, illegal content, or DMCA violations on mURL. Domain-level disable for owners.',
   robots: { index: true, follow: true },
 };
 
 export default function AbusePage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-14">
-      <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">channel 0 [mIRC] · abuse &amp; DMCA</div>
+      <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">mURL · abuse &amp; DMCA</div>
       <h1 className="font-display mt-2 text-4xl font-bold text-foreground">Report abuse or DMCA</h1>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground max-w-xl">
-        channel 0 is an anonymous chat overlaid on third-party domains. We take abuse and illegal content seriously.
+        mURL is an anonymous chat overlaid on third-party domains. We take abuse and illegal content seriously.
         Most reports are resolved in &lt; 24h.
       </p>
 
@@ -84,13 +84,13 @@ export default function AbusePage() {
             <li>· <strong className="text-foreground">Auto-hide</strong> at 3 distinct community reporters.</li>
             <li>· <strong className="text-foreground">Global kill-switch</strong> for operator emergencies.</li>
           </ul>
-          <p className="mt-3 text-xs">Full posture at <Link className="text-primary underline" href="/channel0/privacy">/channel0/privacy</Link>.</p>
+          <p className="mt-3 text-xs">Full posture at <Link className="text-primary underline" href="/murl/privacy">/murl/privacy</Link>.</p>
         </section>
 
         <section>
           <h2 className="font-display mb-3 text-xl font-semibold text-foreground">For minors</h2>
           <p>
-            channel 0 is not for users under 16. On first launch the extension shows an age confirmation; selecting
+            mURL is not for users under 16. On first launch the extension shows an age confirmation; selecting
             &ldquo;under 16&rdquo; disables the chat surface and points the user to an{' '}
             <a className="text-primary underline" href="https://www.thinkuknow.co.uk">internet-safety resource</a>.
             We do not collect age. If you believe a minor is using the platform, report the channel via the in-chat flow

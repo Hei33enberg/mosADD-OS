@@ -120,12 +120,12 @@ export default function DomainsPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-14">
-      <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">channel 0 [mIRC] · domains</div>
+      <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">mURL · domains</div>
       <h1 className="font-display mt-2 text-4xl font-bold text-foreground">Claim your domain</h1>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground max-w-xl">
-        Prove ownership of a domain via DNS TXT and you can disable the channel 0 chat on it for free,
+        Prove ownership of a domain via DNS TXT and you can disable the mURL chat on it for free,
         or claim it for branding (coming soon). Verification is at the apex —{' '}
-        <span className="font-mono">_mosadd-channel0.&lt;domain&gt;</span>.
+        <span className="font-mono">_mosadd-murl.&lt;domain&gt;</span>.
       </p>
 
       {phase === 'idle' && (
@@ -212,28 +212,28 @@ export default function DomainsPage() {
               {data.status === 'blocked' ? (
                 <>
                   <p className="text-sm text-foreground">
-                    Channel 0 is <span className="text-destructive font-semibold">disabled</span> on{' '}
+                    mURL is <span className="text-destructive font-semibold">disabled</span> on{' '}
                     <span className="font-mono">{data.domain}</span>. Visitors with the extension see HTTP 451.
                   </p>
                   <button
                     onClick={() => mutate('open')}
                     className="mt-3 rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
                   >
-                    Re-open channel
+                    Re-open mURL
                   </button>
                 </>
               ) : (
                 <>
                   <p className="text-sm text-foreground">
-                    Channel 0 is currently <span className="text-primary font-semibold">open</span> on{' '}
+                    mURL is currently <span className="text-primary font-semibold">open</span> on{' '}
                     <span className="font-mono">{data.domain}</span>. Anyone who opens the extension on this
-                    domain joins the chat.
+                    domain joins the mURL chat.
                   </p>
                   <button
                     onClick={() => mutate('disable')}
                     className="mt-3 rounded-none bg-destructive px-5 py-3 font-medium text-destructive-foreground transition-colors hover:bg-destructive/90"
                   >
-                    Disable channel on {data.domain}
+                    Disable mURL on {data.domain}
                   </button>
                 </>
               )}
@@ -284,7 +284,7 @@ export default function DomainsPage() {
       <div className="mt-16 grid gap-4 border-t border-border pt-8 text-xs text-muted-foreground md:grid-cols-3">
         <div>
           <div className="font-display text-sm text-primary">Free</div>
-          <div className="mt-1">Disable the channel on your domain. Verified owners only.</div>
+          <div className="mt-1">Disable the mURL room on your domain. Verified owners only.</div>
         </div>
         <div>
           <div className="font-display text-sm text-primary">Paid (soon)</div>
@@ -293,7 +293,7 @@ export default function DomainsPage() {
         <div>
           <div className="font-display text-sm text-primary">Source</div>
           <div className="mt-1">
-            <Link className="underline" href="/channel0">/channel0</Link> · <Link className="underline" href="/channel0/privacy">privacy</Link>
+            <Link className="underline" href="/murl">/murl</Link> · <Link className="underline" href="/murl/privacy">privacy</Link>
           </div>
         </div>
       </div>
@@ -319,7 +319,7 @@ function BrandingPanel({ current, onSave }: { current: BrandingPayload; onSave: 
     <div className="rounded-none border border-border p-6">
       <div className="mb-2 text-xs uppercase tracking-[0.2em] text-primary">4. Brand your channel · free</div>
       <p className="text-xs text-muted-foreground">
-        Theme color, pinned message, official badge. Visible to everyone who joins the chat on your domain.
+        Theme color, pinned message, official badge. Visible to everyone who joins the mURL chat on your domain.
         Free for verified owners — no Stripe in MVP.
       </p>
 
@@ -369,7 +369,7 @@ function BrandingPanel({ current, onSave }: { current: BrandingPayload; onSave: 
           onChange={(e) => setBadge(e.target.checked)}
           className="h-4 w-4 accent-primary"
         />
-        <label htmlFor="badge" className="text-sm text-foreground">Show <span className="font-mono text-primary">OFFICIAL</span> badge in the chat header</label>
+        <label htmlFor="badge" className="text-sm text-foreground">Show <span className="font-mono text-primary">OFFICIAL</span> badge in the mURL chat header</label>
       </div>
 
       <button

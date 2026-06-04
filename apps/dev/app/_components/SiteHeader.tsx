@@ -4,7 +4,7 @@ import { MobileNav } from './MobileNav';
 
 const navLinks = [
   { href: '/embed', label: 'Embed' },
-  { href: '/channel0', label: 'channel 0', primary: true },
+  { href: '/murl', label: 'mURL', primary: true },
   { href: '/docs', label: 'Docs' },
   { href: '/docs/mcp', label: 'MCP' },
   { href: '/skins', label: 'Skins' },

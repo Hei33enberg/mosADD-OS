@@ -3,11 +3,11 @@ import Link from 'next/link';
 import { Terminal } from '../_components/Terminal';
 
 export const metadata: Metadata = {
-  title: 'channel 0 [mIRC] — anonymous live chat on every domain | mosadd',
+  title: 'mURL — anonymous live chat on every domain | mosadd',
   description:
     'A browser extension that drops you into a live, anonymous chat for the domain you are on. Open it on zalando.pl and talk to every other shopper there right now. Powered by the same Cloudflare + Supabase backbone that runs the mosadd toolkit.',
   openGraph: {
-    title: 'channel 0 [mIRC] — with mosadd inside',
+    title: 'mURL — anonymous IRC for every URL · mosadd',
     description: 'Anonymous live chat scoped to the domain you are on. Every site on the web becomes a room.',
     type: 'website',
   },
@@ -62,7 +62,7 @@ export default function Channel0Page() {
             mosadd.dev · energizer · v0.2.0-alpha
           </div>
           <h1 className="font-display text-5xl font-bold leading-[0.95] tracking-tight text-foreground md:text-7xl">
-            channel 0{' '}
+            mURL{' '}
             <span className="text-primary text-glow">[mIRC]</span>
             <br />
             with mosadd inside.
@@ -77,7 +77,7 @@ export default function Channel0Page() {
 
           <div className="mt-8 flex flex-wrap gap-3">
             <a
-              href="https://github.com/Hei33enberg/mosadd-os/tree/main/apps/channel0-ext"
+              href="https://github.com/Hei33enberg/mosadd-os/tree/main/apps/murl-ext"
               target="_blank"
               rel="noreferrer"
               className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
@@ -85,7 +85,7 @@ export default function Channel0Page() {
               Install (Chrome) →
             </a>
             <a
-              href="https://github.com/Hei33enberg/mosadd-os/tree/main/apps/channel0-ext"
+              href="https://github.com/Hei33enberg/mosadd-os/tree/main/apps/murl-ext"
               target="_blank"
               rel="noreferrer"
               className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
@@ -127,7 +127,7 @@ export default function Channel0Page() {
             <div className="font-display text-lg">Grab the build</div>
             <p className="mt-2 text-sm text-muted-foreground">
               Clone the repo and run <span className="font-mono text-primary">npm run build</span> in
-              <span className="font-mono"> apps/channel0-ext/</span>, or download the zipped <span className="font-mono">dist/</span> from releases.
+              <span className="font-mono"> apps/murl-ext/</span>, or download the zipped <span className="font-mono">dist/</span> from releases.
             </p>
           </div>
           <div className="rounded-none border border-border p-5">
@@ -169,7 +169,7 @@ export default function Channel0Page() {
             What runs <span className="text-primary">underneath</span>
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            channel 0 is not a separate stack. It rides the same backbone that mosadd uses for mIRC and
+            mURL is not a separate stack. It rides the same backbone that mosadd uses for mIRC and
             mROOM — proving it at internet scale, for free, on every domain a user opens.
           </p>
         </div>
@@ -190,7 +190,7 @@ export default function Channel0Page() {
             <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary">Own a domain?</div>
             <h2 className="font-display mb-4 text-3xl font-semibold">Claim, brand, or disable your channel</h2>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              channel 0 always carries a non-affiliation banner — &ldquo;Independent chat — domain is not affiliated&rdquo;.
+              mURL always carries a non-affiliation banner — &ldquo;Independent chat — domain is not affiliated&rdquo;.
               If you verify ownership of a domain (DNS TXT), you get three options:
             </p>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
@@ -212,7 +212,7 @@ export default function Channel0Page() {
           <div className="rounded-none border border-border p-5">
             <div className="mb-2 text-xs uppercase tracking-[0.25em] text-muted-foreground">DNS verification</div>
             <Terminal label="bind">{`# add this TXT record to prove you own the domain
-_mosadd-channel0.zalando.pl.  IN  TXT  "v=0; key=<your-token>"`}</Terminal>
+_mosadd-murl.zalando.pl.  IN  TXT  "v=0; key=<your-token>"`}</Terminal>
             <p className="mt-3 text-xs text-muted-foreground">
               We re-check every 24h. Remove the record to relinquish ownership.
             </p>
@@ -229,7 +229,7 @@ _mosadd-channel0.zalando.pl.  IN  TXT  "v=0; key=<your-token>"`}</Terminal>
               Every channel is a <span className="text-primary">brand impression</span>
             </h2>
             <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              channel 0 is mosadd&apos;s viral wedge. It runs the same Cloudflare Worker, the same
+              mURL is mosadd&apos;s viral wedge. It runs the same Cloudflare Worker, the same
               Durable Object per channel, the same Supabase ingest as the rest of the toolkit. Every
               join is a free demonstration that the kernel scales — and every &ldquo;powered by
               mosadd&rdquo; tag a hundred-million-impression-per-month billboard for the dev platform.

@@ -3,11 +3,11 @@ import Link from 'next/link';
 import { Prose, H1, Lead, H2, P, Ul, Anchor, Callout } from '../../_components/Prose';
 
 export const metadata: Metadata = {
-  title: 'channel 0: every domain is a chat room | mosadd',
+  title: 'mURL: every domain is a chat room | mosadd',
   description:
     'A browser extension turning every domain on the web into a live anonymous chat room. Same Cloudflare Worker + Durable Object backbone that powers the mosadd kernel. Built in a weekend. Here is how.',
   openGraph: {
-    title: 'channel 0: every domain is a chat room',
+    title: 'mURL: every domain is a chat room',
     description: 'Browser extension. Same kernel as the toolkit. Internet-scale demo of the mosadd backbone, one domain at a time.',
     type: 'article',
   },
@@ -18,7 +18,7 @@ export default function Post() {
     <div className="max-w-3xl mx-auto px-6 py-14">
       <Prose>
         <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">2026-06-03 · launch</div>
-        <H1>channel 0: how we turned every domain on the web into a chat room in a weekend</H1>
+        <H1>mURL: how we turned every domain on the web into a chat room in a weekend</H1>
         <Lead>
           A browser extension. Open it on zalando.pl and you are in <span className="font-mono">#zalando.pl</span>{' '}
           with every other shopper there right now. Open it on bbc.co.uk and you are in{' '}
@@ -27,7 +27,7 @@ export default function Post() {
         </Lead>
 
         <P>
-          That is the product. <Anchor href="/channel0">Install it</Anchor>. The rest of this post is about why a
+          That is the product. <Anchor href="/murl">Install it</Anchor>. The rest of this post is about why a
           consumer extension is the right way to prove a developer toolkit at internet scale — and how the kernel
           underneath made the whole thing a weekend build.
         </P>
@@ -35,7 +35,7 @@ export default function Post() {
         <H2>The viral mechanic</H2>
         <P>
           Most chat products start with the hardest problem: empty rooms. Slack, Discord, Twitter Spaces — all of
-          them spend years bribing people to invite their friends. channel 0 inverts that. The room already exists.
+          them spend years bribing people to invite their friends. mURL inverts that. The room already exists.
           You did not create it. You did not invite anyone. You opened a tab and the room opened with you.
         </P>
         <P>
@@ -47,7 +47,7 @@ export default function Post() {
         </P>
         <Callout type="success">
           <strong>The 0-to-1 of any chat app is &ldquo;will there be anyone in the room when I open it.&rdquo;</strong>{' '}
-          channel 0 answers this trivially: whoever else is on zalando.pl right now.
+          mURL answers this trivially: whoever else is on zalando.pl right now.
         </Callout>
 
         <H2>Why an extension proves the kernel</H2>
@@ -58,7 +58,7 @@ export default function Post() {
           fight the same fights as 50k real users on a strike day.
         </P>
         <P>
-          channel 0 forces that fight. Every install opens a WebSocket. Every domain a user visits spins up a new
+          mURL forces that fight. Every install opens a WebSocket. Every domain a user visits spins up a new
           Durable Object on the edge. By Tuesday the kernel will have been beaten up across more channels and more
           concurrent connections than the entire toolkit user base will ever produce. The cost is bounded — DOs
           hibernate to free memory, messages persist as a ring buffer in DO storage with async flush to Supabase,
@@ -78,7 +78,7 @@ export default function Post() {
             <span className="font-mono">zalando.pl</span> → one room.
           </li>
           <li>
-            <strong>Anon mint</strong>: <span className="font-mono">channel0-join</span> Supabase edge function. Takes a
+            <strong>Anon mint</strong>: <span className="font-mono">murl-join</span> Supabase edge function. Takes a
             random device token, returns a 5-min HS256 channel-scoped JWT. Stateless proof-of-work hashcash gates the
             mint (12-bit difficulty, ~100ms in a browser, brutal at bot scale).
           </li>
@@ -111,7 +111,7 @@ export default function Post() {
           We only see the registrable domain, never the full URL or page content. No browsing history.
           No fingerprinting library. The device token is a per-install random UUID, hashed server-side before it
           touches the DB. Full posture at{' '}
-          <Anchor href="/channel0/privacy">/channel0/privacy</Anchor>.
+          <Anchor href="/murl/privacy">/murl/privacy</Anchor>.
         </P>
 
         <H2>What domain owners get</H2>
@@ -121,33 +121,33 @@ export default function Post() {
         </Callout>
         <P>
           If you own the domain and want to disable the chat on it, you can do that for free by verifying
-          ownership via DNS TXT at <Anchor href="/channel0#own-a-domain">mosadd.dev/channel0</Anchor>.
+          ownership via DNS TXT at <Anchor href="/murl#own-a-domain">mosadd.dev/murl</Anchor>.
           Branded &ldquo;official&rdquo; channels are a paid tier — that is the revenue model. Most domains will
           stay open. That is the point.
         </P>
 
         <H2>Why we shipped it</H2>
         <P>
-          channel 0 is the energizer for the mosadd developer toolkit. Every domain that gets traffic is a free
+          mURL is the energizer for the mosadd developer toolkit. Every domain that gets traffic is a free
           billboard for the kernel. Every Chrome install pulls a new developer to{' '}
           <Anchor href="https://mosadd.dev">mosadd.dev</Anchor>. Every brand-owned channel is a paying customer
           who self-served through DNS verification. The product subsidizes its own distribution.
         </P>
         <P>
           More importantly: it is fun. The web has been a one-way medium since 1995 — pages that you read and that
-          do not know you exist. channel 0 makes every domain a place where the rest of us are also currently
+          do not know you exist. mURL makes every domain a place where the rest of us are also currently
           standing. Try it on a domain you visit a lot. There is probably someone there.
         </P>
 
         <div className="mt-12 flex flex-wrap gap-3">
           <Link
-            href="/channel0"
+            href="/murl"
             className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Install →
           </Link>
           <a
-            href="https://github.com/Hei33enberg/mosADD-OS/tree/main/apps/channel0-ext"
+            href="https://github.com/Hei33enberg/mosADD-OS/tree/main/apps/murl-ext"
             target="_blank"
             rel="noreferrer"
             className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
@@ -155,7 +155,7 @@ export default function Post() {
             Source code ↗
           </a>
           <Link
-            href="/channel0#own-a-domain"
+            href="/murl#own-a-domain"
             className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
           >
             I own a domain →

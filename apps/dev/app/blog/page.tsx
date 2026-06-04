@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 const posts = [
   {
     slug: 'channel0-every-domain-is-a-room',
-    title: 'channel 0: how we turned every domain on the web into a chat room in a weekend',
+    title: 'mURL: how we turned every domain on the web into an IRC room in a weekend',
     date: '2026-06-03',
     blurb:
-      'A browser extension. Open it on zalando.pl and you are in #zalando.pl with everyone there right now. It is also a forcing function for the mosadd kernel — same Durable Object per channel, same Supabase ingest. Here is how it works under the hood.',
+      'A browser extension. Open it on zalando.pl and you are in #zalando.pl with everyone there right now. mURL is mosadd.dev's sibling to mIRC and mIRL — same kernel — same Durable Object per channel, same Supabase ingest. Here is how it works under the hood.',
   },
   {
     slug: 'mosadd-vs-twilio-agent-connect',

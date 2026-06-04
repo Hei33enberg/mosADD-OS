@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 const links = [
-  { href: '/channel0', label: 'channel 0 [mIRC] →', primary: true },
+  { href: '/murl', label: 'mURL — IRC for URLs →', primary: true },
   { href: '/docs', label: 'Docs' },
   { href: '/docs/quickstart', label: 'Quickstart' },
   { href: '/docs/auth', label: 'Credentials' },

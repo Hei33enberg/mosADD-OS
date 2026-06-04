@@ -1,21 +1,21 @@
 {
   "extName": {
-    "message": "channel 0 [mIRC] — with mosadd inside"
+    "message": "mURL — anonymous IRC for every URL · mosadd"
   },
   "extShortName": {
-    "message": "channel 0"
+    "message": "mURL"
   },
   "extDescription": {
-    "message": "Anonymous live chat scoped to the domain you are on. Powered by mosadd."
+    "message": "Anonymous live chat scoped to the URL you are on. One room per domain. Powered by mosadd."
   },
   "actionTitle": {
-    "message": "channel 0 — open chat for this domain"
+    "message": "mURL — open the room for this URL"
   },
   "channelLabel": {
-    "message": "channel 0"
+    "message": "mURL"
   },
   "headerMirc": {
-    "message": "mIRC"
+    "message": "mURL"
   },
   "disclaimer": {
     "message": "Independent chat — $domain$ is not affiliated. Powered by $mosadd$.",
@@ -57,7 +57,7 @@
     "message": "you are"
   },
   "poweredBy": {
-    "message": "powered by mosadd"
+    "message": "mURL · with mIRC inside · mosadd.dev"
   },
   "send": {
     "message": "send"
@@ -85,7 +85,7 @@
     }
   },
   "popupTagline": {
-    "message": "Anonymous live chat for every domain."
+    "message": "mURL — anonymous IRC for every URL."
   },
   "popupYouAreOn": {
     "message": "You are on"
