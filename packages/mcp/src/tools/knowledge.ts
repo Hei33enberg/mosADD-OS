@@ -79,7 +79,48 @@ async function mKB_search(
   };
 }
 
+const mKB_ingest_input = z.object({
+  content_text: z
+    .string()
+    .min(1)
+    .max(200_000)
+    .describe("Text to index into the user's private knowledge base (a note, document, transcript, pasted page…). Chunked + embedded server-side."),
+  source_type: z
+    .enum(["file", "note", "message", "email", "contact", "call"])
+    .optional()
+    .describe("What kind of source this is. Default 'file' (a document/note). Use 'note' for ad-hoc text."),
+  source_id: z.string().optional().describe("Optional stable id for the source so re-ingests can be grouped."),
+  thread_id: z.string().optional().describe("Optional thread id to associate this knowledge with (e.g. a dm:/chat: thread)."),
+  title: z.string().max(300).optional().describe("Optional human title, stored in metadata."),
+});
+
+async function mKB_ingest(
+  input: z.infer<typeof mKB_ingest_input>,
+  ctx: MosaddToolContext,
+): Promise<{ indexed: number; chunk_count: number }> {
+  readSupabaseEnv();
+  // rag-index accepts a fixed source_type set; map "note" → "file".
+  const backendType = input.source_type === "note" ? "file" : (input.source_type ?? "file");
+  ctx.log("debug", "mKB_ingest via rag-index", { source_type: backendType });
+  const data = await invokeFunction<{ indexed?: number; chunk_count?: number }>("rag-index", {
+    source_type: backendType,
+    source_id: input.source_id ?? null,
+    thread_id: input.thread_id ?? null,
+    content_text: input.content_text,
+    metadata: { ...(input.title ? { title: input.title } : {}), ingested_via: "mKB_ingest" },
+  });
+  return { indexed: data.indexed ?? 0, chunk_count: data.chunk_count ?? 0 };
+}
+
 export const knowledgeTools: MosaddTool[] = [
+  {
+    name: "mKB_ingest",
+    requires: "network",
+    description:
+      "Add text to the USER'S OWN private knowledge base so mKB_search can recall it later. Pass content_text (a note, document, transcript, pasted page); it is semantically chunked, embedded (1536-d) and stored in the per-user vector index mKB_search reads. Returns how many chunks were indexed. NOTE: indexed content is stored server-side in plaintext — NOT covered by the zero-knowledge / E2EE guarantee. Only ingest what the user opted to make searchable.",
+    inputSchema: mKB_ingest_input,
+    handler: mKB_ingest as MosaddTool["handler"],
+  },
   {
     name: "mKB_search",
     requires: "network",

@@ -19,30 +19,35 @@ export default function MkbPage() {
       </P>
 
       <Callout type="info">
-        <strong>Status: alpha.</strong> The <code className="font-mono">mKB_search</code> tool + retrieval engine are
-        live; the indexing pipeline is rolling out, so freshly-seeded corpora may return sparse results until indexed.
+        <strong>Status: alpha.</strong> Both ends are live: <code className="font-mono">mKB_ingest</code> (write) and{' '}
+        <code className="font-mono">mKB_search</code> (read) run against the same per-user 1536-dim index. Ingest is
+        synchronous — content is searchable as soon as <code className="font-mono">mKB_ingest</code> returns.
       </Callout>
 
       <H2>Tools</H2>
 
+      <H3>mKB_ingest</H3>
+      <Pre lang="ts">{`mKB_ingest({
+  content_text: string,     // note, document, transcript, pasted page…
+  source_type?: 'file' | 'note' | 'message' | 'email' | 'contact' | 'call',
+  source_id?: string,       // group re-ingests
+  thread_id?: string,       // associate with a dm:/chat: thread
+  title?: string,
+})
+→ { indexed, chunk_count }  // chunked + embedded server-side`}</Pre>
+
       <H3>mKB_search</H3>
       <Pre lang="ts">{`mKB_search({
   query: string,
-  channel_id?: string,    // scope to one space/thread
-  top_k?: number,         // default 5
+  source_types?: ('message'|'email'|'call'|'note'|'contact')[],
+  thread_id?: string,       // scope to one thread
+  top_k?: number,           // default 8
 })
 → {
-  results: [{ id, score, snippet, source, thread_id }],
-  used_queries: number,   // metered against your plan
+  answer: string,           // grounded in your data, no fabrication
+  sources: [{ source_type, source_id, thread_id, similarity, snippet, created_at }],
+  chunks_found: number,
 }`}</Pre>
-
-      <H3>mKB_write <span className="text-muted-foreground">(roadmap)</span></H3>
-      <Pre lang="ts">{`mKB_write({
-  title: string,
-  body: string,           // chunked + embedded server-side
-  tags?: string[],
-})
-→ { doc_id, chunks }`}</Pre>
 
       <H2>How it works</H2>
       <Ul>
