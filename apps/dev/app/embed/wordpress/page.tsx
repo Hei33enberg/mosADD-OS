@@ -134,8 +134,8 @@ export default function WordPressInstallPage() {
       </P>
 
       <P>
-        Next: <Anchor href="/embed/install">install on other platforms</Anchor> ·{' '}
-        <Anchor href="/skins">browse skins</Anchor> ·{' '}
+        Next: <Anchor href="/embed">about the embed</Anchor> ·{' '}
+        <Anchor href="/embed/install">install on other platforms</Anchor> ·{' '}
         <Anchor href="/pricing">pricing</Anchor>
       </P>
     </Prose>

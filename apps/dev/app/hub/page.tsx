@@ -211,7 +211,7 @@ export default function HubPage() {
       <h2 className="font-display mt-12 mb-3 text-lg font-semibold">Plan</h2>
       <div className="flex flex-wrap gap-3">
         <a href={CHECKOUT.pro} className="rounded-none border border-primary/50 px-4 py-2 text-sm text-primary hover:bg-primary/10">Upgrade to Pro — $9/mo →</a>
-        <a href={CHECKOUT.team} className="rounded-none border border-border px-4 py-2 text-sm text-foreground hover:border-primary/50">Team — $49/mo →</a>
+        <a href="/pricing" className="rounded-none border border-border px-4 py-2 text-sm text-foreground hover:border-primary/50">Team — $29/mo →</a>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
         Free tier active by default. Your key works with <code className="font-mono">npx -y @mosadd/mcp</code> —

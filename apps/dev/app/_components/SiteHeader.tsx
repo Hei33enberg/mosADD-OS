@@ -7,7 +7,6 @@ const navLinks = [
   { href: '/murl', label: 'mURL', primary: true },
   { href: '/docs', label: 'Docs' },
   { href: '/docs/mcp', label: 'MCP' },
-  { href: '/skins', label: 'Skins' },
   { href: '/examples', label: 'Examples' },
   { href: '/pricing', label: 'Pricing' },
 ];

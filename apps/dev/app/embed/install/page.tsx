@@ -153,7 +153,7 @@ ${SNIPPET.split('\n').map(l => '  ' + l).join('\n')}
         <li><InlineCode>minimal-light</InlineCode> — day-mode counterpart</li>
       </Ul>
       <P>
-        Browse all + preview at <Anchor href="/skins">mosadd.dev/skins</Anchor>.
+        All five bundled skins are listed on the <Anchor href="/embed">embed page</Anchor>.
       </P>
 
       <H2 id="troubleshooting">Troubleshooting</H2>
@@ -176,7 +176,7 @@ ${SNIPPET.split('\n').map(l => '  ' + l).join('\n')}
       </P>
 
       <P>
-        Next: <Anchor href="/embed">about the embed</Anchor> · <Anchor href="/skins">all skins</Anchor> ·{' '}
+        Next: <Anchor href="/embed">about the embed</Anchor> · <Anchor href="/pricing">pricing</Anchor> ·{' '}
         <Anchor href="/pricing">pricing</Anchor> · <Anchor href="https://hub.mosadd.com/embed/new">create a key</Anchor>
       </P>
     </Prose>

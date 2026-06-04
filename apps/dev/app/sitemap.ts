@@ -40,8 +40,6 @@ const ROUTES: Array<{ path: string; priority: number; freq: MetadataRoute.Sitema
   { path: '/c/zalando.pl', priority: 0.6, freq: 'monthly' },
   { path: '/c/allegro.pl', priority: 0.6, freq: 'monthly' },
   { path: '/c/github.com', priority: 0.6, freq: 'monthly' },
-  { path: '/skins', priority: 0.7, freq: 'weekly' },
-  { path: '/skins/editor', priority: 0.5, freq: 'monthly' },
   { path: '/status', priority: 0.3, freq: 'monthly' },
 ];
 
