@@ -6,6 +6,7 @@ import { mountChat, type MountHandle, type ToolbarAction } from "../shared/chat-
 import { CHAT_CSS } from "../shared/chat-styles";
 import { getSettings, patchSettings, onSettingsChange, DEFAULT_SETTINGS, type OpenMode } from "../lib/settings";
 import { t, type MsgId } from "../lib/i18n";
+import { fetchTrending, relativeTime } from "../lib/trending";
 
 const styleEl = document.createElement("style");
 styleEl.textContent = CHAT_CSS;
@@ -53,6 +54,7 @@ async function syncChat(): Promise<void> {
   if (mounted) { mounted.handle.destroy(); mounted = null; }
   host.innerHTML = "";
   const actions: ToolbarAction[] = [
+    { icon: "flame",    i18nKey: "tooltipTrending", onClick: () => showTrending(true) },
     { icon: "settings", i18nKey: "tooltipSettings", onClick: () => showSettings(true) },
   ];
   const handle = mountChat(host, { domain: norm.domain, actions });
@@ -86,3 +88,61 @@ resetBubble.addEventListener("click", async () => {
 });
 
 onSettingsChange(() => { void renderSettings(); });
+
+
+// ── Trending overlay (LINEAR-2699) ──────────────────────────────────────────
+const trendingOverlay = document.getElementById("trending-overlay") as HTMLDivElement;
+const trendingPane    = document.getElementById("trending-pane")    as HTMLDivElement;
+const trendingClose   = document.getElementById("trending-close")   as HTMLButtonElement;
+const trendingList    = document.getElementById("trending-list")    as HTMLDivElement;
+const trendingStatus  = document.getElementById("trending-status")  as HTMLDivElement;
+
+let lastTrendingAt = 0;
+
+function showTrending(open: boolean): void {
+  trendingOverlay.classList.toggle("is-open", open);
+  if (open) void loadTrending();
+}
+trendingClose.addEventListener("click", () => showTrending(false));
+trendingOverlay.addEventListener("click", (e) => { if (e.target === trendingOverlay) showTrending(false); });
+
+async function loadTrending(): Promise<void> {
+  const now = Date.now();
+  // Throttle: don't re-fetch more than once / 5s.
+  if (now - lastTrendingAt < 5_000 && trendingList.children.length > 0) return;
+  lastTrendingAt = now;
+  trendingStatus.textContent = "loading…";
+  trendingList.innerHTML = "";
+  try {
+    const data = await fetchTrending(60);
+    if (!data.items.length) {
+      trendingStatus.textContent = "no activity in the last hour — be the first";
+      return;
+    }
+    trendingStatus.textContent = `${data.items.length} active rooms · last 60 min`;
+    for (const it of data.items) {
+      const row = document.createElement("button");
+      row.type = "button";
+      row.className = "trending-row";
+      const d = document.createElement("span");
+      d.className = "trending-domain";
+      d.textContent = "#" + it.domain;
+      const m = document.createElement("span");
+      m.className = "trending-msgs";
+      m.textContent = String(it.messages) + " msg";
+      const tEl = document.createElement("span");
+      tEl.className = "trending-time";
+      tEl.textContent = relativeTime(it.last_ts);
+      row.appendChild(d); row.appendChild(m); row.appendChild(tEl);
+      row.addEventListener("click", () => {
+        // Open a new tab on the domain so the user lands on it AND the side
+        // panel mounts that domain's chat via the tab listener.
+        try { void chrome.tabs.create({ url: "https://" + it.domain }); } catch { /* */ }
+        showTrending(false);
+      });
+      trendingList.appendChild(row);
+    }
+  } catch (e) {
+    trendingStatus.textContent = "couldn't load — try again in a sec";
+  }
+}

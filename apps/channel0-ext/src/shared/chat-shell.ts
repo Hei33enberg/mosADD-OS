@@ -8,10 +8,10 @@ import { t } from "../lib/i18n";
 import { reportMessage, type ReportReason, shouldThrottleLinks, pushLinkHistory } from "../lib/moderation";
 
 export interface ToolbarAction {
-  icon: "dock-left" | "dock-right" | "settings" | "close";
+  icon: "dock-left" | "dock-right" | "settings" | "close" | "flame";
   active?: boolean;
   onClick(): void;
-  i18nKey: "tooltipDockLeft" | "tooltipDockRight" | "tooltipSettings" | "tooltipClose";
+  i18nKey: "tooltipDockLeft" | "tooltipDockRight" | "tooltipSettings" | "tooltipClose" | "tooltipTrending";
 }
 
 export interface MountOptions {
