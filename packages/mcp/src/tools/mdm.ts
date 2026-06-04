@@ -338,6 +338,46 @@ async function mDM_respond_request(
 
 const mDM_publish_keys_input = z.object({});
 
+const mDM_edit_input = z.object({
+  message_id: z.string().min(1).describe("Id of the message to edit (from mDM_list)."),
+  new_text: z.string().min(1).max(64_000).describe("Replacement message body (UTF-8). Max 64 KB."),
+});
+
+const mDM_delete_input = z.object({
+  message_id: z.string().min(1).describe("Id of the message to delete (from mDM_list)."),
+});
+
+async function mDM_edit(
+  input: z.infer<typeof mDM_edit_input>,
+  ctx: MosaddToolContext,
+): Promise<{ message_id: string; edited: true }> {
+  readSupabaseEnv();
+  // Wire format = base64(JSON envelope), matching the EF (which atob()s it).
+  // NOTE: stored server-readable (like mDM_send_unencrypted). On an E2EE thread
+  // this does NOT re-seal the message — prefer delete + re-send for ciphertext.
+  const envelope = {
+    v: PROTOCOL_VERSION,
+    type: "text",
+    text: input.new_text,
+    edited: true,
+    sent_at: new Date().toISOString(),
+  };
+  const encrypted_payload = Buffer.from(JSON.stringify(envelope), "utf8").toString("base64");
+  ctx.log("debug", "mDM_edit via message-edit", { message_id: input.message_id });
+  await invokeFunction("message-edit", { message_id: input.message_id, encrypted_payload });
+  return { message_id: input.message_id, edited: true };
+}
+
+async function mDM_delete(
+  input: z.infer<typeof mDM_delete_input>,
+  ctx: MosaddToolContext,
+): Promise<{ message_id: string; deleted: true }> {
+  readSupabaseEnv();
+  ctx.log("debug", "mDM_delete via message-delete", { message_id: input.message_id });
+  await invokeFunction("message-delete", { message_id: input.message_id });
+  return { message_id: input.message_id, deleted: true };
+}
+
 // ---- Registration ----
 
 export const mdmTools: MosaddTool[] = [
@@ -388,5 +428,21 @@ export const mdmTools: MosaddTool[] = [
       "Accept or reject an incoming DM request from a contact who is not yet in the user's whitelist.",
     inputSchema: mDM_respond_request_input,
     handler: mDM_respond_request as MosaddTool["handler"],
+  },
+  {
+    name: "mDM_edit",
+    requires: "any",
+    description:
+      "Edit a direct message you sent — replace its body by message_id (from mDM_list). Stores a server-readable edited body; on an end-to-end-encrypted thread this does not re-encrypt, so for E2EE prefer deleting and re-sending.",
+    inputSchema: mDM_edit_input,
+    handler: mDM_edit as MosaddTool["handler"],
+  },
+  {
+    name: "mDM_delete",
+    requires: "any",
+    description:
+      "Delete a direct message you sent by message_id (from mDM_list). Soft-deletes server-side so it stops showing in mDM_list for both sides.",
+    inputSchema: mDM_delete_input,
+    handler: mDM_delete as MosaddTool["handler"],
   },
 ];

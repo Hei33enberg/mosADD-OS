@@ -37,6 +37,10 @@ const mAIL_view_input = z.object({
   message_id: MessageId,
 });
 
+const mAIL_delete_input = z.object({
+  message_id: MessageId,
+});
+
 const mAIL_list_input = z.object({
   direction: z
     .enum(["inbound", "outbound"])
@@ -105,6 +109,17 @@ async function mAIL_list(
   });
 }
 
+async function mAIL_delete(
+  input: z.infer<typeof mAIL_delete_input>,
+  ctx: MosaddToolContext,
+): Promise<{ ok: true; message_id: string; deleted: true }> {
+  readSupabaseEnv();
+  ctx.log("debug", "mAIL_delete invoking mp0st-delete", { message_id: input.message_id });
+  return await invokeFunction<{ ok: true; message_id: string; deleted: true }>("mp0st-delete", {
+    message_id: input.message_id,
+  });
+}
+
 // ---- Registration ----
 
 export const mailTools: MosaddTool[] = [
@@ -130,5 +145,13 @@ export const mailTools: MosaddTool[] = [
     description: "Read the full body and metadata of an email by message_id.",
     inputSchema: mAIL_view_input,
     handler: mAIL_view as MosaddTool["handler"],
+  },
+  {
+    name: "mAIL_delete",
+    requires: "network",
+    description:
+      "Delete one of the user's emails by message_id (from mAIL_list). Soft-delete — it stops showing in mAIL_list. Owner-scoped: only your own mail.",
+    inputSchema: mAIL_delete_input,
+    handler: mAIL_delete as MosaddTool["handler"],
   },
 ];

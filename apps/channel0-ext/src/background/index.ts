@@ -1,23 +1,35 @@
 // =============================================================================
-// MV3 service worker. The chat lives entirely in the page (docked in-page panel).
-// Clicking the toolbar icon toggles that panel via a message to the content
-// script — we do NOT open the native Edge side panel anymore.
+// MV3 service worker (v0.2).
+//   (1) Klik ikony → side panel auto-open (setPanelBehavior).
+//   (2) Klik bąbla w content → message → sidePanel.open({tabId}) (Chrome 116+).
+//   (3) Po install: warm-up device token.
 // =============================================================================
 
 import { getDeviceToken } from "../lib/identity-store";
 
-async function disableNativePanel(): Promise<void> {
-  try { await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false }); } catch { /* */ }
-}
-
 chrome.runtime.onInstalled.addListener(async () => {
-  try { await getDeviceToken(); } catch { /* */ }
-  await disableNativePanel();
+  try { await getDeviceToken(); } catch { /* ignore */ }
+  try {
+    await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+  } catch { /* ignore — older Chrome may not have side panel API */ }
 });
-chrome.runtime.onStartup?.addListener(() => { void disableNativePanel(); });
 
-// Toolbar icon click -> toggle the in-page docked panel on the active tab.
-chrome.action?.onClicked.addListener((tab) => {
-  if (tab?.id === undefined) return;
-  chrome.tabs.sendMessage(tab.id, { type: "channel0:toggle-panel" }).catch(() => { /* not injected here */ });
+chrome.runtime.onStartup?.addListener(async () => {
+  try { await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }); }
+  catch { /* ignore */ }
+});
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg?.type === "channel0:open-side-panel" && sender.tab?.id !== undefined) {
+    const tabId = sender.tab.id;
+    (async () => {
+      try {
+        await chrome.sidePanel.open({ tabId });
+        sendResponse({ ok: true });
+      } catch (e) {
+        sendResponse({ ok: false, error: String(e) });
+      }
+    })();
+    return true;
+  }
 });
