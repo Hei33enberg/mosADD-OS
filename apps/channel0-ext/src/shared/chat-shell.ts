@@ -5,6 +5,7 @@ import { deterministicIdentity } from "../lib/nick";
 import { getDeviceToken, getNickFor, setNickFor } from "../lib/identity-store";
 import { joinDomain, openChannelSocket, sendChat, type ChatMessage, type JoinResult } from "../lib/client";
 import { t } from "../lib/i18n";
+import { reportMessage, type ReportReason, shouldThrottleLinks, pushLinkHistory } from "../lib/moderation";
 
 export interface ToolbarAction {
   icon: "dock-left" | "dock-right" | "settings" | "close";
@@ -207,7 +208,15 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
       }
       ws = await openChannelSocket(join, {
         onOpen()  { if (!destroyed && sendBtn) sendBtn.disabled = false; },
-        onMessage(msg) { if (!destroyed) appendMessage(feed, msg, nick); },
+        onMessage(msg) {
+          if (destroyed) return;
+          appendMessage(feed, msg, nick, async (id, reason) => {
+            try {
+              const dev = await getDeviceToken();
+              await reportMessage({ messageId: id, channelSlug: join.channel_id, deviceToken: dev, reason });
+            } catch (e) { console.warn('[channel0] report failed', e); }
+          });
+        },
         onPresence(p) {
           if (destroyed) return;
           liveSpan.style.display = "inline-flex";
@@ -262,7 +271,7 @@ function renderDisclaimer(target: HTMLElement, domain: string): void {
   }
 }
 
-function appendMessage(feed: HTMLElement, msg: ChatMessage, myNick: string): void {
+function appendMessage(feed: HTMLElement, msg: ChatMessage, myNick: string, onReport?: (id: string, reason: ReportReason) => void): void {
   const fromRaw = msg.from ?? "anon";
   const from = fromRaw.startsWith("anon:") ? fromRaw.slice(5) : fromRaw;
   const isMe = from === myNick;
@@ -280,6 +289,26 @@ function appendMessage(feed: HTMLElement, msg: ChatMessage, myNick: string): voi
   xSpan.className = "c0-text";
   xSpan.textContent = msg.text;
   row.appendChild(tSpan); row.appendChild(nSpan); row.appendChild(xSpan);
+  if (onReport && !isMe) {
+    const rep = document.createElement("button");
+    rep.type = "button";
+    rep.className = "c0-rep";
+    rep.title = "Report";
+    rep.setAttribute("aria-label", "Report this message");
+    rep.textContent = "!";
+    rep.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const reason = window.prompt("Report this message — type: spam / abuse / illegal / other", "spam");
+      if (!reason) return;
+      const r = reason.trim().toLowerCase();
+      const allowed = ["spam", "abuse", "illegal", "other"];
+      if (!allowed.includes(r)) { alert("Use one of: spam, abuse, illegal, other."); return; }
+      onReport(msg.id, r as ReportReason);
+      rep.disabled = true;
+      rep.textContent = "✓";
+    });
+    row.appendChild(rep);
+  }
   feed.appendChild(row);
   feed.scrollTop = feed.scrollHeight;
 }

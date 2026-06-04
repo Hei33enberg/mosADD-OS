@@ -103,4 +103,16 @@ export const CHAT_CSS = `
   cursor: pointer; font-family: inherit; }
 .c0-compose button:hover:not(:disabled) { background: #fff; border-color: #fff; }
 .c0-compose button:disabled { opacity: 0.3; cursor: not-allowed; }
+/* Report button — appears on row hover. */
+.c0-row { position: relative; }
+.c0-rep { opacity: 0; transition: opacity 120ms; margin-left: auto;
+  background: transparent; border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.4); font-family: inherit;
+  width: 18px; height: 18px; padding: 0; cursor: pointer; line-height: 0;
+  font-size: 11px; font-weight: 700; }
+.c0-row:hover .c0-rep { opacity: 1; }
+.c0-rep:hover { color: #ff5577; border-color: #ff5577; }
+.c0-rep:disabled { opacity: 0.4 !important; cursor: default;
+  color: rgba(0,255,122,0.7); border-color: rgba(0,255,122,0.4); }
+
 `;
