@@ -1,155 +1,97 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { CodeBlock } from '../_components/CodeBlock';
-import { GITHUB_URL, TRENDING_URL } from '../../lib/site';
+import { GITHUB_URL, MOSADD_DEV } from '../../lib/site';
 
 const REPO = `${GITHUB_URL}/tree/main/apps/channel0-ext`;
-const DOCS = `${GITHUB_URL}/blob/main/apps/channel0-ext/docs`;
 
 export const metadata: Metadata = {
-  title: 'Developers',
+  title: 'For developers',
   description:
-    'mURL is open source (Apache-2.0). Architecture, public API, self-hosting and how to contribute. Built on Cloudflare Workers + Durable Objects + Supabase.',
+    'mURL is a consumer app, not a developer platform. If you want to add chat to your own product or build chat for AI agents, use mIRC / the mosADD toolkit at mosadd.dev. mURL itself is open source.',
   openGraph: {
-    title: 'mURL for developers — open source, self-hostable',
-    description: 'Architecture, API, self-hosting and contribution guide for mURL. Apache-2.0.',
+    title: 'mURL for developers → meet mIRC',
+    description: 'mURL is for everyone. Building chat into your product? That’s mIRC on mosadd.dev. mURL is open source.',
     type: 'website',
   },
 };
 
-const stack = [
-  ['Real-time', 'Cloudflare Workers + Durable Objects — one DO per domain, hibernatable WebSocket fan-out, ring-buffered history'],
-  ['Token auth', 'Anonymous 5-min HS256 channel-scoped JWT, passed via Sec-WebSocket-Protocol — never a key in the browser'],
-  ['Anti-abuse', 'Proof-of-work join gate + per-device/IP/WS rate limits + report→auto-hide'],
-  ['Persistence', 'Supabase messages_meta as the durable system-of-record (thread_id = chat:<slug>)'],
-  ['Identity', 'Deterministic nick + salted-hashed per-install device token — no fingerprint'],
-];
-
 export default function DevelopersPage() {
   return (
-    <div className="relative mx-auto max-w-5xl px-6">
+    <div className="mx-auto max-w-4xl px-6">
       {/* Hero */}
       <section className="relative overflow-hidden border-x border-border px-6 py-16 md:py-20">
         <span className="hud-bracket hud-tl" />
         <span className="hud-bracket hud-tr" />
         <span className="hud-bracket hud-bl" />
         <span className="hud-bracket hud-br" />
-        <div className="mb-4 text-xs uppercase tracking-[0.3em] text-primary/80">mURL · developers</div>
+        <div className="mb-4 text-xs uppercase tracking-[0.3em] text-primary/80">mURL · for developers</div>
         <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-foreground md:text-5xl">
-          mURL is <span className="text-primary text-glow">open source</span>.
+          mURL is for <span className="text-primary text-glow">people</span>, not a platform.
         </h1>
         <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
-          A Chrome extension plus a small, stateless backend that turns any domain into a live room.
-          Apache-2.0, built on the same real-time backbone as the{' '}
-          <a className="text-primary underline" href="https://mosadd.dev">mosADD</a> toolkit. Read the code, call the
-          API, or run the whole stack yourself.
+          mURL is a consumer app — a free browser extension that drops anonymous chat onto any website. There’s nothing
+          to integrate and no API to build on, on purpose. If you’re a developer or a team, the thing you actually want
+          lives next door.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <a href={REPO} target="_blank" rel="noreferrer" className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90">
-            View source on GitHub →
-          </a>
-          <a href={`${DOCS}/ARCHITECTURE.md`} target="_blank" rel="noreferrer" className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50">
-            Architecture ↗
-          </a>
-          <Link href="/developers/api" className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50">
-            API reference →
-          </Link>
-        </div>
       </section>
 
-      {/* Stack */}
+      {/* → mIRC funnel */}
       <section className="border-x border-b border-border px-6 py-14">
-        <div className="mb-6 text-xs uppercase tracking-[0.25em] text-muted-foreground">The stack</div>
-        <div className="grid gap-px bg-border">
-          {stack.map(([k, v]) => (
-            <div key={k} className="grid grid-cols-1 gap-1 bg-background px-5 py-3 md:grid-cols-[160px_1fr] md:gap-6">
-              <div className="font-display text-sm text-primary">{k}</div>
-              <div className="text-sm text-muted-foreground">{v}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* API quickstart */}
-      <section className="border-x border-b border-border px-6 py-14">
-        <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary/80">API</div>
-        <h2 className="font-display text-3xl font-semibold">Talk to the backbone directly</h2>
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Every endpoint is public and CORS-open. Full reference:{' '}
-          <Link className="text-primary underline" href="/developers/api">/developers/api</Link>. Be a good citizen —
-          respect the rate limits and the kill switch.
-        </p>
-
-        <div className="mt-8 space-y-8">
-          <div>
-            <div className="mb-2 font-mono text-sm text-foreground">Live rooms right now</div>
-            <CodeBlock label="trending">{`curl "${TRENDING_URL}?minutes=120"
-# → { items: [ { slug, domain, messages, last_ts, status } ] }`}</CodeBlock>
-          </div>
-
-          <div>
-            <div className="mb-2 font-mono text-sm text-foreground">Join a room (proof-of-work gated)</div>
-            <CodeBlock label="channel0-join">{`# 1) ask to join → first answer is a PoW challenge
-curl -X POST .../functions/v1/channel0-join \\
-  -H 'content-type: application/json' \\
-  -d '{"domain":"nike.com","device_token":"<uuid>","nick":"lucky-otter-77"}'
-# ← 428 { "pow_bits": 12, "server_ts": 1780459620 }
-
-# 2) solve sha256(domain:token:ts:nonce) with N leading zero bits, retry with
-#    pow_ts + pow_nonce → 200 { token, channel_id, expires_in: 300, ... }`}</CodeBlock>
-          </div>
-
-          <div>
-            <div className="mb-2 font-mono text-sm text-foreground">Open the live socket</div>
-            <CodeBlock label="websocket">{`wss://<edge>/c/nike-com/ws
-Sec-WebSocket-Protocol: mosadd.v1, bearer.<token>
-
-← { "type":"presence", "count":12, "roster":[...] }
-← { "id":"<uuid>", "ts":..., "from":"anon:lucky-otter-77", "text":"hi" }
-→ { "text":"hello", "from":"anon:lucky-otter-77" }`}</CodeBlock>
-          </div>
-
-          <div>
-            <div className="mb-2 font-mono text-sm text-foreground">Own a domain? Control its room (DNS-verified)</div>
-            <CodeBlock label="domain-verify">{`# prove ownership with a TXT record at _mosadd-channel0.<domain>,
-# then open / disable / claim+brand the room. See API.md.
-curl -X POST .../functions/v1/domain-verify \\
-  -d '{"domain":"yoursite.com","action":"challenge"}'`}</CodeBlock>
+        <div className="border border-primary/30 bg-primary/[0.05] p-8">
+          <div className="mb-2 text-xs uppercase tracking-[0.25em] text-muted-foreground">Building chat yourself?</div>
+          <h2 className="font-display text-3xl font-semibold">
+            Meet <span className="text-primary">mIRC</span> — chat for your product &amp; for AI agents
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            mIRC is the developer side of <span className="font-bold text-foreground/80">mos<span className="text-primary">ADD</span></span>:
+            an embeddable, brandable, authenticated chat you put on your own site — plus encrypted DMs, channels, rooms,
+            voice and a knowledge base, all through one MCP server for AI agents. Your keys or self-host. Apache-2.0.
+          </p>
+          <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
+            <li>· Embed a branded chat on your site (a few lines of script)</li>
+            <li>· One MCP server: DMs, channels, rooms, mail, voice, KB</li>
+            <li>· End-to-end encryption in the kernel · BYOK or self-host</li>
+          </ul>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a href={MOSADD_DEV} className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+              Go to mosadd.dev →
+            </a>
+            <a href={`${MOSADD_DEV}/embed`} className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50">
+              Embed chat on your site ↗
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Self-host + contribute */}
+      {/* mURL is open source (transparency, not a product pitch) */}
       <section className="grid gap-px border-x border-b border-border bg-border md:grid-cols-2">
         <div className="bg-background p-8">
-          <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary/80">Self-host</div>
-          <h3 className="font-display text-xl font-semibold">Run your own mURL</h3>
+          <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary/80">Open source</div>
+          <h3 className="font-display text-xl font-semibold">Curious how mURL works?</h3>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            One Cloudflare Worker (with a Durable Object) + a handful of Deno edge functions on Supabase. Point a custom
-            build of the extension at your own stack.
+            mURL is fully open source (Apache-2.0) — the extension and its small backend live in the public mosADD-OS
+            repo. Read the architecture, audit the privacy model, or self-host it. We just don’t productise it as a
+            platform — for that, use mIRC above.
           </p>
-          <a href={`${DOCS}/SELF-HOSTING.md`} target="_blank" rel="noreferrer" className="mt-4 inline-block text-sm text-primary underline">
-            Self-hosting guide ↗
+          <a href={REPO} target="_blank" rel="noreferrer" className="mt-4 inline-block text-sm text-primary underline">
+            mURL on GitHub ↗
           </a>
         </div>
         <div className="bg-background p-8">
           <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary/80">Contribute</div>
-          <h3 className="font-display text-xl font-semibold">PRs welcome</h3>
+          <h3 className="font-display text-xl font-semibold">Issues &amp; PRs welcome</h3>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Issues, fixes, new locales, new browsers. Privacy-first invariants apply (no fingerprinting, no reading the
-            host page). Security issues: email <span className="font-mono">security@mosadd.dev</span>.
+            Fixes, new locales, new browsers. Privacy-first invariants apply (no fingerprinting, no reading the host
+            page). Security issues: <span className="font-mono">security@mosadd.dev</span>.
           </p>
-          <a href={`${DOCS.replace('/docs', '')}/CONTRIBUTING.md`} target="_blank" rel="noreferrer" className="mt-4 inline-block text-sm text-primary underline">
+          <a href={`${GITHUB_URL}/blob/main/apps/channel0-ext/CONTRIBUTING.md`} target="_blank" rel="noreferrer" className="mt-4 inline-block text-sm text-primary underline">
             Contributing guide ↗
           </a>
         </div>
       </section>
 
-      {/* footer line */}
       <section className="border-x border-b border-border px-6 py-10 text-sm text-muted-foreground">
-        Looking for the human version? <Link className="text-primary underline" href="/">murl.mosadd.com</Link>. Building
-        with AI agents and want encrypted comms, channels, voice and a knowledge base? That’s{' '}
-        <a className="text-primary underline" href="https://mosadd.dev">mosadd.dev</a>.
+        Just here to chat? <Link className="text-primary underline" href="/">Get mURL</Link> — it’s free.
       </section>
     </div>
   );

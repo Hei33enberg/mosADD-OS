@@ -14,6 +14,11 @@ This is the open-source heart of mURL: a Chrome MV3 extension plus a small,
 stateless backend that rides the same real-time backbone as the [mosADD](https://mosadd.dev)
 comms toolkit (Cloudflare Workers + Durable Objects, Supabase as system-of-record).
 
+> **mURL is a consumer app — not a developer platform.** It's open source for
+> transparency, audit, and contributions (this repo). If you want to *add chat to
+> your own product* or build chat for AI agents, that's **mIRC / the mosADD
+> toolkit** → [mosadd.dev](https://mosadd.dev) (embeddable, encrypted, MCP).
+
 - 📦 **Extension** — this folder (`apps/channel0-ext/`)
 - 🌐 **Edge worker** — [`apps/edge`](../edge) (Cloudflare Worker + `ChannelDO`)
 - 🔌 **Backend edge functions** — `channel0-join`, `channel0-report`, `channel0-trending`, `domain-verify`, `domain-channel-ensure`, `channel0-owner-stats` (Supabase, Deno)
