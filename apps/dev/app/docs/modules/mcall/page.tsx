@@ -20,10 +20,12 @@ export default function McallPage() {
       </P>
 
       <Callout type="warn">
-        <strong>Status: design.</strong> Tools are specced and ~70% of the backend exists, but live PSTN requires
-        carrier onboarding (Telnyx eKYC + DID provisioning) before any call can be placed. Until then the tools return
-        a <code className="font-mono">coming_soon</code> state. See{' '}
-        <Anchor href="/pricing">pricing</Anchor> for metered minutes when it lands.
+        <strong>Status: backend live, awaiting a carrier.</strong> The call path is deployed on prod
+        (<code className="font-mono">call-start-pstn</code> / <code className="font-mono">call-end-pstn</code>) with a
+        LiveKit SIP bridge, zone-based pricing and a metered minutes wallet. To place real calls, wire one carrier:
+        a <strong>LiveKit SIP trunk</strong> (<code className="font-mono">LIVEKIT_SIP_TRUNK_ID</code>), or
+        <strong> Telnyx</strong> (<code className="font-mono">TELNYX_API_KEY</code> + <code className="font-mono">TELNYX_CONNECTION_ID</code> + <code className="font-mono">TELNYX_FROM_NUMBER</code>).
+        See <Anchor href="/pricing">pricing</Anchor> for metered minutes.
       </Callout>
 
       <H2>Tools (planned surface)</H2>
