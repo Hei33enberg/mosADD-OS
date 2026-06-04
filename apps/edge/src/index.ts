@@ -41,10 +41,24 @@ export interface Env {
 }
 
 const HISTORY_LIMIT = 100;
-const KEY_CACHE_TTL_MS = 60_000; // 60s — fast revocation propagation, big cost saving on hot keys
-const RL_PER_MIN = 600; // text rate limit per hub key per minute
-const FLUSH_INTERVAL_MS = 5_000; // E3: how often the DO drains its pending queue
-const FLUSH_BATCH_MAX = 500;     // matches the ingest endpoint cap
+const KEY_CACHE_TTL_MS = 60_000;
+const RL_PER_MIN_HUB = 600;
+const RL_PER_MIN_ANON = 90;
+const FLUSH_INTERVAL_MS = 5_000;
+const FLUSH_BATCH_MAX = 500;
+
+// Hardening — per-socket burst + per-channel ceiling + content rules.
+const MSG_MAX_LEN          = 2_000;
+const MSG_MAX_LINES        = 3;
+const MSG_REPEAT_CHAR_RUN  = 8;
+const MSG_DOMINANT_RATIO   = 0.70;
+const MSG_DOMINANT_MIN_LEN = 20;
+const MSG_ZALGO_RATIO      = 0.30;
+const BURST_SEC1_MAX       = 3;
+const BURST_SEC10_MAX      = 15;
+const REPEAT_LOOKBACK      = 5;
+const REPEAT_BLOCK_AT      = 3;
+const CHANNEL_CEILING_PMIN = 200;
 // channel0 (LINEAR-2693): how long the DO trusts a domain-status check (open/claimed/blocked)
 // before re-asking domain-channel-ensure. Long enough to absorb all hot traffic; short
 // enough for a verified-owner block to propagate worldwide in under a minute.
@@ -189,6 +203,9 @@ export class ChannelDO {
   /** In-memory key cache (cleared on hibernation; falls back to fresh verify). */
   private keyCache = new Map<string, KeyCacheEntry>();
   private rl = new Map<string, RLBucket>();
+  private burst = new Map<string, number[]>();
+  private repeat = new Map<string, string[]>();
+  private channelBucket = { window_start: 0, count: 0 };
   /** channel0: domain-status cache (one entry — the DO is per-channel). */
   private ensure: EnsureCache | null = null;
 
@@ -281,7 +298,7 @@ export class ChannelDO {
   }
 
   // ── Rate limit ────────────────────────────────────────────────────────────
-  private checkRateLimit(keyHash: string): { ok: boolean; retry_after?: number } {
+  private checkRateLimit(keyHash: string, limit: number = RL_PER_MIN_HUB): { ok: boolean; retry_after?: number } {
     const now = Date.now();
     const minute = Math.floor(now / 60_000);
     const b = this.rl.get(keyHash);
@@ -290,8 +307,70 @@ export class ChannelDO {
       return { ok: true };
     }
     b.count += 1;
-    if (b.count > RL_PER_MIN) return { ok: false, retry_after: 60 - Math.floor((now % 60_000) / 1000) };
+    if (b.count > limit) return { ok: false, retry_after: 60 - Math.floor((now % 60_000) / 1000) };
     return { ok: true };
+  }
+
+  /** Pure content checks. Returns a reject reason or null when fine. */
+  private validateContent(text: string): string | null {
+    if (text.length === 0) return "empty";
+    if (text.length > MSG_MAX_LEN) return "too_long";
+    if (/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/.test(text)) return "control_chars";
+    const lines = text.split(/\r?\n/).length;
+    if (lines > MSG_MAX_LINES) return "multiline_flood";
+    if (new RegExp("(.)\\1{" + MSG_REPEAT_CHAR_RUN + ",}").test(text)) return "repeat_char";
+    const nonWs = text.replace(/\s+/g, "");
+    if (nonWs.length >= MSG_DOMINANT_MIN_LEN) {
+      const counts = new Map<string, number>();
+      for (const c of nonWs) counts.set(c, (counts.get(c) ?? 0) + 1);
+      let max = 0;
+      for (const v of counts.values()) if (v > max) max = v;
+      if (max / nonWs.length > MSG_DOMINANT_RATIO) return "dominant_char";
+    }
+    if (nonWs.length >= 50 && !/\s/.test(text)) return "single_token";
+    const combining = (text.match(/[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/g) ?? []).length;
+    if (text.length > 8 && combining / text.length > MSG_ZALGO_RATIO) return "zalgo";
+    return null;
+  }
+
+  /** Per-socket burst tracker. Returns retry-after seconds or null when fine. */
+  private checkBurst(tagId: string): number | null {
+    const now = Date.now();
+    let arr = this.burst.get(tagId);
+    if (!arr) { arr = []; this.burst.set(tagId, arr); }
+    while (arr.length && now - arr[0] > 10_000) arr.shift();
+    const last1s  = arr.filter((t) => now - t < 1_000).length;
+    const last10s = arr.length;
+    if (last1s  >= BURST_SEC1_MAX)  return 1;
+    if (last10s >= BURST_SEC10_MAX) return Math.max(1, Math.ceil((10_000 - (now - arr[0])) / 1000));
+    arr.push(now);
+    return null;
+  }
+
+  /** Same-text repeat tracker. */
+  private isRepeat(tagId: string, text: string): boolean {
+    let ring = this.repeat.get(tagId);
+    if (!ring) { ring = []; this.repeat.set(tagId, ring); }
+    ring.push(text);
+    if (ring.length > REPEAT_LOOKBACK) ring.shift();
+    let n = 0;
+    for (const t of ring) if (t === text) n++;
+    return n >= REPEAT_BLOCK_AT;
+  }
+
+  /** DO-wide per-minute ceiling. */
+  private checkChannelCeiling(): { ok: boolean; retry_after: number } {
+    const now = Date.now();
+    const minute = Math.floor(now / 60_000);
+    if (this.channelBucket.window_start !== minute) {
+      this.channelBucket = { window_start: minute, count: 1 };
+      return { ok: true, retry_after: 0 };
+    }
+    this.channelBucket.count += 1;
+    if (this.channelBucket.count > CHANNEL_CEILING_PMIN) {
+      return { ok: false, retry_after: 60 - Math.floor((now % 60_000) / 1000) };
+    }
+    return { ok: true, retry_after: 0 };
   }
 
   // ── Router ────────────────────────────────────────────────────────────────
@@ -362,8 +441,11 @@ export class ChannelDO {
       if (!rl.ok) return json({ error: "rate_limited", retry_after: rl.retry_after }, { status: 429 });
 
       const body = await req.json().catch(() => null) as { text?: string; from?: string } | null;
-      const text = typeof body?.text === "string" ? body.text.slice(0, 64_000) : "";
+      const rawText = typeof body?.text === "string" ? body.text : "";
+      const text = rawText.slice(0, MSG_MAX_LEN).replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "").trim();
       if (!text) return json({ error: "text_required" }, { status: 400 });
+      const sendReason = this.validateContent(text);
+      if (sendReason) return json({ error: "rejected", reason: sendReason }, { status: 400 });
       const msg: StoredMessage = { id: crypto.randomUUID(), ts: Date.now(), from: body?.from ?? entry.user_id ?? null, text };
       await this.append(msg);
       this.broadcast(msg);
@@ -407,16 +489,32 @@ export class ChannelDO {
 
   async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): Promise<void> {
     if (typeof message !== "string") return;
-    // Recover the caller's key-hash tag (set on acceptWebSocket).
+    if (message.length > 8_000) { try { ws.send(JSON.stringify({ error: "too_long" })); } catch {} return; }
     const tags = this.state.getTags(ws) ?? [];
     const keyHash = tags[0] ?? "anon";
-    const rl = this.checkRateLimit(keyHash);
+    const isAnon = tags.some((t) => typeof t === "string" && t.startsWith(NICK_TAG_PREFIX));
+    const perMinLimit = isAnon ? RL_PER_MIN_ANON : RL_PER_MIN_HUB;
+
+    const rl = this.checkRateLimit(keyHash, perMinLimit);
     if (!rl.ok) { try { ws.send(JSON.stringify({ error: "rate_limited", retry_after: rl.retry_after })); } catch {} return; }
 
+    const burst = this.checkBurst(keyHash);
+    if (burst !== null) { try { ws.send(JSON.stringify({ error: "burst", retry_after: burst })); } catch {} return; }
+
+    const ceiling = this.checkChannelCeiling();
+    if (!ceiling.ok) { try { ws.send(JSON.stringify({ error: "channel_ceiling", retry_after: ceiling.retry_after })); } catch {} return; }
+
     let parsed: { text?: string; from?: string } | null = null;
-    try { parsed = JSON.parse(message); } catch { /* ignore garbage */ }
-    const text = typeof parsed?.text === "string" ? parsed.text.slice(0, 64_000) : "";
+    try { parsed = JSON.parse(message); } catch { return; }
+    const raw = typeof parsed?.text === "string" ? parsed.text : "";
+    const text = raw.slice(0, MSG_MAX_LEN).replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "").trim();
     if (!text) return;
+
+    const contentReason = this.validateContent(text);
+    if (contentReason) { try { ws.send(JSON.stringify({ error: "rejected", reason: contentReason })); } catch {} return; }
+
+    if (this.isRepeat(keyHash, text)) { try { ws.send(JSON.stringify({ error: "rejected", reason: "repeat_message" })); } catch {} return; }
+
     const msg: StoredMessage = { id: crypto.randomUUID(), ts: Date.now(), from: parsed?.from ?? null, text };
     await this.append(msg);
     this.broadcast(msg);
