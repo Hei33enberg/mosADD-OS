@@ -36,6 +36,16 @@ function leadingZeroBits(bytes: Uint8Array): number {
   return n;
 }
 
+/** Cryptographically-strong random nonce prefix (audit P1: was Math.random).
+ *  12 bytes → 96 bits of entropy, base36-ish. */
+function randomNonce(): string {
+  const buf = new Uint8Array(12);
+  crypto.getRandomValues(buf);
+  let out = "";
+  for (const b of buf) out += b.toString(36).padStart(2, "0");
+  return out;
+}
+
 /** Solve the PoW. Yields control roughly every 256 attempts so the UI thread
  *  stays responsive on slow devices. */
 export async function solvePow(args: {
@@ -53,10 +63,11 @@ export async function solvePow(args: {
 
   if (bits <= 0) return { ts, nonce: "0" };
 
+  const base = randomNonce();
   let attempts = 0;
   while (attempts < maxAttempts) {
-    // 8-byte nonce keeps the hash input short while leaving 64 bits of entropy.
-    const nonce = Math.random().toString(36).slice(2) + attempts.toString(36);
+    // Crypto-random base + monotonic counter — unique, unpredictable nonces.
+    const nonce = base + attempts.toString(36);
     const candidate = `${domain}:${device_token}:${ts}:${nonce}`;
     const h = await sha256(candidate);
     if (leadingZeroBits(h) >= bits) return { ts, nonce };

@@ -27,13 +27,17 @@ export class JoinError extends Error {
 
 export async function joinDomain(args: {
   domain: string; deviceToken: string; nick: string;
+  /** Cancels the mint (and any PoW retry) if the chat is destroyed mid-flight. */
+  signal?: AbortSignal;
 }): Promise<JoinResult> {
   const { joinUrl } = await getEndpoints();
+  const { signal } = args;
 
   let r = await fetch(joinUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ domain: args.domain, device_token: args.deviceToken, nick: args.nick }),
+    signal,
   });
 
   // 428 Precondition Required → PoW gate.
@@ -54,6 +58,7 @@ export async function joinDomain(args: {
           domain: args.domain, device_token: args.deviceToken, nick: args.nick,
           pow_ts: sol.ts, pow_nonce: sol.nonce,
         }),
+        signal,
       });
     }
   }

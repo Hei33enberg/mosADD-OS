@@ -36,15 +36,39 @@ async function ageGateAndBootstrap(norm: { domain: string; slug: string }): Prom
     if (got?.[AGE_KEY] === false) return; // hard-decline: user said under-16
   } catch { /* storage flaky, default open */ void bootstrap(norm); return; }
   // Inline mini-prompt (top-right toast) without mounting the full panel.
+  // Built with DOM APIs (not innerHTML) so we never inject markup into the host
+  // page — defensive against CSP/XSS-sink lint and trusted-types pages.
   const prompt = document.createElement("div");
   prompt.setAttribute("data-mosadd-c0-age", "");
   prompt.style.cssText = "all: initial; position: fixed; right: 16px; top: 16px; z-index: 2147483647; max-width: 320px; background: #0a0a0a; color: #fff; border: 1px solid #00ff7a; padding: 12px 14px; font-family: ui-monospace, monospace; font-size: 12px; line-height: 1.4; box-shadow: 0 8px 24px rgba(0,0,0,.5);";
-  prompt.innerHTML = '<div style="font-weight:700; color:#00ff7a; margin-bottom:6px;">mURL · by mosadd</div>' +
-    '<div style="margin-bottom:8px;">Anonymous live chat overlaid on this domain. Adult-only conversations may appear. Please confirm you are 16+.</div>' +
-    '<div style="display:flex; gap:6px;">' +
-    '<button data-yes style="flex:1; background:#00ff7a; color:#000; border:0; padding:6px 8px; font-weight:700; cursor:pointer; font-family:inherit; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;">I am 16+</button>' +
-    '<button data-no  style="flex:1; background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.3); padding:6px 8px; font-weight:700; cursor:pointer; font-family:inherit; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;">I am not</button>' +
-    '</div>';
+
+  const heading = document.createElement("div");
+  heading.style.cssText = "font-weight:700; color:#00ff7a; margin-bottom:6px;";
+  heading.textContent = "mURL · by mosadd";
+
+  const body = document.createElement("div");
+  body.style.cssText = "margin-bottom:8px;";
+  body.textContent = "Anonymous live chat overlaid on this domain. Adult-only conversations may appear. Please confirm you are 16+.";
+
+  const btnRow = document.createElement("div");
+  btnRow.style.cssText = "display:flex; gap:6px;";
+
+  const yesBtn = document.createElement("button");
+  yesBtn.setAttribute("data-yes", "");
+  yesBtn.style.cssText = "flex:1; background:#00ff7a; color:#000; border:0; padding:6px 8px; font-weight:700; cursor:pointer; font-family:inherit; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;";
+  yesBtn.textContent = "I am 16+";
+
+  const noBtn = document.createElement("button");
+  noBtn.setAttribute("data-no", "");
+  noBtn.style.cssText = "flex:1; background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.3); padding:6px 8px; font-weight:700; cursor:pointer; font-family:inherit; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;";
+  noBtn.textContent = "I am not";
+
+  btnRow.appendChild(yesBtn);
+  btnRow.appendChild(noBtn);
+  prompt.appendChild(heading);
+  prompt.appendChild(body);
+  prompt.appendChild(btnRow);
+
   if (document.body) document.body.appendChild(prompt);
   else document.addEventListener("DOMContentLoaded", () => document.body?.appendChild(prompt));
   prompt.querySelector("[data-yes]")?.addEventListener("click", async () => {

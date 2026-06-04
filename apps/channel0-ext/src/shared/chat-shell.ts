@@ -1,5 +1,10 @@
-// Brutalist mIRC chat shell. Header (mIRC #domain + toolbar), non-affiliation
-// banner, IRC-style feed, pre-join nick gate -> compose row.
+// Brutalist mURL chat shell. Header (mURL #domain + toolbar), non-affiliation
+// banner, IRC-style feed, pre-join nick gate -> compose row, brand footer.
+//
+// Resilience (audit P0): the WS auto-reconnects with exponential backoff on any
+// unexpected close. Because reconnect re-runs joinDomain(), it also mints a
+// FRESH 5-min channel token every time — so a socket that drops after the token
+// expired comes back cleanly. No silent message loss, no dead 5-min sessions.
 
 import { deterministicIdentity } from "../lib/nick";
 import { getDeviceToken, getNickFor, setNickFor } from "../lib/identity-store";
@@ -24,6 +29,8 @@ export interface MountOptions {
 export interface MountHandle { destroy(): void; }
 
 const NICK_SEEN_KEY = "channel0.nickConfirmed";
+const RECONNECT_BASE_MS = 1_000;
+const RECONNECT_MAX_MS = 30_000;
 
 const ICON_SVG: Record<ToolbarAction["icon"], string> = {
   "dock-left":  "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"square\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\"/><line x1=\"9\" y1=\"3\" x2=\"9\" y2=\"21\"/></svg>",
@@ -40,7 +47,11 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
   const { domain, actions = [], autoJoinIfKnown = true, onPresence } = opts;
   let ws: WebSocket | null = null;
   let destroyed = false;
+  let manualClose = false;
   let nick = "";
+  let reconnectAttempt = 0;
+  let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  const abort = new AbortController();
 
   const root = document.createElement("div");
   root.className = "c0-chat";
@@ -50,7 +61,7 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
   bg.className = "c0-bg";
   root.appendChild(bg);
 
-  // Header: black bar, white bold "mIRC #domain", live count, toolbar actions.
+  // Header: black bar, white bold "mURL #domain", live count, conn state, toolbar.
   const head = document.createElement("div");
   head.className = "c0-head";
   const title = document.createElement("span");
@@ -70,11 +81,15 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
   liveCountEl.textContent = "0";
   liveSpan.appendChild(liveDot);
   liveSpan.appendChild(liveCountEl);
+  const connSpan = document.createElement("span");
+  connSpan.className = "c0-conn";
+  connSpan.style.display = "none";
   title.appendChild(mircSpan);
   title.appendChild(document.createTextNode(" "));
   title.appendChild(domainSpan);
   title.appendChild(document.createTextNode(" "));
   title.appendChild(liveSpan);
+  title.appendChild(connSpan);
   head.appendChild(title);
   const spacer = document.createElement("span");
   spacer.className = "c0-head-spacer";
@@ -90,6 +105,12 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
     head.appendChild(b);
   }
   root.appendChild(head);
+
+  function setConn(state: "" | "reconnecting" | "offline"): void {
+    if (state === "") { connSpan.style.display = "none"; connSpan.textContent = ""; return; }
+    connSpan.style.display = "inline";
+    connSpan.textContent = "· " + (state === "reconnecting" ? t("connecting") : t("disconnected"));
+  }
 
   // Disclaimer.
   const notice = document.createElement("div");
@@ -157,10 +178,12 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
 
   void (async () => {
     const deviceToken = await getDeviceToken();
+    if (destroyed) return;
     const detNick = deterministicIdentity(deviceToken, domain).nick;
     try { nickInput.value = await getNickFor(domain, deviceToken); }
     catch { nickInput.value = detNick; }
     const confirmed = await wasConfirmed(domain);
+    if (destroyed) return;
     if (autoJoinIfKnown && confirmed) {
       await beginJoin(nickInput.value, deviceToken, false);
       return;
@@ -216,33 +239,54 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
     compose.addEventListener("submit", (e) => {
       e.preventDefault();
       const text = ci.value.trim();
-      if (!text || !ws) return;
-      if (sendChat(ws, text, nick)) ci.value = "";
+      if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
+      // `from` carries the token-sub format ("anon:<nick>") so the durable row's
+      // sender_sub matches what GDPR DSR-by-sub erases. Display strips "anon:".
+      if (sendChat(ws, text, "anon:" + nick)) ci.value = "";
     });
     root.appendChild(compose);
     pushSystem(feed, t("welcome", domain));
     try { ci.focus(); } catch { /* */ }
   }
 
+  function scheduleReconnect(deviceToken: string): void {
+    if (destroyed || manualClose) return;
+    const delay = Math.min(RECONNECT_MAX_MS, RECONNECT_BASE_MS * 2 ** reconnectAttempt)
+      + Math.floor(Math.random() * 400); // small jitter to avoid thundering herd
+    reconnectAttempt++;
+    setConn("reconnecting");
+    if (sendBtn) sendBtn.disabled = true;
+    reconnectTimer = setTimeout(() => { void connect(deviceToken); }, delay);
+  }
+
   async function connect(deviceToken: string): Promise<void> {
+    if (destroyed || manualClose) return;
     try {
-      const join: JoinResult = await joinDomain({ domain, deviceToken, nick });
+      // Re-mint on every (re)connect → always a fresh 5-min token, no expiry death.
+      const join: JoinResult = await joinDomain({ domain, deviceToken, nick, signal: abort.signal });
       if (destroyed) return;
       applyBranding(head, pinSlot, join.branding ?? {}, join.status);
       if (join.status === "blocked") {
+        setConn("");
         pushSystem(feed, t("errBlocked"));
         if (sendBtn) sendBtn.disabled = true;
-        return;
+        return; // do not retry a blocked domain
       }
       ws = await openChannelSocket(join, {
-        onOpen()  { if (!destroyed && sendBtn) sendBtn.disabled = false; },
+        onOpen() {
+          if (destroyed) return;
+          if (reconnectAttempt > 0) pushSystem(feed, t("connected"));
+          reconnectAttempt = 0;
+          setConn("");
+          if (sendBtn) sendBtn.disabled = false;
+        },
         onMessage(msg) {
           if (destroyed) return;
           appendMessage(feed, msg, nick, async (id, reason) => {
             try {
               const dev = await getDeviceToken();
               await reportMessage({ messageId: id, channelSlug: join.channel_id, deviceToken: dev, reason });
-            } catch (e) { console.warn('[channel0] report failed', e); }
+            } catch (e) { console.warn("[mURL] report failed", e); }
           });
         },
         onPresence(p) {
@@ -251,20 +295,30 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
           liveCountEl.textContent = String(p.count);
           onPresence?.(p.count);
         },
-        onClose(_code) { if (!destroyed && sendBtn) sendBtn.disabled = true; },
+        onClose(_code) {
+          if (destroyed || manualClose) return;
+          if (sendBtn) sendBtn.disabled = true;
+          scheduleReconnect(deviceToken);
+        },
       });
     } catch (err) {
+      if (destroyed) return;
       const code = (err as { code?: string })?.code ?? "error";
-      pushSystem(feed,
-        code === "domain_blocked"   ? t("errBlocked") :
-        code === "rate_limited"     ? t("errRateLimited") :
-                                      t("errGeneric", code));
+      if (code === "domain_blocked") { setConn(""); pushSystem(feed, t("errBlocked")); return; }
+      // network / rate-limit / transient → surface once, then back off and retry.
+      if (reconnectAttempt === 0) {
+        pushSystem(feed, code === "rate_limited" ? t("errRateLimited") : t("errGeneric", code));
+      }
+      scheduleReconnect(deviceToken);
     }
   }
 
   function destroy(): void {
     if (destroyed) return;
     destroyed = true;
+    manualClose = true;
+    if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
+    try { abort.abort(); } catch { /* */ }
     try { ws?.close(1000, "destroy"); } catch { /* */ }
     ws = null;
     try { root.remove(); } catch { /* */ }
@@ -360,13 +414,15 @@ function applyBranding(head: HTMLElement, pinSlot: HTMLElement, branding: Record
     head.style.boxShadow = "0 1px 0 0 " + accent + " inset";
   }
   if (status === "claimed" && branding.official_badge) {
-    const badge = document.createElement("span");
-    badge.className = "c0-badge";
-    badge.textContent = "OFFICIAL";
-    badge.title = typeof branding.owner_name === "string" && branding.owner_name
-      ? "Claimed by " + branding.owner_name
-      : "Claimed by verified domain owner";
-    head.querySelector(".c0-head-title")?.appendChild(badge);
+    if (!head.querySelector(".c0-badge")) {
+      const badge = document.createElement("span");
+      badge.className = "c0-badge";
+      badge.textContent = "OFFICIAL";
+      badge.title = typeof branding.owner_name === "string" && branding.owner_name
+        ? "Claimed by " + branding.owner_name
+        : "Claimed by verified domain owner";
+      head.querySelector(".c0-head-title")?.appendChild(badge);
+    }
   }
   const pinned = typeof branding.pinned_message === "string" ? branding.pinned_message.slice(0, 280) : "";
   if (pinned) {
