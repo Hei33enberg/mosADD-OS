@@ -55,7 +55,6 @@ async function syncChat(): Promise<void> {
   host.innerHTML = "";
   const actions: ToolbarAction[] = [
     { icon: "share",    i18nKey: "tooltipShare",    onClick: () => shareRoom(norm.domain) },
-    { icon: "flame",    i18nKey: "tooltipTrending", onClick: () => showTrending(true) },
     { icon: "settings", i18nKey: "tooltipSettings", onClick: () => showSettings(true) },
   ];
   const handle = mountChat(host, { domain: norm.domain, actions });
