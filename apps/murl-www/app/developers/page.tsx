@@ -51,9 +51,9 @@ export default function DevelopersPage() {
           <a href={`${DOCS}/ARCHITECTURE.md`} target="_blank" rel="noreferrer" className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50">
             Architecture ↗
           </a>
-          <a href={`${DOCS}/API.md`} target="_blank" rel="noreferrer" className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50">
-            API reference ↗
-          </a>
+          <Link href="/developers/api" className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50">
+            API reference →
+          </Link>
         </div>
       </section>
 
@@ -75,9 +75,9 @@ export default function DevelopersPage() {
         <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary/80">API</div>
         <h2 className="font-display text-3xl font-semibold">Talk to the backbone directly</h2>
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Every endpoint is public and CORS-open. Full reference in{' '}
-          <a className="text-primary underline" href={`${DOCS}/API.md`}>API.md</a>. Be a good citizen — respect the
-          rate limits and the kill switch.
+          Every endpoint is public and CORS-open. Full reference:{' '}
+          <Link className="text-primary underline" href="/developers/api">/developers/api</Link>. Be a good citizen —
+          respect the rate limits and the kill switch.
         </p>
 
         <div className="mt-8 space-y-8">
