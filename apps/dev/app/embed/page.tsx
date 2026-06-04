@@ -33,7 +33,7 @@ const steps = [
   {
     n: '1',
     title: 'Get a publishable key',
-    body: 'Sign in at hub.mosadd.com/embed/new, add your site domain to the allow-list, copy the m_pk_live_… key once.',
+    body: 'Sign in at mosadd.dev/embed/new, add your site domain to the allow-list, copy the m_pk_live_… key once.',
   },
   {
     n: '2',
@@ -70,7 +70,7 @@ export default function EmbedLandingPage() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
-              href="https://hub.mosadd.com/embed/new"
+              href="https://mosadd.dev/embed/new"
               className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
               Get your key →
@@ -164,7 +164,7 @@ export default function EmbedLandingPage() {
             </p>
           </div>
           <a
-            href="https://hub.mosadd.com/embed/new"
+            href="https://mosadd.dev/embed/new"
             className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Create an embed →

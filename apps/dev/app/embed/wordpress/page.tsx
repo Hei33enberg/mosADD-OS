@@ -51,7 +51,7 @@ export default function WordPressInstallPage() {
       <H2>Install (3 minutes)</H2>
       <H3>1 · Get a publishable key</H3>
       <P>
-        Sign up at <Anchor href="https://hub.mosadd.com/embed/new">hub.mosadd.com/embed/new</Anchor>, add your
+        Sign up at <Anchor href="https://mosadd.dev/embed/new">mosadd.dev/embed/new</Anchor>, add your
         site&apos;s domain (e.g. <InlineCode>myblog.com</InlineCode> and <InlineCode>www.myblog.com</InlineCode>), pick
         a channel id, click <em>Create embed key</em>. Copy the <InlineCode>m_pk_live_…</InlineCode> key once — you
         won&apos;t see it again.
@@ -68,7 +68,7 @@ export default function WordPressInstallPage() {
       <Ul>
         <li>Go to <strong>Settings → mosadd mIRC</strong></li>
         <li>Paste the publishable key</li>
-        <li>Set the channel id (same one you used at hub.mosadd.com)</li>
+        <li>Set the channel id (same one you used at mosadd.dev/hub)</li>
         <li>Pick mode (launcher pill or inline), position, skin, language</li>
         <li>Save Changes</li>
       </Ul>

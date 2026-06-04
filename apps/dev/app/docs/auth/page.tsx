@@ -19,7 +19,7 @@ export default function AuthPage() {
 
       <H2>1. Hosted (recommended)</H2>
       <P>
-        Sign up at <Anchor href="https://hub.mosadd.com">hub.mosadd.com</Anchor>, click <em>Create key</em>.
+        Sign up at <Anchor href="https://mosadd.dev/hub">mosadd.dev/hub</Anchor>, click <em>Create key</em>.
         You get a <InlineCode>mosadd_sk_live_…</InlineCode> hub key. Set it as{' '}
         <InlineCode>MOSADD_API_KEY</InlineCode> and the MCP server picks it up — <strong>no Supabase, no
         passwords, no DevTools tokens.</strong>
@@ -66,7 +66,7 @@ Password:          ••••••••`}</Pre>
         For the <Anchor href="/embed">mIRC embed widget</Anchor> on a creator&apos;s site, the browser holds a
         different kind of key — a <strong>publishable</strong> key <InlineCode>m_pk_live_…</InlineCode> that is
         scoped to a single channel + a whitelist of domains. Created in the hub at{' '}
-        <Anchor href="https://hub.mosadd.com/embed/new">hub.mosadd.com/embed/new</Anchor>.
+        <Anchor href="https://mosadd.dev/embed/new">mosadd.dev/embed/new</Anchor>.
       </P>
       <Pre lang="html">{`<div id="mosadd-mirc"
      data-channel="my-channel"
@@ -102,13 +102,13 @@ Password:          ••••••••`}</Pre>
       <H3>Session expired / Unable to resolve current user</H3>
       <P>
         Access tokens are short-lived. If a tool returns this error, run{' '}
-        <InlineCode>mosadd login</InlineCode> again (BYOK path) or re-issue your hub key at hub.mosadd.com.
+        <InlineCode>mosadd login</InlineCode> again (BYOK path) or re-issue your hub key at mosadd.dev/hub.
       </P>
 
       <H3>invalid_key on the embed</H3>
       <P>
         The publishable key + origin must match the allow-list. Check{' '}
-        <Anchor href="https://hub.mosadd.com/embed">hub.mosadd.com/embed</Anchor> for the configured domains
+        <Anchor href="https://mosadd.dev/embed/new">mosadd.dev/embed/new</Anchor> for the configured domains
         for that key. Add the missing domain (wildcard <InlineCode>*.example.com</InlineCode> works).
       </P>
 

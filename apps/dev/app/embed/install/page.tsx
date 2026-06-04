@@ -28,7 +28,7 @@ export default function EmbedInstallPage() {
 
       <Callout type="success">
         Before any of these: get your <strong>publishable key</strong> at{' '}
-        <Anchor href="https://hub.mosadd.com/embed/new">hub.mosadd.com/embed/new</Anchor>.
+        <Anchor href="https://mosadd.dev/embed/new">mosadd.dev/embed/new</Anchor>.
         Add your site&apos;s domain to the allow-list (e.g. <code>myblog.com</code> and{' '}
         <code>www.myblog.com</code>). Copy the <code className="font-mono text-primary">m_pk_live_…</code> key once — you won&apos;t see it again.
       </Callout>
@@ -162,7 +162,7 @@ ${SNIPPET.split('\n').map(l => '  ' + l).join('\n')}
         <li>Check the <InlineCode>m_pk_live_…</InlineCode> in the snippet matches the one you created in the hub.</li>
         <li>Open browser DevTools → Console. Look for{' '}
           <InlineCode>[mosadd-embed]</InlineCode> warnings (missing data-key, unknown skin name, etc).</li>
-        <li>Check the page URL&apos;s host is in the embed key&apos;s allow-list (hub.mosadd.com/embed → click your key).</li>
+        <li>Check the page URL&apos;s host is in the embed key&apos;s allow-list (mosadd.dev/embed/new → click your key).</li>
       </Ul>
       <H3>WS connect 401 / &quot;origin_not_allowed&quot;</H3>
       <P>
@@ -177,7 +177,7 @@ ${SNIPPET.split('\n').map(l => '  ' + l).join('\n')}
 
       <P>
         Next: <Anchor href="/embed">about the embed</Anchor> · <Anchor href="/pricing">pricing</Anchor> ·{' '}
-        <Anchor href="/pricing">pricing</Anchor> · <Anchor href="https://hub.mosadd.com/embed/new">create a key</Anchor>
+        <Anchor href="/pricing">pricing</Anchor> · <Anchor href="https://mosadd.dev/embed/new">create a key</Anchor>
       </P>
     </Prose>
   );

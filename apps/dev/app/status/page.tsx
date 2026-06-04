@@ -63,7 +63,7 @@ export default async function StatusPage() {
             ['mosadd.dev', <code key="d" className="font-mono text-xs">https://mosadd.dev</code>, pill(dev)],
             ['mosadd.com', <code key="c" className="font-mono text-xs">https://mosadd.com</code>, pill(com)],
             ['Hosted MCP', <code key="m" className="font-mono text-xs">mcp.mosadd.com</code>, pill('pending')],
-            ['Hosted hub', <code key="h" className="font-mono text-xs">hub.mosadd.com</code>, pill('pending')],
+            ['Hosted hub', <code key="h" className="font-mono text-xs">mosadd.dev/hub</code>, pill('pending')],
           ]}
         />
 

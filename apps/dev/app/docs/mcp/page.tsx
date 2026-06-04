@@ -57,7 +57,7 @@ export default function McpPage() {
       <H2>Authentication</H2>
       <Ul>
         <li><strong>Local stdio:</strong> env-based BYOK per provider (see <Anchor href="/docs/quickstart">quickstart</Anchor>)</li>
-        <li><strong>Hosted HTTP:</strong> OAuth → user account on hub.mosadd.com → keys stored in BYOK key broker</li>
+        <li><strong>Hosted HTTP:</strong> OAuth → user account on mosadd.dev/hub → keys stored in BYOK key broker</li>
       </Ul>
 
       <H2>Long-running sessions (mTALK)</H2>

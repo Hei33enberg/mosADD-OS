@@ -48,7 +48,7 @@ const tiers: Tier[] = [
       '1 embed key · 1 hub key',
       '"powered by mosadd" badge shown',
     ],
-    cta: { label: 'Sign up', href: 'https://hub.mosadd.com' },
+    cta: { label: 'Sign up', href: 'https://mosadd.dev/hub' },
   },
   {
     id: 'pro',
@@ -64,7 +64,7 @@ const tiers: Tier[] = [
       'PAYG overage at $0.001 / extra MAT, capped 2× plan price',
       'Badge removal +$3/mo addon (or keep it)',
     ],
-    cta: { label: 'Start Pro', href: 'https://hub.mosadd.com/embed/new?plan=pro' },
+    cta: { label: 'Start Pro', href: 'https://mosadd.dev/embed/new?plan=pro' },
   },
   {
     id: 'team',
@@ -79,7 +79,7 @@ const tiers: Tier[] = [
       'Webhooks · audit log · multi-tenant',
       'PAYG overage at $0.001 / extra MAT, capped 2× plan price',
     ],
-    cta: { label: 'Start Team', href: 'https://hub.mosadd.com/embed/new?plan=team' },
+    cta: { label: 'Start Team', href: 'https://mosadd.dev/embed/new?plan=team' },
   },
   {
     id: 'enterprise',
@@ -109,7 +109,7 @@ export default function PricingPage() {
         </Lead>
         <Callout type="success" id="status">
           <strong>LIVE now.</strong> Self-serve sign-up at{' '}
-          <Anchor href="https://hub.mosadd.com">hub.mosadd.com</Anchor> — create a key, copy the snippet, paste
+          <Anchor href="https://mosadd.dev/hub">mosadd.dev/hub</Anchor> — create a key, copy the snippet, paste
           on your blog (embed) or run <code className="font-mono text-primary">npx -y @mosadd/mcp</code> (toolkit).
         </Callout>
       </Prose>

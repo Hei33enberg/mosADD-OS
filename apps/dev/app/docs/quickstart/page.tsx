@@ -44,7 +44,7 @@ export default function QuickstartPage() {
       <Pre>{`https://mcp.mosadd.com`}</Pre>
       <P>
         OAuth required. Free tier: 100 msg/month, 30 min PTT, 0 PSTN. Sign up at{' '}
-        <Anchor href="https://hub.mosadd.com">hub.mosadd.com</Anchor> (coming with Phase 2).
+        <Anchor href="https://mosadd.dev/hub">mosadd.dev/hub</Anchor> (coming with Phase 2).
       </P>
 
       <H2>BYOK config</H2>
