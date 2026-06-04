@@ -26,7 +26,7 @@ const FALLBACK: Record<MsgId, string> = {
   live: "$1 online",
   disconnected: "disconnected",
   youAre: "you are",
-  poweredBy: "mURL · with mIRC inside · mosadd.dev",
+  poweredBy: "mURL · with mIRC inside · murl.mosadd.com",
   send: "send",
   composePlaceholder: "say something as $1",
   errBlocked: "this channel is disabled by the domain owner.",

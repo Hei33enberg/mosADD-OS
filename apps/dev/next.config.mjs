@@ -5,11 +5,13 @@ const config = {
   outputFileTracingRoot: process.cwd(),
   async redirects() {
     return [
-      // The mURL extension (internal codename "channel0") links to /channel0/*,
-      // but the site serves those pages under /murl/*. Keep old/extension links
-      // alive so the Chrome Web Store privacy/abuse links never 404.
-      { source: '/channel0', destination: '/murl', permanent: true },
-      { source: '/channel0/:path*', destination: '/murl/:path*', permanent: true },
+      // mURL now has its own consumer home at murl.mosadd.com. Send the old
+      // mosadd.dev/murl/* (and the legacy /channel0/* extension links) there so
+      // there is a single canonical site and CWS privacy/abuse links resolve.
+      { source: '/murl', destination: 'https://murl.mosadd.com', permanent: true },
+      { source: '/murl/:path*', destination: 'https://murl.mosadd.com/:path*', permanent: true },
+      { source: '/channel0', destination: 'https://murl.mosadd.com', permanent: true },
+      { source: '/channel0/:path*', destination: 'https://murl.mosadd.com/:path*', permanent: true },
       // Skin Shop deferred — point any stale /skins link at the embed landing.
       { source: '/skins', destination: '/embed', permanent: false },
       { source: '/skins/:path*', destination: '/embed', permanent: false },

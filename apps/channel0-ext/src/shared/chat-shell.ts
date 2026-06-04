@@ -168,7 +168,7 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
   youAre.className = "c0-foot-you";
   const brandLink = document.createElement("a");
   brandLink.className = "c0-foot-brand";
-  brandLink.href = "https://mosadd.dev/murl";
+  brandLink.href = "https://murl.mosadd.com";
   brandLink.target = "_blank";
   brandLink.rel = "noreferrer";
   brandLink.textContent = t("poweredBy");

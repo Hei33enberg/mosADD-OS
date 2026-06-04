@@ -8,17 +8,20 @@ import { mountChat, type MountHandle } from "../shared/chat-shell";
 import { CHAT_CSS } from "../shared/chat-styles";
 import { t } from "../lib/i18n";
 
-// Listen for the deep-link page (mosadd.dev/c/<domain>) ping so the landing
-// page can detect that the extension is installed and show "Open" instead of
-// "Install". (LINEAR-2700 / C1-5).
+// Listen for the deep-link landing-page ping so the page can detect that the
+// extension is installed and show "Open" instead of "Install" (LINEAR-2700).
+// Only the mURL landing pages may probe — refusing other origins avoids being a
+// generic "is mURL installed?" fingerprinting bit.
+const PROBE_ORIGINS = new Set([
+  "https://murl.mosadd.com", // consumer site (primary)
+  "https://mosadd.dev",      // legacy /murl + /c deep-links
+]);
 window.addEventListener("message", (e: MessageEvent) => {
   if (e.source !== window) return;
   if (!e.data || typeof e.data !== "object") return;
-  // Only the mURL landing page may probe for the extension — refusing other
-  // origins avoids being a generic "is mURL installed?" fingerprinting bit.
-  if (e.origin !== "https://mosadd.dev") return;
+  if (!PROBE_ORIGINS.has(e.origin)) return;
   if (e.data.kind === "mosadd-channel0:ping") {
-    try { window.postMessage({ kind: "mosadd-channel0:pong", v: "0.11" }, "https://mosadd.dev"); } catch { /* */ }
+    try { window.postMessage({ kind: "mosadd-channel0:pong", v: "0.14" }, e.origin); } catch { /* */ }
   }
 });
 
