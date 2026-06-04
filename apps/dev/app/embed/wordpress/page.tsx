@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 // Source ZIP lives in apps/wordpress-plugin/dist/. We serve it as a static
 // asset via Next's public/ folder (build script copies it on every deploy).
 const ZIP_URL = '/mosadd-mirc-1.0.0.zip';
-const REPO_URL = 'https://github.com/Hei33enberg/mosADD-OS/tree/main/apps/wordpress-plugin';
+const REPO_URL = 'https://github.com/Hei33enberg/mosadd-os/tree/main/apps/wordpress-plugin';
 
 const SHORTCODE = `[mosadd_mirc]
 

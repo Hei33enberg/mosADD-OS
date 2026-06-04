@@ -3,8 +3,8 @@
 Vendor adapters. Pluggable. Choose your transport per channel, or let mosadd auto-route.
 
 Planned adapters:
-- `supabase` — Phase 1 strangler-fig adapter pointing at the m0ssad-3 backend
-- `livekit-fork` — voice/PTT/rooms (our `m0ssad-fabric` fork)
+- `supabase` — Phase 1 strangler-fig adapter pointing at the mosadd backend
+- `livekit-fork` — voice/PTT/rooms (our `mosadd-fabric` fork)
 - `routr` — SIP control plane for PSTN
 - `telnyx`, `twilio` — PSTN dumb pipes
 - `nwaku` — p2p messaging backbone

@@ -10,7 +10,7 @@ Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosa
 - [ ] `@mosadd/mcp` stub with `mDM_send` working ([LINEAR-2143](https://linear.app/ip-ra/issue/LINEAR-2143))
 - [ ] Provider abstraction ([LINEAR-2144](https://linear.app/ip-ra/issue/LINEAR-2144))
 - [ ] Control plane / data plane separation ([LINEAR-2145](https://linear.app/ip-ra/issue/LINEAR-2145))
-- [ ] Fork LiveKit → `m0ssad-fabric` ([LINEAR-2169](https://linear.app/ip-ra/issue/LINEAR-2169))
+- [ ] Fork LiveKit → `mosadd-fabric` ([LINEAR-2169](https://linear.app/ip-ra/issue/LINEAR-2169))
 - [ ] Anonymous identity recovery ([LINEAR-2170](https://linear.app/ip-ra/issue/LINEAR-2170))
 - [ ] Anti-abuse PoW + rate limits ([LINEAR-2171](https://linear.app/ip-ra/issue/LINEAR-2171))
 - [ ] mCALL stack: Routr + multi-provider ([LINEAR-2172](https://linear.app/ip-ra/issue/LINEAR-2172))

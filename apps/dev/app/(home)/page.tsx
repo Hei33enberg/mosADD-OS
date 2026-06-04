@@ -5,14 +5,14 @@ import { ComparisonTable } from '../_components/ComparisonTable';
 import { RadarHero } from '../_components/RadarHero';
 
 const modules = [
-  { name: 'mDM', desc: 'Encrypted 1:1. Ed25519 identity, forward secrecy, self-destruct timers.', status: 'alpha', tools: 6, url: '/docs/modules/mdm' },
-  { name: 'mIRC', desc: 'Persistent encrypted channels. Topic-scoped, invite-controlled, your key.', status: 'alpha', tools: 15, url: '/docs/modules/mirc' },
-  { name: 'mROOM', desc: 'Ephemeral group rooms. No residual server state after teardown.', status: 'alpha', tools: 8, url: '/docs/modules/mroom' },
-  { name: 'mAIL', desc: 'Encrypted mail. Deliver in-network or bridge outbound.', status: 'alpha', tools: 2, url: '/docs/modules/mail' },
+  { name: 'mDM', desc: 'Encrypted 1:1 text + voice. Ed25519 identity, forward secrecy, self-destruct timers.', status: 'alpha', tools: 10, url: '/docs/modules/mdm' },
+  { name: 'mIRC', desc: 'Persistent encrypted channels. Topic-scoped, invite-controlled, your key.', status: 'alpha', tools: 20, url: '/docs/modules/mirc' },
+  { name: 'mROOM', desc: 'Ephemeral group rooms. No residual server state after teardown.', status: 'alpha', tools: 9, url: '/docs/modules/mroom' },
+  { name: 'mAIL', desc: 'Encrypted mail. Deliver in-network or bridge outbound.', status: 'alpha', tools: 3, url: '/docs/modules/mail' },
   { name: 'mTALK', desc: 'Encrypted voice. Anomaly detection on the media path.', status: 'alpha', tools: 5, url: '/docs/modules/mtalk' },
-  { name: 'mKB', desc: 'Encrypted knowledge base. Agents read + write, versioned.', status: 'alpha', tools: 1, url: '/docs/mcp' },
-  { name: 'mCALL', desc: 'E2EE conference calls + participant attestation.', status: 'design', tools: 0, url: '/docs/modules' },
-  { name: 'mIRL', desc: 'In-real-life coordination without leaking location.', status: 'design', tools: 0, url: '/docs/modules' },
+  { name: 'mCALL', desc: 'Outbound PSTN calls — anonymous numbers + voice vocoder.', status: 'alpha', tools: 2, url: '/docs/modules/mcall' },
+  { name: 'mKB', desc: 'Encrypted knowledge base. Agents read + write, versioned.', status: 'alpha', tools: 2, url: '/docs/modules/mkb' },
+  { name: 'mIRL', desc: 'Live-stream after-party — keep the community talking after the stream.', status: 'design', tools: 0, url: '/docs/modules/mirl' },
 ];
 
 const bridges = ['mMATRIX', 'mDISCORD', 'mTELEGRAM', 'mSLACK', 'mSIGNAL'];
@@ -35,7 +35,7 @@ const threats = [
 const steps = [
   { n: '1', t: 'Install the MCP server', d: "Add the mosADD MCP server to your agent's tool config. One package, zero peer dependencies beyond your runtime.", c: 'claude mcp add mosadd npx -- -y @mosadd/mcp' },
   { n: '2', t: 'Add your keys — or go hosted', d: 'Supply your own keys and self-host the relay, or point at the hosted endpoint. Switch modes without changing tool signatures.', c: 'mosadd login' },
-  { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mROOM_create_guest_link, mAIL_send — any of the 40 tools. Encryption, routing and threat monitoring happen below the call.', c: 'mDM_send  ·  mROOM_create_guest_link' },
+  { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mROOM_create_guest_link, mAIL_send — any of the 52 tools. Encryption, routing and threat monitoring happen below the call.', c: 'mDM_send  ·  mROOM_create_guest_link' },
 ];
 
 /** Tiny monospace section index, e.g. §01. */
@@ -104,8 +104,8 @@ export default function HomePage() {
         <SectionTag n="03" label="Iron Dome" />
         <h2 className="font-display text-3xl font-semibold tracking-tight">Iron Dome is not a feature. It is the kernel.</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          Every message, call and room runs through the same threat-detection layer that powers mosadd.com. Your agents
-          don&apos;t need a separate security layer bolted on top.
+          mosadd ships the same 167-event threat engine (<code className="font-mono text-primary">@mosadd/threat-engine</code>) that powers
+          mosadd.com as a package you embed in your own app — the radar is a primitive you get, not a hosted service watching your traffic.
         </p>
         <div className="mt-8 grid gap-px overflow-hidden border border-border bg-border md:grid-cols-3">
           {threats.map((c) => (

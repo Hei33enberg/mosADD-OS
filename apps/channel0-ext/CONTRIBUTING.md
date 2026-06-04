@@ -1,7 +1,7 @@
 # Contributing to mURL
 
 mURL (codename `channel0`) is open source (Apache-2.0) and part of the
-[mosADD-OS](https://github.com/Hei33enberg/mosadd-os) monorepo. Issues and PRs
+[mosadd-os](https://github.com/Hei33enberg/mosadd-os) monorepo. Issues and PRs
 welcome.
 
 ## Project layout

@@ -52,7 +52,7 @@ More involved skins can restyle individual elements (`.m-msg`, `.m-nick`, `.m-st
 
 ## Submitting a skin
 
-1. Fork [`Hei33enberg/mosADD-OS`](https://github.com/Hei33enberg/mosADD-OS).
+1. Fork [`Hei33enberg/mosadd-os`](https://github.com/Hei33enberg/mosadd-os).
 2. Create `skins/<your-skin-name>/`.
 3. Add `manifest.json`, `style.css`, optional `preview.png` + `assets/`.
 4. Run the validator (TBD): `npm run validate-skins`.

@@ -90,7 +90,7 @@ export default function MdmPage() {
 
       <H2>Providers</H2>
       <Ul>
-        <li>Default: Supabase backend (m0ssad-3 functions <code className="font-mono text-radar-green">message-send</code>, <code className="font-mono text-radar-green">message-list</code>, <code className="font-mono text-radar-green">message-request-respond</code>)</li>
+        <li>Default: Supabase backend (mosadd backend functions <code className="font-mono text-radar-green">message-send</code>, <code className="font-mono text-radar-green">message-list</code>, <code className="font-mono text-radar-green">message-request-respond</code>)</li>
         <li>Federation: <code className="font-mono text-radar-green">mMATRIX</code> provider (route via Matrix homeserver)</li>
         <li>p2p: <code className="font-mono text-radar-green">nwaku</code> provider (anonymous-identity native)</li>
       </Ul>

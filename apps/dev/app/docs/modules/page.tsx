@@ -27,8 +27,16 @@ export default function ModulesPage() {
           [<Anchor key="mail" href="/docs/modules/mail">mAIL</Anchor>, 'Encrypted mail with tracking, priority + auto-destruct', 'alpha'],
           [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, 'Push-to-talk with LLM-in-room support', 'alpha'],
           [<Anchor key="mkb" href="/docs/modules/mkb">mKB</Anchor>, 'Encrypted knowledge base — semantic recall (RAG)', 'alpha'],
-          [<Anchor key="mcall" href="/docs/modules/mcall">mCALL</Anchor>, 'PSTN out with anonymous numbers + vocoder', 'design'],
+          [<Anchor key="mcall" href="/docs/modules/mcall">mCALL</Anchor>, 'PSTN out with anonymous numbers + vocoder', 'alpha'],
           [<Anchor key="mirl" href="/docs/modules/mirl">mIRL</Anchor>, 'Live-stream after-party (YT/TikTok creators)', 'design'],
+        ]}
+      />
+
+      <H2>Security</H2>
+      <Table
+        headers={['Module', 'Description', 'Status']}
+        rows={[
+          [<Anchor key="threat-engine" href="/docs/modules/threat-engine">threat-engine</Anchor>, '167-event threat taxonomy + scoring (embeddable radar engine)', 'alpha'],
         ]}
       />
 

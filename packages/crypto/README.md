@@ -2,7 +2,7 @@
 
 End-to-end cryptography primitives for mosadd.
 
-> **A module of [mosadd](https://github.com/mosadd/os) — a human OS for communications.**
+> **A module of [mosadd](https://github.com/Hei33enberg/mosadd-os) — a human OS for communications.**
 
 ## What's inside
 
@@ -70,4 +70,4 @@ Report vulnerabilities privately to `security@mosadd.com`. See [SECURITY.md](../
 
 [Apache-2.0](./LICENSE). Patent grant included.
 
-Originally licensed MIT under the m0ssad-3 project. Relicensed Apache-2.0 in v3.0.0 for the public OSS release with consent of the original authors.
+Originally licensed MIT under the mosadd backend. Relicensed Apache-2.0 in v3.0.0 for the public OSS release with consent of the original authors.

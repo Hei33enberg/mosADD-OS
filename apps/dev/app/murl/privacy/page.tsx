@@ -101,7 +101,7 @@ export default function Channel0PrivacyPage() {
           <p>
             Privacy: <a className="text-primary underline" href="mailto:privacy@mosadd.dev">privacy@mosadd.dev</a><br />
             Abuse: <a className="text-primary underline" href="mailto:abuse@mosadd.dev">abuse@mosadd.dev</a><br />
-            Source: <a className="text-primary underline" href="https://github.com/Hei33enberg/mosADD-OS/tree/main/apps/channel0-ext">github.com/Hei33enberg/mosADD-OS/apps/channel0-ext</a> (Apache-2.0)
+            Source: <a className="text-primary underline" href="https://github.com/Hei33enberg/mosadd-os/tree/main/apps/channel0-ext">github.com/Hei33enberg/mosadd-os/apps/channel0-ext</a> (Apache-2.0)
           </p>
         </section>
       </div>

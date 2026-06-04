@@ -11,7 +11,7 @@ Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha-orange)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-40%20live-00ff6a)](packages/mcp)
+[![Tools](https://img.shields.io/badge/tools-52%20live-00ff6a)](packages/mcp)
 [![Release](https://img.shields.io/github/v/release/Hei33enberg/mosadd-os?include_prereleases&label=release)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![mosadd.dev](https://img.shields.io/badge/site-mosadd.dev-5af082)](https://mosadd.dev)
 
@@ -19,7 +19,7 @@ Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and 
 
 ---
 
-## What's live today (3.0.0-alpha.0)
+## What's live today (3.0.0-alpha.4)
 
 **Tagline-to-code real:**
 
@@ -27,22 +27,23 @@ Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and 
 npx -y @mosadd/mcp
 ```
 
-…starts an MCP server with **40 tools** across six mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send email, run a push-to-talk room, or recall facts from its own knowledge base — all through your own mosadd backend (BYOK).
+…starts an MCP server with **52 tools** across 7 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send email, run a push-to-talk room, place an outbound PSTN call, or recall facts from its own knowledge base — all through your own mosadd backend (BYOK).
 
 | Channel | Tools | Highlight |
 |---|---|---|
-| **mDM** (6) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request` | Multi-thread per contact (USP) + X3DH/Double-Ratchet E2EE |
+| **mDM** (10) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request` + 4 voice ops | Multi-thread per contact (USP) + X3DH/Double-Ratchet E2EE, text + voice |
+| **mIRC** (20) | 5 channel ops (`mIRC_create/list/get/update/delete`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) + message + admin ops | Discord/Slack-style persistent channels, full RBAC + chat |
+| **mROOM** (9) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_send_message`, `mROOM_list_messages` | **No other registered MCP server exposes single-call guest links** |
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
-| **mKB** (1) | `mKB_search` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
-| **mIRC** (17) | 5 channel ops (`mIRC_create/list/get/update/delete`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) + 2 message ops (`mIRC_post_message`, `mIRC_list_messages`) | Discord/Slack-style persistent channels, full RBAC + chat |
-| **mROOM** (8) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_send_message`, `mROOM_list_messages` | **No other registered MCP server exposes single-call guest links** |
-| **mAIL** (2) | `mAIL_send`, `mAIL_view` | Every user gets `<userId>@mosadd.com` for free |
+| **mAIL** (3) | `mAIL_send`, `mAIL_view`, `mAIL_list` | Every user gets `<userId>@mosadd.com` for free |
+| **mCALL** (2) | `mCALL_dial`, `mCALL_status` | Outbound PSTN — anonymous numbers + voice vocoder |
+| **mKB** (2) | `mKB_ingest`, `mKB_search` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
 
-Phase 1 follow-ups: **mTALK** (push-to-talk + agent in the room), **mCALL** (PSTN with vocoder + anonymized DID), **mIRL** (live-stream after-party), and bridges to Telegram / Discord / Matrix / Signal / Slack.
+Plus the `comms_capabilities` discovery tool — **52 tools across 7 live modules** total. Roadmap: **mIRL** (live-stream after-party) and bridges to Telegram / Discord / Matrix / Signal / Slack.
 
 ## Quickstart (60 seconds)
 
-> **Alpha distribution:** install directly from GitHub for now (`npx github:...`). Once we claim the `mosadd` npm org, `npx @mosadd/mcp@alpha` will Just Work. The tarballs attached to [release v3.0.0-alpha.0](https://github.com/Hei33enberg/mosadd-os/releases/tag/v3.0.0-alpha.0) are identical to what we'll publish.
+> **Alpha distribution:** install directly from GitHub for now (`npx github:...`). Once we claim the `mosadd` npm org, `npx @mosadd/mcp@alpha` will Just Work. The tarballs attached to [release v3.0.0-alpha.4](https://github.com/Hei33enberg/mosadd-os/releases/tag/v3.0.0-alpha.4) are identical to what we'll publish.
 
 ### Claude Code
 
@@ -76,12 +77,12 @@ This installs the MCP server **and** the four [`skills/`](./skills/) — each `S
 
 | Module | What | Status |
 |---|---|---|
-| `mDM` | Direct messages, multi-thread per contact, optional E2E | **alpha (shipped)** |
-| `mTALK` | Push-to-talk voice, LLM-as-participant | Phase 1 (design in [LINEAR-2145](https://linear.app/ip-ra/issue/LINEAR-2145)) |
+| `mDM` | Direct messages, multi-thread per contact, optional E2E, text + voice | **alpha (shipped)** |
+| `mTALK` | Push-to-talk voice, LLM-as-participant | **alpha (shipped)** |
 | `mAIL` | Email, every user gets `<id>@mosadd.com` | **alpha (shipped)** |
-| `mCALL` | PSTN out, anonymous DID pool, vocoder | Phase 1 (design in [LINEAR-2172](https://linear.app/ip-ra/issue/LINEAR-2172)) |
+| `mCALL` | PSTN out, anonymous DID pool, vocoder | **alpha (shipped)** — backend live, carrier pending |
 | `mIRC` | Persistent channels (Discord/Slack semantics) | **alpha (shipped)** |
-| `mIRL` | Live-stream after-party (YT/TikTok creators monetize) | Phase 1 |
+| `mIRL` | Live-stream after-party (YT/TikTok creators monetize) | design (roadmap) |
 | `mROOM` | Ephemeral rooms + no-account join links | **alpha (shipped)** |
 
 ### Bridge modules (reach existing networks)
@@ -135,7 +136,7 @@ Discord: _coming soon_ · Web: [mosadd.dev](https://mosadd.dev) · Linear: [M5 e
 [Apache-2.0](./LICENSE). Patent grant included. Compatible with proprietary use.
 
 This project includes or adapts code from:
-- [LiveKit](https://github.com/livekit/livekit) (Apache-2.0) — vendored as `forks/livekit-server/`, rebranded `m0ssad-fabric`
+- [LiveKit](https://github.com/livekit/livekit) (Apache-2.0) — vendored as `forks/livekit-server/`, rebranded `mosadd-fabric`
 - [Hermes Agent](https://github.com/NousResearch/Hermes-Agent) (MIT, Nous Research) — `gateway/platforms/` adapted to `packages/bridges/`
 - [@noble/curves, @noble/ciphers, @noble/hashes](https://paulmillr.com/noble/) (MIT) — `@mosadd/crypto`
 - Several other dependencies — see full attribution in [NOTICE](./NOTICE).

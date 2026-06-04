@@ -9,7 +9,7 @@ This project follows the [Contributor Covenant v2.1](./CODE_OF_CONDUCT.md). By p
 ## Quick start (dev setup)
 
 ```bash
-git clone https://github.com/mosadd/os.git
+git clone https://github.com/Hei33enberg/mosadd-os.git
 cd os
 pnpm install
 pnpm build

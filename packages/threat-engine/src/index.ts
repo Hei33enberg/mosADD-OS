@@ -20,7 +20,7 @@
  * with no authority and no side-effects.
  */
 
-export const VERSION = "3.0.0-alpha.0" as const;
+export const VERSION = "3.0.0-alpha.4" as const;
 
 /** Defensive actions the engine can recommend. The host executes them. */
 export type ThreatAction =

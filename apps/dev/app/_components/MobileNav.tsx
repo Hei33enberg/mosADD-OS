@@ -8,7 +8,7 @@ const links = [
   { href: '/docs', label: 'Docs' },
   { href: '/docs/quickstart', label: 'Quickstart' },
   { href: '/docs/auth', label: 'Credentials' },
-  { href: '/docs/mcp', label: 'MCP · 40 tools' },
+  { href: '/docs/mcp', label: 'MCP · 52 tools' },
   { href: '/docs/modules', label: 'Modules' },
   { href: '/docs/sdk', label: 'SDK' },
   { href: '/examples', label: 'Examples' },

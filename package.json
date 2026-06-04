@@ -1,12 +1,12 @@
 {
   "name": "mosadd-os",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0-alpha.4",
   "private": true,
   "description": "mosadd — A human OS. Add. Operating system for human communications.",
   "homepage": "https://mosadd.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Hei33enberg/mosADD-OS.git"
+    "url": "https://github.com/Hei33enberg/mosadd-os.git"
   },
   "license": "Apache-2.0",
   "author": "mosadd contributors",

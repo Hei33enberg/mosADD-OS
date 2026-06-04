@@ -103,6 +103,6 @@ the Worker, and invalidating verified-owner DNS records, for zero user value.
 
 ## License
 
-Apache-2.0. Part of the [mosADD-OS](https://github.com/Hei33enberg/mosadd-os)
+Apache-2.0. Part of the [mosadd-os](https://github.com/Hei33enberg/mosadd-os)
 monorepo. Built by [mosADD](https://mosadd.dev). Independent of the websites the
 extension appears on.

@@ -90,7 +90,7 @@ This makes the system **extensible**. Community can propose `mPOST` (broadcast p
                      ▼
 ┌─────────────────────────────────────────────────────────┐
 │  Drivers (forks of OSS infrastructure)                  │
-│  - forks/livekit-server (m0ssad-fabric) — SFU/MCU       │
+│  - forks/livekit-server (mosadd-fabric) — SFU/MCU       │
 │  - Routr — SIP control plane                            │
 │  - nwaku — p2p messaging                                │
 │  - Dendrite — Matrix federation                         │

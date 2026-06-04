@@ -147,7 +147,7 @@ export default function Post() {
             Install →
           </Link>
           <a
-            href="https://github.com/Hei33enberg/mosADD-OS/tree/main/apps/channel0-ext"
+            href="https://github.com/Hei33enberg/mosadd-os/tree/main/apps/channel0-ext"
             target="_blank"
             rel="noreferrer"
             className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"

@@ -16,7 +16,7 @@ export default function QuickstartPage() {
       <Pre lang="bash">{`claude mcp add mosadd npx -- -y @mosadd/mcp`}</Pre>
       <P>Restart Claude Code. The <code className="font-mono text-radar-green">mosadd</code> MCP server is now connected. Try:</P>
       <Callout type="info">
-        Send a DM to <code className="font-mono">alice@m0ssad</code>: "first message from Claude"
+        Send a DM to <code className="font-mono">alice@mosadd</code>: "first message from Claude"
       </Callout>
       <P>Claude will call <code className="font-mono text-radar-green">mDM_send</code> under the hood.</P>
 
@@ -43,7 +43,7 @@ export default function QuickstartPage() {
       </P>
       <Pre>{`https://mcp.mosadd.com`}</Pre>
       <P>
-        OAuth required. Free tier: 100 msg/month, 30 min PTT, 0 PSTN. Sign up at{' '}
+        OAuth required. Free tier: 1,000 msg/month, 30 min PTT, 0 PSTN. Sign up at{' '}
         <Anchor href="https://mosadd.dev/hub">mosadd.dev/hub</Anchor> (coming with Phase 2).
       </P>
 
@@ -69,7 +69,7 @@ MOSADD_LIVEKIT_API_SECRET=...`}</Pre>
 
       <H3>Next steps</H3>
       <Ul>
-        <li><Anchor href="/docs/mcp">MCP server reference</Anchor> — 40 tools, control/data plane split, transports</li>
+        <li><Anchor href="/docs/mcp">MCP server reference</Anchor> — 52 tools, control/data plane split, transports</li>
         <li><Anchor href="/docs/modules">Module reference</Anchor> — every m* per-channel API</li>
         <li><Anchor href="/examples">Examples</Anchor> — 6 runnable example apps</li>
       </Ul>

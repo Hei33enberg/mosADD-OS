@@ -2,7 +2,7 @@
 
 Zod-validated message schemas and codecs for the mosadd protocol. Shared across all `m*` modules and providers.
 
-> **A module of [mosadd](https://github.com/mosadd/os) — a human OS for communications.**
+> **A module of [mosadd](https://github.com/Hei33enberg/mosadd-os) — a human OS for communications.**
 
 ## Install
 

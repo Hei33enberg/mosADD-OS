@@ -46,7 +46,7 @@ Self-host the whole thing for $0 forever (the Worker + this bundle are Apache-2.
 
 ## Skin Shop
 
-Browse + apply skins at [mosadd.dev/skins](https://mosadd.dev/skins). Live editor at [mosadd.dev/skins/editor](https://mosadd.dev/skins/editor). Contribute a skin via PR to [`mosadd-os/skins/`](https://github.com/Hei33enberg/mosADD-OS/tree/main/skins).
+Browse + apply skins at [mosadd.dev/skins](https://mosadd.dev/skins). Live editor at [mosadd.dev/skins/editor](https://mosadd.dev/skins/editor). Contribute a skin via PR to [`mosadd-os/skins/`](https://github.com/Hei33enberg/mosadd-os/tree/main/skins).
 
 ## Local dev
 

@@ -12,7 +12,7 @@ In scope:
 - `@mosadd/ai` framework adapters (Vercel, LangChain, OpenAI Agents, Anthropic)
 - `@mosadd/bridges` (Matrix, Discord, Telegram MVP)
 - `@mosadd/crypto`, `@mosadd/protocol`, `@mosadd/threat-engine` library code
-- LiveKit fork (`m0ssad-fabric`) and PTT floor-control middleware
+- LiveKit fork (`mosadd-fabric`) and PTT floor-control middleware
 
 Out of scope:
 
@@ -56,7 +56,7 @@ Out of scope:
 │  Backend (BYOK by user — or mosadd hub Phase 2)             │
 │  ┌──────────────┐  ┌──────────────┐  ┌─────────────────┐    │
 │  │  Supabase    │  │  Resend      │  │  LiveKit /      │    │
-│  │  Edge fns    │  │  Telnyx      │  │  m0ssad-fabric  │    │
+│  │  Edge fns    │  │  Telnyx      │  │  mosadd-fabric  │    │
 │  └──────────────┘  └──────────────┘  └─────────────────┘    │
 └─────────────────────────────────────────────────────────────┘
 ```

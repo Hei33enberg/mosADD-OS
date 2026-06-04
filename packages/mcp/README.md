@@ -2,7 +2,7 @@
 
 MCP server for [mosadd](https://mosadd.dev) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **3.0.0-alpha** — `mDM` only, wired to the m0ssad-3 Supabase backend as a strangler-fig step. Phase 1 full will add mTALK / mAIL / mCALL / mIRC / mIRL / mROOM + bridges. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 167-event radar in front.
+> **3.0.0-alpha.4** — **52 tools across 7 live modules** (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mCALL, mKB) + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Roadmap: mIRL + bridges. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 167-event radar in front.
 
 ## Install
 
@@ -40,7 +40,7 @@ MOSADD_SUPABASE_URL=... MOSADD_SUPABASE_ANON_KEY=... MOSADD_USER_JWT=... npx @mo
 
 ## BYOK — get your env values
 
-While the hosted gateway is in development, the alpha runs in **local BYOK mode** — you supply your own Supabase credentials to talk to your own m0ssad-3 backend.
+While the hosted gateway is in development, the alpha runs in **local BYOK mode** — you supply your own Supabase credentials to talk to your own mosadd backend.
 
 - `MOSADD_SUPABASE_URL` — your Supabase project URL (e.g. `https://abc.supabase.co`)
 - `MOSADD_SUPABASE_ANON_KEY` — the public anon key from project settings
@@ -53,12 +53,17 @@ In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling 
 
 ## Tools shipped in alpha
 
-| Tool | Description |
-|---|---|
-| `mDM_list_contacts` | List your mosadd contacts (returns `identity_id` to use elsewhere) |
-| `mDM_send` | Send a DM. `{ to: identity_id, text, thread_label?, reply_to_id? }` |
-| `mDM_list` | Read DM thread |
-| `mDM_respond_request` | Accept/reject incoming DM request |
+**52 tools across 7 live modules** (+ the `comms_capabilities` discovery tool). Highlights per module:
+
+| Module | Tools | What it does |
+|---|---|---|
+| **mDM** (10) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request` + 4 voice ops | Encrypted 1:1 text + voice. Multi-thread per contact, X3DH/Double-Ratchet E2EE |
+| **mIRC** (20) | `mIRC_create/list/get/update/delete`, member RBAC ops, `mIRC_post_message`, `mIRC_list_messages` + admin | Persistent Discord/Slack-style channels |
+| **mROOM** (9) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_send_message`, `mROOM_list_messages` | Ephemeral rooms + single-call no-account guest links |
+| **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
+| **mAIL** (3) | `mAIL_send`, `mAIL_view`, `mAIL_list` | Encrypted mail; every user gets `<id>@mosadd.com` |
+| **mCALL** (2) | `mCALL_dial`, `mCALL_status` | Outbound PSTN — anonymous numbers + voice vocoder |
+| **mKB** (2) | `mKB_ingest`, `mKB_search` | RAG recall over the user's own data (hybrid vector + BM25) |
 
 All tool names follow [RFC 0001](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
@@ -86,7 +91,7 @@ Agent (Claude / Cursor / ...)
         │ supabase.functions.invoke('message-send', ...)
         │ + Authorization: Bearer <MOSADD_USER_JWT>
         ▼
-m0ssad-3 Edge Function
+mosadd backend Edge Function
         │
         │ RLS-checked insert
         ▼
@@ -103,13 +108,20 @@ For PTT / CALL / ROOM (real-time media), the architecture separates **control pl
 
 | Env | Description | Required |
 |---|---|---|
-| `MOSADD_SUPABASE_URL` | Supabase project URL | yes |
-| `MOSADD_SUPABASE_ANON_KEY` | Supabase anon key | yes |
+| `MOSADD_SUPABASE_URL` | Supabase project URL — DM / IRC / ROOM / KB backend | yes (BYOK) |
+| `MOSADD_SUPABASE_ANON_KEY` | Supabase anon key | yes (BYOK) |
 | `MOSADD_USER_JWT` | User session token | yes (for tools that touch user data) |
+| `MOSADD_RESEND_API_KEY` | Resend API key — enables `mAIL` outbound | no (mAIL disabled if unset) |
+| `MOSADD_LIVEKIT_URL` | LiveKit `wss://…` URL — enables `mTALK` / `mROOM` voice | no (voice disabled if unset) |
+| `MOSADD_LIVEKIT_API_KEY` | LiveKit API key | no (with `…_URL` / `…_API_SECRET`) |
+| `MOSADD_LIVEKIT_API_SECRET` | LiveKit API secret | no |
+| `MOSADD_TELNYX_API_KEY` | Telnyx API key — enables `mCALL` PSTN | no (mCALL disabled if unset) |
 | `MOSADD_API_KEY` | Hub API key (Phase 2 hosted mode) | no |
 | `MOSADD_HUB_URL` | Override hub url | no |
 | `MOSADD_MODE` | `local` / `cloud` / `self-host` | no (auto-detected) |
 | `MOSADD_LOG_LEVEL` | `debug` / `info` / `warn` / `error` | no (default `info`) |
+
+Missing optional keys fail closed — that channel is simply absent from `comms_capabilities`.
 
 ## License
 

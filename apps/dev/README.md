@@ -42,4 +42,4 @@ npm run build    # production build
 
 ## Deployment
 
-Vercel project `mosadd-dev`, Root Directory `apps/dev`, connected to `Hei33enberg/mosADD-OS`. Custom domains `mosadd.dev` (+ `m0ssad.dev` → 308 redirect).
+Vercel project `mosadd-dev`, Root Directory `apps/dev`, connected to `Hei33enberg/mosadd-os`. Custom domains `mosadd.dev` (+ `m0ssad.dev` → 308 redirect).

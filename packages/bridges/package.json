@@ -2,10 +2,10 @@
   "name": "@mosadd/bridges",
   "version": "3.0.0-alpha.4",
   "description": "Bridge modules — reach existing networks (Telegram, Discord, Matrix, Signal, WhatsApp, Slack, iMessage) from mosadd. Derived from Hermes Agent gateway/platforms/ (MIT).",
-  "homepage": "https://github.com/Hei33enberg/mosADD-OS/tree/main/packages/bridges",
+  "homepage": "https://github.com/Hei33enberg/mosadd-os/tree/main/packages/bridges",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Hei33enberg/mosADD-OS.git",
+    "url": "https://github.com/Hei33enberg/mosadd-os.git",
     "directory": "packages/bridges"
   },
   "license": "Apache-2.0",

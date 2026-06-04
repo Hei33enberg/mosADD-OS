@@ -49,7 +49,7 @@ Out of scope:
 ## Bug bounty
 
 mosadd does not currently run a paid bug bounty. We do offer:
-- Public recognition in the [security advisories](https://github.com/mosadd/os/security/advisories)
+- Public recognition in the [security advisories](https://github.com/Hei33enberg/mosadd-os/security/advisories)
 - mosadd swag for non-trivial findings
 - Priority support on the commercial hub
 

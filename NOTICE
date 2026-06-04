@@ -23,7 +23,7 @@ This product includes code derived from third-party projects:
    https://github.com/livekit/livekit
 
    `forks/livekit-server/` is a vendored fork of livekit-server,
-   rebranded as `m0ssad-fabric` for our use case, with custom
+   rebranded as `mosadd-fabric` for our use case, with custom
    patches in `patches/` for threat radar primitives, anonymous
    identity support, and multi-channel hub abstractions.
 

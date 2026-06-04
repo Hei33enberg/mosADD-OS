@@ -2,7 +2,7 @@
   "name": "mosadd",
   "displayName": "mosadd — A human OS. Add.",
   "description": "Operating system for human communications. Direct messages, push-to-talk, calls, email, channels, rooms with no-account guest links — and bridges to Telegram, Discord, Matrix. Open-source under Apache-2.0.",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0-alpha.4",
   "author": {
     "name": "mosadd contributors",
     "url": "https://mosadd.dev"

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { RadarField } from './RadarField';
 
 const stats = [
-  { v: '40', l: 'MCP tools' },
+  { v: '52', l: 'MCP tools' },
   { v: '7', l: 'm* channels' },
   { v: '4', l: 'SDK adapters' },
   { v: 'Apache-2.0', l: 'license' },
@@ -55,8 +55,8 @@ export function RadarHero() {
           Threat-aware, zero-knowledge comms for AI agents.
         </p>
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          One MCP server — direct messages, channels, rooms, encrypted mail and voice, with the{' '}
-          <span className="text-foreground">Iron Dome threat radar in the kernel</span>. Your keys or self-host.
+          One MCP server — direct messages, channels, rooms, encrypted mail and voice, plus the{' '}
+          <span className="text-foreground">Iron Dome threat engine as an embeddable kernel primitive</span>. Your keys or self-host.
           Apache-2.0.
         </p>
 

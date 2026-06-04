@@ -2,10 +2,10 @@
   "name": "@mosadd/threat-engine",
   "version": "3.0.0-alpha.4",
   "description": "167-event threat taxonomy + scoring for mosadd. The kernel-level security primitive that becomes the radar moat in Phase 2 hub.",
-  "homepage": "https://github.com/Hei33enberg/mosADD-OS/tree/main/packages/threat-engine",
+  "homepage": "https://github.com/Hei33enberg/mosadd-os/tree/main/packages/threat-engine",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Hei33enberg/mosADD-OS.git",
+    "url": "https://github.com/Hei33enberg/mosadd-os.git",
     "directory": "packages/threat-engine"
   },
   "license": "Apache-2.0",

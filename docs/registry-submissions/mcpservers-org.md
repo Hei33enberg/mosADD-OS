@@ -26,7 +26,7 @@
 
 > ## Add mosadd MCP server
 >
-> An OS for human communications, MCP-native. 40 tools today (mDM, mIRC, mROOM, mAIL, mTALK, mKB), with mCALL / mIRL / bridges (Telegram, Discord, Matrix, Slack, Signal) landing in Phase 1 follow-ups.
+> An OS for human communications, MCP-native. 52 tools today (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mCALL, mKB), with mCALL / mIRL / bridges (Telegram, Discord, Matrix, Slack, Signal) landing in Phase 1 follow-ups.
 >
 > **Differentiator:** `mROOM_create_guest_link` generates a short-lived no-signup URL — one MCP call from any agent, no other registered server exposes this.
 >

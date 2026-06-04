@@ -66,7 +66,7 @@ export function JoinController({ domain }: Props) {
       {hasExt === false && (
         <>
           <a
-            href="https://github.com/Hei33enberg/mosADD-OS/tree/main/apps/channel0-ext"
+            href="https://github.com/Hei33enberg/mosadd-os/tree/main/apps/channel0-ext"
             target="_blank"
             rel="noreferrer"
             className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"

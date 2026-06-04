@@ -65,7 +65,7 @@ export default function MtalkPage() {
 
       <H2>Providers</H2>
       <Ul>
-        <li>LiveKit (forked as <code className="font-mono text-radar-green">m0ssad-fabric</code>) — primary</li>
+        <li>LiveKit (forked as <code className="font-mono text-radar-green">mosadd-fabric</code>) — primary</li>
         <li>Mediasoup — backup</li>
         <li>Pion-based custom — fallback</li>
       </Ul>

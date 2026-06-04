@@ -93,7 +93,7 @@ It's expected to be public — that's why it's "publishable". The key only works
 
 = Can I self-host? =
 
-Yes. Everything in mosadd's embed stack is Apache-2.0. See https://github.com/Hei33enberg/mosADD-OS for the source. You'd point this plugin at your own Worker by replacing the `MOSADD_MIRC_BUNDLE_URL` constant.
+Yes. Everything in mosadd's embed stack is Apache-2.0. See https://github.com/Hei33enberg/mosadd-os for the source. You'd point this plugin at your own Worker by replacing the `MOSADD_MIRC_BUNDLE_URL` constant.
 
 = GDPR / privacy law? =
 
@@ -118,6 +118,6 @@ First release.
 
 == Source code ==
 
-This plugin is part of the mosadd-os monorepo: https://github.com/Hei33enberg/mosADD-OS/tree/main/apps/wordpress-plugin
+This plugin is part of the mosadd-os monorepo: https://github.com/Hei33enberg/mosadd-os/tree/main/apps/wordpress-plugin
 
 License: Apache-2.0

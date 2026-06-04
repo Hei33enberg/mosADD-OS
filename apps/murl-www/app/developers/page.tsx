@@ -69,7 +69,7 @@ export default function DevelopersPage() {
           <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary/80">Open source</div>
           <h3 className="font-display text-xl font-semibold">Curious how mURL works?</h3>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            mURL is fully open source (Apache-2.0) — the extension and its small backend live in the public mosADD-OS
+            mURL is fully open source (Apache-2.0) — the extension and its small backend live in the public mosadd-os
             repo. Read the architecture, audit the privacy model, or self-host it. We just don’t productise it as a
             platform — for that, use mIRC above.
           </p>

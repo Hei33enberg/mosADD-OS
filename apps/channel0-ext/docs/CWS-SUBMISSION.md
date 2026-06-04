@@ -70,7 +70,7 @@ are a paid tier.
 
 OPEN SOURCE
 Apache-2.0 licensed. Code at:
-https://github.com/Hei33enberg/mosADD-OS/tree/main/apps/channel0-ext
+https://github.com/Hei33enberg/mosadd-os/tree/main/apps/channel0-ext
 
 Privacy policy: https://mosadd.dev/channel0/privacy
 ```
