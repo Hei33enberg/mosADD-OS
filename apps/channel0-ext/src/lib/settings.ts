@@ -11,15 +11,19 @@ export interface BubblePos {
 }
 
 export interface Settings {
-  openMode: OpenMode;
+  openMode: OpenMode;            // legacy; the panel is now always the in-page docked panel
   bubbleVisible: boolean;
   bubble: BubblePos;
+  panelSide: "left" | "right";   // which edge the docked panel attaches to
+  panelWidth: number;            // px, clamped 300..620
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   openMode: "side",
   bubbleVisible: true,
   bubble: { anchor: "br", x: 16, y: 16 },
+  panelSide: "right",
+  panelWidth: 380,
 };
 
 const KEY = "channel0.settings";
