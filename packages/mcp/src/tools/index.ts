@@ -15,6 +15,7 @@ import { mroomTools } from "./mroom.js";
 import { mroomMessagesTools } from "./mroom-messages.js";
 import { mailTools } from "./mail.js";
 import { mtalkTools } from "./mtalk.js";
+import { mcallTools } from "./mcall.js";
 import { knowledgeTools } from "./knowledge.js";
 import { makeCapabilitiesTool } from "./capabilities.js";
 
@@ -29,8 +30,9 @@ const channelTools: MosaddTool[] = [
   ...mroomMessagesTools,
   ...mailTools,
   ...mtalkTools,
+  ...mcallTools,
   ...knowledgeTools,
-  // mcallTools, mirlTools,
+  // mirlTools,
   // mmatrixTools, mdiscordTools, mtelegramTools, mslackTools, msignalTools,
   //
   // Each m* module registers its tools here as it ships.
