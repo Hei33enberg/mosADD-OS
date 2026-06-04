@@ -25,7 +25,7 @@ const ROUTES: Array<{ path: string; priority: number; freq: MetadataRoute.Sitema
   { path: '/blog', priority: 0.7, freq: 'weekly' },
   { path: '/blog/mosadd-vs-twilio-agent-connect', priority: 0.7, freq: 'monthly' },
   { path: '/blog/channel0-every-domain-is-a-room', priority: 0.85, freq: 'monthly' },
-    { path: '/examples', priority: 0.8, freq: 'weekly' },
+  { path: '/examples', priority: 0.8, freq: 'weekly' },
   { path: '/download', priority: 0.8, freq: 'weekly' },
   { path: '/community', priority: 0.6, freq: 'monthly' },
   { path: '/changelog', priority: 0.6, freq: 'weekly' },
