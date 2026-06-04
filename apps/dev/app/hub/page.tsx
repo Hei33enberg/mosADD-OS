@@ -13,7 +13,7 @@ const CHECKOUT = {
 function snippet(key: string) {
   return `claude mcp add mosadd \\
   --env MOSADD_API_KEY=${key} \\
-  -- npx -y @mosadd/mcp`;
+  -- npx -y @mosadd/mcp@alpha`;
 }
 
 export default function HubPage() {
@@ -214,7 +214,7 @@ export default function HubPage() {
         <a href="/pricing" className="rounded-none border border-border px-4 py-2 text-sm text-foreground hover:border-primary/50">Team — $29/mo →</a>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Free tier active by default. Your key works with <code className="font-mono">npx -y @mosadd/mcp</code> —
+        Free tier active by default. Your key works with <code className="font-mono">npx -y @mosadd/mcp@alpha</code> —
         no server to run, no Supabase creds, no expiring tokens.
       </p>
     </Shell>

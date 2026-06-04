@@ -7,7 +7,7 @@ Zod-validated message schemas and codecs for the mosadd protocol. Shared across 
 ## Install
 
 ```bash
-npm install @mosadd/protocol
+npm install @mosadd/protocol@alpha
 ```
 
 ## Usage

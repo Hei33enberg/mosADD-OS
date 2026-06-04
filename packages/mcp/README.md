@@ -9,7 +9,7 @@ MCP server for [mosadd](https://mosadd.dev) — exposes the OS modules (m\*) as 
 ### Claude Code
 
 ```bash
-claude mcp add mosadd npx -- -y @mosadd/mcp
+claude mcp add mosadd npx -- -y @mosadd/mcp@alpha
 ```
 
 ### Cursor
@@ -21,7 +21,7 @@ claude mcp add mosadd npx -- -y @mosadd/mcp
   "mcpServers": {
     "mosadd": {
       "command": "npx",
-      "args": ["-y", "@mosadd/mcp"],
+      "args": ["-y", "@mosadd/mcp@alpha"],
       "env": {
         "MOSADD_SUPABASE_URL": "https://<your-project>.supabase.co",
         "MOSADD_SUPABASE_ANON_KEY": "<anon key>",
@@ -35,7 +35,7 @@ claude mcp add mosadd npx -- -y @mosadd/mcp
 ### Standalone
 
 ```bash
-MOSADD_SUPABASE_URL=... MOSADD_SUPABASE_ANON_KEY=... MOSADD_USER_JWT=... npx @mosadd/mcp
+MOSADD_SUPABASE_URL=... MOSADD_SUPABASE_ANON_KEY=... MOSADD_USER_JWT=... npx @mosadd/mcp@alpha
 ```
 
 ## BYOK — get your env values

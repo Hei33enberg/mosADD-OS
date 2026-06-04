@@ -26,9 +26,9 @@ export default function AuthPage() {
       </P>
       <Pre lang="bash">{`export MOSADD_API_KEY=mosadd_sk_live_…
 
-npx -y @mosadd/mcp
+npx -y @mosadd/mcp@alpha
 # or with Claude Code:
-claude mcp add mosadd -- npx -y @mosadd/mcp`}</Pre>
+claude mcp add mosadd -- npx -y @mosadd/mcp@alpha`}</Pre>
       <P>
         Hub keys are server-side credentials — never put them in browser code. Free plan = 1,000 outbound
         messages / 1,000 MAT per month, single key. Pro / Team unlock more — see <Anchor href="/pricing">pricing</Anchor>.
@@ -39,7 +39,7 @@ claude mcp add mosadd -- npx -y @mosadd/mcp`}</Pre>
         Run the whole stack yourself with your own mosadd Supabase project. <InlineCode>mosadd login</InlineCode>{' '}
         writes a session to <InlineCode>~/.mosadd/session.json</InlineCode>. Apache-2.0, $0 forever.
       </P>
-      <Pre lang="bash">{`npx -y @mosadd/mcp login
+      <Pre lang="bash">{`npx -y @mosadd/mcp@alpha login
 # or globally:  mosadd login
 
 Supabase URL:      https://<project>.supabase.co

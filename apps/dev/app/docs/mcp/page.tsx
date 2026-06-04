@@ -47,7 +47,7 @@ export default function McpPage() {
       <H2>Transports</H2>
       <Ul>
         <li>
-          <strong>stdio</strong> (default) — <code className="font-mono text-radar-green">npx @mosadd/mcp</code>. For Claude Code, Cursor, Cline, Windsurf, Goose, custom local agents.
+          <strong>stdio</strong> (default) — <code className="font-mono text-radar-green">npx @mosadd/mcp@alpha</code>. For Claude Code, Cursor, Cline, Windsurf, Goose, custom local agents.
         </li>
         <li>
           <strong>HTTP/SSE</strong> — hosted at <code className="font-mono text-radar-green">https://mcp.mosadd.com</code> (Phase 2). For ChatGPT Apps, Lovable, Bolt.

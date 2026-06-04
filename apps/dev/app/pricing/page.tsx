@@ -110,7 +110,7 @@ export default function PricingPage() {
         <Callout type="success" id="status">
           <strong>LIVE now.</strong> Self-serve sign-up at{' '}
           <Anchor href="https://mosadd.dev/hub">mosadd.dev/hub</Anchor> — create a key, copy the snippet, paste
-          on your blog (embed) or run <code className="font-mono text-primary">npx -y @mosadd/mcp</code> (toolkit).
+          on your blog (embed) or run <code className="font-mono text-primary">npx -y @mosadd/mcp@alpha</code> (toolkit).
         </Callout>
       </Prose>
 

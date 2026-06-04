@@ -21,9 +21,9 @@ Built on [@noble/curves](https://github.com/paulmillr/noble-curves), [@noble/cip
 ## Install
 
 ```bash
-npm install @mosadd/crypto
+npm install @mosadd/crypto@alpha
 # or
-pnpm add @mosadd/crypto
+pnpm add @mosadd/crypto@alpha
 ```
 
 ## Usage

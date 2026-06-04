@@ -12,7 +12,7 @@ export default function CommunityPage() {
       <Prose>
         <H1>Community</H1>
         <Lead>
-          mosadd-os is pre-alpha, built in the open under Apache-2.0. We need maintainers, RFC authors, bridge devs, and human-OS thinkers.
+          mosadd-os is in active alpha, built in the open under Apache-2.0. We need maintainers, RFC authors, bridge devs, and human-OS thinkers.
         </Lead>
 
         <H2>Where we hang out</H2>

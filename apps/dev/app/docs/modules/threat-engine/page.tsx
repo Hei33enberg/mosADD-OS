@@ -26,7 +26,7 @@ export default function ThreatEnginePage() {
       </Callout>
 
       <H2>Install</H2>
-      <Pre lang="bash">{`npm i @mosadd/threat-engine`}</Pre>
+      <Pre lang="bash">{`npm i @mosadd/threat-engine@alpha`}</Pre>
 
       <H2>The 167-event taxonomy</H2>
       <P>
