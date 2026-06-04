@@ -49,6 +49,18 @@ export default function MroomPage() {
       <H3>mROOM_close</H3>
       <Pre lang="ts">{`mROOM_close({ room_id })`}</Pre>
 
+      <H3>mROOM_voice_join</H3>
+      <Pre lang="ts">{`mROOM_voice_join({
+  room_id: string,
+  video?: boolean,   // default false (audio-only)
+})
+→ { room_id, token, url, identity, mode }`}</Pre>
+      <P>
+        Full-duplex <strong>group</strong> voice — everyone can talk (no walkie-talkie floor; that&apos;s{' '}
+        <code className="font-mono text-radar-green">mTALK</code>). Returns media credentials for the room&apos;s
+        audio/video transport. Be a room member first (<code className="font-mono">mROOM_join</code> or a guest link).
+      </P>
+
       <H2>Providers</H2>
       <Ul>
         <li>LiveKit (forked) for ptt + video</li>

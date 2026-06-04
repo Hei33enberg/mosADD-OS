@@ -17,6 +17,11 @@ import { invokeFunction, readSupabaseEnv } from "../providers/supabase.js";
 
 const RoomId = z.string().min(1).describe("Private room id (UUID).");
 
+const mROOM_voice_join_input = z.object({
+  room_id: RoomId,
+  video: z.boolean().optional().describe("Request video instead of audio-only. Default false."),
+});
+
 const mROOM_create_input = z.object({
   ttl_seconds: z
     .number()
@@ -139,6 +144,25 @@ async function mROOM_create_guest_link(
   };
 }
 
+async function mROOM_voice_join(
+  input: z.infer<typeof mROOM_voice_join_input>,
+  ctx: MosaddToolContext,
+): Promise<{ room_id: string; token: string; url: string; identity: string; mode: "audio" | "video" }> {
+  // Full-duplex GROUP voice in an mROOM. Audio rides the VoiceProvider's media
+  // transport (LiveKit by default) — same minting path as mTALK/mDM voice, but
+  // no floor control (everyone can talk). Join the membership first via
+  // mROOM_join (or a guest link) so you're authorized in the room.
+  const ticket = await ctx.providers.voice.joinTicket(input.room_id);
+  ctx.log("debug", "mROOM_voice_join", { room_id: ticket.roomId, identity: ticket.identity });
+  return {
+    room_id: ticket.roomId,
+    token: ticket.token,
+    url: ticket.url,
+    identity: ticket.identity,
+    mode: input.video ? "video" : "audio",
+  };
+}
+
 // ---- Registration ----
 
 export const mroomTools: MosaddTool[] = [
@@ -185,5 +209,13 @@ export const mroomTools: MosaddTool[] = [
     description: "List private rooms the current user belongs to.",
     inputSchema: mROOM_list_input,
     handler: mROOM_list as MosaddTool["handler"],
+  },
+  {
+    name: "mROOM_voice_join",
+    requires: "network",
+    description:
+      "Join an mROOM's full-duplex GROUP voice (everyone can talk — no walkie-talkie floor; that's mTALK). Returns media credentials (token + url) for the room's audio/video transport. Be a room member first (mROOM_join or a guest link). Set video:true for video.",
+    inputSchema: mROOM_voice_join_input,
+    handler: mROOM_voice_join as MosaddTool["handler"],
   },
 ];

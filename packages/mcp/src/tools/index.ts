@@ -7,6 +7,7 @@
 
 import type { MosaddTool } from "../types.js";
 import { mdmTools } from "./mdm.js";
+import { mdmVoiceTools } from "./mdm-voice.js";
 import { mircTools } from "./mirc.js";
 import { mircMembersTools } from "./mirc-members.js";
 import { mircMessagesTools } from "./mirc-messages.js";
@@ -22,6 +23,7 @@ import { makeCapabilitiesTool } from "./capabilities.js";
 /** The m* channel tools (everything except the meta discovery tool). */
 const channelTools: MosaddTool[] = [
   ...mdmTools,
+  ...mdmVoiceTools,
   ...mircTools,
   ...mircMembersTools,
   ...mircMessagesTools,

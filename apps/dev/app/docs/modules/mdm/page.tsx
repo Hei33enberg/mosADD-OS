@@ -3,14 +3,14 @@ import { Prose, H1, Lead, H2, H3, P, Ul, Pre, Anchor } from '../../../_component
 
 export const metadata: Metadata = {
   title: 'mDM',
-  description: 'Direct messages — multi-thread per contact, E2E optional.',
+  description: 'Direct messages + 1:1 voice — multi-thread per contact, E2E optional.',
 };
 
 export default function MdmPage() {
   return (
     <Prose>
       <H1>mDM</H1>
-      <Lead>Direct messages — multi-thread per contact, E2E optional.</Lead>
+      <Lead>Direct messages + 1:1 voice — multi-thread per contact, E2E optional.</Lead>
 
       <P>
         <code className="font-mono text-radar-green">mDM</code> is the direct-messaging OS module.{' '}
@@ -43,6 +43,45 @@ export default function MdmPage() {
   action: 'accept' | 'reject',
 })
 → { ok }`}</Pre>
+
+      <H2>1:1 voice &amp; voice notes</H2>
+      <P>
+        mDM is also the home of the <strong>ordinary 1:1 call</strong> — full-duplex, phone-style. This is NOT
+        walkie-talkie (that&apos;s <code className="font-mono text-radar-green">mTALK</code>, half-duplex floor control) and NOT the
+        phone network (that&apos;s <code className="font-mono text-radar-green">mCALL</code> / PSTN). Audio rides the VoiceProvider&apos;s
+        media transport (LiveKit by default); the tools handle the room and the invite/hangup signalling over the DM thread.
+      </P>
+
+      <H3>mDM_call_start</H3>
+      <Pre lang="ts">{`mDM_call_start({
+  to: string,            // contact identity id
+  video?: boolean,       // default false (audio-only)
+  thread_label?: string,
+})
+→ { room_id, token, url, identity, mode, invited, thread_id }
+// creates the room, returns join creds, AND drops a call_invite in the DM thread`}</Pre>
+
+      <H3>mDM_call_answer</H3>
+      <Pre lang="ts">{`mDM_call_answer({ room_id: string })
+→ { room_id, token, url, identity }   // join creds for the same room`}</Pre>
+
+      <H3>mDM_call_end</H3>
+      <Pre lang="ts">{`mDM_call_end({
+  room_id: string,
+  to?: string,           // also drop a call_end (hangup) control message
+  thread_label?: string,
+})
+→ { room_id, signalled }`}</Pre>
+
+      <H3>mDM_voice_note</H3>
+      <Pre lang="ts">{`mDM_voice_note({
+  to: string,
+  audio_url: string,     // already-uploaded clip
+  duration_ms?: number,
+  mime?: string,         // default audio/ogg
+  thread_label?: string,
+})
+→ { message_id, thread_id }   // fire-and-forget async voice`}</Pre>
 
       <H2>E2E encryption</H2>
       <P>

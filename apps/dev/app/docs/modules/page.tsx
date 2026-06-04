@@ -21,9 +21,9 @@ export default function ModulesPage() {
       <Table
         headers={['Module', 'Description', 'Status']}
         rows={[
-          [<Anchor key="mdm" href="/docs/modules/mdm">mDM</Anchor>, 'Encrypted 1:1 — Ed25519 identity, forward secrecy, self-destruct', 'alpha'],
+          [<Anchor key="mdm" href="/docs/modules/mdm">mDM</Anchor>, 'Encrypted 1:1 text + full-duplex voice/video — Ed25519 identity, forward secrecy', 'alpha'],
           [<Anchor key="mirc" href="/docs/modules/mirc">mIRC</Anchor>, 'Persistent encrypted channels (Discord/Slack semantics)', 'alpha'],
-          [<Anchor key="mroom" href="/docs/modules/mroom">mROOM</Anchor>, 'Ephemeral rooms + no-account guest links', 'alpha'],
+          [<Anchor key="mroom" href="/docs/modules/mroom">mROOM</Anchor>, 'Ephemeral rooms + group voice + no-account guest links', 'alpha'],
           [<Anchor key="mail" href="/docs/modules/mail">mAIL</Anchor>, 'Encrypted mail with tracking, priority + auto-destruct', 'alpha'],
           [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, 'Push-to-talk with LLM-in-room support', 'alpha'],
           [<Anchor key="mkb" href="/docs/modules/mkb">mKB</Anchor>, 'Encrypted knowledge base — semantic recall (RAG)', 'alpha'],
