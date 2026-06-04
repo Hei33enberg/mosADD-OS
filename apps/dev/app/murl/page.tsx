@@ -77,7 +77,7 @@ export default function Channel0Page() {
 
           <div className="mt-8 flex flex-wrap gap-3">
             <a
-              href="https://github.com/Hei33enberg/mosadd-os/tree/main/apps/murl-ext"
+              href="https://github.com/Hei33enberg/mosadd-os/tree/main/apps/channel0-ext"
               target="_blank"
               rel="noreferrer"
               className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
@@ -85,7 +85,7 @@ export default function Channel0Page() {
               Install (Chrome) →
             </a>
             <a
-              href="https://github.com/Hei33enberg/mosadd-os/tree/main/apps/murl-ext"
+              href="https://github.com/Hei33enberg/mosadd-os/tree/main/apps/channel0-ext"
               target="_blank"
               rel="noreferrer"
               className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
@@ -127,7 +127,7 @@ export default function Channel0Page() {
             <div className="font-display text-lg">Grab the build</div>
             <p className="mt-2 text-sm text-muted-foreground">
               Clone the repo and run <span className="font-mono text-primary">npm run build</span> in
-              <span className="font-mono"> apps/murl-ext/</span>, or download the zipped <span className="font-mono">dist/</span> from releases.
+              <span className="font-mono"> apps/channel0-ext/</span>, or download the zipped <span className="font-mono">dist/</span> from releases.
             </p>
           </div>
           <div className="rounded-none border border-border p-5">

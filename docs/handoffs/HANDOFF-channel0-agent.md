@@ -9,7 +9,7 @@ P0:
 1. **Reconnect WS** — `src/shared/chat-shell.ts` (`openChannelSocket`/`onClose`): po zerwaniu sieci socket nie wstaje, a UI dalej pozwala pisać → wiadomości giną po cichu. Dodaj exponential backoff (1/2/4/8s, max 60) + widoczny stan „rozłączono / łączę ponownie".
 2. **Odświeżanie tokenu** — `src/lib/client.ts`: JWT w sub-protokole WS żyje 5 min, brak re-mint → sesja umiera. Re-mint ~30 s przed `exp` (ponowny `channel0-join`) albo obsłuż sygnał re-auth z Workera.
 3. **CWS submission** — listing (opis <10 KB z ujawnieniem danych: device-token, transmisja wiadomości do Worker→Supabase), 3–4 zrzuty (trending board, czat, ustawienia), kategoria Productivity. Promo 440×280 już masz.
-4. **RENAME `apps/channel0-ext` → `apps/murl-ext`** — publiczna marka to **mURL**, a strona mosadd.dev już linkuje do `github.com/.../apps/murl-ext` (landing + privacy). Po rename te linki zaczną działać. (Jeśli z jakiegoś powodu NIE robisz rename — napisz mi, podmienię linki na `channel0-ext`.)
+4. ~~RENAME~~ **NIE RENAME — anulowane.** Per founder decision (state_current.md, naming convention): user-facing = mURL, ale **ścieżki/kod zostają `channel0-*`** (rename = redeploy + CWS re-review + verified-DNS owners tracą weryfikację = zero wartości). **JA już podmieniłem linki na stronie na `apps/channel0-ext`** — nic nie rób, zostaw `apps/channel0-ext`.
 
 P1:
 5. PoW nonce → `crypto.getRandomValues()` (`src/lib/pow.ts:~59`, teraz `Math.random()`).
