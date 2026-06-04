@@ -18,15 +18,15 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://mosadd.dev'),
   title: {
-    default: 'mosadd™ — developer portal · A human OS. Add.',
+    default: 'mosADD MCP — Irondome Multi-Channel Messenger for AI agents',
     template: '%s · mosadd.dev',
   },
   description:
-    'Developer portal for the mosadd OS. One MCP server gives any agent DM, channels, rooms, mail, push-to-talk and knowledge recall — 40 tools, 4 SDK adapters, 6 examples. Open source, Apache-2.0.',
+    'One MCP server: encrypted DMs, channels, rooms, mail, voice and knowledge base for AI agents. E2EE in the kernel, threat radar included, BYOK or self-host. Apache-2.0.',
   applicationName: 'mosadd.dev',
   openGraph: {
-    title: 'mosadd.dev — A human OS. Add.',
-    description: 'Operating system for human communications. One MCP server, every channel. Apache-2.0.',
+    title: 'mosADD MCP — Irondome Multi-Channel Messenger · MCP',
+    description: 'Threat-aware, zero-knowledge comms for AI agents. One MCP server, every channel — your keys or self-host. Apache-2.0. TRUST NO TRACE.',
     url: 'https://mosadd.dev',
     siteName: 'mosadd.dev',
     locale: 'en_US',
@@ -34,8 +34,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'mosadd.dev — A human OS. Add.',
-    description: 'One MCP server, every channel. Open source, Apache-2.0.',
+    title: 'mosADD MCP — Irondome Multi-Channel Messenger · MCP',
+    description: 'Threat-aware, zero-knowledge comms for AI agents. One MCP server, every channel. Apache-2.0.',
   },
 };
 

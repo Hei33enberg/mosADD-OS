@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = 'mosadd — A human OS. Add.';
+export const alt = 'mosADD — Irondome Multi-Channel Messenger · MCP';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -36,18 +36,19 @@ export default async function OpengraphImage() {
           }}
         />
         <div style={{ display: 'flex', alignItems: 'flex-start', fontSize: 30, letterSpacing: '0.22em', fontWeight: 700 }}>
-          <span>mosadd</span>
+          <span>mos</span>
+          <span style={{ color: GREEN }}>ADD</span>
           <span style={{ color: GREEN, fontSize: 16, marginLeft: 4 }}>™</span>
           <span style={{ color: '#666', fontSize: 22, marginLeft: 16, letterSpacing: '0.3em' }}>/DEV</span>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
-          <div style={{ fontSize: 128, fontWeight: 700, lineHeight: 0.98, letterSpacing: '-0.03em', display: 'flex', flexDirection: 'column' }}>
-            <span>A human OS.</span>
-            <span style={{ color: GREEN }}>Add.</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+          <div style={{ fontWeight: 700, lineHeight: 1.0, letterSpacing: '0.02em', display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: 116 }}>IRONDOME</span>
+            <span style={{ color: GREEN, fontSize: 50, letterSpacing: '0.04em' }}>MULTI-CHANNEL MESSENGER · MCP</span>
           </div>
-          <div style={{ fontSize: 27, color: '#9a9a9a', maxWidth: 960, lineHeight: 1.35 }}>
-            One MCP server, every channel. mDM · mIRC · mROOM · mAIL · mTALK · mCALL · mIRL
+          <div style={{ fontSize: 26, color: '#9a9a9a', maxWidth: 980, lineHeight: 1.35 }}>
+            Threat-aware, zero-knowledge comms for AI agents. E2EE in the kernel · BYOK or self-host.
           </div>
         </div>
 

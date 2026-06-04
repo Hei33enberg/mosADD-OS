@@ -33,7 +33,7 @@ const ROUTES: Array<{ path: string; priority: number; freq: MetadataRoute.Sitema
   { path: '/embed', priority: 0.9, freq: 'weekly' },
   { path: '/embed/install', priority: 0.85, freq: 'weekly' },
   { path: '/embed/wordpress', priority: 0.9, freq: 'weekly' },
-  { path: '/murl', priority: 0.95, freq: 'weekly' },
+  { path: '/murl', priority: 0.3, freq: 'monthly' },
   { path: '/murl/privacy', priority: 0.4, freq: 'monthly' },
   { path: '/murl/abuse', priority: 0.5, freq: 'monthly' },
   { path: '/domains', priority: 0.85, freq: 'weekly' },

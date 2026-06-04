@@ -3,8 +3,7 @@ import { Logo } from './Logo';
 import { MobileNav } from './MobileNav';
 
 const navLinks = [
-  { href: '/embed', label: 'Embed' },
-  { href: '/murl', label: 'mURL', primary: true },
+  { href: '/embed', label: 'Embed', primary: true },
   { href: '/docs', label: 'Docs' },
   { href: '/docs/mcp', label: 'MCP' },
   { href: '/examples', label: 'Examples' },

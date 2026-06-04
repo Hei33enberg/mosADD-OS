@@ -27,6 +27,7 @@
   --comint: 270 80% 60%;
   --masint: 25 100% 55%;
   --radius: 0.25rem;
+  --ease-snap: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @theme inline {
@@ -173,7 +174,24 @@
   animation: scan-y 7s linear infinite;
 }
 
+/* ── Radar hero (ported from m0ssad-3 apps/web; animations via classes so
+      prefers-reduced-motion can disable them) ── */
+@keyframes radar-sweep { to { transform: rotate(360deg); } }
+@keyframes radar-ping { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(4.5); opacity: 0; } }
+@keyframes scan-fast { 0% { transform: translateY(-10%); } 100% { transform: translateY(100vh); } }
+@keyframes blip-pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+.radar-sweep-el { animation: radar-sweep 3.6s linear infinite; will-change: transform; }
+.radar-ping-el  { animation: radar-ping 3.6s ease-out infinite; will-change: transform, opacity; }
+.radar-scanline { animation: scan-fast 4s linear infinite; will-change: transform; }
+.radar-blip     { animation: blip-pulse 2.6s ease-in-out infinite; }
+
+/* Section reveal — fade + rise (tangernode-style; stagger via inline animation-delay) */
+@keyframes fade-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.fade-up { animation: fade-up 0.6s var(--ease-snap) both; }
+
 @media (prefers-reduced-motion: reduce) {
-  .term-cursor::after, .scan-sweep { animation: none; }
-  .scan-sweep { display: none; }
+  .term-cursor::after, .scan-sweep,
+  .radar-sweep-el, .radar-ping-el, .radar-scanline, .radar-blip, .fade-up { animation: none; }
+  .scan-sweep, .radar-scanline { display: none; }
+  .fade-up { opacity: 1; transform: none; }
 }
