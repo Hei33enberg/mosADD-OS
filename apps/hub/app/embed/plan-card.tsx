@@ -3,14 +3,17 @@ import { useState } from "react";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
-// Stripe price IDs (LIVE mode, acct_1T0CTEPBGTeHZsZK, LINEAR-2682).
-// Update here when prices change or new test-mode prices are added.
+// Stripe price IDs — mosADD account (acct_1TeaGi), the dedicated mosadd
+// account for BOTH mosadd.com and mosadd.dev (one account, one shared DB,
+// separate from CYMRU). Checkout flows through create-checkout-session, which
+// reads STRIPE_SECRET_KEY_MOSADD. Keep these in sync with
+// m0ssad-3/supabase/functions/_shared/dev-products.ts.
 const PRICES = {
-  pro: { id: "price_1Te6YLPBGTeHZsZKytNsQfhm", label: "Pro", monthly: 9 },
-  team: { id: "price_1Te6YLPBGTeHZsZK1HcuWevX", label: "Team", monthly: 29 },
-  // LINEAR-2753: brand-removal addon — Pro can buy this to drop the
-  // "powered by mosadd" badge. Team+ have it included.
-  brandRemoval: { id: "price_1Te6YMPBGTeHZsZKBCBeyIu5", label: "Remove badge", monthly: 3 },
+  pro: { id: "price_1TeagcLmuAqp3A8frR1OFg9M", label: "Pro", monthly: 9 },
+  team: { id: "price_1TeagdLmuAqp3A8fRxVVSW7x", label: "Team", monthly: 29 },
+  // brand-removal addon — Pro can buy this to drop the "powered by mosadd"
+  // badge. Team+ have it included.
+  brandRemoval: { id: "price_1TeagfLmuAqp3A8fzc3LbwFF", label: "Remove badge", monthly: 3 },
 };
 
 const CAP = { free: 1000, pro: 10_000, team: 100_000, enterprise: Infinity };

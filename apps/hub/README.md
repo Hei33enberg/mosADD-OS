@@ -5,7 +5,7 @@ The dashboard where a developer signs up, gets a `mosadd_sk_live_…` key, and s
 ## Architecture (MVP — LINEAR-2603)
 - **Auth:** Supabase magic-link (no password). User signs in → cookie session via `@supabase/ssr`.
 - **Keys:** dashboard calls `hub-keys` Supabase edge fn with the user JWT (POST/GET/DELETE) — shows the plaintext key ONCE.
-- **Billing:** `create-checkout-session` Supabase edge fn → Stripe checkout (dev products `prod_UcYD…` Pro / `prod_UcYN…` Team).
+- **Billing:** `create-checkout-session` Supabase edge fn → Stripe checkout on the dedicated mosADD account `acct_1TeaGi` (one account for mosadd.com + mosadd.dev; separate from CYMRU). Dev products `prod_UdsRp5…` Pro ($9) / `prod_UdsRtF…` Team ($29) / `prod_UdsRsS…` Brand-removal ($3). The EF reads `STRIPE_SECRET_KEY_MOSADD`, never the bare key.
 - **No DB writes from this app** — all state lives in Supabase via edge fns; portal is a thin shell.
 
 ## Routes
