@@ -4,10 +4,9 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getSupabase, SUPABASE_CONFIGURED } from '../../hub/supabaseClient';
 
-// Creator key-creation flow, served on mosadd.dev (apps/dev) instead of the
-// undeployed mosadd.dev/hub. Signs in with the same browser Supabase client the
-// /hub MCP-key page uses, then POSTs to the embed-keys edge function — the same
-// endpoint apps/hub used. One self-contained page: login → form → key + snippet.
+// Creator console, served on mosadd.dev (apps/dev) instead of the undeployed
+// hub.mosadd.com. Same browser Supabase client as /hub. One self-contained page:
+// login -> create key + list/revoke existing keys (embed-keys edge function).
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const EMBED_KEYS_ENDPOINT = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/embed-keys` : '';
@@ -19,6 +18,16 @@ type Created = {
   key: string;
   allowed_origins: string[];
   allowed_channels: string[];
+};
+
+type Key = {
+  id: string;
+  pk_prefix: string;
+  name: string | null;
+  allowed_channels: string[];
+  allowed_origins: string[];
+  created_at: string;
+  last_used_at: string | null;
 };
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -44,6 +53,9 @@ export default function NewEmbedKeyPage() {
   const [err, setErr] = useState('');
   const [created, setCreated] = useState<Created | null>(null);
 
+  // existing keys
+  const [keys, setKeys] = useState<Key[]>([]);
+
   useEffect(() => {
     if (!supabase) {
       setReady(true);
@@ -60,6 +72,29 @@ export default function NewEmbedKeyPage() {
     });
     return () => sub.subscription.unsubscribe();
   }, [supabase]);
+
+  const loadKeys = useCallback(async () => {
+    if (!token) return;
+    try {
+      const r = await fetch(EMBED_KEYS_ENDPOINT, { headers: { Authorization: `Bearer ${token}` } });
+      if (r.ok) setKeys((await r.json()).keys ?? []);
+    } catch {
+      /* ignore */
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (token) void loadKeys();
+  }, [token, loadKeys]);
+
+  async function revoke(id: string) {
+    if (!token) return;
+    await fetch(`${EMBED_KEYS_ENDPOINT}?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    await loadKeys();
+  }
 
   const google = useCallback(async () => {
     if (!supabase) return;
@@ -97,6 +132,7 @@ export default function NewEmbedKeyPage() {
       const data = await r.json();
       if (!r.ok) throw new Error(data?.error ?? 'create failed');
       setCreated(data as Created);
+      void loadKeys();
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : 'create failed');
     } finally {
@@ -195,24 +231,47 @@ export default function NewEmbedKeyPage() {
           </button>
         </div>
         <div className="mt-6 flex gap-3 text-sm">
-          <button onClick={() => setCreated(null)} className="text-primary hover:underline">+ Create another</button>
+          <button onClick={() => setCreated(null)} className="text-primary hover:underline">← Back to my embeds</button>
           <Link href="/embed/install" className="text-muted-foreground hover:text-foreground">Install guide →</Link>
         </div>
       </Shell>
     );
   }
 
-  // ── Form ──
+  // ── Console: existing keys + create form ──
   return (
     <Shell>
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl font-semibold">New embed</h1>
+          <h1 className="font-display text-3xl font-semibold">Your embeds</h1>
           <p className="text-sm text-muted-foreground">{email}</p>
         </div>
         <button onClick={() => supabase?.auth.signOut()} className="text-sm text-muted-foreground hover:text-foreground">Sign out</button>
       </div>
 
+      {keys.length > 0 && (
+        <div className="mb-10">
+          <div className="mb-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">Active keys</div>
+          <div className="divide-y divide-border border border-border">
+            {keys.map((k) => (
+              <div key={k.id} className="flex items-center justify-between px-4 py-3">
+                <div className="min-w-0">
+                  <div className="truncate text-sm text-foreground">{k.name || '(unnamed)'}</div>
+                  <code className="font-mono text-xs text-muted-foreground">{k.pk_prefix}… · #{k.allowed_channels.join(', ') || '—'}</code>
+                </div>
+                <button onClick={() => revoke(k.id)} className="ml-3 shrink-0 text-xs text-destructive/80 hover:text-destructive">revoke</button>
+              </div>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Free tier: 1,000 monthly chatters. <Link href="/pricing" className="text-primary hover:underline">Upgrade →</Link>
+          </p>
+        </div>
+      )}
+
+      <div className="mb-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+        {keys.length > 0 ? 'New embed' : 'Create your first embed'}
+      </div>
       <form onSubmit={submit} className="space-y-6">
         <div>
           <label className="mb-2 block text-xs uppercase tracking-[0.2em] text-muted-foreground">Name (only you see this)</label>
