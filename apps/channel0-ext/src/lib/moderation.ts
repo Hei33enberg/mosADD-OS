@@ -84,7 +84,7 @@ export function pushLinkHistory(text: string, history: number[]): number[] {
 // catch the most obvious slurs so the room is not the first thing newcomers
 // see when they open a fresh domain. Easily extensible via chrome.storage.
 
-const SOFT_BLOCKLIST = [
+const SOFT_BLOCKLIST: string[] = [
   // Keep this list short. The full list is the report flow + auto-hide.
   // (No slurs hard-coded here — the file is publicly visible source code.)
 ];
