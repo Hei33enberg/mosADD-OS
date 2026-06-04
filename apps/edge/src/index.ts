@@ -319,6 +319,8 @@ export class ChannelDO {
     const lines = text.split(/\r?\n/).length;
     if (lines > MSG_MAX_LINES) return "multiline_flood";
     if (new RegExp("(.)\\1{" + MSG_REPEAT_CHAR_RUN + ",}").test(text)) return "repeat_char";
+    // Repeated short pattern (e.g. "adadadad", "abcabcabc") — 1..5 char unit repeated 4+ times.
+    if (/(.{1,5})\1{3,}/.test(text)) return "repeat_pattern";
     const nonWs = text.replace(/\s+/g, "");
     if (nonWs.length >= MSG_DOMINANT_MIN_LEN) {
       const counts = new Map<string, number>();
