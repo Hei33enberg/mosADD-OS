@@ -1,15 +1,15 @@
 {
   "extName": {
-    "message": "channel 0 [mIRC] — with mosadd inside"
+    "message": "channel 0 [mIRC] â€” with mosadd inside"
   },
   "extShortName": {
     "message": "channel 0"
   },
   "extDescription": {
-    "message": "Anonimowy czat na żywo dla każdej domeny. Powered by mosadd."
+    "message": "Anonimowy czat na ĹĽywo dla kaĹĽdej domeny. Powered by mosadd."
   },
   "actionTitle": {
-    "message": "channel 0 — otwórz czat dla tej domeny"
+    "message": "channel 0 â€” otwĂłrz czat dla tej domeny"
   },
   "channelLabel": {
     "message": "channel 0"
@@ -18,7 +18,7 @@
     "message": "mIRC"
   },
   "disclaimer": {
-    "message": "Niezależny czat — niezwiązany z $domain$. Powered by $mosadd$.",
+    "message": "NiezaleĹĽny czat â€” niezwiÄ…zany z $domain$. Powered by $mosadd$.",
     "placeholders": {
       "domain": {
         "content": "$1"
@@ -29,7 +29,7 @@
     }
   },
   "welcome": {
-    "message": "witaj na #$domain$ — przywitaj się",
+    "message": "witaj na #$domain$ â€” przywitaj siÄ™",
     "placeholders": {
       "domain": {
         "content": "$1"
@@ -37,10 +37,10 @@
     }
   },
   "connecting": {
-    "message": "łączę"
+    "message": "Ĺ‚Ä…czÄ™"
   },
   "connected": {
-    "message": "połączono"
+    "message": "poĹ‚Ä…czono"
   },
   "live": {
     "message": "$count$ online",
@@ -51,19 +51,19 @@
     }
   },
   "disconnected": {
-    "message": "rozłączono"
+    "message": "rozĹ‚Ä…czono"
   },
   "youAre": {
-    "message": "jesteś jako"
+    "message": "jesteĹ› jako"
   },
   "poweredBy": {
     "message": "powered by mosadd"
   },
   "send": {
-    "message": "wyślij"
+    "message": "wyĹ›lij"
   },
   "composePlaceholder": {
-    "message": "powiedz coś jako $nick$",
+    "message": "powiedz coĹ› jako $nick$",
     "placeholders": {
       "nick": {
         "content": "$1"
@@ -71,13 +71,13 @@
     }
   },
   "errBlocked": {
-    "message": "ten kanał został wyłączony przez właściciela domeny."
+    "message": "ten kanaĹ‚ zostaĹ‚ wyĹ‚Ä…czony przez wĹ‚aĹ›ciciela domeny."
   },
   "errRateLimited": {
-    "message": "za szybko — spróbuj za chwilę."
+    "message": "za szybko â€” sprĂłbuj za chwilÄ™."
   },
   "errGeneric": {
-    "message": "nie udało się połączyć ($code$).",
+    "message": "nie udaĹ‚o siÄ™ poĹ‚Ä…czyÄ‡ ($code$).",
     "placeholders": {
       "code": {
         "content": "$1"
@@ -85,13 +85,13 @@
     }
   },
   "popupTagline": {
-    "message": "Anonimowy czat na żywo dla każdej domeny."
+    "message": "Anonimowy czat na ĹĽywo dla kaĹĽdej domeny."
   },
   "popupYouAreOn": {
-    "message": "Jesteś na"
+    "message": "JesteĹ› na"
   },
   "popupNickLabel": {
-    "message": "Twój nick na tej domenie"
+    "message": "TwĂłj nick na tej domenie"
   },
   "popupSave": {
     "message": "zapisz nick"
@@ -112,28 +112,28 @@
     "message": "Side panel"
   },
   "settingOpenModeInline": {
-    "message": "Pływające okno"
+    "message": "PĹ‚ywajÄ…ce okno"
   },
   "settingBubblePos": {
-    "message": "Pozycja bąbla"
+    "message": "Pozycja bÄ…bla"
   },
   "settingBubbleDrag": {
-    "message": "Złap bąbel i przeciągnij gdzie chcesz."
+    "message": "ZĹ‚ap bÄ…bel i przeciÄ…gnij gdzie chcesz."
   },
   "settingBubbleReset": {
-    "message": "Resetuj pozycję bąbla"
+    "message": "Resetuj pozycjÄ™ bÄ…bla"
   },
   "prejoinLabel": {
-    "message": "Dołącz anonimowo — podaj nick:"
+    "message": "DoĹ‚Ä…cz anonimowo â€” podaj nick:"
   },
   "prejoinPlaceholder": {
     "message": "np. Janek_z_Krakowa"
   },
   "prejoinGo": {
-    "message": "Wejdź"
+    "message": "WejdĹş"
   },
   "prejoinAlt": {
-    "message": "albo załóż stałe konto mosadd"
+    "message": "albo zaĹ‚ĂłĹĽ staĹ‚e konto mosadd"
   },
   "tooltipDockLeft": {
     "message": "Zadokuj po lewej"
@@ -148,6 +148,6 @@
     "message": "Zamknij"
   },
   "tooltipTrending": {
-    "message": "Trenduj�ce pokoje"
+    "message": "Trendujące pokoje"
   }
 }
