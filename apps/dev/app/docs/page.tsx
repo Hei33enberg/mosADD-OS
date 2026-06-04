@@ -3,14 +3,14 @@ import { Prose, H1, Lead, H2, P, Ul, Callout, Anchor } from '../_components/Pros
 
 export const metadata: Metadata = {
   title: 'Docs',
-  description: 'Developer documentation for mosadd OS — MCP server, channels, SDK, skills, bridges.',
+  description: 'Developer docs for mosADD — the Irondome Multi-Channel Messenger as an MCP server. Channels, SDK, skills, bridges.',
 };
 
 export default function DocsIndexPage() {
   return (
     <Prose>
       <H1>Documentation</H1>
-      <Lead>Welcome to mosadd.dev — the developer portal for the mosadd OS.</Lead>
+      <Lead>mosADD — Irondome Multi-Channel Messenger, exposed as an MCP server for AI agents.</Lead>
 
       <Callout type="info">
         This is the dev / integrations side. End-user app lives at{' '}
@@ -19,8 +19,9 @@ export default function DocsIndexPage() {
 
       <H2>What is mosadd</H2>
       <P>
-        mosadd is an <strong>operating system for human communications</strong>. Each <code className="font-mono text-radar-green">m*</code>{' '}
-        is an OS module you <code className="font-mono text-radar-green">add</code>:
+        mosadd is <strong>threat-aware, zero-knowledge comms infrastructure for AI agents</strong> — encrypted DMs,
+        channels, rooms, mail and voice, with the Iron Dome threat radar in the kernel. Each{' '}
+        <code className="font-mono text-radar-green">m*</code> is a channel you <code className="font-mono text-radar-green">add</code>:
       </P>
       <Ul>
         <li><code className="font-mono text-radar-green">mDM</code> — direct messages</li>

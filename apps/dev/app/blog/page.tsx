@@ -4,16 +4,16 @@ import { Prose, H1, Lead } from '../_components/Prose';
 
 export const metadata: Metadata = {
   title: 'Blog',
-  description: 'Notes from building the open OS for agent communications.',
+  description: 'Engineering notes from building mosADD — encrypted, threat-aware comms for AI agents.',
 };
 
 const posts = [
   {
     slug: 'channel0-every-domain-is-a-room',
-    title: 'mURL: how we turned every domain on the web into an IRC room in a weekend',
+    title: 'One Durable Object per channel: scaling chat to every domain on the web',
     date: '2026-06-03',
     blurb:
-      'A browser extension. Open it on zalando.pl and you are in #zalando.pl with everyone there right now. mURL joins mIRC and mIRL on mosadd.dev — same Durable Object per channel, same Supabase ingest. Here is how it works under the hood.',
+      'How the Cloudflare Worker + Durable Object backbone behind mIRC scales to a channel per domain — hibernatable WebSocket fan-out, ring-buffered history, async flush to Supabase as the system of record. The architecture, under the hood.',
   },
   {
     slug: 'mosadd-vs-twilio-agent-connect',
@@ -29,7 +29,7 @@ export default function BlogIndex() {
     <div className="max-w-3xl mx-auto px-6 py-14">
       <Prose>
         <H1>Blog</H1>
-        <Lead>Notes from building the open OS for agent communications.</Lead>
+        <Lead>Engineering notes from building mosADD — encrypted, threat-aware comms for AI agents.</Lead>
       </Prose>
       <div className="mt-10 divide-y divide-border border-y border-border">
         {posts.map((p) => (
