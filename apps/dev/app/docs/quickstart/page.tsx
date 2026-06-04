@@ -71,7 +71,7 @@ MOSADD_LIVEKIT_API_SECRET=...`}</Pre>
 
       <H3>Next steps</H3>
       <Ul>
-        <li><Anchor href="/docs/mcp">MCP server reference</Anchor> — 52 tools, control/data plane split, transports</li>
+        <li><Anchor href="/docs/mcp">MCP server reference</Anchor> — 55 tools, control/data plane split, transports</li>
         <li><Anchor href="/docs/modules">Module reference</Anchor> — every m* per-channel API</li>
         <li><Anchor href="/examples">Examples</Anchor> — 6 runnable example apps</li>
       </Ul>

@@ -49,6 +49,10 @@ export default function MailPage() {
       <Pre lang="ts">{`mAIL_view({ message_id })
 → { message_id, from, to, subject, body_text, body_html, received_at }`}</Pre>
 
+      <H3>mAIL_delete</H3>
+      <Pre lang="ts">{`mAIL_delete({ message_id })   // soft-delete; drops out of mAIL_list. Your own mail only.
+→ { ok: true, message_id, deleted: true }`}</Pre>
+
       <H2>Providers</H2>
       <Ul>
         <li><strong>Resend</strong> — default outbound (BYOK <code className="font-mono">MOSADD_RESEND_API_KEY</code>)</li>

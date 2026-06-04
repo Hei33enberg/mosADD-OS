@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { RadarField } from './RadarField';
 
 const stats = [
-  { v: '52', l: 'MCP tools' },
+  { v: '55', l: 'MCP tools' },
   { v: '7', l: 'm* channels' },
   { v: '4', l: 'SDK adapters' },
   { v: 'Apache-2.0', l: 'license' },

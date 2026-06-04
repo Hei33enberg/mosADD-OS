@@ -44,6 +44,18 @@ export default function MdmPage() {
 })
 → { ok }`}</Pre>
 
+      <H3>mDM_edit</H3>
+      <Pre lang="ts">{`mDM_edit({
+  message_id: string,   // from mDM_list
+  new_text: string,
+})
+→ { message_id, edited: true }
+// E2EE threads: edit stores a server-readable body — prefer delete + re-send`}</Pre>
+
+      <H3>mDM_delete</H3>
+      <Pre lang="ts">{`mDM_delete({ message_id: string })   // soft-delete, hides for both sides
+→ { message_id, deleted: true }`}</Pre>
+
       <H2>1:1 voice &amp; voice notes</H2>
       <P>
         mDM is also the home of the <strong>ordinary 1:1 call</strong> — full-duplex, phone-style. This is NOT

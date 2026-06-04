@@ -11,7 +11,7 @@ Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha-orange)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-52%20live-00ff6a)](packages/mcp)
+[![Tools](https://img.shields.io/badge/tools-55%20live-00ff6a)](packages/mcp)
 [![Release](https://img.shields.io/github/v/release/Hei33enberg/mosadd-os?include_prereleases&label=release)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![mosadd.dev](https://img.shields.io/badge/site-mosadd.dev-5af082)](https://mosadd.dev)
 
@@ -27,7 +27,7 @@ Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and 
 npx -y @mosadd/mcp
 ```
 
-…starts an MCP server with **52 tools** across 7 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send email, run a push-to-talk room, place an outbound PSTN call, or recall facts from its own knowledge base — all through your own mosadd backend (BYOK).
+…starts an MCP server with **55 tools** across 7 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send email, run a push-to-talk room, place an outbound PSTN call, or recall facts from its own knowledge base — all through your own mosadd backend (BYOK).
 
 | Channel | Tools | Highlight |
 |---|---|---|
@@ -39,7 +39,7 @@ npx -y @mosadd/mcp
 | **mCALL** (2) | `mCALL_dial`, `mCALL_status` | Outbound PSTN — anonymous numbers + voice vocoder |
 | **mKB** (2) | `mKB_ingest`, `mKB_search` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
 
-Plus the `comms_capabilities` discovery tool — **52 tools across 7 live modules** total. Roadmap: **mIRL** (live-stream after-party) and bridges to Telegram / Discord / Matrix / Signal / Slack.
+Plus the `comms_capabilities` discovery tool — **55 tools across 7 live modules** total. Roadmap: **mIRL** (live-stream after-party) and bridges to Telegram / Discord / Matrix / Signal / Slack.
 
 ## Quickstart (60 seconds)
 

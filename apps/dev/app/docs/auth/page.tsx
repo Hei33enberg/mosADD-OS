@@ -114,7 +114,7 @@ Password:          ••••••••`}</Pre>
 
       <P>
         Next: <Anchor href="/docs/quickstart">Quickstart</Anchor> ·{' '}
-        <Anchor href="/docs/mcp">52-tool reference</Anchor> · <Anchor href="/embed">embed widget</Anchor>
+        <Anchor href="/docs/mcp">55-tool reference</Anchor> · <Anchor href="/embed">embed widget</Anchor>
       </P>
     </Prose>
   );

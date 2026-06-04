@@ -21,7 +21,7 @@ export interface MosaddOptions {
   /**
    * Which OS modules to expose. Each module name is the m\* prefix without
    * the underscore — `'mDM'`, `'mROOM'`, etc. Omit to expose ALL shipped
-   * tools (52 today, more in follow-ups).
+   * tools (55 today, more in follow-ups).
    *
    * Example: `modules: ['mDM', 'mROOM']` exposes only DM + room tools.
    */
