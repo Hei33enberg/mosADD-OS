@@ -21,13 +21,14 @@ export default function ModulesPage() {
       <Table
         headers={['Module', 'Description', 'Status']}
         rows={[
-          [<Anchor key="mdm" href="/docs/modules/mdm">mDM</Anchor>, 'Direct messages with multi-thread per contact', 'alpha'],
-          [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, 'Push-to-talk with LLM-in-room support', 'design'],
-          [<Anchor key="mail" href="/docs/modules/mail">mAIL</Anchor>, 'Email — every user gets <id>@mosadd.com', 'design'],
-          ['mCALL', 'PSTN out with anonymous numbers + vocoder', 'design'],
-          [<Anchor key="mirc" href="/docs/modules/mirc">mIRC</Anchor>, 'Persistent channels (Discord/Slack semantics)', 'design'],
-          ['mIRL', 'Live-stream after-party (YT/TikTok creators)', 'design'],
-          [<Anchor key="mroom" href="/docs/modules/mroom">mROOM</Anchor>, 'Ephemeral rooms + no-account join links', 'design'],
+          [<Anchor key="mdm" href="/docs/modules/mdm">mDM</Anchor>, 'Encrypted 1:1 — Ed25519 identity, forward secrecy, self-destruct', 'alpha'],
+          [<Anchor key="mirc" href="/docs/modules/mirc">mIRC</Anchor>, 'Persistent encrypted channels (Discord/Slack semantics)', 'alpha'],
+          [<Anchor key="mroom" href="/docs/modules/mroom">mROOM</Anchor>, 'Ephemeral rooms + no-account guest links', 'alpha'],
+          [<Anchor key="mail" href="/docs/modules/mail">mAIL</Anchor>, 'Encrypted mail with tracking, priority + auto-destruct', 'alpha'],
+          [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, 'Push-to-talk with LLM-in-room support', 'alpha'],
+          [<Anchor key="mkb" href="/docs/modules/mkb">mKB</Anchor>, 'Encrypted knowledge base — semantic recall (RAG)', 'alpha'],
+          [<Anchor key="mcall" href="/docs/modules/mcall">mCALL</Anchor>, 'PSTN out with anonymous numbers + vocoder', 'design'],
+          [<Anchor key="mirl" href="/docs/modules/mirl">mIRL</Anchor>, 'Live-stream after-party (YT/TikTok creators)', 'design'],
         ]}
       />
 
