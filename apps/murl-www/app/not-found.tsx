@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { InstallCTA } from './_components/InstallCTA';
+import { BrowserButtons } from './_components/BrowserButtons';
 
 export default function NotFound() {
   return (
@@ -13,10 +13,10 @@ export default function NotFound() {
         <span className="font-mono text-foreground">/your-favourite-site.com</span> — or just add the
         extension and a room appears on every site you open.
       </p>
-      <div className="mt-8 flex flex-wrap gap-3">
-        <InstallCTA />
-        <Link href="/" className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50">
-          Back to home
+      <div className="mt-8 flex flex-col gap-4">
+        <BrowserButtons variant="compact" />
+        <Link href="/" className="text-sm text-primary underline underline-offset-4 hover:text-primary/80">
+          ← Back to home
         </Link>
       </div>
     </div>

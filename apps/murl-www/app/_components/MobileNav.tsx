@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { CHROME_STORE_URL, INSTALL_LABEL } from '../../lib/site';
+import { BrowserButtons } from './BrowserButtons';
 
 const links = [
   { href: '/#how', label: 'How it works' },
@@ -40,15 +40,9 @@ export function MobileNav() {
                 {l.label}
               </Link>
             ))}
-            <a
-              href={CHROME_STORE_URL}
-              target="_blank"
-              rel="noreferrer"
-              onClick={() => setOpen(false)}
-              className="mt-2 bg-primary px-3 py-2.5 text-center font-medium text-primary-foreground"
-            >
-              {INSTALL_LABEL} →
-            </a>
+            <div className="mt-3" onClick={() => setOpen(false)}>
+              <BrowserButtons variant="compact" />
+            </div>
           </nav>
         </div>
       ) : null}

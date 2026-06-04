@@ -5,3 +5,5 @@
 *.tsbuildinfo
 next-env.d.ts.timestamp
 .env*.local
+
+.vercel

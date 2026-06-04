@@ -149,3 +149,83 @@
   .fade-up, .live-dot, .msg-in, .caret::after, .soft-float { animation: none; }
   .fade-up, .msg-in { opacity: 1; transform: none; }
 }
+
+/* =============================================================================
+ * EXTENSION-FIDELITY CSS — ported 1:1 from the shipped extension
+ * (apps/channel0-ext/src/shared/chat-styles.ts + src/content/index.ts).
+ * Used by LiveChatHero + ExtensionDemo so the on-site demo is pixel-identical
+ * to the real mURL side panel + floating bubble. Scoped under .c0-* classes.
+ * ============================================================================= */
+
+.c0-chat { position: relative; display: flex; flex-direction: column; overflow: hidden;
+  background: #000; color: #fff;
+  font-family: ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  font-size: 12px; line-height: 1.45; height: 100%; min-height: 0; }
+.c0-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(0,255,122,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,122,0.06) 1px, transparent 1px);
+  background-size: 24px 24px; }
+.c0-chat > :not(.c0-bg) { position: relative; z-index: 1; }
+
+.c0-head { display: flex; align-items: center; gap: 6px; padding: 6px 10px; min-height: 26px;
+  background: #000; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.2); }
+.c0-head-title { font-weight: 700; letter-spacing: 0.04em; font-size: 12px;
+  min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: flex; align-items: center; gap: 4px; }
+.c0-head-title .c0-mirc { color: rgba(255,255,255,0.55); text-transform: lowercase; }
+.c0-head-title .c0-domain { color: #00ff7a; }
+.c0-head-live { display: inline-flex; align-items: center; gap: 3px; font-size: 10px;
+  color: rgba(255,255,255,0.4); margin-left: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+.c0-head-live .c0-dot { width: 5px; height: 5px; border-radius: 50%;
+  background: #00ff7a; box-shadow: 0 0 4px #00ff7a; animation: c0-pulse 1.6s ease-in-out infinite; }
+@keyframes c0-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.c0-head-spacer { flex: 1; }
+.c0-head-btn { background: transparent; color: rgba(255,255,255,0.5);
+  border: 1px solid rgba(255,255,255,0.15); width: 20px; height: 20px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center; line-height: 0; }
+.c0-head-btn svg { width: 11px; height: 11px; display: block; }
+
+.c0-notice { padding: 5px 10px; font-size: 10px; line-height: 1.4;
+  color: rgba(255,255,255,0.4); background: rgba(0,0,0,0.85);
+  border-bottom: 1px solid rgba(255,255,255,0.08); letter-spacing: 0.01em; }
+.c0-notice b { color: rgba(0,255,122,0.85); font-weight: 600; }
+
+.c0-feed { flex: 1; min-height: 0; overflow-y: auto; padding: 8px 10px;
+  display: flex; flex-direction: column; gap: 2px; }
+.c0-row { display: flex; gap: 6px; align-items: baseline; font-size: 12px; }
+.c0-time { color: rgba(255,255,255,0.3); font-size: 10px; flex-shrink: 0; min-width: 38px; }
+.c0-nick { font-weight: 700; color: #00ff7a; flex-shrink: 0; white-space: nowrap; }
+.c0-nick.is-me { color: #fff; }
+.c0-nick.is-host { color: #ffd23f; }
+.c0-text { color: #fff; word-break: break-word; white-space: pre-wrap; flex: 1; min-width: 0; }
+.c0-system .c0-nick { color: rgba(255,255,255,0.3); }
+.c0-system .c0-text { color: rgba(255,255,255,0.45); font-style: italic; }
+
+.c0-compose { display: flex; gap: 4px; padding: 8px 10px; background: #000;
+  border-top: 1px solid rgba(255,255,255,0.2); }
+.c0-compose input { flex: 1; min-width: 0; background: rgba(255,255,255,0.04); color: #fff;
+  border: 1px solid rgba(255,255,255,0.2); padding: 6px 8px; font-size: 12px; outline: none; font-family: inherit; }
+.c0-compose input::placeholder { color: rgba(255,255,255,0.25); }
+.c0-compose .c0-send { flex-shrink: 0; background: #00ff7a; color: #000; border: 1px solid #00ff7a;
+  padding: 0 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-family: inherit; }
+
+.c0-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 6px 10px; background: #000; border-top: 1px solid rgba(255,255,255,0.12);
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; }
+.c0-foot-you { color: rgba(255,255,255,0.4); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c0-foot-you b { color: rgba(255,255,255,0.7); }
+.c0-foot-brand { color: #00ff7a; font-weight: 700; white-space: nowrap; }
+
+/* Floating bubble (the draggable launcher) — from content/index.ts buildStyles(). */
+.c0-bubble { width: 56px; height: 56px; border-radius: 28px; background: #0a0a0a; color: #00ff7a;
+  border: 1px solid #1a1a1a; box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;
+  letter-spacing: .5px; user-select: none; font-family: ui-monospace, "JetBrains Mono", monospace; }
+.c0-bubble.has-people { box-shadow: 0 0 0 2px #00ff7a inset, 0 8px 24px rgba(0,0,0,.35); }
+.c0-bubble .c0-bubble-dot { width: 8px; height: 8px; border-radius: 4px; background: #00ff7a;
+  margin-right: 6px; box-shadow: 0 0 8px #00ff7a; }
+
+@media (prefers-reduced-motion: reduce) {
+  .c0-head-live .c0-dot { animation: none; }
+}

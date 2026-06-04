@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { CHROME_STORE_URL, INSTALL_LABEL, SITE_URL } from '../../lib/site';
+import { SITE_URL } from '../../lib/site';
+import { BrowserButtons } from '../_components/BrowserButtons';
 
 // Matches the extension content script's probe protocol (lib/content). The
 // extension only answers same-origin probes from allowed origins; until the
@@ -57,17 +58,10 @@ export function JoinController({ domain }: { domain: string }) {
 
       {hasExt !== true && (
         <>
-          <a
-            href={CHROME_STORE_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-none bg-primary px-5 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            {INSTALL_LABEL} →
-          </a>
+          <BrowserButtons variant="compact" />
           <Link
             href="/"
-            className="rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
+            className="self-center rounded-none border border-border px-5 py-3 text-foreground transition-colors hover:border-primary/50"
           >
             What is mURL?
           </Link>

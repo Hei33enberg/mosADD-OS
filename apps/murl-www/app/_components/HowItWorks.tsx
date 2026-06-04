@@ -1,4 +1,4 @@
-import { InstallCTA } from './InstallCTA';
+import { BrowserButtons } from './BrowserButtons';
 
 const steps = [
   {
@@ -58,7 +58,7 @@ export function HowItWorks() {
       </div>
 
       <div className="mt-10">
-        <InstallCTA />
+        <BrowserButtons variant="compact" />
       </div>
     </section>
   );

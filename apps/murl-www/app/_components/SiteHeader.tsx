@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Wordmark } from './Wordmark';
 import { MobileNav } from './MobileNav';
-import { InstallCTA } from './InstallCTA';
+import { BrowserButtons } from './BrowserButtons';
 
 const navLinks = [
   { href: '/#how', label: 'How it works' },
@@ -23,7 +23,7 @@ export function SiteHeader() {
               {l.label}
             </Link>
           ))}
-          <InstallCTA className="px-3 py-1.5 text-sm" />
+          <BrowserButtons variant="compact" />
         </nav>
         <MobileNav />
       </div>
