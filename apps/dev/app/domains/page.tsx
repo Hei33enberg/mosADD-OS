@@ -250,6 +250,21 @@ export default function DomainsPage() {
             />
           )}
 
+          {data.verified_at && (
+            <div className="rounded-none border border-border p-6">
+              <div className="mb-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">5. Analytics · free</div>
+              <p className="text-xs text-muted-foreground">
+                Message count, unique senders, hourly distribution for the last 24h + 7d. Owner-only.
+              </p>
+              <a
+                href={`/domains/${data.domain}/stats`}
+                className="mt-3 inline-block rounded-none border border-border px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/50"
+              >
+                View analytics →
+              </a>
+            </div>
+          )}
+
           <button
             onClick={reset}
             className="text-xs uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground"
