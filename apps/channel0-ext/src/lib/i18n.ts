@@ -11,7 +11,8 @@ export type MsgId =
   | "settingBubblePos" | "settingBubbleDrag" | "settingBubbleReset"
   | "settingAppearance" | "settingAppearanceHelp"
   | "prejoinLabel" | "prejoinPlaceholder" | "prejoinGo" | "prejoinAlt"
-  | "tooltipDockLeft" | "tooltipDockRight" | "tooltipSettings" | "tooltipClose" | "tooltipTrending" | "tooltipShare";
+  | "tooltipDockLeft" | "tooltipDockRight" | "tooltipSettings" | "tooltipClose" | "tooltipTrending" | "tooltipShare"
+  | "tooltipSkins" | "skinsTitle" | "skinAutoLabel" | "skinAutoHint";
 
 const FALLBACK: Record<MsgId, string> = {
   extName: "mURL — anonymous IRC for every URL · mosadd",
@@ -58,6 +59,10 @@ const FALLBACK: Record<MsgId, string> = {
   tooltipClose: "Close",
   tooltipTrending: "Trending rooms",
   tooltipShare: "Share this room",
+  tooltipSkins: "Theme",
+  skinsTitle: "Theme",
+  skinAutoLabel: "Match this site",
+  skinAutoHint: "adopt this site's colors",
 };
 
 export function t(id: MsgId, ...subs: string[]): string {

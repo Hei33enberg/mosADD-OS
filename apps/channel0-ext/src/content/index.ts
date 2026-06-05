@@ -11,7 +11,80 @@ import { mountChat, type MountHandle, type ToolbarAction } from "../shared/chat-
 import { CHAT_CSS } from "../shared/chat-styles";
 import { t } from "../lib/i18n";
 import { applySkinToShadow, setShadowSkin, normalizeSkinId } from "../skins/runtime/extension";
+import { SKINS } from "../skins/registry";
 import { SKIN_SYNC_EVENT } from "../skins/contract";
+import { extractAutoTokens, autoSkinCss } from "./auto-skin";
+
+// Synthetic "match this site" skin — extracted live from the host page (BM-1).
+const AUTO_ID = "auto";
+const AUTO_STYLE_ID = "m-skin-auto";
+
+/** Extract the host page's palette, inject it as the `auto` skin, activate it. */
+function applyAutoSkin(shadow: ShadowRoot, host: HTMLElement): void {
+  try {
+    const tokens = extractAutoTokens();
+    let st = shadow.getElementById(AUTO_STYLE_ID) as HTMLStyleElement | null;
+    if (!st) { st = document.createElement("style"); st.id = AUTO_STYLE_ID; shadow.appendChild(st); }
+    st.textContent = autoSkinCss(tokens);
+    host.setAttribute("data-murl-skin", AUTO_ID);
+    host.style.colorScheme = tokens.scheme;
+  } catch {
+    // Extraction failed → never ship a broken panel; fall back to the default.
+    shadow.getElementById(AUTO_STYLE_ID)?.remove();
+    setShadowSkin(host, "mosadd-dark");
+  }
+}
+
+/** Apply whichever skin is active: the synthetic auto skin or a static one. */
+function applyActiveSkin(shadow: ShadowRoot, host: HTMLElement, skinId: string): void {
+  if (skinId === AUTO_ID) { applyAutoSkin(shadow, host); return; }
+  // Switching to a static skin → drop the synthetic auto <style> (tidy hygiene;
+  // the selector wouldn't match anyway once the host attribute changes).
+  shadow.getElementById(AUTO_STYLE_ID)?.remove();
+  setShadowSkin(host, skinId);
+}
+
+/** Render the in-dock theme picker: "Match this site" (auto) + 8 static skins. */
+function renderSkinsOverlay(ov: HTMLElement, activeId: string): void {
+  ov.textContent = "";
+  const head = document.createElement("div"); head.className = "c0-skins-head";
+  const h3 = document.createElement("h3"); h3.textContent = t("skinsTitle");
+  const x = document.createElement("button"); x.className = "c0-skins-x"; x.type = "button";
+  x.setAttribute("aria-label", t("tooltipClose")); x.textContent = "×";
+  x.addEventListener("click", () => { ov.style.display = "none"; });
+  head.appendChild(h3); head.appendChild(x);
+  ov.appendChild(head);
+
+  // "Match this site" — the auto skin.
+  const auto = document.createElement("button");
+  auto.type = "button";
+  auto.className = "c0-skin-auto" + (activeId === AUTO_ID ? " active" : "");
+  const ic = document.createElement("span"); ic.className = "ic"; ic.textContent = "✦";
+  const tx = document.createElement("span"); tx.className = "tx";
+  const b = document.createElement("b"); b.textContent = t("skinAutoLabel");
+  const hint = document.createElement("span"); hint.textContent = t("skinAutoHint");
+  tx.appendChild(b); tx.appendChild(hint);
+  auto.appendChild(ic); auto.appendChild(tx);
+  auto.addEventListener("click", () => { void patchSettings({ skinId: AUTO_ID }); });
+  ov.appendChild(auto);
+
+  // Static skins grid.
+  const grid = document.createElement("div"); grid.className = "c0-skins-grid";
+  for (const skin of SKINS) {
+    const tile = document.createElement("button");
+    tile.type = "button";
+    tile.className = "c0-skin-tile" + (skin.id === activeId ? " active" : "");
+    const sw = document.createElement("div"); sw.className = "c0-skin-sw";
+    for (const c of [skin.preview.bg, skin.preview.fg, skin.preview.primary]) {
+      const i = document.createElement("i"); i.style.background = c; sw.appendChild(i);
+    }
+    const nm = document.createElement("div"); nm.className = "nm"; nm.textContent = skin.label;
+    tile.appendChild(sw); tile.appendChild(nm);
+    tile.addEventListener("click", () => { void patchSettings({ skinId: skin.id }); });
+    grid.appendChild(tile);
+  }
+  ov.appendChild(grid);
+}
 
 // Deep-link landing-page probe (LINEAR-2700). Allowed origins only.
 const PROBE_ORIGINS = new Set([
@@ -86,26 +159,42 @@ async function bootstrap(norm: { domain: string; slug: string }): Promise<void> 
   host.style.cssText = "all: initial; position: fixed; inset: 0; pointer-events: none; z-index: 2147483647;";
   const shadow = host.attachShadow({ mode: "closed" });
   shadow.appendChild(buildStyles());
-  // Stamp all skin CSS once + tag host with the current skin. Later changes
-  // just flip the data-attribute (no re-injection).
+  // Stamp all static skin CSS once; then activate the current skin (which may
+  // be the synthetic "auto" skin extracted from the host page).
   applySkinToShadow(shadow, host, settings.skinId);
+  applyActiveSkin(shadow, host, settings.skinId);
   if (document.body) document.body.appendChild(host);
   else document.addEventListener("DOMContentLoaded", () => document.body?.appendChild(host));
+  // Some sites set theme-color / brand CSS late — re-sample once shortly after.
+  if (settings.skinId === AUTO_ID) {
+    setTimeout(() => { void getSettings().then((s) => { if (s.skinId === AUTO_ID) applyAutoSkin(shadow, host); }); }, 1500);
+  }
 
-  // React to settings changes (skin picker in side panel or sync from site).
-  onSettingsChange((s) => { setShadowSkin(host, s.skinId); });
+  // React to skin changes from any surface (dock picker, side panel, site sync).
+  function onSkin(skinId: string): void {
+    applyActiveSkin(shadow, host, skinId);
+    if (panel) {
+      panel.root.classList.toggle("c0-matched", skinId === AUTO_ID);
+      if (panel.skinsOverlay && panel.skinsOverlay.style.display !== "none") renderSkinsOverlay(panel.skinsOverlay, skinId);
+    }
+  }
+  onSettingsChange((s) => onSkin(s.skinId));
 
   // Tell the murl.mosadd.com landing page about the current skin so the
   // hero / demo / trending board match the panel the user already sees.
+  // The synthetic "auto" skin is extension-only (the site has no host page to
+  // match) — never broadcast it; the site would ignore it anyway.
   if (location.host === "murl.mosadd.com") {
-    try { window.postMessage({ kind: SKIN_SYNC_EVENT, id: settings.skinId, source: "extension" }, location.origin); } catch { /* */ }
-    onSettingsChange((s) => {
-      try { window.postMessage({ kind: SKIN_SYNC_EVENT, id: s.skinId, source: "extension" }, location.origin); } catch { /* */ }
-    });
+    const sendSkin = (id: string) => {
+      if (id === AUTO_ID) return;
+      try { window.postMessage({ kind: SKIN_SYNC_EVENT, id, source: "extension" }, location.origin); } catch { /* */ }
+    };
+    sendSkin(settings.skinId);
+    onSettingsChange((s) => sendSkin(s.skinId));
   }
 
   const bubble = renderBubble(shadow, settings);
-  let panel: { handle: MountHandle; root: HTMLElement } | null = null;
+  let panel: { handle: MountHandle; root: HTMLElement; skinsOverlay: HTMLElement } | null = null;
 
   function closePanel(): void {
     if (panel) { panel.handle.destroy(); panel.root.remove(); panel = null; }
@@ -122,17 +211,36 @@ async function bootstrap(norm: { domain: string; slug: string }): Promise<void> 
     const grip = document.createElement("div"); grip.className = "c0-grip";
     const body = document.createElement("div"); body.className = "c0-dock-body";
     root.appendChild(grip); root.appendChild(body);
+    // Skins overlay (theme picker, incl. "Match this site"). Hidden until opened.
+    const skinsOverlay = document.createElement("div");
+    skinsOverlay.className = "c0-skins";
+    skinsOverlay.style.display = "none";
+    root.appendChild(skinsOverlay);
+    if (s.skinId === AUTO_ID) root.classList.add("c0-matched");
     shadow.appendChild(root);
     const dockAction: ToolbarAction = side === "right"
       ? { icon: "dock-left",  i18nKey: "tooltipDockLeft",  onClick: () => { void switchSide("left"); } }
       : { icon: "dock-right", i18nKey: "tooltipDockRight", onClick: () => { void switchSide("right"); } };
     const actions: ToolbarAction[] = [
+      { icon: "skins", i18nKey: "tooltipSkins", onClick: () => { void toggleSkins(); } },
       dockAction,
       { icon: "close", i18nKey: "tooltipClose", onClick: () => closePanel() },
     ];
     const handle = mountChat(body, { domain: norm.domain, actions, onPresence(c) { bubble.setCount(c); } });
-    panel = { handle, root };
+    panel = { handle, root, skinsOverlay };
     setupResize(grip, root, side);
+  }
+
+  async function toggleSkins(): Promise<void> {
+    if (!panel) return;
+    const ov = panel.skinsOverlay;
+    if (ov.style.display === "none") {
+      const st = await getSettings();
+      renderSkinsOverlay(ov, st.skinId);
+      ov.style.display = "block";
+    } else {
+      ov.style.display = "none";
+    }
   }
 
   async function togglePanel(): Promise<void> {
@@ -269,6 +377,42 @@ function buildStyles(): HTMLStyleElement {
     .c0-dock-body > * { flex: 1; min-width: 0; }
     .c0-grip { flex: 0 0 6px; cursor: col-resize; background: transparent; }
     .c0-grip:hover { background: var(--m-glow, rgba(0,255,122,0.35)); }
+
+    /* Louder non-affiliation banner in "match this site" mode (BM-6). */
+    .c0-dock.c0-matched .c0-notice {
+      border-left: 3px solid var(--m-primary, #00ff7a); padding-left: 8px;
+      color: var(--m-fg, #fff); background: var(--m-card, rgba(0,0,0,0.85));
+    }
+
+    /* Theme picker overlay (in-dock). */
+    .c0-skins { position: absolute; inset: 0; z-index: 6; overflow-y: auto; padding: 10px;
+      background: var(--m-bg, #000); color: var(--m-fg, #fff);
+      font-family: var(--m-font-mono, ui-monospace, "JetBrains Mono", monospace); }
+    .c0-skins-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .c0-skins-head h3 { margin: 0; font-size: 11px; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.14em; color: var(--m-fg, #fff); }
+    .c0-skins-x { background: transparent; border: 1px solid var(--m-border, rgba(255,255,255,0.2));
+      color: var(--m-fg-muted, rgba(255,255,255,0.6)); width: 22px; height: 22px; cursor: pointer;
+      line-height: 0; font-size: 15px; font-family: inherit; }
+    .c0-skins-x:hover { color: var(--m-fg, #fff); border-color: var(--m-primary, #00ff7a); }
+    .c0-skin-auto { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+      cursor: pointer; padding: 10px; margin-bottom: 10px; font-family: inherit;
+      background: var(--m-card, #0a0a0a); color: var(--m-fg, #fff);
+      border: 2px solid var(--m-border, rgba(255,255,255,0.18)); }
+    .c0-skin-auto:hover { border-color: var(--m-fg-muted, rgba(255,255,255,0.45)); }
+    .c0-skin-auto.active { border-color: var(--m-primary, #00ff7a); }
+    .c0-skin-auto .ic { font-size: 18px; color: var(--m-primary, #00ff7a); flex-shrink: 0; }
+    .c0-skin-auto .tx b { display: block; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; }
+    .c0-skin-auto .tx span { font-size: 10px; color: var(--m-fg-muted, rgba(255,255,255,0.55)); }
+    .c0-skins-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .c0-skin-tile { display: flex; flex-direction: column; gap: 5px; padding: 7px; cursor: pointer;
+      font-family: inherit; text-align: left; background: var(--m-card, #0a0a0a); color: var(--m-fg, #fff);
+      border: 2px solid var(--m-border, rgba(255,255,255,0.18)); }
+    .c0-skin-tile:hover { border-color: var(--m-fg-muted, rgba(255,255,255,0.45)); }
+    .c0-skin-tile.active { border-color: var(--m-primary, #00ff7a); }
+    .c0-skin-sw { display: flex; height: 20px; border: 1px solid var(--m-border, rgba(255,255,255,0.18)); }
+    .c0-skin-sw > i { flex: 1; display: block; }
+    .c0-skin-tile .nm { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
 
     ${CHAT_CSS}
   `;

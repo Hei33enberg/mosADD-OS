@@ -95,6 +95,17 @@ const skinGrid = document.getElementById("skin-grid") as HTMLDivElement | null;
 function renderSkinGrid(activeId: string): void {
   if (!skinGrid) return;
   skinGrid.textContent = "";
+  // "Match this site" (auto) — applies on whatever page you open the panel on.
+  const autoTile = document.createElement("button");
+  autoTile.type = "button";
+  autoTile.className = "skin-tile" + (activeId === "auto" ? " active" : "");
+  autoTile.dataset.skinId = "auto";
+  autoTile.style.gridColumn = "1 / -1";
+  const autoLabel = document.createElement("div"); autoLabel.className = "label"; autoLabel.textContent = "✦ " + t("skinAutoLabel");
+  const autoTag = document.createElement("div"); autoTag.className = "tagline"; autoTag.textContent = t("skinAutoHint");
+  autoTile.appendChild(autoLabel); autoTile.appendChild(autoTag);
+  autoTile.addEventListener("click", async () => { await patchSettings({ skinId: "auto" }); renderSkinGrid("auto"); });
+  skinGrid.appendChild(autoTile);
   for (const skin of SKINS) {
     const tile = document.createElement("button");
     tile.type = "button";

@@ -158,5 +158,17 @@
   },
   "tooltipShare": {
     "message": "Udostępnij ten pokój"
+  },
+  "tooltipSkins": {
+    "message": "Motyw"
+  },
+  "skinsTitle": {
+    "message": "Motyw"
+  },
+  "skinAutoLabel": {
+    "message": "Dopasuj do strony"
+  },
+  "skinAutoHint": {
+    "message": "użyj kolorów tej strony"
   }
 }
