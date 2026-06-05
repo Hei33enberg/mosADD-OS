@@ -123,8 +123,8 @@ export default function DomainsPage() {
       <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">mURL · domains</div>
       <h1 className="font-display mt-2 text-4xl font-bold text-foreground">Claim your domain</h1>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground max-w-xl">
-        Prove ownership of a domain via DNS TXT and you can disable the mURL chat on it for free,
-        or claim it for branding (coming soon). Verification is at the apex —{' '}
+        Prove ownership of a domain via DNS TXT and you can disable the mURL chat on it — or brand it
+        (theme, pinned message, official badge), free for verified owners. Verification is at the apex —{' '}
         <span className="font-mono">_mosadd-murl.&lt;domain&gt;</span>.
       </p>
 

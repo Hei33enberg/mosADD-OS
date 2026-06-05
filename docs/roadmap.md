@@ -2,25 +2,27 @@
 
 Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosadd-deaa4bef6de8) · Epic [LINEAR-2138](https://linear.app/ip-ra/issue/LINEAR-2138).
 
-## Phase 1 — Public OS core (6-7 months)
+## Phase 1 — Public OS core
+
+> **Substantially shipped (3.0.0-alpha).** The toolkit is live — **52 tools across 6 modules**. The [README "What's live today"](../README.md) is the authoritative status. Open items below: bridges, P2P backbone, hosted MCP, and MCP-registry submissions.
 
 - [x] Monorepo scaffold + Apache-2.0 + governance
-- [ ] `@mosadd/crypto` ported from m0ssad-3 ([LINEAR-2142](https://linear.app/ip-ra/issue/LINEAR-2142))
-- [ ] `@mosadd/protocol` ported ([LINEAR-2142](https://linear.app/ip-ra/issue/LINEAR-2142))
-- [ ] `@mosadd/mcp` stub with `mDM_send` working ([LINEAR-2143](https://linear.app/ip-ra/issue/LINEAR-2143))
-- [ ] Provider abstraction ([LINEAR-2144](https://linear.app/ip-ra/issue/LINEAR-2144))
-- [ ] Control plane / data plane separation ([LINEAR-2145](https://linear.app/ip-ra/issue/LINEAR-2145))
-- [ ] Fork LiveKit → `mosadd-fabric` ([LINEAR-2169](https://linear.app/ip-ra/issue/LINEAR-2169))
-- [ ] Anonymous identity recovery ([LINEAR-2170](https://linear.app/ip-ra/issue/LINEAR-2170))
-- [ ] Anti-abuse PoW + rate limits ([LINEAR-2171](https://linear.app/ip-ra/issue/LINEAR-2171))
-- [ ] mCALL stack: Routr + multi-provider ([LINEAR-2172](https://linear.app/ip-ra/issue/LINEAR-2172))
+- [x] `@mosadd/crypto` — X3DH + Double Ratchet, powers mDM E2EE ([LINEAR-2142](https://linear.app/ip-ra/issue/LINEAR-2142))
+- [x] `@mosadd/protocol` ([LINEAR-2142](https://linear.app/ip-ra/issue/LINEAR-2142))
+- [x] `@mosadd/mcp` — full MCP server (well past the `mDM_send` stub) ([LINEAR-2143](https://linear.app/ip-ra/issue/LINEAR-2143))
+- [x] Provider abstraction (`@mosadd/providers`) ([LINEAR-2144](https://linear.app/ip-ra/issue/LINEAR-2144))
+- [x] Control plane / data plane separation ([LINEAR-2145](https://linear.app/ip-ra/issue/LINEAR-2145))
+- [x] Fork LiveKit → `mosadd-fabric` ([LINEAR-2169](https://linear.app/ip-ra/issue/LINEAR-2169))
+- [ ] Anonymous identity recovery — descoped ([LINEAR-2170](https://linear.app/ip-ra/issue/LINEAR-2170))
+- [x] Anti-abuse PoW + rate limits ([LINEAR-2171](https://linear.app/ip-ra/issue/LINEAR-2171))
+- [ ] mCALL stack: Routr + multi-provider — control plane shipped, **carrier pending** ([LINEAR-2172](https://linear.app/ip-ra/issue/LINEAR-2172))
 - [ ] Messaging backbone: nwaku + Dendrite ([LINEAR-2173](https://linear.app/ip-ra/issue/LINEAR-2173))
-- [ ] Native channels: mDM, mAIL, mIRC, **mTALK (killer feature)**, mROOM, mKB live; mCALL carrier-pending; mIRL design ([LINEAR-2146](https://linear.app/ip-ra/issue/LINEAR-2146)-[2152](https://linear.app/ip-ra/issue/LINEAR-2152)) — see README "What's live today" for current status
+- [x] Native channels: mDM, mAIL, mIRC, **mTALK (killer feature)**, mROOM, mKB live; mCALL carrier-pending; mIRL design ([LINEAR-2146](https://linear.app/ip-ra/issue/LINEAR-2146)-[2152](https://linear.app/ip-ra/issue/LINEAR-2152))
 - [ ] Bridge Provider Pack: mMATRIX, mDISCORD, mTELEGRAM ([LINEAR-2168](https://linear.app/ip-ra/issue/LINEAR-2168))
-- [ ] SDK adapters: Vercel AI SDK + LangChain + OpenAI Agents + Anthropic Agents ([LINEAR-2153](https://linear.app/ip-ra/issue/LINEAR-2153))
-- [ ] Claude Code plugin + Anthropic Skills bundle ([LINEAR-2154](https://linear.app/ip-ra/issue/LINEAR-2154))
-- [ ] 4 example apps ([LINEAR-2155](https://linear.app/ip-ra/issue/LINEAR-2155))
-- [ ] Community: CONTRIBUTING, GOVERNANCE, RFC, Discord ([LINEAR-2156](https://linear.app/ip-ra/issue/LINEAR-2156))
+- [x] SDK adapters: Vercel AI SDK + LangChain + OpenAI Agents + Anthropic Agents ([LINEAR-2153](https://linear.app/ip-ra/issue/LINEAR-2153))
+- [x] Claude Code plugin + Anthropic Skills bundle ([LINEAR-2154](https://linear.app/ip-ra/issue/LINEAR-2154))
+- [x] Example apps (6 shipped) ([LINEAR-2155](https://linear.app/ip-ra/issue/LINEAR-2155))
+- [x] Community: CONTRIBUTING, GOVERNANCE, RFC (Discord soon) ([LINEAR-2156](https://linear.app/ip-ra/issue/LINEAR-2156))
 - [ ] Submit to 5 MCP registries ([LINEAR-2157](https://linear.app/ip-ra/issue/LINEAR-2157))
 
 ## Phase 2 — Commercial Hub (3-4 months)
