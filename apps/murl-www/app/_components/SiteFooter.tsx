@@ -19,6 +19,7 @@ export function SiteFooter() {
           <ul className="space-y-2">
             <li><Link href="/#how" className="hover:text-foreground">How it works</Link></li>
             <li><Link href="/#use-cases" className="hover:text-foreground">Use cases</Link></li>
+            <li><Link href="/#trending" className="hover:text-foreground">Trending rooms</Link></li>
             <li><Link href="/#faq" className="hover:text-foreground">FAQ</Link></li>
             <li><Link href="/developers" className="hover:text-foreground">Developers</Link></li>
             <li><Link href="/privacy" className="hover:text-foreground">Privacy</Link></li>

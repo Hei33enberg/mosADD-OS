@@ -1,8 +1,10 @@
 /**
  * Tool registry. Each m* module contributes a set of tools.
  *
- * Phase 1 MVP (shipped): mDM, mIRC, mROOM, mAIL.
- * Phase 1 full: + mTALK, mCALL, mIRL, plus bridges (mMATRIX, mDISCORD, mTELEGRAM, mSLACK, mSIGNAL).
+ * Live modules (6): mDM, mIRC, mROOM, mTALK, mAIL, mKB — 52 tools + comms_capabilities.
+ * mCALL is carrier-pending (no telephony carrier live yet): its tools live in
+ * tools/mcall.ts but are NOT registered here, so an agent only ever discovers
+ * tools that actually work. Re-register the one line below when a carrier ships.
  */
 
 import type { MosaddTool } from "../types.js";
@@ -16,7 +18,7 @@ import { mroomTools } from "./mroom.js";
 import { mroomMessagesTools } from "./mroom-messages.js";
 import { mailTools } from "./mail.js";
 import { mtalkTools } from "./mtalk.js";
-import { mcallTools } from "./mcall.js";
+// import { mcallTools } from "./mcall.js"; // mCALL: carrier-pending — not registered (see header note)
 import { knowledgeTools } from "./knowledge.js";
 import { makeCapabilitiesTool } from "./capabilities.js";
 
@@ -32,8 +34,8 @@ const channelTools: MosaddTool[] = [
   ...mroomMessagesTools,
   ...mailTools,
   ...mtalkTools,
-  ...mcallTools,
   ...knowledgeTools,
+  // ...mcallTools,  // mCALL: carrier-pending (no telephony carrier live) — re-register when a carrier is configured
   // mirlTools,
   // mmatrixTools, mdiscordTools, mtelegramTools, mslackTools, msignalTools,
   //

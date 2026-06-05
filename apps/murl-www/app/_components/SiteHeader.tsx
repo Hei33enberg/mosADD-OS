@@ -7,6 +7,7 @@ import { SkinPicker } from './SkinPicker';
 const navLinks = [
   { href: '/#how', label: 'How it works' },
   { href: '/#use-cases', label: 'Use cases' },
+  { href: '/#trending', label: 'Trending rooms' },
   { href: '/#faq', label: 'FAQ' },
 ];
 
