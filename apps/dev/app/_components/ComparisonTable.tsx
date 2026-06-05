@@ -3,6 +3,8 @@
  * Honest side-by-side vs the closest alternatives. No strawman: where a
  * competitor genuinely does something, it's marked.
  */
+import { Logo } from './Logo';
+
 type Cell = { v: 'yes' | 'no' | 'partial'; note?: string } | { text: string };
 
 const COLS = ['mosadd', 'Twilio Agent Connect', 'Composio', 'LiveKit'] as const;
@@ -92,7 +94,7 @@ export function ComparisonTable() {
                   i === 0 ? 'bg-primary/[0.06] text-primary' : 'text-foreground'
                 }`}
               >
-                {c}
+                {i === 0 ? <Logo size="sm" /> : c}
               </th>
             ))}
           </tr>

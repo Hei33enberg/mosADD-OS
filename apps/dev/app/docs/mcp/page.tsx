@@ -80,6 +80,11 @@ export default function McpPage() {
       </P>
 
       <H2>Self-host</H2>
+      <P>
+        Container images will be published to GHCR once the hosted gateway lands; until then,{' '}
+        <code className="font-mono text-primary">npx -y @mosadd/mcp@alpha</code> + your own reverse proxy is the
+        recommended self-host path. The planned image will look like:
+      </P>
       <Pre lang="bash">{`docker run -p 3000:3000 \\
   -e MOSADD_SUPABASE_URL=... \\
   ghcr.io/hei33enberg/mosadd-mcp:latest`}</Pre>

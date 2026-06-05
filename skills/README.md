@@ -12,6 +12,8 @@ Skills are a Claude-only convenience layer on top of the [`@mosadd/mcp`](../pack
 | [`mroom/SKILL.md`](mroom/SKILL.md) | mROOM | Ephemeral rooms + no-account guest links (USP) |
 | [`mirc/SKILL.md`](mirc/SKILL.md) | mIRC | Persistent Discord/Slack-style channels |
 | [`mail/SKILL.md`](mail/SKILL.md) | mAIL | Email from `<userId>@mosadd.com` |
+| [`mtalk/SKILL.md`](mtalk/SKILL.md) | mTALK | Push-to-talk voice rooms (half-duplex floor control) |
+| [`mkb/SKILL.md`](mkb/SKILL.md) | mKB | RAG recall over the user's own messages/emails/calls |
 
 ## Plugin marketplace entry
 
@@ -25,9 +27,14 @@ The plugin pulls the `@mosadd/mcp` server alongside, so users get one install fo
 
 ## Coming next
 
-- `mtalk/SKILL.md` (push-to-talk — depends on the WebRTC daemon design in [LINEAR-2145](https://linear.app/ip-ra/issue/LINEAR-2145))
-- `mcall/SKILL.md` (PSTN — depends on Telnyx eKYC + [LINEAR-2172](https://linear.app/ip-ra/issue/LINEAR-2172))
+- `mcall/SKILL.md` (PSTN — gated on carrier wiring + [LINEAR-2172](https://linear.app/ip-ra/issue/LINEAR-2172))
 - `mirl/SKILL.md` (live-stream after-party)
 - Bridge skills: mMATRIX, mDISCORD, mTELEGRAM (Phase 1 P1 — [LINEAR-2168](https://linear.app/ip-ra/issue/LINEAR-2168))
+
+```bash
+claude plugin install https://github.com/Hei33enberg/mosadd-os.git
+```
+
+(Top-level `claude plugin install` is the legacy syntax; on current Claude Code use `/plugin marketplace add Hei33enberg/mosadd-os` then `/plugin install mosadd@mosadd-os`.)
 
 RFC required to add a new skill; see [docs/rfcs/0001-module-naming.md](../docs/rfcs/0001-module-naming.md) for the bar.

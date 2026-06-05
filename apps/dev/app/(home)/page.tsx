@@ -28,8 +28,8 @@ const threats = [
     d: 'The server never holds plaintext. Encryption happens client-side; the hosted layer stores only opaque ciphertext and cannot be compelled to produce readable content.',
   },
   {
-    t: 'Threat radar — DECK',
-    d: 'The DECK layer monitors for known spyware signatures, SS7 routing anomalies, IMSI-catcher fingerprints and exfiltration patterns — the surface used to flag Pegasus-class implants on mosadd.com.',
+    t: 'Threat radar — Iron Dome',
+    d: 'The Iron Dome detection layer scans for known spyware signatures, SS7 routing anomalies, IMSI-catcher fingerprints and exfiltration patterns — designed to flag Pegasus-class implants. The same 167-event engine shipping in @mosadd/threat-engine.',
   },
 ];
 
