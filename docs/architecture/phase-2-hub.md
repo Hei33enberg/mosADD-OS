@@ -23,7 +23,7 @@ Self-host alternative: any user can run `npx @mosadd/mcp` + `mcp-proxy` themselv
 
 Today's alpha asks users to paste `MOSADD_SUPABASE_*` env vars into agent configs. That's friction and a leak surface. The hub:
 
-- Stores user provider keys (Supabase, Telnyx, Twilio, LiveKit, Resend, ElevenLabs) AES-256-GCM at rest, keys never leave the AWS KMS envelope
+- Stores user provider keys (Supabase, LiveKit, Resend, ElevenLabs) AES-256-GCM at rest, keys never leave the AWS KMS envelope
 - Mints short-lived (≤15 min) provider-scoped JWTs on each `mcp.mosadd.com` request
 - Audit-trails every key use to the threat radar (see §3)
 - Users can opt for **self-host BYOK**: same code, but the secret store points at their own Vault / Doppler / AWS Secrets Manager instance — enterprise tier.
@@ -44,9 +44,9 @@ operation → @mosadd/threat-engine → radar event → severity scoring
 
 Open-source `@mosadd/threat-engine` ships the 167-event taxonomy and scoring primitives. The hub adds:
 
-- Real-time correlation across channels (a single actor sending mDM + mTELEGRAM + mDISCORD spam looks innocent on each channel; correlated, it's abuse)
+- Real-time correlation across channels (a single actor spamming mDM + mIRC + mROOM looks innocent on each channel; correlated, it's abuse)
 - Cross-tenant threat intel feeds (private — paid threat intel partners, MISP feeds, our own observations)
-- ML scoring on voice (deepfake detection on PTT / mCALL inbound)
+- ML scoring on voice (deepfake detection on PTT / mDM voice)
 - ML scoring on text (prompt-injection detection — model: distilled adversarial classifier)
 - Quarantine workflow: high-severity operation → human review queue
 
@@ -57,7 +57,7 @@ Self-host: `@mosadd/threat-engine` runs locally with the open 167-event taxonomy
 Stripe-fronted metering of:
 
 - MCP tool calls (per-call cost — covers our infra overhead)
-- Provider passthrough (Telnyx PSTN minutes, Resend emails, LiveKit room-hours — unit costs marked up by tier)
+- Provider passthrough (Resend emails, LiveKit room-hours — unit costs marked up by tier)
 - Threat radar event evaluation (free for tier A self-host, included in tier B+)
 - Storage (call recordings, message archive, audit_events retention beyond default)
 
@@ -66,9 +66,9 @@ Pricing tiers (as designed today — may shift before launch):
 | Tier | Audience | Price | Limits |
 |---|---|---|---|
 | A — Self-host OSS | Solo devs, privacy enthusiasts | $0 | All limits = your own infra |
-| B Free — Hosted | Trying mosadd | $0 | 100 msg / 30 min PTT / 0 PSTN per month |
-| B Pro | Builders, indie agents | $9 / month | 10 k msg / 10 h PTT / 60 min PSTN |
-| B Team | Small teams | $49 / month / 5 seats | 100 k msg / 100 h PTT / 600 min PSTN |
+| B Free — Hosted | Trying mosadd | $0 | 1 k msg / 30 min PTT per month |
+| B Pro | Builders, indie agents | $9 / month | 10 k msg / 10 h PTT |
+| B Team | Small teams | $29 / month | 100 k msg / 100 h PTT |
 | C Enterprise | Banking, gov, NIS2 scope | Custom | Self-host + BYOK + SLA + dedicated radar feeds + audit log retention 7 y |
 
 ### 5. SaaS dashboard — `hub.mosadd.com` ([LINEAR-2162](https://linear.app/ip-ra/issue/LINEAR-2162))
@@ -94,7 +94,7 @@ The contract between the public OSS layer and the hub:
 │  Public OSS layer (this repo — mosadd-os)                       │
 │                                                                  │
 │  - @mosadd/mcp     — MCP server, stdio + HTTP (no auth built-in)│
-│  - @mosadd/providers — direct calls to Supabase/Telnyx/...      │
+│  - @mosadd/providers — direct calls to Supabase/LiveKit/...     │
 │  - @mosadd/threat-engine — emits events, no scoring decisions   │
 │  - @mosadd/ai     — framework adapters (no auth, BYOK env vars) │
 │                                                                  │
@@ -125,10 +125,8 @@ The contract between the public OSS layer and the hub:
 
 These need answers before Phase 2 implementation starts:
 
-- **Egress costs.** Hosted PSTN minutes through Telnyx + STIR/SHAKEN regulatory cost — what's our floor margin per minute? Need a model.
 - **Threat intel partnerships.** Which feeds? MISP is free. CrowdStrike / Mandiant / Recorded Future paid feeds cost five-six figures per year — when does that pay off?
 - **Cross-tenant data isolation.** Radar correlation needs aggregated signals. How do we prove to enterprise tenants their data doesn't leak through aggregates? Differential privacy? Separate tenant-isolated feeds?
-- **Provider failover for mCALL.** If Telnyx cuts us off (regulatory dispute), Twilio takes over with what user experience? Spec needed.
 
 ## Timeline
 
@@ -138,6 +136,6 @@ Phase 2 work starts when Phase 1 hits all of:
 2. 5/5 MCP registries indexed
 3. ≥10 GitHub stars on mosadd-os
 4. ≥3 community contributors with merged PRs
-5. mTALK + mCALL Phase 1 designs accepted (RFCs)
+5. mTALK Phase 1 design accepted (RFC)
 
 ETA: 3-4 months Phase 1 to maturity → Phase 2 build → another 3-4 months to commercial GA. Realistic 6-8 months total from today to hub.mosadd.com being a paid product.

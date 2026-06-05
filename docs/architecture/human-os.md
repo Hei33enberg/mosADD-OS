@@ -8,14 +8,12 @@ mosadd is not an SDK. It is not a wrapper. It is not a chat app. It is an **oper
 
 Like a real OS gives you `open()`, `read()`, `write()`, `socket()`, `fork()`, mosadd gives you:
 
-- `mDM` — direct messages
+- `mDM` — direct messages + 1:1 voice
+- `mIRC` — persistent encrypted channels
+- `mROOM` — ephemeral group rooms + no-account join links
 - `mTALK` — push-to-talk voice
 - `mAIL` — email
-- `mCALL` — phone calls (PSTN)
-- `mIRC` — persistent channels
-- `mIRL` — live-stream after-parties
-- `mROOM` — ephemeral group rooms
-- `mMATRIX`, `mDISCORD`, `mTELEGRAM`, ... — bridges to external networks
+- `mKB` — encrypted knowledge base (RAG recall)
 
 Each `m*` is a **module** you `add` to your system.
 
@@ -23,7 +21,7 @@ Each `m*` is a **module** you `add` to your system.
 
 ### vs. "Stripe for communications"
 
-The Stripe metaphor implies "we wrap your existing comms infrastructure with a friendlier API." That's the Composio model. It's a valid product, but it's not what we are. We're not a billing layer over Telnyx + Twilio + LiveKit. We are a **system on top of which apps run**.
+The Stripe metaphor implies "we wrap your existing comms infrastructure with a friendlier API." That's the Composio model. It's a valid product, but it's not what we are. We're not a thin billing layer over someone else's comms stack. We are a **system on top of which apps run**.
 
 ### vs. "Secure messenger app"
 
@@ -32,7 +30,6 @@ A messenger is one app. mosadd has many surfaces:
 - Native consumer app (PWA, Android, iOS, Electron, macOS)
 - Hosted MCP endpoint (`mcp.mosadd.com`) consumed by Claude Code, Cursor, Lovable, ChatGPT Apps, custom agents
 - Self-hosted SDK in any Node/Python project
-- Bridge layer that lets your existing Telegram/Discord/Signal contacts reach you
 
 These are not separate products. They are **shells over the same OS**. Just as Linux is the same kernel whether you run GNOME or Sway or i3, mosadd is the same kernel whether you run the PWA, the Electron app, or call it via MCP.
 
@@ -40,23 +37,21 @@ These are not separate products. They are **shells over the same OS**. Just as L
 
 | Them | Us |
 |---|---|
-| Twilio Agent Connect — SDK for Twilio products | OS that abstracts over Twilio (and others) |
-| Composio — aggregator of vendor MCPs | OS with native primitives, plus bridges |
+| Twilio Agent Connect — SDK for Twilio products | OS that abstracts over many providers |
+| Composio — aggregator of vendor MCPs | OS with native semantic primitives |
 | LiveKit Agents — voice transport + agent framework | OS that uses (and forks) LiveKit as one provider |
-| Slack/Discord/WhatsApp — apps with closed protocols | OS that bridges to all of them |
-| Matrix — federated chat protocol | OS that uses Matrix as one provider |
 
 ## Module convention (the `m*` prefix)
 
 The `m` prefix is **not** "messenger". It's "module". Every `m*` is a self-contained OS module that:
 
-1. Implements a channel interface (`DmProvider`, `RoomProvider`, `CallProvider`, ...)
+1. Implements a channel interface (`DmProvider`, `RoomProvider`, ...)
 2. Exposes MCP tools (`mDM_send`, `mDM_list`, ...)
 3. Ships an Anthropic SKILL.md
-4. Has a provider in `packages/providers/<name>/` and (optionally) a bridge in `packages/bridges/<name>/`
+4. Has a provider in `packages/providers/<name>/`
 5. Has its own version, maintainer, RFC history
 
-This makes the system **extensible**. Community can propose `mPOST` (broadcast posts), `mWALL` (public wall), `mPING` (presence), `mPAY` (in-flow micropayments), `mVAULT` (encrypted storage). Each goes through the RFC process.
+This makes the system **extensible**. New modules go through the RFC process (semantic primitive, ≥2 backend providers, radar hooks, MCP tool surface) — see [RFC 0001](../rfcs/0001-module-naming.md).
 
 ## Layered architecture
 
@@ -72,7 +67,7 @@ This makes the system **extensible**. Community can propose `mPOST` (broadcast p
                      ▼
 ┌─────────────────────────────────────────────────────────┐
 │  System call interface (@mosadd/mcp + @mosadd/ai)       │
-│  - Tools: mDM_send, mTALK_start, mCALL_pstn, ...        │
+│  - Tools: mDM_send, mTALK_open, mKB_search, ...         │
 │  - Adapters: @mosadd/ai/vercel, /langchain, /openai     │
 └────────────────────┬────────────────────────────────────┘
                      │
@@ -83,7 +78,7 @@ This makes the system **extensible**. Community can propose `mPOST` (broadcast p
 │  - Channel primitives                                   │
 │  - Threat radar middleware (hook on every call)         │
 │  - Identity (anonymous, passphrase-recoverable)         │
-│  - Routing logic (native vs bridge vs federation)       │
+│  - Routing logic (native vs federation)                 │
 └────────────────────┬────────────────────────────────────┘
                      │
                      │ network I/O
@@ -91,11 +86,8 @@ This makes the system **extensible**. Community can propose `mPOST` (broadcast p
 ┌─────────────────────────────────────────────────────────┐
 │  Drivers (forks of OSS infrastructure)                  │
 │  - forks/livekit-server (mosadd-fabric) — SFU/MCU       │
-│  - Routr — SIP control plane                            │
 │  - nwaku — p2p messaging                                │
-│  - Dendrite — Matrix federation                         │
-│  - Telnyx/Twilio — PSTN dumb pipes                      │
-│  - mautrix-{telegram,discord,whatsapp,...} — bridges    │
+│  - Supabase — backend (Phase 1 strangler-fig)           │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -128,7 +120,7 @@ We are not building a literal new kernel. We are not replacing Linux. We are not
 ## Related decisions
 
 - **License: Apache-2.0** — patent grant matters for an OS-shaped product
-- **Stack: own transmission infrastructure** (forks LiveKit, adopts Routr/nwaku/Dendrite) — an OS needs its own drivers, not wrappers around someone else's
+- **Stack: own transmission infrastructure** (forks LiveKit, adopts nwaku) — an OS needs its own drivers, not wrappers around someone else's
 - **Identity: anonymous-native** — no email/phone signup, because an OS doesn't ask you for credentials before letting you boot
 - **Distribution: MCP-first** — agents (Claude/Cursor/Lovable) are the shells of 2026, and MCP is their syscall interface
 
