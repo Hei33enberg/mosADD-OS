@@ -4,7 +4,7 @@ ChatGPT Apps consume MCP over **HTTP/SSE** rather than stdio. The local `@mosadd
 
 ## Phase 2 — hosted gateway
 
-[`mcp.mosadd.com`](https://mcp.mosadd.com) (coming in Phase 2 — [LINEAR-2158](https://linear.app/ip-ra/issue/LINEAR-2158)) will speak HTTP/SSE with OAuth + BYOK key brokerage. Then setup is one URL:
+`mcp.mosadd.com` (coming in Phase 2 — [LINEAR-2158](https://linear.app/ip-ra/issue/LINEAR-2158)) will speak HTTP/SSE with OAuth + BYOK key brokerage. Then setup is one URL:
 
 ```
 https://mcp.mosadd.com/sse

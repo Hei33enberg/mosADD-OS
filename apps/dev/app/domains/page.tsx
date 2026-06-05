@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-const VERIFY_URL = 'https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/domain-verify';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+const VERIFY_URL = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/domain-verify` : '';
 
 interface ChallengeResponse {
   domain: string;

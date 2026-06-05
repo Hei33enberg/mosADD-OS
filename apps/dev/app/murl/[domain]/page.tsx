@@ -55,7 +55,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 async function fetchActivity(slug: string): Promise<{ messages: number; status: string } | null> {
   try {
-    const r = await fetch(`https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/murl-trending?minutes=60`, {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!supabaseUrl) return null;
+    const r = await fetch(`${supabaseUrl}/functions/v1/murl-trending?minutes=60`, {
       cache: 'no-store',
     });
     if (!r.ok) return null;

@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-const STATS_URL = 'https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/channel0-owner-stats';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+const STATS_URL = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/channel0-owner-stats` : '';
 
 interface Stats {
   domain: string;
