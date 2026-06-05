@@ -9,8 +9,8 @@ import posthog from 'posthog-js';
  *
  * Initializes only when NEXT_PUBLIC_POSTHOG_KEY is set, so the portal ships
  * with telemetry wired but DARK until a dedicated mosadd PostHog project key
- * is provided in Vercel. (The only currently-connected PostHog project is
- * "CYMRU", which is a separate product — we deliberately do not route mosadd
+ * is provided in Vercel. (The only currently-connected PostHog project
+ * belongs to a separate product — we deliberately do not route mosadd
  * traffic there.) Flip it on later with one env var, zero code change.
  *
  * Vercel Web Analytics runs independently via <Analytics/> in layout.tsx.

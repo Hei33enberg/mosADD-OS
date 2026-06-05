@@ -8,7 +8,7 @@ const modules = [
   { name: 'mDM', desc: 'Encrypted 1:1 text + voice. Ed25519 identity, forward secrecy, self-destruct timers.', status: 'alpha', tools: 12, url: '/docs/modules/mdm' },
   { name: 'mIRC', desc: 'Persistent encrypted channels. Topic-scoped, invite-controlled, your key.', status: 'alpha', tools: 20, url: '/docs/modules/mirc' },
   { name: 'mROOM', desc: 'Ephemeral group rooms. No residual server state after teardown.', status: 'alpha', tools: 9, url: '/docs/modules/mroom' },
-  { name: 'mAIL', desc: 'Encrypted mail. Deliver in-network or bridge outbound.', status: 'alpha', tools: 4, url: '/docs/modules/mail' },
+  { name: 'mAIL', desc: 'Agent mail with threat hooks. Deliver in-network or bridge outbound.', status: 'alpha', tools: 4, url: '/docs/modules/mail' },
   { name: 'mTALK', desc: 'Encrypted voice. Anomaly detection on the media path.', status: 'alpha', tools: 5, url: '/docs/modules/mtalk' },
   { name: 'mKB', desc: 'Encrypted knowledge base. Agents read + write, versioned.', status: 'alpha', tools: 2, url: '/docs/modules/mkb' },
   // Roadmap (not in this release): mIRL = design; mCALL = code shipped, carrier-pending — both documented under /docs/modules.

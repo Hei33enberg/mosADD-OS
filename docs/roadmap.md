@@ -15,7 +15,7 @@ Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosa
 - [ ] Anti-abuse PoW + rate limits ([LINEAR-2171](https://linear.app/ip-ra/issue/LINEAR-2171))
 - [ ] mCALL stack: Routr + multi-provider ([LINEAR-2172](https://linear.app/ip-ra/issue/LINEAR-2172))
 - [ ] Messaging backbone: nwaku + Dendrite ([LINEAR-2173](https://linear.app/ip-ra/issue/LINEAR-2173))
-- [ ] Native channels: mDM, mAIL, mIRC, **mTALK (kill feature)**, mROOM, mCALL, mIRL ([LINEAR-2146](https://linear.app/ip-ra/issue/LINEAR-2146)-[2152](https://linear.app/ip-ra/issue/LINEAR-2152))
+- [ ] Native channels: mDM, mAIL, mIRC, **mTALK (killer feature)**, mROOM, mKB live; mCALL carrier-pending; mIRL design ([LINEAR-2146](https://linear.app/ip-ra/issue/LINEAR-2146)-[2152](https://linear.app/ip-ra/issue/LINEAR-2152)) — see README "What's live today" for current status
 - [ ] Bridge Provider Pack: mMATRIX, mDISCORD, mTELEGRAM ([LINEAR-2168](https://linear.app/ip-ra/issue/LINEAR-2168))
 - [ ] SDK adapters: Vercel AI SDK + LangChain + OpenAI Agents + Anthropic Agents ([LINEAR-2153](https://linear.app/ip-ra/issue/LINEAR-2153))
 - [ ] Claude Code plugin + Anthropic Skills bundle ([LINEAR-2154](https://linear.app/ip-ra/issue/LINEAR-2154))

@@ -9,7 +9,7 @@ import posthog from 'posthog-js';
  * v1 records intent two ways, both no-op-safe:
  *  - PostHog `waitlist_signup` event + person prop (lights up once the mosadd
  *    PostHog key is set in Vercel; harmless before that).
- *  - Optional durable POST to NEXT_PUBLIC_WAITLIST_ENDPOINT (the m0ssad-3
+ *  - Optional durable POST to NEXT_PUBLIC_WAITLIST_ENDPOINT (the mosadd
  *    `hub-waitlist` edge function, once the owner deploys it). If unset/failing
  *    we still show success — the PostHog event is the floor.
  */

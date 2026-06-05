@@ -34,8 +34,8 @@ export default function CommunityPage() {
             className="block border border-neutral-800 rounded-lg p-5 hover:border-radar-green/40 hover:bg-neutral-900/50 transition group"
           >
             <div className="text-radar-green text-xs uppercase tracking-widest mb-2">Realtime</div>
-            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-radar-green transition">Discord</div>
-            <p className="text-sm text-neutral-400">Real-time channel coming with Phase 1 community kickoff.</p>
+            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-radar-green transition">Discord <span className="text-neutral-500">· soon</span></div>
+            <p className="text-sm text-neutral-400">Real-time channel launching with the Phase 1 community kickoff. Not live yet.</p>
           </a>
           <a
             href="https://github.com/Hei33enberg/mosadd-os/issues"

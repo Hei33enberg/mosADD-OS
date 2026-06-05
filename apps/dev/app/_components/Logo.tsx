@@ -1,5 +1,5 @@
 /**
- * Brand wordmark lockup — per m0ssad-3 BRANDBOOK.md.
+ * Brand wordmark lockup — per the mosadd brand book.
  * Text-only `mosadd™`, JetBrains Mono, wide tracking, ™ in primary green
  * superscript. Never paired with an icon. The wordmark stands alone.
  */
