@@ -3,8 +3,8 @@
 @source '../app/**/*.{ts,tsx}';
 
 /*
- * mosadd brand tokens — source of truth: m0ssad-3/docs/BRANDBOOK.md +
- * m0ssad-3/apps/web/src/index.css. Dark-only. HSL tokens, never hardcoded hex.
+ * mosadd brand tokens — source of truth: the mosadd brand book.
+ * Dark-only. HSL tokens, never hardcoded hex.
  * Pure black + neon green, brutalist, JetBrains Mono only.
  */
 :root {
@@ -55,11 +55,6 @@
   --color-comint: hsl(var(--comint));
   --color-masint: hsl(var(--masint));
 
-  /* Legacy aliases → brand, so any un-migrated class still renders on-brand. */
-  --color-radar-green: hsl(var(--primary));
-  --color-radar-dim: hsl(var(--muted-foreground));
-  --color-radar-dark: hsl(var(--card));
-
   /* Override Tailwind's neutral scale → pure brand grayscale (brand uses 0 0% x%, not warm gray). */
   --color-neutral-950: hsl(0 0% 0%);
   --color-neutral-900: hsl(0 0% 3%);
@@ -104,7 +99,7 @@
   letter-spacing: -0.01em;
 }
 
-/* ── Brand motifs (ported from m0ssad-3 apps/web/src/index.css) ── */
+/* ── Brand motifs (ported from the original mosadd web app) ── */
 
 /* Faint engineering grid */
 .grid-bg {
@@ -174,7 +169,7 @@
   animation: scan-y 7s linear infinite;
 }
 
-/* ── Radar hero (ported from m0ssad-3 apps/web; animations via classes so
+/* ── Radar hero (ported from the original mosadd web app; animations via classes so
       prefers-reduced-motion can disable them) ── */
 @keyframes radar-sweep { to { transform: rotate(360deg); } }
 @keyframes radar-ping { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(4.5); opacity: 0; } }

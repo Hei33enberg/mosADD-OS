@@ -13,7 +13,7 @@ export default function MroomPage() {
       <Lead>Ephemeral rooms with no-account join links. Group txt + ptt + media.</Lead>
 
       <P>
-        <code className="font-mono text-radar-green">mROOM</code> is the "create a room, share a link, anyone joins without signup, kills itself after TTL" primitive.
+        <code className="font-mono text-primary">mROOM</code> is the "create a room, share a link, anyone joins without signup, kills itself after TTL" primitive.
       </P>
       <P>
         Whereby has guest links. WhatsApp has guest chats. Whereby/WhatsApp aren't agent-callable. mROOM is.
@@ -82,7 +82,7 @@ export default function MroomPage() {
 → { room_id, token, url, identity, mode }`}</Pre>
       <P>
         Full-duplex <strong>group</strong> voice — everyone can talk (no walkie-talkie floor; that&apos;s{' '}
-        <code className="font-mono text-radar-green">mTALK</code>). Returns media credentials for the room&apos;s
+        <code className="font-mono text-primary">mTALK</code>). Returns media credentials for the room&apos;s
         audio/video transport. Be a room member first (<code className="font-mono">mROOM_join</code> or a guest link).
       </P>
 

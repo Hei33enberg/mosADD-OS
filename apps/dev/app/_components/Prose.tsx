@@ -65,7 +65,7 @@ export function Ol({ children }: { children: ReactNode }) {
 
 export function InlineCode({ children }: { children: ReactNode }) {
   return (
-    <code className="font-mono text-[0.9em] px-1.5 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-radar-green">
+    <code className="font-mono text-[0.9em] px-1.5 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-primary">
       {children}
     </code>
   );
@@ -98,7 +98,7 @@ export function Callout({
   const styles: Record<string, string> = {
     info: 'border-blue-500/30 bg-blue-500/5 text-blue-100',
     warn: 'border-amber-500/30 bg-amber-500/5 text-amber-100',
-    success: 'border-radar-green/30 bg-radar-green/5 text-radar-green',
+    success: 'border-primary/30 bg-primary/5 text-primary',
   };
   return (
     <div id={id} className={`my-5 p-4 border-l-2 rounded scroll-mt-24 ${styles[type]}`}>{children}</div>
@@ -145,7 +145,7 @@ export function Anchor(props: HTMLAttributes<HTMLAnchorElement> & { href: string
   return (
     <a
       {...props}
-      className={`text-radar-green hover:underline ${props.className ?? ''}`}
+      className={`text-primary hover:underline ${props.className ?? ''}`}
       target={isExternal ? '_blank' : undefined}
       rel={isExternal ? 'noreferrer' : undefined}
     />

@@ -13,7 +13,7 @@ export default function MkbPage() {
       <Lead>Encrypted knowledge base — semantic recall your agents read and write, over your own ciphertext.</Lead>
 
       <P>
-        <code className="font-mono text-radar-green">mKB</code> gives an agent a private, per-tenant knowledge base:
+        <code className="font-mono text-primary">mKB</code> gives an agent a private, per-tenant knowledge base:
         store documents, retrieve by meaning, ground answers in your own corpus. Hybrid retrieval (vector + BM25 +
         rerank) runs server-side over content scoped to your key — not a shared index.
       </P>

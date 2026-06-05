@@ -14,7 +14,7 @@ export default function ModulesPage() {
 
       <P>
         Per <Anchor href="https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md">RFC 0001</Anchor>, every module is named{' '}
-        <code className="font-mono text-radar-green">m&lt;NAME&gt;</code> and is an OS-level semantic primitive — not a vendor wrapper.
+        <code className="font-mono text-primary">m&lt;NAME&gt;</code> and is an OS-level semantic primitive — not a vendor wrapper.
       </P>
 
       <H2>Native channels</H2>
@@ -65,16 +65,16 @@ export default function ModulesPage() {
 
       <H2>Reserved for v3.1+</H2>
       <P>
-        <code className="font-mono text-radar-green">mPOST</code>,{' '}
-        <code className="font-mono text-radar-green">mWALL</code>,{' '}
-        <code className="font-mono text-radar-green">mBROADCAST</code>,{' '}
-        <code className="font-mono text-radar-green">mPING</code>,{' '}
-        <code className="font-mono text-radar-green">mPAY</code>,{' '}
-        <code className="font-mono text-radar-green">mVAULT</code>,{' '}
-        <code className="font-mono text-radar-green">mFAX</code>,{' '}
-        <code className="font-mono text-radar-green">mRSS</code>,{' '}
-        <code className="font-mono text-radar-green">mNEWS</code>,{' '}
-        <code className="font-mono text-radar-green">mMAP</code>.
+        <code className="font-mono text-primary">mPOST</code>,{' '}
+        <code className="font-mono text-primary">mWALL</code>,{' '}
+        <code className="font-mono text-primary">mBROADCAST</code>,{' '}
+        <code className="font-mono text-primary">mPING</code>,{' '}
+        <code className="font-mono text-primary">mPAY</code>,{' '}
+        <code className="font-mono text-primary">mVAULT</code>,{' '}
+        <code className="font-mono text-primary">mFAX</code>,{' '}
+        <code className="font-mono text-primary">mRSS</code>,{' '}
+        <code className="font-mono text-primary">mNEWS</code>,{' '}
+        <code className="font-mono text-primary">mMAP</code>.
       </P>
       <P>
         <Anchor href="https://github.com/Hei33enberg/mosadd-os/issues/new?template=module_proposal.yml">Propose a new module →</Anchor>

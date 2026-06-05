@@ -63,9 +63,9 @@ function inlineFormat(s: string) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/`([^`]+)`/g, '<code class="font-mono text-radar-green text-[0.9em] px-1 rounded bg-neutral-900 border border-neutral-800">$1</code>')
+    .replace(/`([^`]+)`/g, '<code class="font-mono text-primary text-[0.9em] px-1 rounded bg-neutral-900 border border-neutral-800">$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-neutral-100">$1</strong>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer" class="text-radar-green hover:underline">$1</a>');
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer" class="text-primary hover:underline">$1</a>');
 }
 
 export default async function ChangelogPage() {
@@ -87,13 +87,13 @@ export default async function ChangelogPage() {
 
       <div className="space-y-8 mt-10">
         {releases.map((r) => (
-          <article key={r.tag_name} className="border-l-2 border-neutral-800 pl-6 hover:border-radar-green/60 transition">
+          <article key={r.tag_name} className="border-l-2 border-neutral-800 pl-6 hover:border-primary/60 transition">
             <div className="flex items-baseline gap-3 mb-2 flex-wrap">
               <a
                 href={r.html_url}
                 target="_blank"
                 rel="noreferrer"
-                className="font-display text-2xl text-neutral-100 hover:text-radar-green transition"
+                className="font-display text-2xl text-neutral-100 hover:text-primary transition"
               >
                 {r.name || r.tag_name}
               </a>

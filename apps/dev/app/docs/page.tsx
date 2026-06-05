@@ -21,17 +21,17 @@ export default function DocsIndexPage() {
       <P>
         mosadd is <strong>threat-aware, zero-knowledge comms infrastructure for AI agents</strong> — encrypted DMs,
         channels, rooms, mail and voice, with the Iron Dome threat radar in the kernel. Each{' '}
-        <code className="font-mono text-radar-green">m*</code> is a channel you <code className="font-mono text-radar-green">add</code>:
+        <code className="font-mono text-primary">m*</code> is a channel you <code className="font-mono text-primary">add</code>:
       </P>
       <Ul>
-        <li><code className="font-mono text-radar-green">mDM</code> — direct messages</li>
-        <li><code className="font-mono text-radar-green">mTALK</code> — push-to-talk (PTT + LLM in the same room)</li>
-        <li><code className="font-mono text-radar-green">mAIL</code> — email</li>
-        <li><code className="font-mono text-radar-green">mCALL</code> — PSTN calls with anonymous numbers + vocoder <span className="text-muted-foreground">(carrier-pending)</span></li>
-        <li><code className="font-mono text-radar-green">mIRC</code> — persistent channels</li>
-        <li><code className="font-mono text-radar-green">mIRL</code> — live-stream after-party <span className="text-muted-foreground">(design)</span></li>
-        <li><code className="font-mono text-radar-green">mROOM</code> — ephemeral rooms + no-account join links</li>
-        <li><code className="font-mono text-radar-green">mMATRIX</code> / <code className="font-mono text-radar-green">mDISCORD</code> / <code className="font-mono text-radar-green">mTELEGRAM</code> / <code className="font-mono text-radar-green">mSLACK</code> / <code className="font-mono text-radar-green">mSIGNAL</code> — bridges to existing networks</li>
+        <li><code className="font-mono text-primary">mDM</code> — direct messages</li>
+        <li><code className="font-mono text-primary">mTALK</code> — push-to-talk (PTT + LLM in the same room)</li>
+        <li><code className="font-mono text-primary">mAIL</code> — email</li>
+        <li><code className="font-mono text-primary">mCALL</code> — PSTN calls with anonymous numbers + vocoder <span className="text-muted-foreground">(carrier-pending)</span></li>
+        <li><code className="font-mono text-primary">mIRC</code> — persistent channels</li>
+        <li><code className="font-mono text-primary">mIRL</code> — live-stream after-party <span className="text-muted-foreground">(design)</span></li>
+        <li><code className="font-mono text-primary">mROOM</code> — ephemeral rooms + no-account join links</li>
+        <li><code className="font-mono text-primary">mMATRIX</code> / <code className="font-mono text-primary">mDISCORD</code> / <code className="font-mono text-primary">mTELEGRAM</code> / <code className="font-mono text-primary">mSLACK</code> / <code className="font-mono text-primary">mSIGNAL</code> — bridges to existing networks</li>
       </Ul>
       <P>
         All exposed through a <strong>single MCP server</strong>, plus an Anthropic Skills bundle as a bonus for Claude users.

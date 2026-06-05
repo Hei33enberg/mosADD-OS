@@ -21,40 +21,40 @@ export default function CommunityPage() {
             href="https://github.com/Hei33enberg/mosadd-os/discussions"
             target="_blank"
             rel="noreferrer"
-            className="block border border-neutral-800 rounded-lg p-5 hover:border-radar-green/40 hover:bg-neutral-900/50 transition group"
+            className="block border border-neutral-800 rounded-lg p-5 hover:border-primary/40 hover:bg-neutral-900/50 transition group"
           >
-            <div className="text-radar-green text-xs uppercase tracking-widest mb-2">GitHub</div>
-            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-radar-green transition">Discussions</div>
+            <div className="text-primary text-xs uppercase tracking-widest mb-2">GitHub</div>
+            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-primary transition">Discussions</div>
             <p className="text-sm text-neutral-400">Long-form architecture chats, Q&amp;A, "show &amp; tell" demos.</p>
           </a>
           <a
             href="https://mosadd.com/discord"
             target="_blank"
             rel="noreferrer"
-            className="block border border-neutral-800 rounded-lg p-5 hover:border-radar-green/40 hover:bg-neutral-900/50 transition group"
+            className="block border border-neutral-800 rounded-lg p-5 hover:border-primary/40 hover:bg-neutral-900/50 transition group"
           >
-            <div className="text-radar-green text-xs uppercase tracking-widest mb-2">Realtime</div>
-            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-radar-green transition">Discord <span className="text-neutral-500">· soon</span></div>
+            <div className="text-primary text-xs uppercase tracking-widest mb-2">Realtime</div>
+            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-primary transition">Discord <span className="text-neutral-500">· soon</span></div>
             <p className="text-sm text-neutral-400">Real-time channel launching with the Phase 1 community kickoff. Not live yet.</p>
           </a>
           <a
             href="https://github.com/Hei33enberg/mosadd-os/issues"
             target="_blank"
             rel="noreferrer"
-            className="block border border-neutral-800 rounded-lg p-5 hover:border-radar-green/40 hover:bg-neutral-900/50 transition group"
+            className="block border border-neutral-800 rounded-lg p-5 hover:border-primary/40 hover:bg-neutral-900/50 transition group"
           >
-            <div className="text-radar-green text-xs uppercase tracking-widest mb-2">Bug tracker</div>
-            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-radar-green transition">Issues</div>
+            <div className="text-primary text-xs uppercase tracking-widest mb-2">Bug tracker</div>
+            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-primary transition">Issues</div>
             <p className="text-sm text-neutral-400">Found a bug, want to suggest a feature, or propose a new module.</p>
           </a>
           <a
             href="https://x.com/mosaddcom"
             target="_blank"
             rel="noreferrer"
-            className="block border border-neutral-800 rounded-lg p-5 hover:border-radar-green/40 hover:bg-neutral-900/50 transition group"
+            className="block border border-neutral-800 rounded-lg p-5 hover:border-primary/40 hover:bg-neutral-900/50 transition group"
           >
-            <div className="text-radar-green text-xs uppercase tracking-widest mb-2">Updates</div>
-            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-radar-green transition">@mosaddcom on X</div>
+            <div className="text-primary text-xs uppercase tracking-widest mb-2">Updates</div>
+            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-primary transition">@mosaddcom on X</div>
             <p className="text-sm text-neutral-400">Releases, RFC accept/reject, hardware launches.</p>
           </a>
         </div>

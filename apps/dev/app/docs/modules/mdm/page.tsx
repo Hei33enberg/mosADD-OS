@@ -13,7 +13,7 @@ export default function MdmPage() {
       <Lead>Direct messages + 1:1 voice — multi-thread per contact, E2E optional.</Lead>
 
       <P>
-        <code className="font-mono text-radar-green">mDM</code> is the direct-messaging OS module.{' '}
+        <code className="font-mono text-primary">mDM</code> is the direct-messaging OS module.{' '}
         <strong>USP:</strong> multiple threads per contact (like GitHub Issues per repo), not one flat chat like WhatsApp.
       </P>
 
@@ -59,8 +59,8 @@ export default function MdmPage() {
       <H2>1:1 voice &amp; voice notes</H2>
       <P>
         mDM is also the home of the <strong>ordinary 1:1 call</strong> — full-duplex, phone-style. This is NOT
-        walkie-talkie (that&apos;s <code className="font-mono text-radar-green">mTALK</code>, half-duplex floor control) and NOT the
-        phone network (that&apos;s <code className="font-mono text-radar-green">mCALL</code> / PSTN). Audio rides the VoiceProvider&apos;s
+        walkie-talkie (that&apos;s <code className="font-mono text-primary">mTALK</code>, half-duplex floor control) and NOT the
+        phone network (that&apos;s <code className="font-mono text-primary">mCALL</code> / PSTN). Audio rides the VoiceProvider&apos;s
         media transport (LiveKit by default); the tools handle the room and the invite/hangup signalling over the DM thread.
       </P>
 
@@ -97,14 +97,14 @@ export default function MdmPage() {
 
       <H2>E2E encryption</H2>
       <P>
-        With <code className="font-mono text-radar-green">encrypted: true</code>, message body is wrapped via X3DH + Double Ratchet (<code className="font-mono text-radar-green">@mosadd/crypto</code>). Provider sees ciphertext only.
+        With <code className="font-mono text-primary">encrypted: true</code>, message body is wrapped via X3DH + Double Ratchet (<code className="font-mono text-primary">@mosadd/crypto</code>). Provider sees ciphertext only.
       </P>
 
       <H2>Providers</H2>
       <Ul>
-        <li>Default: Supabase backend (mosadd backend functions <code className="font-mono text-radar-green">message-send</code>, <code className="font-mono text-radar-green">message-list</code>, <code className="font-mono text-radar-green">message-request-respond</code>)</li>
-        <li>Federation: <code className="font-mono text-radar-green">mMATRIX</code> provider (route via Matrix homeserver)</li>
-        <li>p2p: <code className="font-mono text-radar-green">nwaku</code> provider (anonymous-identity native)</li>
+        <li>Default: Supabase backend (mosadd backend functions <code className="font-mono text-primary">message-send</code>, <code className="font-mono text-primary">message-list</code>, <code className="font-mono text-primary">message-request-respond</code>)</li>
+        <li>Federation: <code className="font-mono text-primary">mMATRIX</code> provider (route via Matrix homeserver)</li>
+        <li>p2p: <code className="font-mono text-primary">nwaku</code> provider (anonymous-identity native)</li>
       </Ul>
 
       <H2>Threat radar hooks</H2>

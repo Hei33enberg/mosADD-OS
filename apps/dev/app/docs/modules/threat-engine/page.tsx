@@ -14,7 +14,7 @@ export default function ThreatEnginePage() {
       <Lead>The 167-event threat taxonomy + scoring — the kernel security primitive, as an embeddable package.</Lead>
 
       <P>
-        <code className="font-mono text-radar-green">@mosadd/threat-engine</code> (Apache-2.0) is the{' '}
+        <code className="font-mono text-primary">@mosadd/threat-engine</code> (Apache-2.0) is the{' '}
         <strong>same engine</strong> that powers the mosadd.com app&apos;s radar. Ship it in <em>your</em> app
         (Electron / mobile / web) so you don&apos;t have to rewrite 167 detections from scratch. It is a pure,
         side-effect-free decision function — events in, a defensive verdict out — so it runs anywhere with no backend.
@@ -36,19 +36,19 @@ export default function ThreatEnginePage() {
       <Table
         headers={['Category', 'What it covers']}
         rows={[
-          [<code key="comint" className="font-mono text-radar-green">COMINT</code>, 'Communications intelligence — anomalies in message/channel/room traffic (volume spikes, exfiltration patterns, malformed payloads)'],
-          [<code key="sigint" className="font-mono text-radar-green">SIGINT</code>, 'Signals intelligence — network/transport signals: SS7 routing anomalies, SIP malformation, QoS drops, IMSI-catcher fingerprints'],
-          [<code key="masint" className="font-mono text-radar-green">MASINT</code>, 'Measurement & signature intelligence — device/OS-level signatures: known spyware fingerprints, kernel-compromise + SIM-swap indicators'],
-          [<code key="behavioral" className="font-mono text-radar-green">BEHAVIORAL</code>, 'Behavioral anomalies — auth brute-force, session/identity misuse, carrier/DID abuse (toll fraud, robocalls)'],
-          [<code key="phishing" className="font-mono text-radar-green">PHISHING</code>, 'Social-engineering surface — impersonation, malicious links, contact-request abuse'],
-          [<code key="privacy" className="font-mono text-radar-green">PRIVACY</code>, 'Privacy / data-leak signals — PII exposure, location leakage, metadata that breaks the zero-knowledge posture'],
+          [<code key="comint" className="font-mono text-primary">COMINT</code>, 'Communications intelligence — anomalies in message/channel/room traffic (volume spikes, exfiltration patterns, malformed payloads)'],
+          [<code key="sigint" className="font-mono text-primary">SIGINT</code>, 'Signals intelligence — network/transport signals: SS7 routing anomalies, SIP malformation, QoS drops, IMSI-catcher fingerprints'],
+          [<code key="masint" className="font-mono text-primary">MASINT</code>, 'Measurement & signature intelligence — device/OS-level signatures: known spyware fingerprints, kernel-compromise + SIM-swap indicators'],
+          [<code key="behavioral" className="font-mono text-primary">BEHAVIORAL</code>, 'Behavioral anomalies — auth brute-force, session/identity misuse, carrier/DID abuse (toll fraud, robocalls)'],
+          [<code key="phishing" className="font-mono text-primary">PHISHING</code>, 'Social-engineering surface — impersonation, malicious links, contact-request abuse'],
+          [<code key="privacy" className="font-mono text-primary">PRIVACY</code>, 'Privacy / data-leak signals — PII exposure, location leakage, metadata that breaks the zero-knowledge posture'],
         ]}
       />
 
       <H2>Scoring API</H2>
       <P>
-        The core is one deterministic function: hand it a <code className="font-mono text-radar-green">ThreatEvent</code>,
-        get back a <code className="font-mono text-radar-green">ThreatDecision</code> with the recommended defensive
+        The core is one deterministic function: hand it a <code className="font-mono text-primary">ThreatEvent</code>,
+        get back a <code className="font-mono text-primary">ThreatDecision</code> with the recommended defensive
         action, a normalized severity, and a human-readable reason. The engine <em>decides</em>; the caller carries
         out the action against whatever backend it has.
       </P>

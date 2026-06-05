@@ -23,7 +23,7 @@ export default function RfcsPage() {
           <Anchor href="https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md">
             <strong>RFC 0001 — m* module naming</strong>
           </Anchor>{' '}
-          — every module is <code className="font-mono text-radar-green">m&lt;NAME&gt;</code> and is an OS-level semantic primitive, not a vendor wrapper
+          — every module is <code className="font-mono text-primary">m&lt;NAME&gt;</code> and is an OS-level semantic primitive, not a vendor wrapper
         </li>
       </Ul>
 

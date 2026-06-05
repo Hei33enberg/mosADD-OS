@@ -13,7 +13,7 @@ export default function MtalkPage() {
       <Lead>Push-to-talk with LLM-in-room support. The kill feature.</Lead>
 
       <P>
-        <code className="font-mono text-radar-green">mTALK</code> is push-to-talk voice with one twist nobody else ships:{' '}
+        <code className="font-mono text-primary">mTALK</code> is push-to-talk voice with one twist nobody else ships:{' '}
         <strong>agents can join the room as listening/speaking participants</strong>.
       </P>
       <P>
@@ -54,10 +54,10 @@ export default function MtalkPage() {
 
       <H2>How LLM-in-room works</H2>
       <Ol>
-        <li>Agent opens (or joins) a PTT room via <code className="font-mono text-radar-green">mTALK_open</code>, then mints client credentials with <code className="font-mono text-radar-green">mTALK_join</code></li>
+        <li>Agent opens (or joins) a PTT room via <code className="font-mono text-primary">mTALK_open</code>, then mints client credentials with <code className="font-mono text-primary">mTALK_join</code></li>
         <li>The credentials let an agent participant subscribe to the room&apos;s audio transport (LiveKit Agents framework, with VAD + STT)</li>
-        <li>Agent takes the floor with <code className="font-mono text-radar-green">mTALK_press</code> (granted when no one is transmitting), TTS&apos;s into the room, then calls <code className="font-mono text-radar-green">mTALK_release</code></li>
-        <li>Floor discipline is half-duplex FIFO with an anti-hog timeout — inspect it any time with <code className="font-mono text-radar-green">mTALK_state</code></li>
+        <li>Agent takes the floor with <code className="font-mono text-primary">mTALK_press</code> (granted when no one is transmitting), TTS&apos;s into the room, then calls <code className="font-mono text-primary">mTALK_release</code></li>
+        <li>Floor discipline is half-duplex FIFO with an anti-hog timeout — inspect it any time with <code className="font-mono text-primary">mTALK_state</code></li>
       </Ol>
       <P>
         This is <strong>the killer feature</strong>. Walkie-talkie group + AI participant in the same room.
@@ -65,7 +65,7 @@ export default function MtalkPage() {
 
       <H2>Providers</H2>
       <Ul>
-        <li>LiveKit (forked as <code className="font-mono text-radar-green">mosadd-fabric</code>) — primary</li>
+        <li>LiveKit (forked as <code className="font-mono text-primary">mosadd-fabric</code>) — primary</li>
         <li>Mediasoup — backup</li>
         <li>Pion-based custom — fallback</li>
       </Ul>

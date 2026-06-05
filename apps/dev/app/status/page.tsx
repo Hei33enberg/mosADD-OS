@@ -28,7 +28,7 @@ export default async function StatusPage() {
 
   const pill = (s: 'ok' | 'down' | 'pending') => {
     const styles: Record<string, string> = {
-      ok: 'text-radar-green border-radar-green/40 bg-radar-green/5',
+      ok: 'text-primary border-primary/40 bg-primary/5',
       down: 'text-red-400 border-red-500/40 bg-red-500/5',
       pending: 'text-neutral-500 border-neutral-700 bg-neutral-900/50',
     };
@@ -39,7 +39,7 @@ export default async function StatusPage() {
     };
     return (
       <span className={`inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 rounded border ${styles[s]}`}>
-        <span className={`w-1.5 h-1.5 rounded-full ${s === 'ok' ? 'bg-radar-green' : s === 'down' ? 'bg-red-400' : 'bg-neutral-600'}`} />
+        <span className={`w-1.5 h-1.5 rounded-full ${s === 'ok' ? 'bg-primary' : s === 'down' ? 'bg-red-400' : 'bg-neutral-600'}`} />
         {labels[s]}
       </span>
     );
@@ -53,7 +53,7 @@ export default async function StatusPage() {
 
         <Callout type="info">
           This page does light HEAD checks at render time. A proper hosted status page lives at{' '}
-          <code className="font-mono text-radar-green">status.mosadd.com</code> (coming with Phase 2 hosted MCP).
+          <code className="font-mono text-primary">status.mosadd.com</code> (coming with Phase 2 hosted MCP).
         </Callout>
 
         <H2>Public surfaces</H2>
@@ -68,7 +68,7 @@ export default async function StatusPage() {
         />
 
         <H2>Incident history</H2>
-        <P>No incidents recorded. Full history will live at <code className="font-mono text-radar-green">status.mosadd.com</code> once Phase 2 ships.</P>
+        <P>No incidents recorded. Full history will live at <code className="font-mono text-primary">status.mosadd.com</code> once Phase 2 ships.</P>
 
         <H2>Subscribe</H2>
         <Ul>

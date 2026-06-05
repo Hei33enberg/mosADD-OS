@@ -13,7 +13,7 @@ export default function MircPage() {
       <Lead>Persistent channels — Discord/Slack semantics, agent-callable.</Lead>
 
       <P>
-        <code className="font-mono text-radar-green">mIRC</code> is the persistent-channels OS module. Topics, members, roles, presence — but every operation is exposed as an MCP tool, so agents can spin channels up, moderate, and orchestrate flows just like humans.
+        <code className="font-mono text-primary">mIRC</code> is the persistent-channels OS module. Topics, members, roles, presence — but every operation is exposed as an MCP tool, so agents can spin channels up, moderate, and orchestrate flows just like humans.
       </P>
 
       <H2>Tools (channel ops)</H2>

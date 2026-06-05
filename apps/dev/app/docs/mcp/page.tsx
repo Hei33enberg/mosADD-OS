@@ -10,32 +10,32 @@ export default function McpPage() {
   return (
     <Prose>
       <H1>MCP server</H1>
-      <Lead>Tool surface, transports, authentication for <code className="font-mono text-radar-green">@mosadd/mcp</code>.</Lead>
+      <Lead>Tool surface, transports, authentication for <code className="font-mono text-primary">@mosadd/mcp</code>.</Lead>
 
       <P>
-        The <code className="font-mono text-radar-green">@mosadd/mcp</code> package is the <strong>main artifact</strong> of mosadd-os.
+        The <code className="font-mono text-primary">@mosadd/mcp</code> package is the <strong>main artifact</strong> of mosadd-os.
         It covers 11 of 12 LLM clients (Claude Code, Cursor, Windsurf, VS Code, ChatGPT Apps, Lovable, Bolt, Goose, Cline, Manus, custom).
       </P>
 
       <H2>Tool naming</H2>
       <P>
         Per <Anchor href="https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md">RFC 0001</Anchor>,
-        tools follow <code className="font-mono text-radar-green">m&lt;MODULE&gt;_&lt;operation&gt;</code> snake_case:
+        tools follow <code className="font-mono text-primary">m&lt;MODULE&gt;_&lt;operation&gt;</code> snake_case:
       </P>
 
       <Table
         headers={['Tool', 'What it does']}
         rows={[
-          [<code key="1" className="font-mono text-radar-green">mDM_send</code>, 'Send an end-to-end-encrypted direct message'],
-          [<code key="2" className="font-mono text-radar-green">mDM_list</code>, 'List messages in a thread'],
-          [<code key="3" className="font-mono text-radar-green">mDM_respond_request</code>, 'Accept / reject a contact request'],
-          [<code key="4" className="font-mono text-radar-green">mROOM_create_guest_link</code>, 'Create ephemeral room with no-account join link'],
-          [<code key="5" className="font-mono text-radar-green">mROOM_join</code>, 'Join a room by link'],
-          [<code key="6" className="font-mono text-radar-green">mIRC_create</code>, 'Create a persistent channel'],
-          [<code key="7" className="font-mono text-radar-green">mAIL_send</code>, 'Send email'],
-          [<code key="8" className="font-mono text-radar-green">mTALK_press</code>, 'Press push-to-talk: request the floor (half-duplex)'],
-          [<code key="9" className="font-mono text-radar-green">mTALK_join</code>, 'Get LiveKit credentials to join a PTT room'],
-          [<code key="10" className="font-mono text-radar-green">mKB_search</code>, "Search/answer over the user's own data (RAG)"],
+          [<code key="1" className="font-mono text-primary">mDM_send</code>, 'Send an end-to-end-encrypted direct message'],
+          [<code key="2" className="font-mono text-primary">mDM_list</code>, 'List messages in a thread'],
+          [<code key="3" className="font-mono text-primary">mDM_respond_request</code>, 'Accept / reject a contact request'],
+          [<code key="4" className="font-mono text-primary">mROOM_create_guest_link</code>, 'Create ephemeral room with no-account join link'],
+          [<code key="5" className="font-mono text-primary">mROOM_join</code>, 'Join a room by link'],
+          [<code key="6" className="font-mono text-primary">mIRC_create</code>, 'Create a persistent channel'],
+          [<code key="7" className="font-mono text-primary">mAIL_send</code>, 'Send email'],
+          [<code key="8" className="font-mono text-primary">mTALK_press</code>, 'Press push-to-talk: request the floor (half-duplex)'],
+          [<code key="9" className="font-mono text-primary">mTALK_join</code>, 'Get LiveKit credentials to join a PTT room'],
+          [<code key="10" className="font-mono text-primary">mKB_search</code>, "Search/answer over the user's own data (RAG)"],
           ['…', <span key="more">full list in <Anchor href="/docs/modules">modules reference</Anchor></span>],
         ]}
       />
@@ -47,10 +47,10 @@ export default function McpPage() {
       <H2>Transports</H2>
       <Ul>
         <li>
-          <strong>stdio</strong> (default) — <code className="font-mono text-radar-green">npx @mosadd/mcp@alpha</code>. For Claude Code, Cursor, Cline, Windsurf, Goose, custom local agents.
+          <strong>stdio</strong> (default) — <code className="font-mono text-primary">npx @mosadd/mcp@alpha</code>. For Claude Code, Cursor, Cline, Windsurf, Goose, custom local agents.
         </li>
         <li>
-          <strong>HTTP/SSE</strong> — hosted at <code className="font-mono text-radar-green">https://mcp.mosadd.com</code> (Phase 2). For ChatGPT Apps, Lovable, Bolt.
+          <strong>HTTP/SSE</strong> — hosted at <code className="font-mono text-primary">https://mcp.mosadd.com</code> (Phase 2). For ChatGPT Apps, Lovable, Bolt.
         </li>
       </Ul>
 
@@ -66,13 +66,13 @@ export default function McpPage() {
       </P>
       <Ul>
         <li>
-          <code className="font-mono text-radar-green">mTALK_open</code> → returns a stable <code className="font-mono">room_id</code> (half-duplex PTT room).
+          <code className="font-mono text-primary">mTALK_open</code> → returns a stable <code className="font-mono">room_id</code> (half-duplex PTT room).
         </li>
         <li>
-          <code className="font-mono text-radar-green">mTALK_join</code> → returns <code className="font-mono">&#123; token, url, identity &#125;</code> (a LiveKit credential). A human/bot client connects with it; audio flows client ↔ LiveKit, never through MCP.
+          <code className="font-mono text-primary">mTALK_join</code> → returns <code className="font-mono">&#123; token, url, identity &#125;</code> (a LiveKit credential). A human/bot client connects with it; audio flows client ↔ LiveKit, never through MCP.
         </li>
         <li>
-          <code className="font-mono text-radar-green">mTALK_press</code> / <code className="font-mono text-radar-green">mTALK_release</code> / <code className="font-mono text-radar-green">mTALK_state</code> → drive the floor: one speaker at a time, FIFO queue, anti-hog auto-release.
+          <code className="font-mono text-primary">mTALK_press</code> / <code className="font-mono text-primary">mTALK_release</code> / <code className="font-mono text-primary">mTALK_state</code> → drive the floor: one speaker at a time, FIFO queue, anti-hog auto-release.
         </li>
       </Ul>
       <P>

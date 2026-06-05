@@ -13,7 +13,7 @@ export default function MirlPage() {
       <Lead>Live-stream after-party — a stream&apos;s audience keeps talking in a room the creator owns and can monetize.</Lead>
 
       <P>
-        <code className="font-mono text-radar-green">mIRL</code> spins up a room attached to a running live stream
+        <code className="font-mono text-primary">mIRL</code> spins up a room attached to a running live stream
         (YouTube, TikTok, Twitch, Kick). Viewers join with a no-account guest link mid-stream; when the broadcast ends,
         the conversation continues in the room for hours or days. The creator owns the audience and can charge for it.
       </P>

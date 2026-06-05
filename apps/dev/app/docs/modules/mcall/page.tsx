@@ -13,7 +13,7 @@ export default function McallPage() {
       <Lead>Burner telephony as an API — lease an ephemeral number, call and receive over an encrypted SIP relay, mask the caller&apos;s voice with a vocoder.</Lead>
 
       <P>
-        <code className="font-mono text-radar-green">mCALL</code> leases a short-lived (&ldquo;burner&rdquo;) phone
+        <code className="font-mono text-primary">mCALL</code> leases a short-lived (&ldquo;burner&rdquo;) phone
         number, presents it as your caller-ID on outbound calls, receives inbound calls to it, and can disguise the
         caller&apos;s voice with a vocoder. Real PSTN (E.164), media bridged over an encrypted SIP relay. The control
         plane is MCP; audio never flows through the tool call (see{' '}

@@ -14,14 +14,14 @@ export default function QuickstartPage() {
 
       <H2>In Claude Code</H2>
       <Pre lang="bash">{`claude mcp add mosadd npx -- -y @mosadd/mcp@alpha`}</Pre>
-      <P>Restart Claude Code. The <code className="font-mono text-radar-green">mosadd</code> MCP server is now connected. Try:</P>
+      <P>Restart Claude Code. The <code className="font-mono text-primary">mosadd</code> MCP server is now connected. Try:</P>
       <Callout type="info">
         Send a DM to <code className="font-mono">alice@mosadd</code>: "first message from Claude"
       </Callout>
-      <P>Claude will call <code className="font-mono text-radar-green">mDM_send</code> under the hood.</P>
+      <P>Claude will call <code className="font-mono text-primary">mDM_send</code> under the hood.</P>
 
       <H2>In Cursor</H2>
-      <P>Add to <code className="font-mono text-radar-green">~/.cursor/mcp.json</code>:</P>
+      <P>Add to <code className="font-mono text-primary">~/.cursor/mcp.json</code>:</P>
       <Pre lang="json">{`{
   "mcpServers": {
     "mosadd": {
@@ -66,7 +66,7 @@ MOSADD_LIVEKIT_URL=wss://...
 MOSADD_LIVEKIT_API_KEY=...
 MOSADD_LIVEKIT_API_SECRET=...`}</Pre>
       <P>
-        Missing keys = that channel is disabled in <code className="font-mono text-radar-green">comms.discover</code>. No-op fail closed.
+        Missing keys = that channel is disabled in <code className="font-mono text-primary">comms.discover</code>. No-op fail closed.
       </P>
 
       <H3>Next steps</H3>

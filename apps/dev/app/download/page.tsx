@@ -54,7 +54,7 @@ export default async function DownloadPage() {
       <Prose>
         <H1>Download</H1>
         <Lead>
-          mosadd ships on <strong>npm</strong> as <code className="font-mono text-radar-green">@mosadd/*</code> —
+          mosadd ships on <strong>npm</strong> as <code className="font-mono text-primary">@mosadd/*</code> —
           that&apos;s the canonical install. GitHub Releases also carry the package tarballs + SBOMs for
           air-gapped or pinned setups.
         </Lead>
@@ -79,12 +79,12 @@ claude mcp add mosadd -- npx -y @mosadd/mcp@alpha`}</Pre>
               rows={release.assets
                 .filter((a) => !a.name.endsWith('.spdx.json'))
                 .map((a) => [
-                  <code key={a.name} className="font-mono text-radar-green text-xs">{a.name}</code>,
+                  <code key={a.name} className="font-mono text-primary text-xs">{a.name}</code>,
                   formatSize(a.size),
                   <a
                     key={`${a.name}-link`}
                     href={a.browser_download_url}
-                    className="text-radar-green hover:underline text-sm"
+                    className="text-primary hover:underline text-sm"
                   >
                     Download →
                   </a>,
@@ -101,7 +101,7 @@ claude mcp add mosadd -- npx -y @mosadd/mcp@alpha`}</Pre>
                   <a
                     key={`${a.name}-link`}
                     href={a.browser_download_url}
-                    className="text-radar-green hover:underline text-sm"
+                    className="text-primary hover:underline text-sm"
                   >
                     Download →
                   </a>,

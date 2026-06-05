@@ -75,12 +75,12 @@ export default function ExamplesPage() {
             href={ex.url}
             target="_blank"
             rel="noreferrer"
-            className="block border border-neutral-800 rounded-lg p-5 hover:border-radar-green/40 hover:bg-neutral-900/50 transition group"
+            className="block border border-neutral-800 rounded-lg p-5 hover:border-primary/40 hover:bg-neutral-900/50 transition group"
           >
             <div className="text-[10px] uppercase tracking-widest text-neutral-500 mb-2">{ex.framework}</div>
-            <div className="font-display text-lg text-neutral-100 group-hover:text-radar-green transition mb-2">{ex.title}</div>
+            <div className="font-display text-lg text-neutral-100 group-hover:text-primary transition mb-2">{ex.title}</div>
             <p className="text-sm text-neutral-400 leading-relaxed">{ex.blurb}</p>
-            <div className="mt-4 text-xs font-mono text-radar-green group-hover:underline">examples/{ex.slug} ↗</div>
+            <div className="mt-4 text-xs font-mono text-primary group-hover:underline">examples/{ex.slug} ↗</div>
           </a>
         ))}
       </div>
@@ -91,7 +91,7 @@ export default function ExamplesPage() {
           href="https://github.com/Hei33enberg/mosadd-os/issues/new"
           target="_blank"
           rel="noreferrer"
-          className="text-radar-green hover:underline"
+          className="text-primary hover:underline"
         >
           Open an issue ↗
         </a>{' '}

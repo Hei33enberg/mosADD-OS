@@ -10,10 +10,10 @@ export default function MailPage() {
   return (
     <Prose>
       <H1>mAIL</H1>
-      <Lead>Email — every user gets a <code className="font-mono text-radar-green">&lt;id&gt;@mosadd.com</code> address. Provider-agnostic.</Lead>
+      <Lead>Email — every user gets a <code className="font-mono text-primary">&lt;id&gt;@mosadd.com</code> address. Provider-agnostic.</Lead>
 
       <P>
-        <code className="font-mono text-radar-green">mAIL</code> is the email OS module. Outbound via Resend or SES.
+        <code className="font-mono text-primary">mAIL</code> is the email OS module. Outbound via Resend or SES.
         Inbound via a Postfix-backed catch-all that drops into the threat radar before delivery.
       </P>
 

@@ -13,7 +13,7 @@ export default function SdkPage() {
       <Lead>Adapter pattern for every major agent framework via subpath exports.</Lead>
 
       <P>
-        <code className="font-mono text-radar-green">@mosadd/ai</code> ships adapters for every major agent framework — as{' '}
+        <code className="font-mono text-primary">@mosadd/ai</code> ships adapters for every major agent framework — as{' '}
         <strong>subpath exports</strong>, not separate packages (Stripe Agent Toolkit pattern).
       </P>
 
@@ -46,12 +46,12 @@ const tools = mosadd({ modules: ['mDM', 'mROOM', 'mTELEGRAM'] });`}</Pre>
 
       <H2>Bring your own framework</H2>
       <P>
-        The <code className="font-mono text-radar-green">mosadd()</code> function returns a plain{' '}
+        The <code className="font-mono text-primary">mosadd()</code> function returns a plain{' '}
         <code className="font-mono">&#123; name, description, schema, execute &#125;</code> tool list.
         Adapt to any custom framework with one wrapper.
       </P>
       <P>
-        See <Anchor href="https://github.com/Hei33enberg/mosadd-os/tree/main/packages/ai"><code className="font-mono text-radar-green">packages/ai</code></Anchor> on GitHub.
+        See <Anchor href="https://github.com/Hei33enberg/mosadd-os/tree/main/packages/ai"><code className="font-mono text-primary">packages/ai</code></Anchor> on GitHub.
       </P>
     </Prose>
   );
