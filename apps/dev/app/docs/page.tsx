@@ -3,7 +3,7 @@ import { Prose, H1, Lead, H2, P, Ul, Callout, Anchor } from '../_components/Pros
 
 export const metadata: Metadata = {
   title: 'Docs',
-  description: 'Developer docs for mosADD — the Iron Dome Multi-Channel Messenger as an MCP server. Channels, SDK, skills, bridges.',
+  description: 'Developer docs for mosADD — the Iron Dome Multi-Channel Messenger as an MCP server. Channels, SDK, skills, security.',
 };
 
 export default function DocsIndexPage() {
@@ -46,7 +46,7 @@ export default function DocsIndexPage() {
 
       <H2>Status</H2>
       <P>
-        <strong>alpha — toolkit live.</strong> The MCP server ships 52 tools across 6 live modules today (mCALL is carrier-pending, mIRL is design). Track progress on{' '}
+        <strong>alpha — toolkit live.</strong> The MCP server ships 52 tools across 6 live modules today. Track progress on{' '}
         <Anchor href="https://linear.app/ip-ra/project/mosadd-deaa4bef6de8">Linear</Anchor>.
       </P>
       <P>

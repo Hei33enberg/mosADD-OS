@@ -78,7 +78,7 @@ export default function MdmPage() {
       <P>
         mDM is also the home of the <strong>ordinary 1:1 call</strong> — full-duplex, phone-style. This is NOT
         walkie-talkie (that&apos;s <code className="font-mono text-primary">mTALK</code>, half-duplex floor control) and NOT the
-        phone network (that&apos;s <code className="font-mono text-primary">mCALL</code> / PSTN). Audio rides the VoiceProvider&apos;s
+        public phone network (PSTN). Audio rides the VoiceProvider&apos;s
         media transport (LiveKit by default); the tools handle the room and the invite/hangup signalling over the DM thread.
       </P>
 

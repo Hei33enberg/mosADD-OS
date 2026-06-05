@@ -42,7 +42,7 @@ export default function SecurityPage() {
 
       <H2>Threat model</H2>
       <P>
-        STRIDE-derived, with module-specific extensions for voice (mTALK), PSTN (mCALL) and bridges. Full document in{' '}
+        STRIDE-derived, with module-specific extensions for voice (mTALK) and the per-channel encryption posture. Full document in{' '}
         <Anchor href="https://github.com/Hei33enberg/mosadd-os/blob/main/docs/security/threat-model.md">
           <code className="font-mono">docs/security/threat-model.md</code>
         </Anchor>.
