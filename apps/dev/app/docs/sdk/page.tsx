@@ -36,7 +36,7 @@ const agent = createReactAgent({ llm, tools });`}</Pre>
       <Pre lang="ts">{`import { mosadd } from '@mosadd/ai/openai';
 
 const agent = new Agent({
-  tools: mosadd({ modules: ['mAIL', 'mCALL'] }),
+  tools: mosadd({ modules: ['mAIL', 'mTALK'] }),
 });`}</Pre>
 
       <H2>Anthropic Agents</H2>

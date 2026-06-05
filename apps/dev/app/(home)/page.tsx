@@ -5,14 +5,14 @@ import { ComparisonTable } from '../_components/ComparisonTable';
 import { RadarHero } from '../_components/RadarHero';
 
 const modules = [
-  { name: 'mDM', desc: 'Encrypted 1:1 text + voice. Ed25519 identity, forward secrecy, self-destruct timers.', status: 'alpha', tools: 10, url: '/docs/modules/mdm' },
+  { name: 'mDM', desc: 'Encrypted 1:1 text + voice. Ed25519 identity, forward secrecy, self-destruct timers.', status: 'alpha', tools: 12, url: '/docs/modules/mdm' },
   { name: 'mIRC', desc: 'Persistent encrypted channels. Topic-scoped, invite-controlled, your key.', status: 'alpha', tools: 20, url: '/docs/modules/mirc' },
   { name: 'mROOM', desc: 'Ephemeral group rooms. No residual server state after teardown.', status: 'alpha', tools: 9, url: '/docs/modules/mroom' },
-  { name: 'mAIL', desc: 'Encrypted mail. Deliver in-network or bridge outbound.', status: 'alpha', tools: 3, url: '/docs/modules/mail' },
+  { name: 'mAIL', desc: 'Encrypted mail. Deliver in-network or bridge outbound.', status: 'alpha', tools: 4, url: '/docs/modules/mail' },
   { name: 'mTALK', desc: 'Encrypted voice. Anomaly detection on the media path.', status: 'alpha', tools: 5, url: '/docs/modules/mtalk' },
-  { name: 'mCALL', desc: 'Outbound PSTN calls — anonymous numbers + voice vocoder.', status: 'alpha', tools: 2, url: '/docs/modules/mcall' },
   { name: 'mKB', desc: 'Encrypted knowledge base. Agents read + write, versioned.', status: 'alpha', tools: 2, url: '/docs/modules/mkb' },
-  { name: 'mIRL', desc: 'Live-stream after-party — keep the community talking after the stream.', status: 'design', tools: 0, url: '/docs/modules/mirl' },
+  // Roadmap (not in this release): mIRL = design; mCALL = code shipped, carrier-pending — both documented under /docs/modules.
+  { name: 'mIRL', desc: 'Live-stream after-party — keep the community talking after the stream.', status: 'roadmap', tools: 0, url: '/docs/modules/mirl' },
 ];
 
 const bridges = ['mMATRIX', 'mDISCORD', 'mTELEGRAM', 'mSLACK', 'mSIGNAL'];
@@ -35,7 +35,7 @@ const threats = [
 const steps = [
   { n: '1', t: 'Install the MCP server', d: "Add the mosADD MCP server to your agent's tool config. One package, zero peer dependencies beyond your runtime.", c: 'claude mcp add mosadd npx -- -y @mosadd/mcp@alpha' },
   { n: '2', t: 'Add your keys — or go hosted', d: 'Supply your own keys and self-host the relay, or point at the hosted endpoint. Switch modes without changing tool signatures.', c: 'mosadd login' },
-  { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mROOM_create_guest_link, mAIL_send — any of the 55 tools. Encryption, routing and threat monitoring happen below the call.', c: 'mDM_send  ·  mROOM_create_guest_link' },
+  { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mROOM_create_guest_link, mAIL_send — any of the 52 tools. Encryption, routing and threat monitoring happen below the call.', c: 'mDM_send  ·  mROOM_create_guest_link' },
 ];
 
 /** Tiny monospace section index, e.g. §01. */
@@ -122,7 +122,7 @@ export default function HomePage() {
         <div className="flex items-end justify-between">
           <div>
             <SectionTag n="04" label="m* channels" />
-            <h2 className="font-display text-3xl font-semibold tracking-tight">Eight channels. One tool namespace.</h2>
+            <h2 className="font-display text-3xl font-semibold tracking-tight">Six channels, live today. One tool namespace.</h2>
           </div>
           <Link href="/docs/rfcs" className="hidden text-sm text-muted-foreground hover:text-foreground md:block">
             RFC 0001 · m* naming →

@@ -6,7 +6,7 @@
 
 mosadd.dev is the developer portal for the mosadd OS toolkit. The toolkit ships
 as `@mosadd/*` packages on npm; the headline artifact is `@mosadd/mcp` — a single
-MCP server exposing 55 tools across 7 live modules that any agent (Claude Code, Cursor, ChatGPT Apps,
+MCP server exposing 52 tools across 6 live modules that any agent (Claude Code, Cursor, ChatGPT Apps,
 Vercel AI SDK, LangChain, …) can call.
 
 Install: `npx -y @mosadd/mcp@alpha`
@@ -14,20 +14,20 @@ Install: `npx -y @mosadd/mcp@alpha`
 ## Docs
 - [Quickstart](https://mosadd.dev/docs/quickstart): install for Claude Code, Cursor, Vercel AI SDK
 - [Credentials](https://mosadd.dev/docs/auth): `mosadd login`, MOSADD_* env vars
-- [MCP reference](https://mosadd.dev/docs/mcp): all 55 tools (discover + invoke)
-- [Modules](https://mosadd.dev/docs/modules): mDM, mIRC, mROOM, mAIL, mTALK, mCALL, mKB (alpha); threat-engine (alpha); mIRL (design)
+- [MCP reference](https://mosadd.dev/docs/mcp): all 52 live tools (discover + invoke)
+- [Modules](https://mosadd.dev/docs/modules): mDM, mIRC, mROOM, mAIL, mTALK, mKB (alpha); threat-engine (alpha); mCALL (carrier-pending); mIRL (design)
 - [SDK adapters](https://mosadd.dev/docs/sdk): Vercel AI, LangChain, OpenAI, Anthropic
 - [Security](https://mosadd.dev/docs/security): threat model + hardening
 - [RFCs](https://mosadd.dev/docs/rfcs): protocol RFC index
 
 ## Channels (m*)
-- mDM — direct messages, end-to-end encrypted, text + voice (10 tools)
+- mDM — direct messages, end-to-end encrypted, text + voice (12 tools)
 - mIRC — persistent channels (20 tools)
 - mROOM — ephemeral rooms + no-account join links (9 tools)
-- mAIL — email, every user gets <id>@mosadd.com (3 tools)
+- mAIL — email, every user gets <id>@mosadd.com (4 tools)
 - mTALK — push-to-talk, half-duplex floor control (5 tools)
-- mCALL — outbound PSTN, anonymous numbers + vocoder (2 tools)
 - mKB — knowledge base, RAG recall over your own data (2 tools)
+- mCALL — outbound/inbound PSTN, ephemeral numbers + vocoder (2 tools, carrier-pending — code shipped, needs a Telnyx/LiveKit trunk)
 - mIRL — live-stream after-party (design)
 
 ## Resources

@@ -27,9 +27,9 @@ export default function DocsIndexPage() {
         <li><code className="font-mono text-radar-green">mDM</code> — direct messages</li>
         <li><code className="font-mono text-radar-green">mTALK</code> — push-to-talk (PTT + LLM in the same room)</li>
         <li><code className="font-mono text-radar-green">mAIL</code> — email</li>
-        <li><code className="font-mono text-radar-green">mCALL</code> — PSTN calls with anonymous numbers + vocoder</li>
+        <li><code className="font-mono text-radar-green">mCALL</code> — PSTN calls with anonymous numbers + vocoder <span className="text-muted-foreground">(carrier-pending)</span></li>
         <li><code className="font-mono text-radar-green">mIRC</code> — persistent channels</li>
-        <li><code className="font-mono text-radar-green">mIRL</code> — live-stream after-party</li>
+        <li><code className="font-mono text-radar-green">mIRL</code> — live-stream after-party <span className="text-muted-foreground">(design)</span></li>
         <li><code className="font-mono text-radar-green">mROOM</code> — ephemeral rooms + no-account join links</li>
         <li><code className="font-mono text-radar-green">mMATRIX</code> / <code className="font-mono text-radar-green">mDISCORD</code> / <code className="font-mono text-radar-green">mTELEGRAM</code> / <code className="font-mono text-radar-green">mSLACK</code> / <code className="font-mono text-radar-green">mSIGNAL</code> — bridges to existing networks</li>
       </Ul>
@@ -48,7 +48,7 @@ export default function DocsIndexPage() {
 
       <H2>Status</H2>
       <P>
-        <strong>alpha — toolkit live.</strong> The MCP server ships 55 tools across 7 live modules today. Track progress on{' '}
+        <strong>alpha — toolkit live.</strong> The MCP server ships 52 tools across 6 live modules today (mCALL is carrier-pending, mIRL is design). Track progress on{' '}
         <Anchor href="https://linear.app/ip-ra/project/mosadd-deaa4bef6de8">Linear</Anchor>.
       </P>
       <P>

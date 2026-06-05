@@ -28,7 +28,7 @@ const tiers: Tier[] = [
     price: '$0',
     features: [
       '@mosadd/mcp + all SDK adapters',
-      'All 55 tools across 7 live modules',
+      'All 52 tools across 6 live modules',
       'Bring your own keys (Telnyx, Resend, LiveKit, Supabase)',
       'Unlimited MAT, msg, search — you pay your own infra',
       'Community support · GitHub Discussions',
@@ -221,7 +221,7 @@ export default function PricingPage() {
         <P><strong>Why one unified plan instead of separate prices?</strong> Most users want both: a creator wants the embed for visitors AND the MCP toolkit for their own bots. Charging once is simpler. Pro $9 unlocks 10k MAT + 10k msg + 1k RAG — pick whichever fits and the others come along.</P>
         <P><strong>Is there a spend cap?</strong> Yes — hard cap = 2× your plan price. When you hit it, the mint endpoint refuses new joiners with a "queue / upgrade" UI. No silent overage bills, ever.</P>
         <P><strong>Can I move from self-host to hosted later?</strong> Yes — your data, your keys. The Apache-2.0 self-host has the same data model; just point your Stripe-paid account at the hosted hub.</P>
-        <P><strong>What about PSTN / voice (mCALL / mTALK)?</strong> Carrier fees are pass-through at-cost (≤10% markup) or $0 with BYOK (your own Telnyx / LiveKit keys). Same logic for Resend (email).</P>
+        <P><strong>What about voice (mTALK) and PSTN (mCALL)?</strong> mTALK voice is live. mCALL PSTN is <em>carrier-pending</em> — the control plane is shipped and it turns on once you wire a Telnyx / LiveKit SIP trunk. Carrier fees are then pass-through at-cost (≤10% markup) or $0 with BYOK (your own keys). Same logic for Resend (email).</P>
         <P><strong>Where&apos;s the open/paid line?</strong> Everything you need to build and self-host is Apache-2.0 forever. The hosted convenience, BYOK key-broker, threat radar, SSO/RBAC/audit-log and SLAs are the paid layer. We won&apos;t relicense the open core.</P>
       </Prose>
     </div>
