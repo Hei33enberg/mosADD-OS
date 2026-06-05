@@ -52,10 +52,6 @@ export default function EmbedLandingPage() {
     <div className="mx-auto max-w-6xl px-6">
       {/* ── Hero ── */}
       <section className="relative overflow-hidden border-x border-border">
-        <span className="hud-bracket hud-tl" />
-        <span className="hud-bracket hud-tr" />
-        <span className="hud-bracket hud-bl" />
-        <span className="hud-bracket hud-br" />
         <div className="px-6 py-24 md:py-28">
           <div className="mb-5 text-xs uppercase tracking-[0.35em] text-primary/80">mosadd.dev · embed</div>
           <h1 className="font-display text-5xl font-bold leading-[0.95] tracking-tight text-foreground md:text-6xl">

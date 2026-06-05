@@ -30,26 +30,31 @@ async function getStars(): Promise<number | null> {
 
 export async function SocialProof() {
   const stars = await getStars();
+  // No tool-count here — the hero already carries it. Keep these distinct.
   const stats: Array<{ value: string; label: string }> = [
-    { value: '52', label: 'live MCP tools' },
     { value: '0', label: 'setup steps' },
     { value: '$0', label: 'to first tool call' },
-    ...(stars != null ? [{ value: `${stars}`, label: 'GitHub stars' }] : []),
+    { value: 'Apache-2.0', label: 'open source' },
+    ...(stars != null && stars > 0 ? [{ value: `${stars}`, label: stars === 1 ? 'GitHub star' : 'GitHub stars' }] : []),
   ];
 
   return (
-    <section className="border-x border-b border-border px-6 py-6">
-      <div className="mb-4 text-center text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+    <section className="border-x border-b border-border px-6 py-10">
+      <div className="mb-5 text-center text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
         Works in every MCP client
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+      {/* Compatibility wall — bordered wordmark cells (one grid, even rhythm). */}
+      <div className="mx-auto grid max-w-5xl grid-cols-2 gap-px overflow-hidden border border-border bg-border sm:grid-cols-4 lg:grid-cols-7">
         {CLIENTS.map((c) => (
-          <span key={c} className="font-display text-sm text-muted-foreground/80">
+          <div
+            key={c}
+            className="flex items-center justify-center bg-card/40 px-3 py-5 text-center font-display text-sm text-muted-foreground/90 transition-colors hover:bg-card hover:text-foreground"
+          >
             {c}
-          </span>
+          </div>
         ))}
       </div>
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 border-t border-border/60 pt-5">
+      <div className="mx-auto mt-8 flex max-w-2xl flex-wrap items-center justify-center gap-x-10 gap-y-3">
         {stats.map((s) => (
           <div key={s.label} className="text-center">
             <span className="font-display text-xl text-primary">{s.value}</span>

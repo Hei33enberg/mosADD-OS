@@ -33,11 +33,6 @@ export function RadarHero() {
       {/* left→right fade keeps the copy crisp over the radar */}
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-background/92 to-transparent sm:via-background/75" />
 
-      <span className="hud-bracket hud-tl" />
-      <span className="hud-bracket hud-tr" />
-      <span className="hud-bracket hud-bl" />
-      <span className="hud-bracket hud-br" />
-
       <div className="relative z-10 px-6 py-24 sm:py-28 md:py-36 lg:py-44">
         <div className="mb-6 text-[11px] uppercase tracking-[0.35em] text-primary/80">
           mosadd.dev · MCP · Apache-2.0
@@ -47,7 +42,7 @@ export function RadarHero() {
           className="max-w-4xl font-display font-bold uppercase text-foreground"
           style={{ fontSize: 'clamp(2.1rem, 5.4vw, 4.5rem)', lineHeight: 1.05, letterSpacing: '0.045em' }}
         >
-          Irondome Multi-Channel Messenger{' '}
+          Iron Dome Multi-Channel Messenger{' '}
           <span className="whitespace-nowrap text-primary text-glow">· MCP</span>
         </h1>
 
@@ -62,19 +57,17 @@ export function RadarHero() {
 
         <div className="mt-9 flex flex-wrap gap-3">
           <Link
-            href="/docs/quickstart"
+            href="/hub"
             className="rounded-none bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            [ Start free ]
+            [ Get your free key ]
           </Link>
-          <a
-            href="https://github.com/Hei33enberg/mosadd-os"
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            href="/docs/quickstart"
             className="rounded-none border border-border px-6 py-3 text-xs uppercase tracking-[0.2em] text-foreground transition-colors hover:border-primary/50 hover:text-primary"
           >
-            [ Read the code ]
-          </a>
+            [ Docs ]
+          </Link>
           <Link
             href="/pricing"
             className="rounded-none border border-border px-6 py-3 text-xs uppercase tracking-[0.2em] text-foreground transition-colors hover:border-primary/50 hover:text-primary"

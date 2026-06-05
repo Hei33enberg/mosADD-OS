@@ -43,10 +43,16 @@ export function SiteHeader() {
           </a>
           <a
             href="https://mosadd.com"
-            className="rounded-none border border-primary/40 px-3 py-1.5 text-primary transition-colors hover:bg-primary/10"
+            className="text-muted-foreground transition-colors hover:text-foreground"
           >
-            mosadd.com →
+            mosadd.com&nbsp;→
           </a>
+          <Link
+            href="/hub"
+            className="rounded-none bg-primary px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Sign in
+          </Link>
         </nav>
         <MobileNav />
       </div>

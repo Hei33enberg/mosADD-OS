@@ -3,14 +3,14 @@ import { Prose, H1, Lead, H2, P, Ul, Callout, Anchor } from '../_components/Pros
 
 export const metadata: Metadata = {
   title: 'Docs',
-  description: 'Developer docs for mosADD — the Irondome Multi-Channel Messenger as an MCP server. Channels, SDK, skills, bridges.',
+  description: 'Developer docs for mosADD — the Iron Dome Multi-Channel Messenger as an MCP server. Channels, SDK, skills, bridges.',
 };
 
 export default function DocsIndexPage() {
   return (
     <Prose>
       <H1>Documentation</H1>
-      <Lead>mosADD — Irondome Multi-Channel Messenger, exposed as an MCP server for AI agents.</Lead>
+      <Lead>mosADD — Iron Dome Multi-Channel Messenger, exposed as an MCP server for AI agents.</Lead>
 
       <Callout type="info">
         This is the dev / integrations side. End-user app lives at{' '}

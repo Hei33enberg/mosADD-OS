@@ -99,7 +99,7 @@ export default function HomePage() {
         <p className="mt-3 text-xs text-muted-foreground">✓ yes · ~ partial · ✗ no. Corrections welcome — open an issue.</p>
       </section>
 
-      {/* ── §03 Threat-aware (Irondome differentiator) ── */}
+      {/* ── §03 Threat-aware (Iron Dome differentiator) ── */}
       <section className="relative overflow-hidden border-x border-b border-border px-6 py-16">
         <div aria-hidden className="pointer-events-none absolute -right-32 top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-primary/[0.06] blur-[120px]" />
         <SectionTag n="03" label="Iron Dome" />

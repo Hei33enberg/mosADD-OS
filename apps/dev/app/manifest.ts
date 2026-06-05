@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next';
 // PWA / web manifest — brand tokens: pure black bg, neon-green theme.
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'mosadd.dev — Irondome Multi-Channel Messenger · MCP',
+    name: 'mosadd.dev — Iron Dome Multi-Channel Messenger · MCP',
     short_name: 'mosadd.dev',
     description:
       'One MCP server: encrypted DMs, channels, rooms, mail, voice and a knowledge base for AI agents. E2EE in the kernel, threat radar included, BYOK or self-host. Apache-2.0.',

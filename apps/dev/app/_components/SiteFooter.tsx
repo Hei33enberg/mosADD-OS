@@ -7,7 +7,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-6 py-12 md:grid-cols-5">
         <div className="col-span-2">
           <Logo size="base" />
-          <div className="mb-3 mt-3 text-foreground/80">Irondome Multi-Channel Messenger · MCP</div>
+          <div className="mb-3 mt-3 text-foreground/80">Iron Dome Multi-Channel Messenger · MCP</div>
           <div className="text-muted-foreground/70">TRUST NO TRACE. · Apache-2.0 · Engineered in Switzerland</div>
         </div>
 

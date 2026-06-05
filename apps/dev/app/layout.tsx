@@ -18,14 +18,14 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://mosadd.dev'),
   title: {
-    default: 'mosADD MCP — Irondome Multi-Channel Messenger for AI agents',
+    default: 'mosADD MCP — Iron Dome Multi-Channel Messenger for AI agents',
     template: '%s · mosadd.dev',
   },
   description:
     'One MCP server: encrypted DMs, channels, rooms, mail, voice and knowledge base for AI agents. E2EE in the kernel, threat radar included, BYOK or self-host. Apache-2.0.',
   applicationName: 'mosadd.dev',
   openGraph: {
-    title: 'mosADD MCP — Irondome Multi-Channel Messenger · MCP',
+    title: 'mosADD MCP — Iron Dome Multi-Channel Messenger · MCP',
     description: 'Threat-aware, zero-knowledge comms for AI agents. One MCP server, every channel — your keys or self-host. Apache-2.0. TRUST NO TRACE.',
     url: 'https://mosadd.dev',
     siteName: 'mosadd.dev',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'mosADD MCP — Irondome Multi-Channel Messenger · MCP',
+    title: 'mosADD MCP — Iron Dome Multi-Channel Messenger · MCP',
     description: 'Threat-aware, zero-knowledge comms for AI agents. One MCP server, every channel. Apache-2.0.',
   },
 };

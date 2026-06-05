@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
 const links = [
-  { href: '/embed', label: 'Embed →', primary: true },
+  { href: '/hub', label: 'Sign in →', primary: true },
+  { href: '/embed', label: 'Embed' },
   { href: '/docs', label: 'Docs' },
   { href: '/docs/quickstart', label: 'Quickstart' },
   { href: '/docs/auth', label: 'Credentials' },
