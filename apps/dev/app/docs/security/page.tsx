@@ -51,8 +51,8 @@ export default function SecurityPage() {
       <Ul>
         <li>MCP server (stdio + hosted) — prompt injection, tool poisoning, BYOK exfiltration</li>
         <li>Edge functions — auth bypass, replay, IDOR on tenant scoping</li>
-        <li>Bridges — credential theft from federation links, bidirectional content laundering</li>
-        <li>Voice — deepfake injection, prompt-injection-via-TTS, floor-control abuse</li>
+        <li>mAIL (inbound mp0st) — sender spoofing, spam/phishing payloads, soft-delete abuse</li>
+        <li>Voice (mTALK) — deepfake injection, prompt-injection-via-TTS, floor-control abuse</li>
         <li>Identity recovery — passphrase phishing, seed-phrase social engineering</li>
       </Ul>
       <H3>Defenses</H3>
@@ -77,8 +77,8 @@ export MOSADD_LOG_LEVEL=warn
 export MOSADD_RATE_LIMIT_MODE=strict
 export MOSADD_AUDIT_RETENTION_DAYS=2555  # NIS2 7-year minimum
 
-# disable bridges you don't use
-export MOSADD_DISABLE_BRIDGES=whatsapp,imessage`}</Pre>
+# run self-hosted / BYOK — no traffic to the hosted hub
+export MOSADD_MODE=self-host`}</Pre>
 
       <H2>Reporting a vulnerability</H2>
       <P>Please <strong>do not</strong> open a public GitHub issue. Instead:</P>
@@ -91,8 +91,9 @@ export MOSADD_DISABLE_BRIDGES=whatsapp,imessage`}</Pre>
       <P>Full policy in <Anchor href="https://github.com/Hei33enberg/mosadd-os/blob/main/SECURITY.md">SECURITY.md</Anchor>.</P>
 
       <Callout type="info">
-        <strong>Status:</strong> mosADD is in active alpha — encryption surfaces and bridges are still hardening, and
-        PSTN has carrier/legal review pending. Run it, audit it, break it, tell us. That&apos;s the point of open source.
+        <strong>Status:</strong> mosADD is in active alpha — encryption surfaces are still hardening (per-channel
+        group-key E2EE for mIRC/mROOM is the next crypto milestone). Run it, audit it, break it, tell us. That&apos;s
+        the point of open source.
       </Callout>
     </Prose>
   );

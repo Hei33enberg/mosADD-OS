@@ -6,7 +6,7 @@ import { ComparisonTable } from '../_components/ComparisonTable';
 export const metadata: Metadata = {
   title: 'Pricing',
   description:
-    'Open-source forever. Hosted hub usage-based with a generous free tier and BYOK = $0. Estimate your cost vs a hand-wired Twilio + LiveKit + Telnyx stack.',
+    'Open-source forever. Hosted hub usage-based with a generous free tier and BYOK = $0. Estimate your cost vs a hand-wired Twilio + LiveKit + Resend stack.',
 };
 
 type Tier = {
@@ -29,7 +29,7 @@ const tiers: Tier[] = [
     features: [
       '@mosadd/mcp + all SDK adapters',
       'All 52 tools across 6 live modules',
-      'Bring your own keys (Telnyx, Resend, LiveKit, Supabase)',
+      'Bring your own keys (LiveKit, Resend, OpenAI, Supabase)',
       'Unlimited MAT, msg, search — you pay your own infra',
       'Community support · GitHub Discussions',
     ],
@@ -164,7 +164,7 @@ export default function PricingPage() {
           <H2>Estimate your cost</H2>
           <P>
             Drag the sliders. We show the cheapest mosadd plan for your usage and what the same stack would
-            cost wired by hand across Twilio, LiveKit and Telnyx.
+            cost wired by hand across Twilio, LiveKit and Resend.
           </P>
         </Prose>
         <div className="mt-6">

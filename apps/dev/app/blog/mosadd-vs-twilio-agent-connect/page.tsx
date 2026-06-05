@@ -47,13 +47,13 @@ export default function Post() {
         <H2>What an OS does instead</H2>
         <P>
           mosadd is the layer below the channels. One MCP server exposes 52 tools across DM, channels, rooms,
-          mail, push-to-talk and knowledge recall. You bring your own keys — Telnyx, Resend, LiveKit, Supabase — or self-host the whole thing for
+          mail, push-to-talk and knowledge recall. You bring your own keys — LiveKit, Resend, OpenAI, Supabase — or self-host the whole thing for
           $0, forever, under Apache-2.0. The provider is a swappable seam, not a landlord.
         </P>
         <Callout type="success">
           <strong>One call, any provider:</strong>{' '}
-          <code className="font-mono">mROOM_create_guest_link</code> replaces a LiveKit room + a Twilio number +
-          a Resend invite + Matrix federation — wired by hand. Switch the provider behind it without touching
+          <code className="font-mono">mROOM_create_guest_link</code> replaces a LiveKit room + guest-token auth +
+          a Resend invite — wired by hand. Switch the provider behind it without touching
           your agent.
         </Callout>
 
