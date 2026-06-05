@@ -10,9 +10,6 @@
     "typecheck": "tsc --noEmit",
     "zip": "cd dist && zip -r ../channel0-ext.zip ."
   },
-  "dependencies": {
-    "@mosadd/skins": "file:../../packages/skins"
-  },
   "devDependencies": {
     "@types/chrome": "^0.0.270",
     "typescript": "^5.5.4",

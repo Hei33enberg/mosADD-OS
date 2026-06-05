@@ -6,8 +6,8 @@ import {
   broadcastSkin,
   readSkinFromStorage,
   writeSkinToStorage,
-} from '@mosadd/skins/runtime/site';
-import { SKINS } from '@mosadd/skins/registry';
+} from '../../lib/skins/runtime/site';
+import { SKINS } from '../../lib/skins/registry';
 
 export function SkinPicker() {
   const [open, setOpen] = useState(false);

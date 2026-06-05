@@ -6,9 +6,9 @@ import {
   readSkinFromStorage,
   writeSkinToStorage,
   listenForSkinSync,
-} from '@mosadd/skins/runtime/site';
-import { SKIN_BY_ID } from '@mosadd/skins/registry';
-import { DEFAULT_SKIN_ID } from '@mosadd/skins/contract';
+} from '../../lib/skins/runtime/site';
+import { SKIN_BY_ID } from '../../lib/skins/registry';
+import { DEFAULT_SKIN_ID } from '../../lib/skins/contract';
 
 /**
  * Boots the active skin from localStorage on first paint + subscribes to

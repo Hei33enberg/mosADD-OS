@@ -8,7 +8,7 @@ import { SiteHeader } from './_components/SiteHeader';
 import { SiteFooter } from './_components/SiteFooter';
 import { PostHogProvider } from './_components/PostHogProvider';
 import { SkinProvider, SKIN_BOOT_SCRIPT } from './_components/SkinProvider';
-import { getAllSkinsCss } from '@mosadd/skins/registry';
+import { getAllSkinsCss } from '../lib/skins/registry';
 import { SITE_URL } from '../lib/site';
 
 const ALL_SKINS_CSS = getAllSkinsCss();

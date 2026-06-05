@@ -10,8 +10,8 @@ import { getSettings, onSettingsChange, patchSettings, type Settings } from "../
 import { mountChat, type MountHandle, type ToolbarAction } from "../shared/chat-shell";
 import { CHAT_CSS } from "../shared/chat-styles";
 import { t } from "../lib/i18n";
-import { applySkinToShadow, setShadowSkin, normalizeSkinId } from "@mosadd/skins/runtime/extension";
-import { SKIN_SYNC_EVENT } from "@mosadd/skins/contract";
+import { applySkinToShadow, setShadowSkin, normalizeSkinId } from "../skins/runtime/extension";
+import { SKIN_SYNC_EVENT } from "../skins/contract";
 
 // Deep-link landing-page probe (LINEAR-2700). Allowed origins only.
 const PROBE_ORIGINS = new Set([

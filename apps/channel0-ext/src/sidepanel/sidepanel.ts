@@ -7,8 +7,8 @@ import { CHAT_CSS } from "../shared/chat-styles";
 import { getSettings, patchSettings, onSettingsChange, DEFAULT_SETTINGS, type OpenMode } from "../lib/settings";
 import { t, type MsgId } from "../lib/i18n";
 import { fetchTrending, relativeTime } from "../lib/trending";
-import { SKINS, getSkin } from "@mosadd/skins/registry";
-import { DEFAULT_CSS } from "@mosadd/skins";
+import { SKINS, getSkin } from "../skins/registry";
+import { DEFAULT_CSS } from "../skins";
 
 // Stamp the skin CSS into <head> once (default + all skin overrides).
 // Then the active skin is just a `data-murl-skin` attribute on <html>.
