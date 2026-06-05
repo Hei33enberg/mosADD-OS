@@ -5,18 +5,13 @@ import { ComparisonTable } from '../_components/ComparisonTable';
 import { RadarHero } from '../_components/RadarHero';
 
 const modules = [
-  { name: 'mDM', desc: 'Encrypted 1:1 text + voice. Ed25519 identity, forward secrecy, self-destruct timers.', status: 'alpha', tools: 12, url: '/docs/modules/mdm' },
-  { name: 'mIRC', desc: 'Persistent encrypted channels. Topic-scoped, invite-controlled, your key.', status: 'alpha', tools: 20, url: '/docs/modules/mirc' },
-  { name: 'mROOM', desc: 'Ephemeral group rooms. No residual server state after teardown.', status: 'alpha', tools: 9, url: '/docs/modules/mroom' },
-  { name: 'mAIL', desc: 'Agent mail with threat hooks. Deliver in-network or bridge outbound.', status: 'alpha', tools: 4, url: '/docs/modules/mail' },
-  { name: 'mTALK', desc: 'Encrypted voice. Anomaly detection on the media path.', status: 'alpha', tools: 5, url: '/docs/modules/mtalk' },
-  { name: 'mKB', desc: 'Encrypted knowledge base. Agents read + write, versioned.', status: 'alpha', tools: 2, url: '/docs/modules/mkb' },
-  // Roadmap (not in this release). Code is in the package; flipped live once the prerequisite lands.
-  { name: 'mCALL', desc: 'PSTN voice + ephemeral burner numbers + vocoder. Code shipped, carrier wiring pending.', status: 'carrier-pending', tools: 7, url: '/docs/modules/mcall' },
-  { name: 'mIRL', desc: 'Live-stream after-party — keep the community talking after the stream.', status: 'design', tools: 0, url: '/docs/modules/mirl' },
+  { name: 'mDM', desc: 'Encrypted 1:1 text + voice. Ed25519 identity, forward secrecy, self-destruct timers.', tools: 12, url: '/docs/modules/mdm' },
+  { name: 'mIRC', desc: 'Persistent encrypted channels. Topic-scoped, invite-controlled, your key.', tools: 20, url: '/docs/modules/mirc' },
+  { name: 'mROOM', desc: 'Ephemeral group rooms. No residual server state after teardown.', tools: 9, url: '/docs/modules/mroom' },
+  { name: 'mAIL', desc: 'Encrypted agent mail with threat hooks, priority and auto-destruct.', tools: 4, url: '/docs/modules/mail' },
+  { name: 'mTALK', desc: 'Encrypted push-to-talk voice. Anomaly detection on the media path.', tools: 5, url: '/docs/modules/mtalk' },
+  { name: 'mKB', desc: 'Encrypted knowledge base. Semantic recall (RAG) over your own data.', tools: 2, url: '/docs/modules/mkb' },
 ];
-
-const bridges = ['mMATRIX', 'mDISCORD', 'mTELEGRAM', 'mSLACK', 'mSIGNAL'];
 
 const threats = [
   {
@@ -34,7 +29,7 @@ const threats = [
 ];
 
 const steps = [
-  { n: '1', t: 'Install the MCP server', d: "Add the mosADD MCP server to your agent's tool config. One package, zero peer dependencies beyond your runtime.", c: 'claude mcp add mosadd npx -- -y @mosadd/mcp@alpha' },
+  { n: '1', t: 'Install the MCP server', d: "Add the mosADD MCP server to your agent's tool config. One package, zero peer dependencies beyond your runtime.", c: 'claude mcp add mosadd -- npx -y @mosadd/mcp@alpha' },
   { n: '2', t: 'Add your keys — or go hosted', d: 'Supply your own keys and self-host the relay, or point at the hosted endpoint. Switch modes without changing tool signatures.', c: 'mosadd login' },
   { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mROOM_create_guest_link, mAIL_send — any of the 52 tools. Encryption, routing and threat monitoring happen below the call.', c: 'mDM_send  ·  mROOM_create_guest_link' },
 ];
@@ -133,36 +128,20 @@ export default function HomePage() {
           Each module is a discrete MCP tool set — use the ones your agent needs. All share the same auth context, key
           material and threat surface.
         </p>
-        <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
-          {modules.map((m) => {
-            const live = m.status === 'alpha';
-            const carrierPending = m.status === 'carrier-pending';
-            return (
-              <Link
-                key={m.name}
-                href={m.url}
-                className="group bg-card/40 p-5 backdrop-blur-sm transition-colors hover:bg-card"
-              >
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="font-display text-lg text-primary">{m.name}</span>
-                  <span className={`text-[10px] uppercase tracking-[0.15em] ${live ? 'text-primary' : carrierPending ? 'text-warning' : 'text-muted-foreground'}`}>
-                    {live ? `${m.tools} tools` : m.status}
-                  </span>
-                </div>
-                <div className="text-sm leading-relaxed text-muted-foreground">{m.desc}</div>
-              </Link>
-            );
-          })}
-        </div>
-        <div className="mt-8">
-          <div className="mb-3 text-xs uppercase tracking-[0.25em] text-muted-foreground">Bridges — encryption dropped at the boundary, explicit + controllable</div>
-          <div className="flex flex-wrap gap-2">
-            {bridges.map((b) => (
-              <span key={b} className="rounded-none border border-border bg-card px-2 py-1 font-display text-xs text-muted-foreground">
-                {b}
-              </span>
-            ))}
-          </div>
+        <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+          {modules.map((m) => (
+            <Link
+              key={m.name}
+              href={m.url}
+              className="group bg-card/40 p-5 backdrop-blur-sm transition-colors hover:bg-card"
+            >
+              <div className="mb-2 flex items-center justify-between">
+                <span className="font-display text-lg text-primary">{m.name}</span>
+                <span className="text-[10px] uppercase tracking-[0.15em] text-primary">{m.tools} tools</span>
+              </div>
+              <div className="text-sm leading-relaxed text-muted-foreground">{m.desc}</div>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -181,7 +160,7 @@ export default function HomePage() {
           ))}
         </div>
         <div className="mt-8 max-w-xl">
-          <Terminal label="claude code">claude mcp add mosadd npx -- -y @mosadd/mcp@alpha</Terminal>
+          <Terminal label="claude code">claude mcp add mosadd -- npx -y @mosadd/mcp@alpha</Terminal>
         </div>
       </section>
 

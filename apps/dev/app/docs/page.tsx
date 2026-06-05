@@ -24,14 +24,12 @@ export default function DocsIndexPage() {
         <code className="font-mono text-primary">m*</code> is a channel you <code className="font-mono text-primary">add</code>:
       </P>
       <Ul>
-        <li><code className="font-mono text-primary">mDM</code> — direct messages</li>
-        <li><code className="font-mono text-primary">mTALK</code> — push-to-talk (PTT + LLM in the same room)</li>
-        <li><code className="font-mono text-primary">mAIL</code> — email</li>
-        <li><code className="font-mono text-primary">mCALL</code> — PSTN calls with anonymous numbers + vocoder <span className="text-muted-foreground">(carrier-pending)</span></li>
-        <li><code className="font-mono text-primary">mIRC</code> — persistent channels</li>
-        <li><code className="font-mono text-primary">mIRL</code> — live-stream after-party <span className="text-muted-foreground">(design)</span></li>
+        <li><code className="font-mono text-primary">mDM</code> — encrypted direct messages + 1:1 voice</li>
+        <li><code className="font-mono text-primary">mIRC</code> — persistent encrypted channels</li>
         <li><code className="font-mono text-primary">mROOM</code> — ephemeral rooms + no-account join links</li>
-        <li><code className="font-mono text-primary">mMATRIX</code> / <code className="font-mono text-primary">mDISCORD</code> / <code className="font-mono text-primary">mTELEGRAM</code> / <code className="font-mono text-primary">mSLACK</code> / <code className="font-mono text-primary">mSIGNAL</code> — bridges to existing networks</li>
+        <li><code className="font-mono text-primary">mTALK</code> — push-to-talk (PTT + LLM in the same room)</li>
+        <li><code className="font-mono text-primary">mAIL</code> — agent email</li>
+        <li><code className="font-mono text-primary">mKB</code> — encrypted knowledge base (RAG recall)</li>
       </Ul>
       <P>
         All exposed through a <strong>single MCP server</strong>, plus an Anthropic Skills bundle as a bonus for Claude users.

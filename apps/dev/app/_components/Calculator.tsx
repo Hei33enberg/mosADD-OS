@@ -5,21 +5,21 @@ import { useMemo, useState } from 'react';
 /**
  * Interactive cost calculator. Pure client-side math from a rate table — no
  * backend. Shows the cheapest mosadd plan for the entered usage and the
- * estimated cost of wiring the equivalent raw stack (Twilio SMS + LiveKit voice
- * + Telnyx PSTN) yourself.
+ * estimated cost of wiring the equivalent raw stack (Twilio SMS + LiveKit voice)
+ * yourself.
  *
- * Rates are list/preview rates for the Phase-2 hosted hub; BYOK sets voice/PSTN
- * orchestration to $0 (you pay your own provider at cost).
+ * Rates are list rates for the hosted hub; BYOK sets voice orchestration to $0
+ * (you pay your own provider at cost).
  */
-type Plan = { id: string; name: string; base: number; msg: number; ptt: number; pstn: number };
+type Plan = { id: string; name: string; base: number; msg: number; ptt: number };
 // Keep in sync with `tiers[]` in app/pricing/page.tsx — single source of truth is the pricing page.
 const PLANS: Plan[] = [
-  { id: 'free', name: 'Free', base: 0, msg: 1_000, ptt: 30, pstn: 0 },
-  { id: 'pro', name: 'Pro', base: 9, msg: 10_000, ptt: 600, pstn: 60 },
-  { id: 'team', name: 'Team', base: 29, msg: 100_000, ptt: 6_000, pstn: 600 },
+  { id: 'free', name: 'Free', base: 0, msg: 1_000, ptt: 30 },
+  { id: 'pro', name: 'Pro', base: 9, msg: 10_000, ptt: 600 },
+  { id: 'team', name: 'Team', base: 29, msg: 100_000, ptt: 6_000 },
 ];
-const OVER = { msg: 0.0006, ptt: 0.005, pstn: 0.015 }; // mosadd overage per unit
-const RAW = { msg: 0.0083, ptt: 0.0075, pstn: 0.014 }; // Twilio SMS / LiveKit / Telnyx list
+const OVER = { msg: 0.0006, ptt: 0.005 }; // mosadd overage per unit
+const RAW = { msg: 0.0083, ptt: 0.0075 }; // Twilio SMS / LiveKit list
 
 function money(n: number) {
   return n < 10 && n > 0 ? `$${n.toFixed(2)}` : `$${Math.round(n).toLocaleString()}`;
@@ -28,13 +28,12 @@ function money(n: number) {
 // Mirrors the pricing-page promise: "hard cap = 2× your plan price". The cap
 // applies to paid plans (Pro/Team); on Free, we stop at $0 — usage beyond the
 // included allowance is a quota-exceeded signal, not a charge.
-function mosaddCost(msg: number, ptt: number, pstn: number, byok: boolean) {
+function mosaddCost(msg: number, ptt: number, byok: boolean) {
   let best: { plan: Plan; total: number; capped: boolean } | null = null;
   for (const p of PLANS) {
     const overRaw =
       Math.max(0, msg - p.msg) * OVER.msg +
-      (byok ? 0 : Math.max(0, ptt - p.ptt) * OVER.ptt) +
-      (byok ? 0 : Math.max(0, pstn - p.pstn) * OVER.pstn);
+      (byok ? 0 : Math.max(0, ptt - p.ptt) * OVER.ptt);
     let total: number;
     let capped = false;
     if (p.base === 0) {
@@ -88,14 +87,10 @@ function Field({
 export function Calculator() {
   const [msg, setMsg] = useState(10_000);
   const [ptt, setPtt] = useState(300);
-  const [pstn, setPstn] = useState(60);
   const [byok, setByok] = useState(false);
 
-  const { plan, total, capped } = useMemo(() => mosaddCost(msg, ptt, pstn, byok), [msg, ptt, pstn, byok]);
-  const raw = useMemo(
-    () => msg * RAW.msg + ptt * RAW.ptt + pstn * RAW.pstn,
-    [msg, ptt, pstn],
-  );
+  const { plan, total, capped } = useMemo(() => mosaddCost(msg, ptt, byok), [msg, ptt, byok]);
+  const raw = useMemo(() => msg * RAW.msg + ptt * RAW.ptt, [msg, ptt]);
   const savings = raw - total;
 
   return (
@@ -103,10 +98,9 @@ export function Calculator() {
       <div className="space-y-5">
         <Field label="Messages / mo" value={msg} onChange={setMsg} max={200_000} step={1_000} hint="mDM · mIRC · mROOM · mAIL outbound" />
         <Field label="Push-to-talk min / mo" value={ptt} onChange={setPtt} max={12_000} step={100} hint="mTALK voice minutes" />
-        <Field label="PSTN min / mo" value={pstn} onChange={setPstn} max={2_000} step={20} hint="PSTN phone minutes (carrier-pending)" />
         <label className="flex items-center gap-2 text-sm text-foreground">
           <input type="checkbox" checked={byok} onChange={(e) => setByok(e.target.checked)} className="accent-primary" />
-          Bring my own keys (LiveKit / Telnyx) — voice &amp; PSTN orchestration $0
+          Bring my own keys (LiveKit) — voice orchestration $0
         </label>
       </div>
 
@@ -128,7 +122,7 @@ export function Calculator() {
         </div>
         <div className="space-y-1 text-sm">
           <div className="flex justify-between text-muted-foreground">
-            <span>Same stack hand-wired (Twilio + LiveKit + Telnyx)</span>
+            <span>Same stack hand-wired (Twilio + LiveKit)</span>
             <span>{money(raw)}/mo</span>
           </div>
           {savings > 0 ? (
@@ -142,7 +136,7 @@ export function Calculator() {
         </div>
         <p className="text-[10px] leading-relaxed text-muted-foreground">
           List rates for the hosted hub (live). Raw-stack estimate uses public list rates
-          (Twilio SMS $0.0083/msg · LiveKit ~$0.0075/min · Telnyx ~$0.014/min) and excludes the
+          (Twilio SMS $0.0083/msg · LiveKit ~$0.0075/min) and excludes the
           integration + maintenance you&apos;d write yourself.
         </p>
       </div>

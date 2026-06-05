@@ -3,14 +3,14 @@ import { Prose, H1, Lead, H2, P, Table, Anchor } from '../../_components/Prose';
 
 export const metadata: Metadata = {
   title: 'Modules',
-  description: 'Every m* module in the mosadd OS — native channels and bridges.',
+  description: 'The live m* modules in the mosadd OS — encrypted channels for AI agents.',
 };
 
 export default function ModulesPage() {
   return (
     <Prose>
       <H1>Modules</H1>
-      <Lead>Every m* module in the mosadd OS — native channels and bridges.</Lead>
+      <Lead>The live m* modules in the mosadd OS — six encrypted channels + the threat engine.</Lead>
 
       <P>
         Per <Anchor href="https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md">RFC 0001</Anchor>, every module is named{' '}
@@ -38,45 +38,9 @@ export default function ModulesPage() {
         ]}
       />
 
-      <H2>Roadmap (not in this release)</H2>
-      <P>Documented and partly built, but not part of the current live surface.</P>
-      <Table
-        headers={['Module', 'Description', 'Status']}
-        rows={[
-          [<Anchor key="mcall" href="/docs/modules/mcall">mCALL</Anchor>, 'PSTN out with anonymous numbers + vocoder — control plane shipped, awaiting a carrier (Telnyx / LiveKit SIP)', 'carrier-pending'],
-          [<Anchor key="mirl" href="/docs/modules/mirl">mIRL</Anchor>, 'Live-stream after-party (YT/TikTok creators)', 'design'],
-        ]}
-      />
-
-      <H2>Bridges (Hermes-derived)</H2>
-      <P>Reach existing contacts on their networks without forcing migration.</P>
-      <Table
-        headers={['Module', 'Description', 'Phase']}
-        rows={[
-          ['mMATRIX', 'Matrix federation + bridges', 'P0'],
-          ['mDISCORD', 'Discord DMs + channels', 'P0'],
-          ['mTELEGRAM', 'Telegram via MTProto', 'P0'],
-          ['mSLACK', 'Slack workspaces', 'P1'],
-          ['mSIGNAL', 'Signal via linked device', 'P1'],
-          ['mWHATSAPP', 'WhatsApp Business API', 'P2 (legal)'],
-          ['mIMESSAGE', 'Mac-only Blue Bubbles', 'P2 (legal)'],
-        ]}
-      />
-
-      <H2>Reserved for v3.1+</H2>
       <P>
-        <code className="font-mono text-primary">mPOST</code>,{' '}
-        <code className="font-mono text-primary">mWALL</code>,{' '}
-        <code className="font-mono text-primary">mBROADCAST</code>,{' '}
-        <code className="font-mono text-primary">mPING</code>,{' '}
-        <code className="font-mono text-primary">mPAY</code>,{' '}
-        <code className="font-mono text-primary">mVAULT</code>,{' '}
-        <code className="font-mono text-primary">mFAX</code>,{' '}
-        <code className="font-mono text-primary">mRSS</code>,{' '}
-        <code className="font-mono text-primary">mNEWS</code>,{' '}
-        <code className="font-mono text-primary">mMAP</code>.
-      </P>
-      <P>
+        Each module is an OS-level semantic primitive with its own MCP tool set — use the ones your agent needs.
+        They share one auth context, key material and threat surface.{' '}
         <Anchor href="https://github.com/Hei33enberg/mosadd-os/issues/new?template=module_proposal.yml">Propose a new module →</Anchor>
       </P>
     </Prose>

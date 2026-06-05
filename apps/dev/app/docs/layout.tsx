@@ -19,7 +19,7 @@ const nav: { section: string; items: { href: string; label: string }[] }[] = [
     ],
   },
   {
-    section: 'Modules (live)',
+    section: 'Modules',
     items: [
       { href: '/docs/modules', label: 'Overview' },
       { href: '/docs/modules/mdm', label: 'mDM · DMs' },
@@ -28,13 +28,6 @@ const nav: { section: string; items: { href: string; label: string }[] }[] = [
       { href: '/docs/modules/mtalk', label: 'mTALK · PTT' },
       { href: '/docs/modules/mail', label: 'mAIL · Email' },
       { href: '/docs/modules/mkb', label: 'mKB · Knowledge' },
-    ],
-  },
-  {
-    section: 'Roadmap',
-    items: [
-      { href: '/docs/modules/mcall', label: 'mCALL · PSTN (carrier-pending)' },
-      { href: '/docs/modules/mirl', label: 'mIRL · After-party (design)' },
     ],
   },
   {

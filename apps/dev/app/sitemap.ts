@@ -20,8 +20,6 @@ const ROUTES: Array<{ path: string; priority: number; freq: MetadataRoute.Sitema
   { path: '/docs/modules/mail', priority: 0.6, freq: 'monthly' },
   { path: '/docs/modules/mtalk', priority: 0.5, freq: 'monthly' },
   { path: '/docs/modules/mkb', priority: 0.6, freq: 'monthly' },
-  { path: '/docs/modules/mcall', priority: 0.5, freq: 'monthly' },
-  { path: '/docs/modules/mirl', priority: 0.4, freq: 'monthly' },
   { path: '/docs/modules/threat-engine', priority: 0.7, freq: 'monthly' },
   { path: '/docs/sdk', priority: 0.8, freq: 'monthly' },
   { path: '/docs/rfcs', priority: 0.5, freq: 'monthly' },
