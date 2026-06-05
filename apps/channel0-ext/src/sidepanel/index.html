@@ -38,6 +38,17 @@
                 margin-top: 8px; }
       .danger:hover { background: #00ff7a; color: #000; border-color: #00ff7a; }
       .brand { color: #00ff7a; font-weight: 900; }
+      .skin-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .skin-tile { display: flex; flex-direction: column; gap: 4px;
+                    padding: 8px; background: #111; color: #fff;
+                    border: 2px solid rgba(255,255,255,0.18); cursor: pointer;
+                    font-family: inherit; text-align: left; }
+      .skin-tile:hover { border-color: rgba(255,255,255,0.45); }
+      .skin-tile.active { border-color: #00ff7a; }
+      .skin-tile .swatch { display: flex; height: 22px; border: 1px solid rgba(255,255,255,0.18); }
+      .skin-tile .swatch > span { flex: 1; display: block; }
+      .skin-tile .label { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; }
+      .skin-tile .tagline { font-size: 9.5px; color: rgba(255,255,255,0.5); line-height: 1.3; }
       #trending-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.92);
                           display: none; align-items: stretch; justify-content: stretch; }
       #trending-overlay.is-open { display: flex; }
@@ -79,6 +90,11 @@
             <button data-mode="side"   data-i18n="settingOpenModeSide">Side panel</button>
             <button data-mode="inline" data-i18n="settingOpenModeInline">Floating panel</button>
           </div>
+        </div>
+        <div class="row">
+          <label data-i18n="settingAppearance">Appearance</label>
+          <div class="help" data-i18n="settingAppearanceHelp">The same skin applies to murl.mosadd.com when you visit it.</div>
+          <div class="skin-grid" id="skin-grid"></div>
         </div>
         <div class="row">
           <label data-i18n="settingBubblePos">Bubble position</label>

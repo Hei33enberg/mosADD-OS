@@ -123,6 +123,12 @@
   "settingBubbleReset": {
     "message": "Reset bubble position"
   },
+  "settingAppearance": {
+    "message": "Appearance"
+  },
+  "settingAppearanceHelp": {
+    "message": "The same skin applies to murl.mosadd.com when you visit it."
+  },
   "prejoinLabel": {
     "message": "Join anonymously — pick a nick:"
   },

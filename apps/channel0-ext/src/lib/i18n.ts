@@ -9,6 +9,7 @@ export type MsgId =
   | "popupSaved" | "popupNotWebsite"
   | "settingsTitle" | "settingOpenMode" | "settingOpenModeSide" | "settingOpenModeInline"
   | "settingBubblePos" | "settingBubbleDrag" | "settingBubbleReset"
+  | "settingAppearance" | "settingAppearanceHelp"
   | "prejoinLabel" | "prejoinPlaceholder" | "prejoinGo" | "prejoinAlt"
   | "tooltipDockLeft" | "tooltipDockRight" | "tooltipSettings" | "tooltipClose" | "tooltipTrending" | "tooltipShare";
 
@@ -45,6 +46,8 @@ const FALLBACK: Record<MsgId, string> = {
   settingBubblePos: "Bubble position",
   settingBubbleDrag: "Drag the bubble to reposition.",
   settingBubbleReset: "Reset bubble position",
+  settingAppearance: "Appearance",
+  settingAppearanceHelp: "The same skin applies to murl.mosadd.com when you visit it.",
   prejoinLabel: "Join anonymously — pick a nick:",
   prejoinPlaceholder: "e.g. lucky-otter-77",
   prejoinGo: "Enter",

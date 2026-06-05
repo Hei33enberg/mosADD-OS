@@ -123,6 +123,12 @@
   "settingBubbleReset": {
     "message": "Resetuj pozycję bąbla"
   },
+  "settingAppearance": {
+    "message": "Wygląd"
+  },
+  "settingAppearanceHelp": {
+    "message": "Ten sam motyw zostanie zastosowany na murl.mosadd.com gdy tam wejdziesz."
+  },
   "prejoinLabel": {
     "message": "Dołącz anonimowo — podaj nick:"
   },

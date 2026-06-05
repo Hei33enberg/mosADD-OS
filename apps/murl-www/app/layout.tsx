@@ -7,7 +7,11 @@ import { Analytics } from '@vercel/analytics/next';
 import { SiteHeader } from './_components/SiteHeader';
 import { SiteFooter } from './_components/SiteFooter';
 import { PostHogProvider } from './_components/PostHogProvider';
+import { SkinProvider, SKIN_BOOT_SCRIPT } from './_components/SkinProvider';
+import { getAllSkinsCss } from '@mosadd/skins/registry';
 import { SITE_URL } from '../lib/site';
+
+const ALL_SKINS_CSS = getAllSkinsCss();
 
 const jetbrains = JetBrains_Mono({
   subsets: ['latin'],
@@ -52,15 +56,24 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${jetbrains.variable} dark`} suppressHydrationWarning>
+      <head>
+        {/* All skin overrides stamped once — the active one is selected via
+            the `data-murl-skin` attribute on <html>. */}
+        <style id="m-skin-css" dangerouslySetInnerHTML={{ __html: ALL_SKINS_CSS }} />
+        {/* Set the data-attribute BEFORE React hydrates to avoid a FOUC. */}
+        <script dangerouslySetInnerHTML={{ __html: SKIN_BOOT_SCRIPT }} />
+      </head>
       <body className="relative flex min-h-screen flex-col bg-background text-foreground antialiased">
         <div aria-hidden className="grid-bg pointer-events-none fixed inset-0 z-0 opacity-60" />
         <Suspense fallback={null}>
           <PostHogProvider>
-            <div className="relative z-10 flex min-h-screen flex-col">
-              <SiteHeader />
-              <main className="flex-1">{children}</main>
-              <SiteFooter />
-            </div>
+            <SkinProvider>
+              <div className="relative z-10 flex min-h-screen flex-col">
+                <SiteHeader />
+                <main className="flex-1">{children}</main>
+                <SiteFooter />
+              </div>
+            </SkinProvider>
           </PostHogProvider>
         </Suspense>
         <Analytics />

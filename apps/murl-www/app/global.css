@@ -218,13 +218,59 @@
 .c0-foot-brand { color: #00ff7a; font-weight: 700; white-space: nowrap; }
 
 /* Floating bubble (the draggable launcher) — from content/index.ts buildStyles(). */
-.c0-bubble { width: 56px; height: 56px; border-radius: 28px; background: #0a0a0a; color: #00ff7a;
-  border: 1px solid #1a1a1a; box-shadow: 0 8px 24px rgba(0,0,0,.35);
+.c0-bubble { width: 56px; height: 56px; border-radius: 28px;
+  background: var(--m-card, #0a0a0a); color: var(--m-primary, #00ff7a);
+  border: 1px solid var(--m-border, #1a1a1a); box-shadow: 0 8px 24px rgba(0,0,0,.35);
   display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;
-  letter-spacing: .5px; user-select: none; font-family: ui-monospace, "JetBrains Mono", monospace; }
-.c0-bubble.has-people { box-shadow: 0 0 0 2px #00ff7a inset, 0 8px 24px rgba(0,0,0,.35); }
-.c0-bubble .c0-bubble-dot { width: 8px; height: 8px; border-radius: 4px; background: #00ff7a;
-  margin-right: 6px; box-shadow: 0 0 8px #00ff7a; }
+  letter-spacing: .5px; user-select: none; font-family: var(--m-font-mono, ui-monospace, "JetBrains Mono", monospace); }
+.c0-bubble.has-people { box-shadow: 0 0 0 2px var(--m-primary, #00ff7a) inset, 0 8px 24px rgba(0,0,0,.35); }
+.c0-bubble .c0-bubble-dot { width: 8px; height: 8px; border-radius: 4px; background: var(--m-primary, #00ff7a);
+  margin-right: 6px; box-shadow: 0 0 8px var(--m-glow, #00ff7a); }
+
+/* ============================================================================
+ * Skin bridge — when a skin is active, route all the legacy shadcn-style
+ * tokens through `--m-*` so existing Tailwind utilities (`bg-background`,
+ * `text-primary`, `text-foreground`, `border-border`…) follow the theme.
+ *
+ * The cheap+correct route: drive html/body backgrounds directly from --m-*
+ * (this beats any Tailwind utility that touches the same property) and bridge
+ * the few HSL-component tokens via raw color overrides for the most common
+ * surfaces. The room hues are decoration; they don't need to track.
+ * ========================================================================= */
+:root[data-murl-skin] body,
+:root[data-murl-skin] html {
+  background: var(--m-bg);
+  color: var(--m-fg);
+}
+:root[data-murl-skin] .bg-background { background-color: var(--m-bg) !important; }
+:root[data-murl-skin] .bg-card,
+:root[data-murl-skin] .bg-card\/40,
+:root[data-murl-skin] .bg-card\/60,
+:root[data-murl-skin] .bg-card\/30 { background-color: var(--m-card) !important; }
+:root[data-murl-skin] .text-foreground { color: var(--m-fg) !important; }
+:root[data-murl-skin] .text-muted-foreground { color: var(--m-fg-muted) !important; }
+:root[data-murl-skin] .text-primary { color: var(--m-primary) !important; }
+:root[data-murl-skin] .bg-primary { background-color: var(--m-primary) !important; }
+:root[data-murl-skin] .text-primary-foreground { color: var(--m-primary-fg) !important; }
+:root[data-murl-skin] .border-border,
+:root[data-murl-skin] .border-x,
+:root[data-murl-skin] .border-y,
+:root[data-murl-skin] .border-t,
+:root[data-murl-skin] .border-b,
+:root[data-murl-skin] .border-l,
+:root[data-murl-skin] .border-r,
+:root[data-murl-skin] .border { border-color: var(--m-border) !important; }
+:root[data-murl-skin] .text-destructive { color: var(--m-danger) !important; }
+:root[data-murl-skin] .text-warning { color: var(--m-warning) !important; }
+:root[data-murl-skin] * { border-color: var(--m-border); }
+:root[data-murl-skin] .grid-bg {
+  background-image:
+    linear-gradient(var(--m-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--m-grid) 1px, transparent 1px);
+}
+:root[data-murl-skin] .text-glow {
+  text-shadow: 0 0 22px var(--m-glow);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .c0-head-live .c0-dot { animation: none; }

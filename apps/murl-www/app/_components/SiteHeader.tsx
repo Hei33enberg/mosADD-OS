@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Wordmark } from './Wordmark';
 import { MobileNav } from './MobileNav';
 import { BrowserButtons } from './BrowserButtons';
+import { SkinPicker } from './SkinPicker';
 
 const navLinks = [
   { href: '/#how', label: 'How it works' },
@@ -23,9 +24,13 @@ export function SiteHeader() {
               {l.label}
             </Link>
           ))}
+          <SkinPicker />
           <BrowserButtons variant="compact" />
         </nav>
-        <MobileNav />
+        <div className="flex items-center gap-2 md:hidden">
+          <SkinPicker />
+          <MobileNav />
+        </div>
       </div>
     </header>
   );

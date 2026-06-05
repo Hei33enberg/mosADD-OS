@@ -6,10 +6,12 @@
 // =============================================================================
 
 import { normalizeDomain } from "../lib/domain";
-import { getSettings, patchSettings, type Settings } from "../lib/settings";
+import { getSettings, onSettingsChange, patchSettings, type Settings } from "../lib/settings";
 import { mountChat, type MountHandle, type ToolbarAction } from "../shared/chat-shell";
 import { CHAT_CSS } from "../shared/chat-styles";
 import { t } from "../lib/i18n";
+import { applySkinToShadow, setShadowSkin, normalizeSkinId } from "@mosadd/skins/runtime/extension";
+import { SKIN_SYNC_EVENT } from "@mosadd/skins/contract";
 
 // Deep-link landing-page probe (LINEAR-2700). Allowed origins only.
 const PROBE_ORIGINS = new Set([
@@ -21,7 +23,13 @@ window.addEventListener("message", (e: MessageEvent) => {
   if (!e.data || typeof e.data !== "object") return;
   if (!PROBE_ORIGINS.has(e.origin)) return;
   if (e.data.kind === "mosadd-channel0:ping") {
-    try { window.postMessage({ kind: "mosadd-channel0:pong", v: "0.15" }, e.origin); } catch { /* */ }
+    try { window.postMessage({ kind: "mosadd-channel0:pong", v: "0.16" }, e.origin); } catch { /* */ }
+  }
+  // Skin sync from the site (origin already checked). Source field guards
+  // against echoes of our own broadcast.
+  if (e.data.kind === SKIN_SYNC_EVENT && e.data.source === "site") {
+    const id = normalizeSkinId(e.data.id);
+    void patchSettings({ skinId: id });
   }
 });
 
@@ -78,8 +86,23 @@ async function bootstrap(norm: { domain: string; slug: string }): Promise<void> 
   host.style.cssText = "all: initial; position: fixed; inset: 0; pointer-events: none; z-index: 2147483647;";
   const shadow = host.attachShadow({ mode: "closed" });
   shadow.appendChild(buildStyles());
+  // Stamp all skin CSS once + tag host with the current skin. Later changes
+  // just flip the data-attribute (no re-injection).
+  applySkinToShadow(shadow, host, settings.skinId);
   if (document.body) document.body.appendChild(host);
   else document.addEventListener("DOMContentLoaded", () => document.body?.appendChild(host));
+
+  // React to settings changes (skin picker in side panel or sync from site).
+  onSettingsChange((s) => { setShadowSkin(host, s.skinId); });
+
+  // Tell the murl.mosadd.com landing page about the current skin so the
+  // hero / demo / trending board match the panel the user already sees.
+  if (location.host === "murl.mosadd.com") {
+    try { window.postMessage({ kind: SKIN_SYNC_EVENT, id: settings.skinId, source: "extension" }, location.origin); } catch { /* */ }
+    onSettingsChange((s) => {
+      try { window.postMessage({ kind: SKIN_SYNC_EVENT, id: s.skinId, source: "extension" }, location.origin); } catch { /* */ }
+    });
+  }
 
   const bubble = renderBubble(shadow, settings);
   let panel: { handle: MountHandle; root: HTMLElement } | null = null;
@@ -224,28 +247,28 @@ function buildStyles(): HTMLStyleElement {
     .c0-bubble-wrap { position: fixed; pointer-events: auto; z-index: 2147483646; }
     .c0-bubble {
       width: 56px; height: 56px; border-radius: 28px;
-      background: #0a0a0a; color: #00ff7a; border: 1px solid #1a1a1a;
+      background: var(--m-card, #0a0a0a); color: var(--m-primary, #00ff7a); border: 1px solid var(--m-border, #1a1a1a);
       box-shadow: 0 8px 24px rgba(0,0,0,.35);
       cursor: grab; display: flex; align-items: center; justify-content: center;
       font-weight: 700; font-size: 16px; letter-spacing: .5px; user-select: none; touch-action: none;
     }
-    .c0-bubble:hover { background: #111; }
+    .c0-bubble:hover { background: var(--m-bg, #111); }
     .c0-bubble:active { cursor: grabbing; }
-    .c0-bubble-dot { width: 8px; height: 8px; border-radius: 4px; background: #00ff7a; margin-right: 6px; box-shadow: 0 0 8px #00ff7a; }
-    .c0-bubble.has-people { box-shadow: 0 0 0 2px #00ff7a inset, 0 8px 24px rgba(0,0,0,.35); }
+    .c0-bubble-dot { width: 8px; height: 8px; border-radius: 4px; background: var(--m-primary, #00ff7a); margin-right: 6px; box-shadow: 0 0 8px var(--m-glow, #00ff7a); }
+    .c0-bubble.has-people { box-shadow: 0 0 0 2px var(--m-primary, #00ff7a) inset, 0 8px 24px rgba(0,0,0,.35); }
 
     /* Docked, full-height, resizable panel (the only surface). */
     .c0-dock {
       position: fixed; top: 0; bottom: 0; pointer-events: auto; z-index: 2147483647;
-      display: flex; background: #000; min-width: 300px; max-width: 620px;
+      display: flex; background: var(--m-bg, #000); min-width: 300px; max-width: 620px;
       box-shadow: 0 0 40px rgba(0,0,0,.6);
     }
-    .c0-dock-right { right: 0; border-left: 1px solid #1a1a1a; flex-direction: row; }
-    .c0-dock-left  { left: 0;  border-right: 1px solid #1a1a1a; flex-direction: row-reverse; }
+    .c0-dock-right { right: 0; border-left: 1px solid var(--m-border, #1a1a1a); flex-direction: row; }
+    .c0-dock-left  { left: 0;  border-right: 1px solid var(--m-border, #1a1a1a); flex-direction: row-reverse; }
     .c0-dock-body { flex: 1; min-width: 0; display: flex; }
     .c0-dock-body > * { flex: 1; min-width: 0; }
     .c0-grip { flex: 0 0 6px; cursor: col-resize; background: transparent; }
-    .c0-grip:hover { background: rgba(0,255,122,0.35); }
+    .c0-grip:hover { background: var(--m-glow, rgba(0,255,122,0.35)); }
 
     ${CHAT_CSS}
   `;

@@ -16,6 +16,7 @@ export interface Settings {
   bubble: BubblePos;
   panelSide: "left" | "right";   // which edge the docked panel attaches to
   panelWidth: number;            // px, clamped 300..620
+  skinId: string;                // @mosadd/skins id — controls the look of chat + bubble
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -24,6 +25,7 @@ export const DEFAULT_SETTINGS: Settings = {
   bubble: { anchor: "br", x: 16, y: 16 },
   panelSide: "right",
   panelWidth: 380,
+  skinId: "mosadd-dark",
 };
 
 const KEY = "channel0.settings";

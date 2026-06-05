@@ -7,10 +7,25 @@ import { CHAT_CSS } from "../shared/chat-styles";
 import { getSettings, patchSettings, onSettingsChange, DEFAULT_SETTINGS, type OpenMode } from "../lib/settings";
 import { t, type MsgId } from "../lib/i18n";
 import { fetchTrending, relativeTime } from "../lib/trending";
+import { SKINS, getSkin } from "@mosadd/skins/registry";
+import { DEFAULT_CSS } from "@mosadd/skins";
+
+// Stamp the skin CSS into <head> once (default + all skin overrides).
+// Then the active skin is just a `data-murl-skin` attribute on <html>.
+const skinStyleEl = document.createElement("style");
+skinStyleEl.id = "m-skin-css";
+skinStyleEl.textContent = DEFAULT_CSS + "\n" + SKINS.map((s) => s.css).join("\n");
+document.head.appendChild(skinStyleEl);
 
 const styleEl = document.createElement("style");
 styleEl.textContent = CHAT_CSS;
 document.head.appendChild(styleEl);
+
+function applySkinHere(id: string): void {
+  const skin = getSkin(id);
+  document.documentElement.setAttribute("data-murl-skin", skin.id);
+  document.documentElement.style.colorScheme = skin.scheme;
+}
 
 for (const el of document.querySelectorAll<HTMLElement>("[data-i18n]")) {
   const k = el.dataset.i18n;
@@ -73,7 +88,36 @@ async function renderSettings(): Promise<void> {
   for (const btn of openModeSeg.querySelectorAll<HTMLButtonElement>("button[data-mode]")) {
     btn.classList.toggle("active", btn.dataset.mode === s.openMode);
   }
+  renderSkinGrid(s.skinId);
 }
+
+const skinGrid = document.getElementById("skin-grid") as HTMLDivElement | null;
+function renderSkinGrid(activeId: string): void {
+  if (!skinGrid) return;
+  skinGrid.textContent = "";
+  for (const skin of SKINS) {
+    const tile = document.createElement("button");
+    tile.type = "button";
+    tile.className = "skin-tile" + (skin.id === activeId ? " active" : "");
+    tile.dataset.skinId = skin.id;
+    const swatch = document.createElement("div"); swatch.className = "swatch";
+    for (const c of [skin.preview.bg, skin.preview.fg, skin.preview.primary]) {
+      const sp = document.createElement("span"); sp.style.background = c; swatch.appendChild(sp);
+    }
+    const label = document.createElement("div"); label.className = "label"; label.textContent = skin.label;
+    const tag = document.createElement("div"); tag.className = "tagline"; tag.textContent = skin.tagline;
+    tile.appendChild(swatch); tile.appendChild(label); tile.appendChild(tag);
+    tile.addEventListener("click", async () => {
+      await patchSettings({ skinId: skin.id });
+      renderSkinGrid(skin.id);
+    });
+    skinGrid.appendChild(tile);
+  }
+}
+
+// Boot: apply current skin to this side panel + react to changes from any surface.
+void getSettings().then((s) => applySkinHere(s.skinId));
+onSettingsChange((s) => applySkinHere(s.skinId));
 
 for (const btn of openModeSeg.querySelectorAll<HTMLButtonElement>("button[data-mode]")) {
   btn.addEventListener("click", async () => {
