@@ -8,7 +8,7 @@ mosadd-os exposes the OS layer. **Shells** are the end-user faces of that OS —
 
 ### Shell A — mosadd.com (Web, end-user)
 
-Existing app at `m0ssad-3/apps/web`. Today: Vite + React + Capacitor wraps for mobile. After Phase 3:
+Existing consumer app (mosadd.com), Vite + React + Capacitor wraps for mobile. After Phase 3:
 
 - **Radar home** — every contact rendered as an avatar floating on the threat radar, glow color = mode with new activity
 - **DECK footer (left)** — global event log + vocoder settings
@@ -69,7 +69,7 @@ Within shells we sequence by **leverage / risk ratio**:
 
 ## Build pipeline
 
-All from a single source: `m0ssad-3/apps/web`.
+All from a single source: the proprietary consumer-app source tree.
 
 ```
 apps/web (Vite + React)
@@ -81,7 +81,7 @@ apps/web (Vite + React)
     │                   → android/    → Gradle → Play Store
     │
     └── + Electron wrap → packages/electron-shell  → electron-builder
-                          (new package in m0ssad-3 monorepo)
+                          (new package in the consumer-app monorepo)
                                       → .dmg / .exe / .AppImage
                                       → GitHub Releases
 ```

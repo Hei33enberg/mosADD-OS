@@ -41,7 +41,7 @@ export default function McpPage() {
       />
 
       <P>
-        Total surface today: <strong>52 tools across 6 live modules</strong> — mDM ×12 (incl. 4 voice), mIRC ×20, mROOM ×9, mAIL ×4, mTALK ×5, mKB ×2. <code className="font-mono text-primary">mCALL</code> ×2 is registered but <em>carrier-pending</em> (needs a Telnyx/LiveKit trunk); with it plus the <code className="font-mono text-primary">comms_capabilities</code> discovery tool the package registers 55 tools in total.
+        Total surface today: <strong>52 tools across 6 live modules</strong> — mDM ×12 (incl. 4 voice), mIRC ×20, mROOM ×9, mAIL ×4, mTALK ×5, mKB ×2. <code className="font-mono text-primary">mCALL</code> ×7 is registered but <em>carrier-pending</em> (needs a Telnyx/LiveKit SIP trunk); with it plus the <code className="font-mono text-primary">comms_capabilities</code> discovery tool the package registers 60 tools in total.
       </P>
 
       <H2>Transports</H2>

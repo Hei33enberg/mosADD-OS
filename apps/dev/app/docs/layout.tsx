@@ -7,6 +7,7 @@ const nav: { section: string; items: { href: string; label: string }[] }[] = [
     items: [
       { href: '/docs', label: 'Overview' },
       { href: '/docs/quickstart', label: 'Quickstart' },
+      { href: '/docs/auth', label: 'Auth' },
     ],
   },
   {
@@ -14,17 +15,26 @@ const nav: { section: string; items: { href: string; label: string }[] }[] = [
     items: [
       { href: '/docs/mcp', label: 'MCP server' },
       { href: '/docs/sdk', label: 'SDK adapters' },
+      { href: '/docs/modules/threat-engine', label: 'Threat engine' },
     ],
   },
   {
-    section: 'Modules',
+    section: 'Modules (live)',
     items: [
       { href: '/docs/modules', label: 'Overview' },
       { href: '/docs/modules/mdm', label: 'mDM · DMs' },
-      { href: '/docs/modules/mtalk', label: 'mTALK · PTT' },
-      { href: '/docs/modules/mroom', label: 'mROOM · Rooms' },
-      { href: '/docs/modules/mail', label: 'mAIL · Email' },
       { href: '/docs/modules/mirc', label: 'mIRC · Channels' },
+      { href: '/docs/modules/mroom', label: 'mROOM · Rooms' },
+      { href: '/docs/modules/mtalk', label: 'mTALK · PTT' },
+      { href: '/docs/modules/mail', label: 'mAIL · Email' },
+      { href: '/docs/modules/mkb', label: 'mKB · Knowledge' },
+    ],
+  },
+  {
+    section: 'Roadmap',
+    items: [
+      { href: '/docs/modules/mcall', label: 'mCALL · PSTN (carrier-pending)' },
+      { href: '/docs/modules/mirl', label: 'mIRL · After-party (design)' },
     ],
   },
   {

@@ -11,8 +11,9 @@ const modules = [
   { name: 'mAIL', desc: 'Agent mail with threat hooks. Deliver in-network or bridge outbound.', status: 'alpha', tools: 4, url: '/docs/modules/mail' },
   { name: 'mTALK', desc: 'Encrypted voice. Anomaly detection on the media path.', status: 'alpha', tools: 5, url: '/docs/modules/mtalk' },
   { name: 'mKB', desc: 'Encrypted knowledge base. Agents read + write, versioned.', status: 'alpha', tools: 2, url: '/docs/modules/mkb' },
-  // Roadmap (not in this release): mIRL = design; mCALL = code shipped, carrier-pending — both documented under /docs/modules.
-  { name: 'mIRL', desc: 'Live-stream after-party — keep the community talking after the stream.', status: 'roadmap', tools: 0, url: '/docs/modules/mirl' },
+  // Roadmap (not in this release). Code is in the package; flipped live once the prerequisite lands.
+  { name: 'mCALL', desc: 'PSTN voice + ephemeral burner numbers + vocoder. Code shipped, carrier wiring pending.', status: 'carrier-pending', tools: 7, url: '/docs/modules/mcall' },
+  { name: 'mIRL', desc: 'Live-stream after-party — keep the community talking after the stream.', status: 'design', tools: 0, url: '/docs/modules/mirl' },
 ];
 
 const bridges = ['mMATRIX', 'mDISCORD', 'mTELEGRAM', 'mSLACK', 'mSIGNAL'];
@@ -135,6 +136,7 @@ export default function HomePage() {
         <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
           {modules.map((m) => {
             const live = m.status === 'alpha';
+            const carrierPending = m.status === 'carrier-pending';
             return (
               <Link
                 key={m.name}
@@ -143,7 +145,7 @@ export default function HomePage() {
               >
                 <div className="mb-2 flex items-center justify-between">
                   <span className="font-display text-lg text-primary">{m.name}</span>
-                  <span className={`text-[10px] uppercase tracking-[0.15em] ${live ? 'text-primary' : 'text-muted-foreground'}`}>
+                  <span className={`text-[10px] uppercase tracking-[0.15em] ${live ? 'text-primary' : carrierPending ? 'text-warning' : 'text-muted-foreground'}`}>
                     {live ? `${m.tools} tools` : m.status}
                   </span>
                 </div>
@@ -193,6 +195,8 @@ export default function HomePage() {
         <div className="flex flex-wrap gap-3">
           <a
             href="https://github.com/Hei33enberg/mosadd-os"
+            target="_blank"
+            rel="noreferrer"
             className="rounded-none bg-foreground px-4 py-2 font-medium text-background transition-colors hover:bg-foreground/90"
           >
             Star on GitHub

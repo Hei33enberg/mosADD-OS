@@ -1,11 +1,11 @@
 # `@mosadd/hub` — self-serve hub portal
 
-The dashboard where a developer signs up, gets a `mosadd_sk_live_…` key, and starts using the 42 MCP tools. Stripe TEST checkout for Pro/Team. Lives at `hub.mosadd.com` (DNS in Vercel — see deploy section).
+The dashboard where a developer signs up, gets a `mosadd_sk_live_…` key, and starts using the 52 live MCP tools. Stripe TEST checkout for Pro/Team. Lives at `hub.mosadd.com` (DNS in Vercel — see deploy section).
 
 ## Architecture (MVP — LINEAR-2603)
 - **Auth:** Supabase magic-link (no password). User signs in → cookie session via `@supabase/ssr`.
 - **Keys:** dashboard calls `hub-keys` Supabase edge fn with the user JWT (POST/GET/DELETE) — shows the plaintext key ONCE.
-- **Billing:** `create-checkout-session` Supabase edge fn → Stripe checkout on the dedicated mosADD account `acct_1TeaGi` (one account for mosadd.com + mosadd.dev; separate from CYMRU). Dev products `prod_UdsRp5…` Pro ($9) / `prod_UdsRtF…` Team ($29) / `prod_UdsRsS…` Brand-removal ($3). The EF reads `STRIPE_SECRET_KEY_MOSADD`, never the bare key.
+- **Billing:** `create-checkout-session` Supabase edge fn → Stripe checkout on the dedicated mosADD Stripe account. Dev tiers Pro ($9) / Team ($29) / Brand-removal ($3 add-on). The EF reads `STRIPE_SECRET_KEY_MOSADD`, never a bare key. (Concrete Stripe / Supabase IDs live in private ops notes, not this public repo.)
 - **No DB writes from this app** — all state lives in Supabase via edge fns; portal is a thin shell.
 
 ## Routes
@@ -24,7 +24,7 @@ Push to main → Vercel auto-deploys (assumes a Vercel project pointed at `apps/
 ## Local dev
 ```sh
 npm install
-NEXT_PUBLIC_SUPABASE_URL=https://rooffhgbxafyjcwmwpsy.supabase.co \
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co \
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon> \
 npm run dev
 ```

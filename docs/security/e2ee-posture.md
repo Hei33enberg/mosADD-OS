@@ -7,7 +7,7 @@
 
 There are two surfaces over one backend (Supabase + Edge Functions):
 
-- **mosadd.com app** (`m0ssad-3/apps/web`) — the consumer app.
+- **mosadd.com app** — the consumer app.
 - **mosadd.dev toolkit** (`@mosadd/mcp`, this repo) — the developer/agent surface.
 
 They share the same message store but currently use **different cryptography**, so
@@ -18,7 +18,7 @@ on this page.
 
 | Surface / channel | Encryption as shipped | Server can read? | Notes |
 |---|---|---|---|
-| **App mDM** (1:1 DM) | E2EE — X3DH + Double Ratchet (`@m0ssad/crypto`) | No (when keys present) | Sealed-sender metadata. |
+| **App mDM** (1:1 DM) | E2EE — X3DH + Double Ratchet (`@mosadd/crypto`) | No (when keys present) | Sealed-sender metadata. |
 | **App channels (mIRC) / rooms (mROOM)** | Group-key encryption *when the vault is unlocked* (`useChannelCrypto`, `channel_keys`) | No when `e2eeReady`; **yes on plaintext fallback** | Falls back to base64 plaintext if the group key isn't ready — see "Conditional E2EE" below. |
 | **App RAG / search index** | **Plaintext, server-side** | **Yes** | Required for vector search. Opt-in, off by default — see "RAG". |
 | **Dev `mDM_send`** | E2EE — X3DH + Double Ratchet (`mosadd_prekey_bundles`) | No (when peer published prekeys) | Only works if the recipient ran `mDM_publish_keys`. |

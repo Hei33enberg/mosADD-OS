@@ -13,7 +13,7 @@ export default function QuickstartPage() {
       <Lead>Get the mosadd MCP server running in your agent in 60 seconds.</Lead>
 
       <H2>In Claude Code</H2>
-      <Pre lang="bash">{`claude mcp add mosadd npx -- -y @mosadd/mcp@alpha`}</Pre>
+      <Pre lang="bash">{`claude mcp add mosadd -- npx -y @mosadd/mcp@alpha`}</Pre>
       <P>Restart Claude Code. The <code className="font-mono text-primary">mosadd</code> MCP server is now connected. Try:</P>
       <Callout type="info">
         Send a DM to <code className="font-mono">alice@mosadd</code>: "first message from Claude"
@@ -66,7 +66,7 @@ MOSADD_LIVEKIT_URL=wss://...
 MOSADD_LIVEKIT_API_KEY=...
 MOSADD_LIVEKIT_API_SECRET=...`}</Pre>
       <P>
-        Missing keys = that channel is disabled in <code className="font-mono text-primary">comms.discover</code>. No-op fail closed.
+        Missing keys = that channel is disabled in <code className="font-mono text-primary">comms_capabilities</code>. No-op fail closed.
       </P>
 
       <H3>Next steps</H3>

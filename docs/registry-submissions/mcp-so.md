@@ -21,19 +21,22 @@ Install:        npx -y @mosadd/mcp
 
 ## Short description (≤200 chars)
 
-Operating system for human communications. 40 MCP tools across direct messages, ephemeral rooms with no-account guest links, channels, email, push-to-talk, and knowledge recall. Apache-2.0, vendor-agnostic.
+Operating system for human communications. 52 live MCP tools across direct messages, ephemeral rooms with no-account guest links, channels, email, push-to-talk, and knowledge recall. Apache-2.0, vendor-agnostic.
 
 ## Long description
 
 mosadd treats human communication as an OS treats IPC: orthogonal primitives accessible through a uniform syscall layer. Instead of integrating Twilio + LiveKit + Resend + Matrix yourself, your agent calls `mROOM_create_with_link` once and gets a working room + a short-lived no-signup URL to share.
 
-**Shipped in 3.0.0-alpha.0:**
-- **mDM** — Direct messages with multi-thread per contact (USP — unlike WhatsApp/Telegram)
+**Shipped in 3.0.0-alpha (6 live modules):**
+- **mDM** — Direct messages + voice with multi-thread per contact (USP — unlike WhatsApp/Telegram)
 - **mIRC** — Persistent channels (Discord/Slack semantics)
 - **mROOM** — Ephemeral rooms + no-signup guest links (USP — no other registered server exposes this)
 - **mAIL** — Email from `<userId>@mosadd.com`
+- **mTALK** — Push-to-talk + LLM-in-room
+- **mKB** — Knowledge base RAG recall
 
-**Next:** mTALK (push-to-talk + LLM-in-room), mCALL (PSTN), mIRL (live-stream after-party), bridges to Telegram, Discord, Matrix, Slack, Signal.
+**Carrier-pending:** mCALL (PSTN — control plane shipped, needs a Telnyx / LiveKit SIP trunk).
+**Roadmap:** mIRL (live-stream after-party), bridges to Telegram, Discord, Matrix, Slack, Signal.
 
 ## Categories
 

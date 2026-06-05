@@ -31,7 +31,7 @@ async function getStars(): Promise<number | null> {
 export async function SocialProof() {
   const stars = await getStars();
   const stats: Array<{ value: string; label: string }> = [
-    { value: '40', label: 'MCP tools' },
+    { value: '52', label: 'live MCP tools' },
     { value: '0', label: 'setup steps' },
     { value: '$0', label: 'to first tool call' },
     ...(stars != null ? [{ value: `${stars}`, label: 'GitHub stars' }] : []),

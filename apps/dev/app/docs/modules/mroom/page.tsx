@@ -98,7 +98,7 @@ export default function MroomPage() {
         <li>Customer support — agent creates room, shares link with customer, anonymous PTT call</li>
         <li>Live-stream after-party — creator drops mROOM link in stream chat, fans join with one click</li>
         <li>Incident bridge — sec team spins up room, shares 24h link with stakeholders</li>
-        <li>Anonymous tipline — <code className="font-mono">no_account_allowed: true</code> + <code className="font-mono">modes: ['txt']</code> + short TTL</li>
+        <li>Anonymous tipline — create an mROOM with a short <code className="font-mono">ttl_seconds</code> and share its <code className="font-mono">mROOM_create_guest_link</code> URL (no-account join is built into the link, not a per-room parameter)</li>
       </Ul>
 
       <H2>Threat radar hooks</H2>

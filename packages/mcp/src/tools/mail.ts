@@ -2,9 +2,9 @@
  * mAIL — Email.
  *
  * Every mosadd user gets `<userId>@mosadd.com` for free — incoming mail lands
- * in their app, outgoing mail flows through the m0ssad-3 mp0st pipeline.
+ * in their app, outgoing mail flows through the mosadd mp0st pipeline.
  *
- * Phase 1 alpha: wired to m0ssad-3 `mp0st-send` + `mp0st-view` Edge Functions.
+ * Phase 1 alpha: wired to the mosadd backend's `mp0st-send` + `mp0st-view` Edge Functions.
  */
 
 import { z } from "zod";

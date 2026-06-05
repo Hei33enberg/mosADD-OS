@@ -4,8 +4,9 @@ export const alt = 'mosADD — Irondome Multi-Channel Messenger · MCP';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-// Brand: pure black (#000) + neon green (hsl 145 100% 50% ≈ #00ff6a), mono.
-const GREEN = '#00ff6a';
+// Brand: pure black (#000) + neon green (#00ff7f — matches global.css primary,
+// icon.tsx, apple-icon.tsx, manifest.ts; single source of truth for social cards).
+const GREEN = '#00ff7f';
 const MONO = 'ui-monospace, "JetBrains Mono", SFMono-Regular, Menlo, monospace';
 
 export default async function OpengraphImage() {
@@ -30,7 +31,7 @@ export default async function OpengraphImage() {
             position: 'absolute',
             inset: 0,
             backgroundImage:
-              'linear-gradient(rgba(0,255,106,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,106,0.06) 1px, transparent 1px)',
+              'linear-gradient(rgba(0,255,127,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,127,0.06) 1px, transparent 1px)',
             backgroundSize: '48px 48px',
             display: 'flex',
           }}

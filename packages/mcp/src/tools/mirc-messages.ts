@@ -1,7 +1,7 @@
 /**
  * mIRC text mode — post + list messages inside a persistent channel.
  *
- * Channel messages route through the same m0ssad-3 `message-send` / `message-list`
+ * Channel messages route through the same the mosadd backend's `message-send` / `message-list`
  * Edge Functions as DMs and rooms, but with `thread_id: 'chat:<channelId>'` so the
  * RLS / access checks apply channel-membership rules. Each channel is linked to a
  * backing space (`metadata.linked_space_id`); message-send needs that space id, so

@@ -43,7 +43,7 @@ Operated by mosadd commercial entity at [hub.mosadd.com](https://hub.mosadd.com)
 
 ## Phase 4 — Migration & cleanup
 
-- [ ] Strangler fig from m0ssad-3 ([LINEAR-2166](https://linear.app/ip-ra/issue/LINEAR-2166))
+- [ ] Strangler fig migration from the legacy consumer app/backend ([LINEAR-2166](https://linear.app/ip-ra/issue/LINEAR-2166))
 - [ ] Tech debt cleanup ([LINEAR-2167](https://linear.app/ip-ra/issue/LINEAR-2167))
 
 ## Not in 3.0.0

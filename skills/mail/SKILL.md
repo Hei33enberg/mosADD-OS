@@ -35,7 +35,7 @@ For **listing the inbox**, the alpha doesn't ship `mAIL_list_inbox` yet — dire
 
 ## Configuration
 
-Outbound delivery uses Resend by default in alpha. The mosadd hub will broker BYOK Resend / Mailgun / SendGrid in Phase 2 — for now the user's m0ssad-3 Supabase backend handles routing transparently.
+Outbound delivery uses Resend by default in alpha. The mosadd hub will broker BYOK Resend / Mailgun / SendGrid in Phase 2 — for now the user's mosadd Supabase backend handles routing transparently.
 
 ## Don't
 

@@ -26,7 +26,7 @@ mcp-proxy --sse-port 3333 -- npx -y @mosadd/mcp
 
 The proxy exposes `http://localhost:3333/sse`. Use a tunneling tool (cloudflared, ngrok) to give it a public URL, then point ChatGPT Apps at that URL.
 
-This is intentionally rough — it's a stopgap until [`mcp.mosadd.com`](https://mosadd.dev) is live.
+This is intentionally rough — it's a stopgap until [`mcp.mosadd.com`](https://mcp.mosadd.com) is live.
 
 ## When the hosted gateway lands
 
@@ -36,4 +36,4 @@ Configuration becomes (literally) one line:
 MCP server URL: https://mcp.mosadd.com/sse
 ```
 
-OAuth, your keys server-side, 40 mosadd tools available. Watch the repo for the v0.2 release.
+OAuth, your keys server-side, 52 live mosadd tools available. Watch the repo for the v0.2 release.

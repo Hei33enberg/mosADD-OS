@@ -2,7 +2,7 @@
  * SupabaseDmProvider — the default (network) DmProvider.
  *
  * Implements the transport-agnostic `DmProvider` contract from
- * `@mosadd/providers` over the m0ssad-3 Supabase Edge Functions
+ * `@mosadd/providers` over the mosadd Supabase Edge Functions
  * (`message-send` / `message-list`). This is the strangler-fig network path;
  * a carrier-aware host injects a different DmProvider for radio.
  *
@@ -70,7 +70,7 @@ export class SupabaseDmProvider implements DmProvider {
 
   async publishPrekeyBundle(bundle: Uint8Array): Promise<void> {
     // Network key directory. Server-side fn (`prekey-bundle-publish`) is the
-    // m0ssad-3 hub's responsibility — it stores the opaque bundle keyed by the
+    // the mosadd hub's responsibility — it stores the opaque bundle keyed by the
     // caller's identity (resolved from the JWT). mosadd-os just ships bytes.
     await invokeFunction<{ ok: boolean }>("prekey-bundle-publish", {
       bundle: Buffer.from(bundle).toString("base64"),

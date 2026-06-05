@@ -25,7 +25,7 @@ export default async function Home() {
       <section className="container py-12">
         <h1 className="text-3xl font-black tracking-widest uppercase">Your mosadd hub.</h1>
         <p className="mt-4 text-muted-foreground max-w-2xl">
-          Self-serve dashboard for <code>@mosadd/mcp</code>. Sign in, issue an API key, paste a one-line install snippet into Claude Code / Cursor / your agent. 40 MCP tools, 7 channels, $0 to start.
+          Self-serve dashboard for <code>@mosadd/mcp</code>. Sign in, issue an API key, paste a one-line install snippet into Claude Code / Cursor / your agent. 52 live MCP tools across 6 modules, $0 to start.
         </p>
 
         <div className="mt-8 flex gap-4">
@@ -40,8 +40,8 @@ export default async function Home() {
         <div className="mt-8 grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem" }}>
           {[
             { plan: "Free", price: "$0/mo", note: "1,000 messages/mo · 1 key" },
-            { plan: "Pro", price: "$9/mo", note: "50k messages · mKB · 10h PTT" },
-            { plan: "Team", price: "$49/mo", note: "500k messages · 10 seats" },
+            { plan: "Pro", price: "$9/mo", note: "10k messages · 1k RAG · 5 keys" },
+            { plan: "Team", price: "$29/mo", note: "100k messages · 10k RAG · white-label" },
           ].map((t) => (
             <div key={t.plan} className="border border-border p-4 bg-card">
               <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">{t.plan}</div>

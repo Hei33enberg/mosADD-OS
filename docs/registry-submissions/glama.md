@@ -19,7 +19,7 @@
 
 ## Summary
 
-mosadd is an MCP-native operating system for human communications. 52 tools across 7 live modules in alpha (mDM, mIRC, mROOM, mAIL, mTALK, mKB), with more landing through Phase 1 (mCALL, mIRL, plus bridges to Telegram, Discord, Matrix, Slack, Signal).
+mosadd is an MCP-native operating system for human communications. **52 live tools across 6 live modules** in alpha (mDM, mIRC, mROOM, mAIL, mTALK, mKB). `mCALL` ×7 is registered but carrier-pending — 60 registered total. Roadmap: mCALL carrier wiring, mIRL, plus bridges to Telegram, Discord, Matrix, Slack, Signal.
 
 ## Differentiators
 

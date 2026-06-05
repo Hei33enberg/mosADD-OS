@@ -29,7 +29,7 @@ const ROWS: Array<{ label: string; cells: Cell[] }> = [
   {
     label: 'Channels: DM · chan · rooms · mail · voice',
     cells: [
-      { v: 'yes', note: '5 + PSTN/IRL' },
+      { v: 'yes', note: '6 live · PSTN soon' },
       { v: 'partial', note: 'voice · SMS · WA' },
       { v: 'no', note: 'tools, not comms' },
       { v: 'partial', note: 'voice/video' },

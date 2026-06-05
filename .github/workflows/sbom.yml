@@ -2,7 +2,7 @@ name: SBOM + supply-chain
 
 # Generates a Software Bill of Materials (SPDX 2.3 JSON) for every
 # Apache-2.0 package in mosadd-os. Foundation for Common Criteria
-# EAL2+ supply-chain attestation. Mirrors m0ssad-3/sbom.yml structure.
+# EAL2+ supply-chain attestation. Mirrors the legacy mosadd consumer-app repo/sbom.yml structure.
 
 on:
   push:

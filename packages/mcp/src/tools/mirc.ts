@@ -4,7 +4,7 @@
  * IRC-style persistent channels (Discord/Slack semantics). Channels live forever
  * until deleted, members come and go. Distinct from mROOM (ephemeral, no-account).
  *
- * Phase 1 alpha: wired to m0ssad-3 `channel-manage` Edge Function (strangler-fig).
+ * Phase 1 alpha: wired to the mosadd backend's `channel-manage` Edge Function (strangler-fig).
  * The single edge fn dispatches on `action` — we expose each action as its own
  * MCP tool for clarity.
  */

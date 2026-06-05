@@ -20,7 +20,7 @@ Becoming a maintainer:
 4. Nominated by an existing maintainer, approved by core team
 
 ### Steering committee
-Core maintainers form the steering committee. Currently bootstrapping — see [CONTRIBUTORS.md](./CONTRIBUTORS.md).
+Core maintainers form the steering committee. Currently bootstrapping — initial committee to be named at the first stable release.
 
 ## Decision making
 

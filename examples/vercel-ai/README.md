@@ -44,7 +44,7 @@ await generateText({
 });
 ```
 
-Three lines after the imports. That's the API contract. The model gets 10 tools (4 mDM + 6 mROOM), picks the right one, AI SDK calls `execute()` which routes back through the mosadd handlers via your BYOK Supabase backend.
+Three lines after the imports. That's the API contract. The model gets 21 tools (12 mDM + 9 mROOM), picks the right one, AI SDK calls `execute()` which routes back through the mosadd handlers via your BYOK Supabase backend.
 
 ## Swap to other models
 
@@ -68,4 +68,4 @@ mosadd({ modules: ["mDM", "mROOM", "mIRC", "mAIL"] })
 mosadd({})
 ```
 
-Today: 52 tools across 7 live modules (mDM incl. voice / mIRC / mROOM / mAIL / mTALK / mCALL / mKB). Roadmap: mIRL + bridges (Matrix / Discord / Telegram).
+Today: 52 live tools across 6 live modules (mDM incl. voice / mIRC / mROOM / mAIL / mTALK / mKB). `mCALL` ×7 is registered but carrier-pending — 60 registered total. Roadmap: mCALL carrier wiring, mIRL, bridges (Matrix / Discord / Telegram).

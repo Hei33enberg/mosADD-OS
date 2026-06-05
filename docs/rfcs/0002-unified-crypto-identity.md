@@ -23,7 +23,7 @@ Today (confirmed by audit, 2026-06):
 
 | Surface | Session scheme | Prekey / key material |
 |---|---|---|
-| **App channels / rooms** | Group key (`@m0ssad/crypto`, `useChannelCrypto`) | `channel_keys`; X25519 derived from the vault master key; identity prekeys in `identities.signed_prekey_pub` + `one_time_prekeys` |
+| **App channels / rooms** | Group key (`@mosadd/crypto`, `useChannelCrypto`) | `channel_keys`; X25519 derived from the vault master key; identity prekeys in `identities.signed_prekey_pub` + `one_time_prekeys` |
 | **Toolkit mDM** (`mDM_send`) | X3DH + Double Ratchet | `mosadd_prekey_bundles` (opaque bundle); `mosadd.e2ee.v1` envelope |
 
 Consequences:

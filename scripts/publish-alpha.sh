@@ -5,7 +5,7 @@
 # Order matters: protocol + crypto + threat-engine first (mcp depends on protocol).
 #
 # Usage:
-#   export NPM_TOKEN=npm_xxx                 # granular token, scope @m0ssad
+#   export NPM_TOKEN=npm_xxx                 # granular token, scope @mosadd
 #   ./scripts/publish-alpha.sh               # dry run by default
 #   PUBLISH=1 ./scripts/publish-alpha.sh     # actually publish
 #

@@ -1,7 +1,7 @@
 # modelcontextprotocol/registry — submission draft
 
 **Target repo:** https://github.com/modelcontextprotocol/registry
-**Submission path:** `servers/community/m0ssad-mcp.yaml` (or whatever the current schema expects — check repo README at submission time)
+**Submission path:** `servers/community/mosadd-mcp.yaml` (or whatever the current schema expects — check repo README at submission time)
 
 ## Payload (YAML, draft)
 
@@ -10,8 +10,9 @@ name: "@mosadd/mcp"
 displayName: "mosadd — A human OS. Add."
 description: |
   Operating system for human communications. Exposes mosadd OS modules
-  (mDM, mIRC, mROOM, mAIL, mTALK, mKB today; mCALL / mIRL / bridges in Phase 1
-  follow-up) as MCP tools. 52 tools, RFC 0001 naming convention
+  (mDM, mIRC, mROOM, mAIL, mTALK, mKB live today; mCALL carrier-pending; mIRL
+  + bridges roadmap) as MCP tools. 52 live tools across 6 modules; 60
+  registered including carrier-pending mCALL. RFC 0001 naming convention
   m<MODULE>_<operation>. Apache-2.0, vendor-agnostic by design.
 homepage: "https://mosadd.dev"
 repository: "https://github.com/Hei33enberg/mosadd-os"

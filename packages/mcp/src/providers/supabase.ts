@@ -3,7 +3,7 @@
  *
  * Local BYOK mode: user supplies their own Supabase URL + anon key + user JWT
  * via env vars. The MCP server creates a per-request Supabase client and
- * invokes the m0ssad-3 Edge Functions on the user's behalf.
+ * invokes the mosadd Edge Functions on the user's behalf.
  *
  * In Phase 2 this is replaced by the hosted gateway (mcp.mosadd.com) which
  * holds keys server-side via the BYOK broker.
@@ -70,7 +70,7 @@ export function getSupabase(env: SupabaseEnv = readSupabaseEnv()): SupabaseClien
 }
 
 /**
- * Invoke a m0ssad-3 Edge Function. Wraps `supabase.functions.invoke` with
+ * Invoke a the legacy mosadd consumer-app repo Edge Function. Wraps `supabase.functions.invoke` with
  * normalized error handling so MCP tool handlers can throw clean errors that
  * agents can reason about.
  */

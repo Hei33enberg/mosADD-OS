@@ -65,7 +65,15 @@ function inlineFormat(s: string) {
     .replace(/>/g, '&gt;')
     .replace(/`([^`]+)`/g, '<code class="font-mono text-primary text-[0.9em] px-1 rounded bg-neutral-900 border border-neutral-800">$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-neutral-100">$1</strong>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer" class="text-primary hover:underline">$1</a>');
+    // Markdown link → <a> — but only when the URL uses http(s): or a same-origin
+    // relative path. Anything else (javascript:, data:, vbscript:, ftp:) is rendered
+    // as plain text so a crafted release note cannot inject script-scheme URLs.
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
+      const safe = /^https?:\/\//.test(url) || url.startsWith('/');
+      return safe
+        ? `<a href="${url}" target="_blank" rel="noreferrer" class="text-primary hover:underline">${text}</a>`
+        : `${text} (${url})`;
+    });
 }
 
 export default async function ChangelogPage() {

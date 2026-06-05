@@ -2,7 +2,7 @@
 
 > **Status:** design draft. Concrete implementation lands after Phase 1 (the public OS layer, this repo) is npm-published and has its first 50 users. Tracking in Linear M5 milestone tickets [LINEAR-2158](https://linear.app/ip-ra/issue/LINEAR-2158) – [LINEAR-2162](https://linear.app/ip-ra/issue/LINEAR-2162).
 
-The commercial hub at `hub.mosadd.com` and `mcp.mosadd.com` is **proprietary** and lives in the `m0ssad-3` repo, not this one. This document describes the contract the hub honours with the public mosadd-os toolkit, so OSS contributors and self-hosters know exactly what the hub does for you (and what you'd reimplement in a self-host scenario).
+The commercial hub at `hub.mosadd.com` and `mcp.mosadd.com` is **proprietary** and lives in a separate repo, not this one. This document describes the contract the hub honours with the public mosadd-os toolkit, so OSS contributors and self-hosters know exactly what the hub does for you (and what you'd reimplement in a self-host scenario).
 
 ## Five hub responsibilities
 
@@ -83,7 +83,7 @@ Where users manage everything self-service:
 - Audit log viewer
 - API key management (rotate, revoke, scope)
 
-Tech: Next.js + Supabase Auth + Stripe Checkout. Lives in `m0ssad-3/apps/hub-web` (does not exist yet).
+Tech: Next.js + Supabase Auth + Stripe Checkout. Lives in the proprietary hub-web app (does not exist yet).
 
 ## Trust boundaries
 
@@ -102,7 +102,7 @@ The contract between the public OSS layer and the hub:
 └─────────────────────────────────────┬───────────────────────────┘
                                        │ contract
 ┌─────────────────────────────────────▼───────────────────────────┐
-│  Commercial hub (proprietary — m0ssad-3)                        │
+│  Commercial hub (proprietary)                                   │
 │                                                                  │
 │  - mcp.mosadd.com   — HTTP/SSE wrapper around @mosadd/mcp       │
 │  - hub.mosadd.com   — SaaS dashboard                             │

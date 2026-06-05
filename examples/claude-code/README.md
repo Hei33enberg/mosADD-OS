@@ -5,10 +5,10 @@ Setup mosadd MCP server in Claude Code so the agent can send DMs, manage rooms, 
 ## Install
 
 ```bash
-claude mcp add mosadd npx -- -y @mosadd/mcp
+claude mcp add mosadd -- npx -y github:Hei33enberg/mosadd-os --package=@mosadd/mcp
 ```
 
-This adds an entry to your Claude Code MCP config pointing at `npx -y @mosadd/mcp`. Restart Claude Code.
+This adds an entry to your Claude Code MCP config pointing at the GitHub-hosted alpha package. (Once the `@mosadd` npm org is claimed, swap to `claude mcp add mosadd -- npx -y @mosadd/mcp@alpha`.) Restart Claude Code.
 
 ## Configure (BYOK)
 
@@ -57,7 +57,7 @@ Claude calls `mAIL_send`.
 
 ## All tools available
 
-See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (52 tools across 7 live modules: mDM incl. voice / mIRC / mROOM / mAIL / mTALK / mCALL / mKB).
+See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (52 live tools across 6 live modules: mDM incl. voice / mIRC / mROOM / mAIL / mTALK / mKB; mCALL ×7 carrier-pending, 60 registered total).
 
 ## Troubleshooting
 

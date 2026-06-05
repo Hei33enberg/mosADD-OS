@@ -11,7 +11,7 @@ Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha-orange)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-52%20live-00ff6a)](packages/mcp)
+[![Tools](https://img.shields.io/badge/tools-52%20live-00ff7f)](packages/mcp)
 [![Release](https://img.shields.io/github/v/release/Hei33enberg/mosadd-os?include_prereleases&label=release)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![mosadd.dev](https://img.shields.io/badge/site-mosadd.dev-5af082)](https://mosadd.dev)
 
@@ -38,7 +38,7 @@ npx -y @mosadd/mcp
 | **mAIL** (4) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete` | Every user gets `<userId>@mosadd.com` for free |
 | **mKB** (2) | `mKB_ingest`, `mKB_search` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
 
-**52 tools across 6 live modules** (12+20+9+5+4+2). The package also registers `mCALL` (PSTN, ×2) and the `comms_capabilities` discovery tool, so `@mosadd/mcp` exposes **55 tools in total** — but `mCALL` is **carrier-pending** (control plane shipped, no carrier wired) so it is not part of the live surface. Roadmap: **mCALL** carrier wiring, **mIRL** (live-stream after-party) and bridges to Telegram / Discord / Matrix / Signal / Slack.
+**52 tools across 6 live modules** (12+20+9+5+4+2). The package also registers `mCALL` (PSTN, ×7 — `mCALL_start_pstn`, `mCALL_end_pstn`, `mCALL_acquire_number`, `mCALL_my_numbers`, `mCALL_extend_number`, `mCALL_release_number`, `mCALL_answer`) and the `comms_capabilities` discovery tool, so `@mosadd/mcp` exposes **60 tools in total** — but `mCALL` is **carrier-pending** (control plane shipped, no Telnyx/LiveKit SIP trunk wired) so it is not part of the live surface. Roadmap: **mCALL** carrier wiring, **mIRL** (live-stream after-party) and bridges to Telegram / Discord / Matrix / Signal / Slack.
 
 ## Quickstart (60 seconds)
 
@@ -47,7 +47,7 @@ npx -y @mosadd/mcp
 ### Claude Code
 
 ```bash
-claude mcp add mosadd npx -- -y github:Hei33enberg/mosadd-os --package=@mosadd/mcp
+claude mcp add mosadd -- npx -y github:Hei33enberg/mosadd-os --package=@mosadd/mcp
 ```
 
 Then set three env vars in your MCP config — see [`examples/claude-code/`](./examples/claude-code/) for the walkthrough (including how to grab your session JWT from mosadd.com DevTools).
@@ -82,7 +82,7 @@ This installs the MCP server **and** the four [`skills/`](./skills/) — each `S
 | `mIRC` | Persistent channels (Discord/Slack semantics) | **alpha (shipped)** |
 | `mKB` | Knowledge base — RAG recall (hybrid vector+BM25) | **alpha (shipped)** |
 | `mROOM` | Ephemeral rooms + no-account join links | **alpha (shipped)** |
-| `mCALL` | PSTN out/in, ephemeral DID pool, vocoder | **carrier-pending** — control plane shipped, no carrier wired |
+| `mCALL` | PSTN out/in, ephemeral DID pool, vocoder (7 tools) | **carrier-pending** — control plane shipped, no Telnyx/LiveKit SIP trunk wired |
 | `mIRL` | Live-stream after-party (YT/TikTok creators monetize) | design (roadmap) |
 
 ### Bridge modules (reach existing networks)

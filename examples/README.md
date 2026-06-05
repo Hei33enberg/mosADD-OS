@@ -21,13 +21,13 @@ Quickstart configs for the agent runtimes that consume `@mosadd/mcp`.
 
 ## What you get
 
-40 MCP tools across 6 modules (+ the `comms_capabilities` discovery tool):
+**52 live MCP tools across 6 modules** (+ the `comms_capabilities` discovery tool; `mCALL` ×7 is registered but carrier-pending — total **60 registered**):
 
-- **mDM** (6): list_contacts, publish_keys, send, send_unencrypted, list, respond_request
-- **mIRC** (17): create, list, get, update, delete, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages
-- **mROOM** (8): create, create_guest_link ★, join, leave, close, list, send_message, list_messages
-- **mAIL** (2): send, view
+- **mDM** (12): list_contacts, publish_keys, send, send_unencrypted, edit, delete, list, respond_request + 4 voice ops
+- **mIRC** (20): create, list, get, update, delete, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops
+- **mROOM** (9): create, create_guest_link ★, join, leave, close, list, send_message, list_messages + admin
 - **mTALK** (5): open, join, press, release, state — half-duplex push-to-talk
-- **mKB** (1): search — RAG recall over your own data
+- **mAIL** (4): send, view, list, delete
+- **mKB** (2): ingest, search — RAG recall over your own data
 
 All names follow [RFC 0001](../docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>`. Full reference: [packages/mcp/README.md](../packages/mcp/README.md).

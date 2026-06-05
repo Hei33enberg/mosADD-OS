@@ -5,7 +5,7 @@
  * mIRC (persistent channels for known users). Use cases: customer support drop-in
  * call, live-stream after-party, anonymous tipline, incident bridge.
  *
- * Phase 1 alpha: wired to m0ssad-3 `privroom-manage` + `privroom-guest-token`
+ * Phase 1 alpha: wired to the mosadd backend's `privroom-manage` + `privroom-guest-token`
  * Edge Functions.
  */
 

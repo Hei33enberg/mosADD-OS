@@ -37,13 +37,9 @@ const ROUTES: Array<{ path: string; priority: number; freq: MetadataRoute.Sitema
   { path: '/embed', priority: 0.9, freq: 'weekly' },
   { path: '/embed/install', priority: 0.85, freq: 'weekly' },
   { path: '/embed/wordpress', priority: 0.9, freq: 'weekly' },
-  { path: '/murl', priority: 0.3, freq: 'monthly' },
-  { path: '/murl/privacy', priority: 0.4, freq: 'monthly' },
-  { path: '/murl/abuse', priority: 0.5, freq: 'monthly' },
+  // /murl/* and /c/* are 308 redirects to murl.mosadd.com (see next.config.mjs)
+  // and are sitemapped on that canonical origin instead.
   { path: '/domains', priority: 0.85, freq: 'weekly' },
-  { path: '/c/zalando.pl', priority: 0.6, freq: 'monthly' },
-  { path: '/c/allegro.pl', priority: 0.6, freq: 'monthly' },
-  { path: '/c/github.com', priority: 0.6, freq: 'monthly' },
   { path: '/status', priority: 0.3, freq: 'monthly' },
 ];
 

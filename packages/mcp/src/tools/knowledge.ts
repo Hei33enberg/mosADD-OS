@@ -9,7 +9,7 @@
  * the user's communications — WITHOUT the mosadd.com app. It is the dev-product
  * form of RAG (decision C): the same engine, exposed as one MCP tool.
  *
- * Wired to the m0ssad-3 `rag-query` Edge Function. The answer + cited sources
+ * Wired to the mosadd backend's `rag-query` Edge Function. The answer + cited sources
  * come back grounded strictly in the user's indexed data (no fabrication).
  *
  * Plan note: on the hosted hub this tool is gated by plan (free = off,

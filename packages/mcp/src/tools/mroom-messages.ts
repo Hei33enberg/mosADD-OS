@@ -2,7 +2,7 @@
  * mROOM text mode — send + list messages inside a private room.
  *
  * mROOM_send_message and mROOM_list_messages route through the same
- * m0ssad-3 `message-send` / `message-list` Edge Functions that mDM uses,
+ * the mosadd backend's `message-send` / `message-list` Edge Functions that mDM uses,
  * but with `space_id: 'rooms'` and `thread_id: 'privroom:<room_id>'` so the
  * RLS policies apply room-membership checks rather than DM contact checks.
  *

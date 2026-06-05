@@ -1,7 +1,7 @@
 /**
  * @mosadd/threat-engine — defensive decision engine.
  *
- * Ported from m0ssad-3 `supabase/functions/threat-engine/index.ts` (the DECK
+ * Ported from the mosadd backend's `supabase/functions/threat-engine/index.ts` (the DECK
  * Security Engine). The Edge Function coupled the decision logic to Supabase
  * side-effects (lock identity, suspend DIDs, sign-out). This package extracts
  * the PURE decision — `evaluateEvent(event) → {action, severity, reason}` — so
@@ -73,7 +73,7 @@ function matchesAny(haystack: string, needles: readonly string[]): boolean {
 /**
  * Evaluate a single telemetry event and recommend a defensive action.
  *
- * Deterministic, side-effect-free, backend-free. Mirrors the m0ssad-3 DECK
+ * Deterministic, side-effect-free, backend-free. Mirrors the mosadd DECK
  * rules, in priority order:
  *   1. SIM swap / kernel compromise / explicit "killswitch" → lock_account
  *   2. malformed SIP / auth brute-force / explicit "critical" → revoke_sessions

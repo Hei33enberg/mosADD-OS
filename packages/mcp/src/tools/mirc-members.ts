@@ -1,7 +1,7 @@
 /**
  * mIRC channel members — join, leave, kick, ban, set-role, set-ptt.
  *
- * Wraps the m0ssad-3 `channel-members-manage` Edge Function (audit ab6c885f),
+ * Wraps the mosadd backend's `channel-members-manage` Edge Function (audit ab6c885f),
  * which dispatches on the `action` body field.
  *
  * Split from packages/mcp/src/tools/mirc.ts because the channel-management

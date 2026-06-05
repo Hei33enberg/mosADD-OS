@@ -7,7 +7,7 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 // account for BOTH mosadd.com and mosadd.dev (one account, one shared DB,
 // separate from CYMRU). Checkout flows through create-checkout-session, which
 // reads STRIPE_SECRET_KEY_MOSADD. Keep these in sync with
-// m0ssad-3/supabase/functions/_shared/dev-products.ts.
+// the mosadd Supabase functions/_shared/dev-products.ts.
 const PRICES = {
   pro: { id: "price_1TeagcLmuAqp3A8frR1OFg9M", label: "Pro", monthly: 9 },
   team: { id: "price_1TeagdLmuAqp3A8fRxVVSW7x", label: "Team", monthly: 29 },

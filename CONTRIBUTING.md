@@ -62,11 +62,11 @@ See `packages/bridges/README.md` for the contract.
 ## Architecture
 
 See [`docs/architecture/`](./docs/architecture/) for design docs:
-- `human-os.md` — the OS framing rationale
-- `control-data-plane.md` — why mTALK/mCALL/mROOM need separate data plane
-- `fork-strategy.md` — LiveKit fork divergence discipline
-- `identity-recovery.md` — anonymous identity + mobile key recovery
-- `anti-abuse.md` — PoW + rate limits + stake hybrid
+- [`human-os.md`](./docs/architecture/human-os.md) — the OS framing rationale
+- [`phase-2-hub.md`](./docs/architecture/phase-2-hub.md) — Phase 2 hub architecture
+- [`phase-3-shells.md`](./docs/architecture/phase-3-shells.md) — Phase 3 shells architecture
+
+Additional architecture docs (control-data-plane, fork-strategy, identity-recovery, anti-abuse, threat-radar, bridges) are TODO — see the index.
 
 ## Communication
 
@@ -80,4 +80,4 @@ By contributing, you agree that your contributions will be licensed under Apache
 
 ## Recognition
 
-All contributors are listed in [`CONTRIBUTORS.md`](./CONTRIBUTORS.md) (auto-generated). Maintainers per channel are listed in [`GOVERNANCE.md`](./GOVERNANCE.md).
+Maintainers per channel are listed in [`GOVERNANCE.md`](./GOVERNANCE.md). A `CONTRIBUTORS.md` will be generated for the first stable release.

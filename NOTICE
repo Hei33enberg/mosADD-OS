@@ -68,5 +68,5 @@ This product includes code derived from third-party projects:
 
 ---
 
-For a machine-readable manifest of dependencies and their licenses,
-see THIRD-PARTY-LICENSES.md.
+For a machine-readable manifest of every dependency and its license,
+generate one locally with `pnpm licenses list --json` from the repo root.

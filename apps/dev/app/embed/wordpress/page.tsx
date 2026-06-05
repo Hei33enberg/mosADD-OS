@@ -68,7 +68,7 @@ export default function WordPressInstallPage() {
       <Ul>
         <li>Go to <strong>Settings → mosadd mIRC</strong></li>
         <li>Paste the publishable key</li>
-        <li>Set the channel id (same one you used at mosadd.dev/hub)</li>
+        <li>Set the channel id (same one you minted at mosadd.dev/embed/new)</li>
         <li>Pick mode (launcher pill or inline), position, skin, language</li>
         <li>Save Changes</li>
       </Ul>

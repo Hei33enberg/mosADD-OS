@@ -5,7 +5,7 @@
  * threads for clarity (the way GitHub Issues handles conversations), unlike
  * WhatsApp/Telegram which collapse everything into a single chat.
  *
- * Phase 1 alpha: wired to the m0ssad-3 Supabase Edge Functions as a
+ * Phase 1 alpha: wired to the mosadd Supabase Edge Functions as a
  * strangler-fig step (`message-send`, `message-list`). The user supplies
  * their own Supabase URL + anon key + a session JWT via env vars (BYOK).
  *
@@ -112,7 +112,7 @@ async function resolveSelfIdentityId(): Promise<string> {
  * Pack message body into the encrypted_payload string the Edge Function expects.
  *
  * ALPHA: not actually encrypted — wraps plaintext in JSON + base64.
- *        Receivers in the m0ssad-3 app understand this `mosadd.chat.v1` shape.
+ *        Receivers in the mosadd consumer app understand this `mosadd.chat.v1` shape.
  * V0.2:  replace with @mosadd/crypto Double Ratchet wrap.
  */
 function packPlaintextPayload(text: string, replyToId?: string): Uint8Array {

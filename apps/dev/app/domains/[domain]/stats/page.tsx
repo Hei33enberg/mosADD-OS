@@ -53,7 +53,7 @@ export default function OwnerStatsPage() {
       </h1>
       <p className="mt-3 max-w-xl text-sm text-muted-foreground">
         Aggregate activity for the channel on your domain. Ownership re-verified
-        against your <span className="font-mono">_mosadd-channel0</span> TXT at every load — remove the
+        against your <span className="font-mono">_mosadd-murl</span> TXT at every load — remove the
         record to revoke access.
       </p>
 
