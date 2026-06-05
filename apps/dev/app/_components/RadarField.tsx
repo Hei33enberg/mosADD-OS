@@ -75,13 +75,9 @@ export function RadarField() {
         );
       })}
 
-      {/* center shield + eye — the mosADD security mark, with HUD brackets */}
+      {/* center shield + eye — the mosADD security mark (clean, no frame — matches mosadd.com) */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="relative flex items-center justify-center" style={{ width: '17%', height: '17%' }}>
-          <span className="hud-bracket hud-tl" />
-          <span className="hud-bracket hud-tr" />
-          <span className="hud-bracket hud-bl" />
-          <span className="hud-bracket hud-br" />
           <svg viewBox="0 0 48 48" className="h-[70%] w-[70%]" fill="none" stroke={`hsl(${C} / 0.55)`} strokeWidth="1.4" strokeLinejoin="round">
             <path d="M24 4 L40 10 V24 C40 34 32 41 24 44 C16 41 8 34 8 24 V10 Z" />
             <ellipse cx="24" cy="23" rx="9" ry="6" stroke={`hsl(${C} / 0.72)`} strokeWidth="1.2" />
