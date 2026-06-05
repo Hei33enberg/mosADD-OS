@@ -25,30 +25,20 @@ This naming choice has cascading effects on:
 ## Naming rules
 
 1. **Prefix `m`** — lowercase, no separator. Always.
-2. **Module name** — UPPERCASE 2-8 letters, alphanumeric only. Examples: `mDM`, `mTALK`, `mIRC`, `mROOM`, `mIRL`.
-3. **MCP tools** — `m<NAME>_<operation>` snake_case for operation. Examples: `mDM_send`, `mROOM_create_with_link`, `mTALK_start_session`.
-4. **Bridges** — same convention, name is the external network: `mMATRIX`, `mDISCORD`, `mTELEGRAM`, `mSLACK`, `mSIGNAL`, `mWHATSAPP`, `mIMESSAGE`.
-5. **No version suffix in name** — versioning via package version, not `mDM2` etc.
+2. **Module name** — UPPERCASE 2-8 letters, alphanumeric only. Examples: `mDM`, `mTALK`, `mIRC`, `mROOM`, `mKB`.
+3. **MCP tools** — `m<NAME>_<operation>` snake_case for operation. Examples: `mDM_send`, `mROOM_create_guest_link`, `mTALK_open`.
+4. **No version suffix in name** — versioning via package version, not `mDM2` etc.
 
-## Reserved modules (v3.0.0)
+## Live modules (3.0.0-alpha)
 
-Native channels:
-- `mDM` — Direct Messages
-- `mTALK` — Push-to-Talk voice
-- `mAIL` — Email
-- `mCALL` — PSTN voice call
-- `mIRC` — Persistent channels
-- `mIRL` — Live-stream after-party
+- `mDM` — Direct messages + 1:1 voice
+- `mIRC` — Persistent encrypted channels
 - `mROOM` — Ephemeral rooms + no-account join links
+- `mTALK` — Push-to-talk voice
+- `mAIL` — Email
+- `mKB` — Knowledge base (RAG recall)
 
-Bridges (Hermes-derived):
-- `mMATRIX`, `mDISCORD`, `mTELEGRAM` (P0)
-- `mSLACK`, `mSIGNAL` (P1)
-- `mWHATSAPP`, `mIMESSAGE` (P2, legal review)
-
-## Reserved future names (no implementation yet)
-
-`mPOST`, `mWALL`, `mBROADCAST`, `mPING`, `mPAY`, `mVAULT`, `mFAX`, `mRSS`, `mNEWS`, `mMAP`.
+New modules require an accepted RFC (semantic primitive, ≥2 backend providers, radar hooks, MCP tool surface).
 
 To reserve a new name, open an RFC and tag it with the reserved name.
 

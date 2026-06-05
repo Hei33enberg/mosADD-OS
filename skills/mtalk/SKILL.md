@@ -1,6 +1,6 @@
 ---
 name: mosadd-mtalk
-description: Push-to-talk voice rooms on mosadd. Half-duplex floor control — one speaker at a time, FIFO queue, anti-hog auto-release. Use when the user wants a walkie-talkie style room, "open a PTT channel", join an ops/field-team room, or hold the floor to speak. NOT for full-duplex 1:1 voice (that's mDM_call_start) and NOT for phone calls (that's mCALL).
+description: Push-to-talk voice rooms on mosadd. Half-duplex floor control — one speaker at a time, FIFO queue, anti-hog auto-release. Use when the user wants a walkie-talkie style room, "open a PTT channel", join an ops/field-team room, or hold the floor to speak. NOT for full-duplex 1:1 voice (that's mDM_call_start).
 ---
 
 # mosadd Push-to-Talk (mTALK)
@@ -52,4 +52,4 @@ If unset, mTALK is missing from `comms_capabilities` and the tools fail closed w
 
 - Don't claim audio is end-to-end encrypted — the media path is DTLS-SRTP between client and SFU (LiveKit), not E2E.
 - Don't press PTT just to "check if I can speak" — that consumes the floor from real speakers.
-- Don't confuse mTALK with mDM full-duplex voice or mCALL PSTN. mTALK = walkie-talkie semantics; mDM = phone-style 1:1; mCALL = real phone network.
+- Don't confuse mTALK with mDM full-duplex voice. mTALK = walkie-talkie semantics (half-duplex, one speaker); mDM = phone-style 1:1 (full-duplex).

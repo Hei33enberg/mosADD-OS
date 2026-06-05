@@ -21,7 +21,7 @@ Quickstart configs for the agent runtimes that consume `@mosadd/mcp`.
 
 ## What you get
 
-**52 live MCP tools across 6 modules** (+ the `comms_capabilities` discovery tool; `mCALL` ×7 is registered but carrier-pending — total **60 registered**):
+**52 live MCP tools across 6 modules** (+ the `comms_capabilities` discovery tool):
 
 - **mDM** (12): list_contacts, publish_keys, send, send_unencrypted, edit, delete, list, respond_request + 4 voice ops
 - **mIRC** (20): create, list, get, update, delete, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops

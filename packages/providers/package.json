@@ -1,7 +1,7 @@
 {
   "name": "@mosadd/providers",
   "version": "3.0.0-alpha.4",
-  "description": "Vendor adapters for mosadd: forked LiveKit, Routr SIP, nwaku p2p, Dendrite Matrix, Telnyx, Twilio, Resend, ElevenLabs. Pluggable.",
+  "description": "Vendor adapters for mosadd: forked LiveKit, nwaku p2p, Resend, ElevenLabs, Supabase. Pluggable.",
   "homepage": "https://github.com/Hei33enberg/mosadd-os/tree/main/packages/providers",
   "repository": {
     "type": "git",

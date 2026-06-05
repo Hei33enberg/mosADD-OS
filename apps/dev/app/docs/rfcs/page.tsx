@@ -13,7 +13,7 @@ export default function RfcsPage() {
       <Lead>Substantive design decisions, accepted and proposed.</Lead>
 
       <P>
-        mosadd uses an RFC process for any substantive change (new modules, breaking API, new providers, new bridges). See{' '}
+        mosadd uses an RFC process for any substantive change (new modules, breaking API, new providers). See{' '}
         <Anchor href="https://github.com/Hei33enberg/mosadd-os/blob/main/GOVERNANCE.md">GOVERNANCE.md</Anchor> for the process.
       </P>
 

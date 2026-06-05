@@ -2,7 +2,7 @@
 
 MCP server for [mosadd](https://mosadd.dev) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **3.0.0-alpha.4** — **52 live tools across 6 live modules** (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mKB) + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. The package also registers **mCALL** ×7 (carrier-pending — Telnyx / LiveKit SIP trunk needed) for a total of **60 registered tools**. Roadmap: wire a carrier for mCALL, ship mIRL, add bridges. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 167-event radar in front.
+> **3.0.0-alpha.4** — **52 live tools across 6 live modules** (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mKB) + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 167-event radar in front.
 
 ## Install
 
@@ -53,7 +53,7 @@ In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling 
 
 ## Tools shipped in alpha
 
-**52 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mKB) + the `comms_capabilities` discovery tool. The package also registers **mCALL** ×7 (carrier-pending) — total **60 registered tools**. Highlights per module:
+**52 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mKB) + the `comms_capabilities` discovery tool. Highlights per module:
 
 | Module | Tools | What it does |
 |---|---|---|
@@ -63,7 +63,6 @@ In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling 
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
 | **mAIL** (4) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete` | Mail; every user gets `<id>@mosadd.com` |
 | **mKB** (2) | `mKB_ingest`, `mKB_search` | RAG recall over the user's own data (hybrid vector + BM25) |
-| **mCALL** (7, _carrier-pending_) | `mCALL_start_pstn`, `mCALL_end_pstn`, `mCALL_acquire_number`, `mCALL_my_numbers`, `mCALL_extend_number`, `mCALL_release_number`, `mCALL_answer` | Outbound + inbound PSTN with burner numbers + vocoder. Wire a Telnyx or LiveKit SIP trunk to flip live. |
 
 All tool names follow [RFC 0001](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
@@ -115,7 +114,6 @@ For PTT / CALL / ROOM (real-time media), the architecture separates **control pl
 | `MOSADD_LIVEKIT_URL` | LiveKit `wss://…` URL — enables `mTALK` / `mROOM` voice | no (voice disabled if unset) |
 | `MOSADD_LIVEKIT_API_KEY` | LiveKit API key | no (with `…_URL` / `…_API_SECRET`) |
 | `MOSADD_LIVEKIT_API_SECRET` | LiveKit API secret | no |
-| `MOSADD_TELNYX_API_KEY` | Telnyx API key — enables `mCALL` PSTN | no (mCALL disabled if unset) |
 | `MOSADD_API_KEY` | Hub API key (Phase 2 hosted mode) | no |
 | `MOSADD_HUB_URL` | Override hub url | no |
 | `MOSADD_MODE` | `local` / `cloud` / `self-host` | no (auto-detected) |

@@ -35,8 +35,7 @@ mosadd treats human communication as an OS treats IPC: orthogonal primitives acc
 - **mTALK** — Push-to-talk + LLM-in-room
 - **mKB** — Knowledge base RAG recall
 
-**Carrier-pending:** mCALL (PSTN — control plane shipped, needs a Telnyx / LiveKit SIP trunk).
-**Roadmap:** mIRL (live-stream after-party), bridges to Telegram, Discord, Matrix, Slack, Signal.
+Plus the embeddable `@mosadd/threat-engine` — a 167-event threat radar that scores every operation.
 
 ## Categories
 

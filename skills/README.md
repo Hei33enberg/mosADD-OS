@@ -25,15 +25,7 @@ claude plugin install https://github.com/Hei33enberg/mosadd-os.git
 
 The plugin pulls the `@mosadd/mcp` server alongside, so users get one install for both the runtime and the skill descriptions.
 
-## Coming next
-
-- `mcall/SKILL.md` (PSTN — gated on carrier wiring + [LINEAR-2172](https://linear.app/ip-ra/issue/LINEAR-2172))
-- `mirl/SKILL.md` (live-stream after-party)
-- Bridge skills: mMATRIX, mDISCORD, mTELEGRAM (Phase 1 P1 — [LINEAR-2168](https://linear.app/ip-ra/issue/LINEAR-2168))
-
-```bash
-claude plugin install https://github.com/Hei33enberg/mosadd-os.git
-```
+RFC required to add a new skill; see [docs/rfcs/0001-module-naming.md](../docs/rfcs/0001-module-naming.md) for the bar.
 
 (Top-level `claude plugin install` is the legacy syntax; on current Claude Code use `/plugin marketplace add Hei33enberg/mosadd-os` then `/plugin install mosadd@mosadd-os`.)
 

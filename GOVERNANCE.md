@@ -11,7 +11,7 @@ Anyone who opens an issue, comments on a discussion, submits a PR, helps with do
 Contributors with merge rights. Two kinds:
 
 - **Core maintainers** — full repo access, can land changes to anything, set direction
-- **Channel maintainers** — merge rights for a specific `m*` module or area (e.g. `mTALK`, `bridges/matrix`, `providers/routr`)
+- **Channel maintainers** — merge rights for a specific `m*` module or area (e.g. `mTALK`, `mKB`, `providers/livekit`)
 
 Becoming a maintainer:
 1. Land 5+ meaningful PRs over 3+ months
@@ -43,7 +43,7 @@ Any maintainer can veto a PR within their domain for technical reasons (correctn
 For changes that:
 - Add a new `m*` module
 - Change a public API (`@mosadd/*` exports)
-- Add or remove a provider/bridge
+- Add or remove a provider
 - Modify governance
 
 Follow the RFC template in [`docs/rfcs/0000-template.md`](./docs/rfcs/0000-template.md). RFCs go through lazy consensus.

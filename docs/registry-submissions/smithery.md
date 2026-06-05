@@ -42,17 +42,15 @@ startCommand:
 
 mosadd is the OS for human communications: instead of stitching Twilio + LiveKit + Resend + Matrix yourself, you call OS-level semantic primitives — `mROOM.create_with_link` instead of provisioning a LiveKit room + generating a JWT + emailing the URL + signing the alias.
 
-**What's included in 3.0.0-alpha.0:**
-- mDM (4 tools) — Direct messages with multi-thread per contact (USP)
-- mIRC (5 tools) — Discord/Slack-style persistent channels
-- mROOM (6 tools) — Ephemeral rooms with no-account guest join links (USP)
-- mAIL (2 tools) — Email from `<userId>@mosadd.com`
+**52 live tools across 6 live modules (3.0.0-alpha):**
+- mDM (12 tools) — Encrypted direct messages + 1:1 voice, multi-thread per contact (USP)
+- mIRC (20 tools) — Discord/Slack-style persistent encrypted channels
+- mROOM (9 tools) — Ephemeral rooms with no-account guest join links (USP)
+- mTALK (5 tools) — Push-to-talk voice with agent-in-room
+- mAIL (4 tools) — Email from `<userId>@mosadd.com`
+- mKB (2 tools) — Encrypted knowledge base, RAG recall
 
-**Coming next:**
-- mTALK — push-to-talk voice with agent-in-room (kill feature)
-- mCALL — PSTN out with anonymized caller-ID
-- mIRL — live-stream after-party rooms
-- Bridges to Telegram, Discord, Matrix, Slack, Signal
+Plus the embeddable `@mosadd/threat-engine` — a 167-event threat radar.
 
 **License:** Apache-2.0. **Repo:** https://github.com/Hei33enberg/mosadd-os
 

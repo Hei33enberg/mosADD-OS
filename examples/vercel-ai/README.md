@@ -68,4 +68,4 @@ mosadd({ modules: ["mDM", "mROOM", "mIRC", "mAIL"] })
 mosadd({})
 ```
 
-Today: 52 live tools across 6 live modules (mDM incl. voice / mIRC / mROOM / mAIL / mTALK / mKB). `mCALL` ×7 is registered but carrier-pending — 60 registered total. Roadmap: mCALL carrier wiring, mIRL, bridges (Matrix / Discord / Telegram).
+Today: 52 live tools across 6 live modules (mDM incl. voice / mIRC / mROOM / mAIL / mTALK / mKB).

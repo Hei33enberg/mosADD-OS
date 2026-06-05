@@ -21,8 +21,7 @@ Maintainers can merge PRs in their area, request reviews, and vote on RFCs.
 | Maciej Damian Białek | [@Hei33enberg](https://github.com/Hei33enberg) | all areas (bootstrap) | active |
 | *(open)* | | `@mosadd/mcp` — MCP server, tool surface | seeking |
 | *(open)* | | `@mosadd/ai` — framework adapters | seeking |
-| *(open)* | | `@mosadd/providers` — provider adapters (Supabase, Telnyx, LiveKit, Routr) | seeking |
-| *(open)* | | `@mosadd/bridges` — Telegram/Discord/Matrix/Signal | seeking |
+| *(open)* | | `@mosadd/providers` — provider adapters (Supabase, LiveKit, nwaku) | seeking |
 | *(open)* | | `@mosadd/crypto` — E2E primitives, X3DH, Double Ratchet | seeking |
 | *(open)* | | `@mosadd/threat-engine` — radar event taxonomy | seeking |
 | *(open)* | | `apps/dev` — mosadd.dev developer portal | seeking |

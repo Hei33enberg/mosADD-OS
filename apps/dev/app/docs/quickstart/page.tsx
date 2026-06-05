@@ -43,7 +43,7 @@ export default function QuickstartPage() {
       </P>
       <Pre>{`https://mcp.mosadd.com`}</Pre>
       <P>
-        Free tier: 1,000 msg/month, 30 min PTT, 0 PSTN. Sign up + get your key now at{' '}
+        Free tier: 1,000 msg/month, 30 min PTT. Sign up + get your key now at{' '}
         <Anchor href="https://mosadd.dev/hub">mosadd.dev/hub</Anchor> (live). The hosted HTTP/SSE
         endpoint above (<code className="font-mono">mcp.mosadd.com</code>) is rolling out in Phase 2 —
         until then, use the local stdio server (<code className="font-mono">npx @mosadd/mcp@alpha</code>) with your hub key.
@@ -57,9 +57,6 @@ MOSADD_SUPABASE_KEY=...
 
 # mAIL outbound
 MOSADD_RESEND_API_KEY=...
-
-# mCALL PSTN
-MOSADD_TELNYX_API_KEY=...
 
 # mTALK / mROOM voice (LiveKit)
 MOSADD_LIVEKIT_URL=wss://...

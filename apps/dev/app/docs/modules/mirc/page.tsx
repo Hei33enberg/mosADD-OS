@@ -119,7 +119,6 @@ export default function MircPage() {
       <H2>Providers</H2>
       <Ul>
         <li>Default: Supabase backend (mosadd backend functions <code className="font-mono">channel-*</code>)</li>
-        <li>Federation: <code className="font-mono">mMATRIX</code> rooms</li>
         <li>p2p: <code className="font-mono">nwaku</code> gossipsub topics</li>
       </Ul>
 

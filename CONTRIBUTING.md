@@ -1,6 +1,6 @@
 # Contributing to mosadd
 
-We're building **a human OS for communications**. We welcome contributions of any size — bug reports, feature ideas, code, docs, RFCs, providers, bridges, skills, examples.
+We're building **a human OS for communications**. We welcome contributions of any size — bug reports, feature ideas, code, docs, RFCs, providers, skills, examples.
 
 ## Code of Conduct
 
@@ -53,12 +53,6 @@ Providers live in `packages/providers/`. Each provider implements one of the cha
 
 See `packages/providers/README.md` for the contract and reference implementation.
 
-### Adding a bridge
-
-Bridges live in `packages/bridges/`. Each bridge implements `BridgeProvider` and exposes the platform as a new `m*` module (e.g. `mTELEGRAM`, `mDISCORD`).
-
-See `packages/bridges/README.md` for the contract.
-
 ## Architecture
 
 See [`docs/architecture/`](./docs/architecture/) for design docs:
@@ -66,7 +60,7 @@ See [`docs/architecture/`](./docs/architecture/) for design docs:
 - [`phase-2-hub.md`](./docs/architecture/phase-2-hub.md) — Phase 2 hub architecture
 - [`phase-3-shells.md`](./docs/architecture/phase-3-shells.md) — Phase 3 shells architecture
 
-Additional architecture docs (control-data-plane, fork-strategy, identity-recovery, anti-abuse, threat-radar, bridges) are TODO — see the index.
+Additional architecture docs (control-data-plane, fork-strategy, identity-recovery, anti-abuse, threat-radar) are TODO — see the index.
 
 ## Communication
 

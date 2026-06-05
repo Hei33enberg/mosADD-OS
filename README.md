@@ -5,7 +5,7 @@
 **A human OS. Add.**
 
 `m·os·add` — operating system for human communications.
-Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and you `add` what you need.
+Modular primitives — DMs, channels, rooms, push-to-talk, email, knowledge — and you `add` what you need.
 
 [![CI](https://github.com/Hei33enberg/mosadd-os/actions/workflows/ci.yml/badge.svg)](https://github.com/Hei33enberg/mosadd-os/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
@@ -27,7 +27,7 @@ Modular primitives — DMs, push-to-talk, rooms, calls, email, channels — and 
 npx -y @mosadd/mcp
 ```
 
-…starts an MCP server with **52 tools** across 6 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send mail, run a push-to-talk room, or recall facts from its own knowledge base — all through your own mosadd backend (BYOK). (Outbound/inbound PSTN via **mCALL** is code-complete but carrier-pending — see below.)
+…starts an MCP server with **52 tools** across 6 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send mail, run a push-to-talk room, or recall facts from its own knowledge base — all through your own mosadd backend (BYOK).
 
 | Channel | Tools | Highlight |
 |---|---|---|
@@ -38,7 +38,7 @@ npx -y @mosadd/mcp
 | **mAIL** (4) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete` | Every user gets `<userId>@mosadd.com` for free |
 | **mKB** (2) | `mKB_ingest`, `mKB_search` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
 
-**52 tools across 6 live modules** (12+20+9+5+4+2). The package also registers `mCALL` (PSTN, ×7 — `mCALL_start_pstn`, `mCALL_end_pstn`, `mCALL_acquire_number`, `mCALL_my_numbers`, `mCALL_extend_number`, `mCALL_release_number`, `mCALL_answer`) and the `comms_capabilities` discovery tool, so `@mosadd/mcp` exposes **60 tools in total** — but `mCALL` is **carrier-pending** (control plane shipped, no Telnyx/LiveKit SIP trunk wired) so it is not part of the live surface. Roadmap: **mCALL** carrier wiring, **mIRL** (live-stream after-party) and bridges to Telegram / Discord / Matrix / Signal / Slack.
+**52 tools across 6 live modules** (12+20+9+5+4+2), plus the `comms_capabilities` discovery tool. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
 ## Quickstart (60 seconds)
 
@@ -59,10 +59,11 @@ Drop [`examples/cursor/mcp.json`](./examples/cursor/mcp.json) into `~/.cursor/mc
 ### Anthropic Skills (Claude Code plugin)
 
 ```bash
-claude plugin install https://github.com/Hei33enberg/mosadd-os.git
+claude plugin marketplace add Hei33enberg/mosadd-os
+claude plugin install mosadd@mosadd-os
 ```
 
-This installs the MCP server **and** the four [`skills/`](./skills/) — each `SKILL.md` teaches Claude when to invoke which channel.
+This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.md` teaches Claude when to invoke which channel.
 
 ### Try it
 
@@ -82,30 +83,15 @@ This installs the MCP server **and** the four [`skills/`](./skills/) — each `S
 | `mIRC` | Persistent channels (Discord/Slack semantics) | **alpha (shipped)** |
 | `mKB` | Knowledge base — RAG recall (hybrid vector+BM25) | **alpha (shipped)** |
 | `mROOM` | Ephemeral rooms + no-account join links | **alpha (shipped)** |
-| `mCALL` | PSTN out/in, ephemeral DID pool, vocoder (7 tools) | **carrier-pending** — control plane shipped, no Telnyx/LiveKit SIP trunk wired |
-| `mIRL` | Live-stream after-party (YT/TikTok creators monetize) | design (roadmap) |
 
-### Bridge modules (reach existing networks)
-
-| Module | What | Status |
-|---|---|---|
-| `mMATRIX` | Matrix.org federation | Phase 1 P0 ([LINEAR-2168](https://linear.app/ip-ra/issue/LINEAR-2168)) |
-| `mDISCORD` | Discord DM + channel post | Phase 1 P0 |
-| `mTELEGRAM` | Telegram DM + group | Phase 1 P0 |
-| `mSLACK` | Slack workspace | Phase 1 P1 |
-| `mSIGNAL` | Signal | Phase 1 P1 |
-| `mWHATSAPP` | WhatsApp | Phase 2 (legal review) |
-| `mIMESSAGE` | iMessage | Phase 2 (legal review) |
-
-Community-contributed modules in v3.1+: `mPOST`, `mWALL`, `mBROADCAST`, `mPING`, `mPAY`, `mVAULT`, … RFC required — see [RFC 0001](./docs/rfcs/0001-module-naming.md).
+Plus [`@mosadd/threat-engine`](./packages/threat-engine) — the embeddable 167-event threat radar that scores every operation.
 
 ## Architecture
 
 **Public OSS layer (Apache-2.0, this repo):**
 - [`@mosadd/mcp`](./packages/mcp) — single MCP server, all channels (THE main artifact)
 - [`@mosadd/core`](./packages/core) — channel primitives
-- [`@mosadd/providers`](./packages/providers) — vendor adapters (forked LiveKit, Routr SIP, nwaku p2p, Dendrite Matrix)
-- [`@mosadd/bridges`](./packages/bridges) — Telegram/Discord/Matrix/Signal/WhatsApp (Hermes-derived)
+- [`@mosadd/providers`](./packages/providers) — vendor adapters (forked LiveKit, nwaku p2p)
 - [`@mosadd/ai`](./packages/ai) — framework adapters (Vercel AI SDK, LangChain, OpenAI Agents, Anthropic Agents)
 - [`@mosadd/crypto`](./packages/crypto), [`@mosadd/protocol`](./packages/protocol), [`@mosadd/threat-engine`](./packages/threat-engine)
 - [`apps/dev`](./apps/dev) — the **[mosadd.dev](https://mosadd.dev)** developer portal (Next.js; deployed standalone via Vercel, Root Directory `apps/dev`). Lives here, alongside the toolkit it documents.
@@ -114,12 +100,11 @@ Community-contributed modules in v3.1+: `mPOST`, `mWALL`, `mBROADCAST`, `mPING`,
 - Hosted MCP gateway with OAuth + BYOK key broker
 - 167-event threat radar middleware (the moat)
 - Unified billing across providers
-- Multi-provider PSTN failover orchestration
 - Enterprise self-host packaging + NIS2 audit trail
 
 ## Why we're different
 
-Built for the **agent era** (Claude Code, Cursor, Lovable, Manus, ChatGPT Apps) — first-class MCP support, **semantic OS primitives instead of vendor-shaped tool wrappers**. Vendor-agnostic across our forked stack + Telnyx/Twilio/Matrix/Discord backends. Managed threat radar watching every message, call, and bridge — the moat nobody else ships.
+Built for the **agent era** (Claude Code, Cursor, Lovable, Manus, ChatGPT Apps) — first-class MCP support, **semantic OS primitives instead of vendor-shaped tool wrappers**. Vendor-agnostic: bring your own keys or self-host the whole stack. Managed threat radar watching every message and call — the moat nobody else ships.
 
 Read [docs/roadmap.md](./docs/roadmap.md) for the full plan or jump to the [M5 milestone](https://linear.app/ip-ra/project/mosadd-deaa4bef6de8) for live status.
 

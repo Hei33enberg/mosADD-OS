@@ -12,7 +12,7 @@ export default function CommunityPage() {
       <Prose>
         <H1>Community</H1>
         <Lead>
-          mosadd-os is in active alpha, built in the open under Apache-2.0. We need maintainers, RFC authors, bridge devs, and human-OS thinkers.
+          mosadd-os is in active alpha, built in the open under Apache-2.0. We need maintainers, RFC authors, providers, and human-OS thinkers.
         </Lead>
 
         <H2>Where we hang out</H2>
@@ -68,7 +68,7 @@ export default function CommunityPage() {
         <H2>Why contribute</H2>
         <P>
           mosadd is the OSS-first alternative to Twilio Agent Connect, Composio, and LiveKit. We're not a vendor SDK — we're an{' '}
-          <strong>operating system</strong> for human communications, and every contributor who lands an m* module or bridge is shaping the kernel layer of the next decade of agent comms.
+          <strong>operating system</strong> for human communications, and every contributor who lands an m* module is shaping the kernel layer of the next decade of agent comms.
         </P>
         <P>
           The commercial hub (Phase 2) stays proprietary. The OS layer stays Apache-2.0 forever.{' '}
