@@ -4,15 +4,7 @@
  * Pattern from the Evil Martians "100 devtool landing pages" study: for tools
  * without big customer logos yet, lead with integration compatibility + numbers.
  */
-const CLIENTS = [
-  'Claude Code',
-  'Cursor',
-  'Windsurf',
-  'Cline',
-  'ChatGPT Apps',
-  'Vercel AI SDK',
-  'LangChain',
-];
+import { ClientLogos } from './ClientLogos';
 
 async function getStars(): Promise<number | null> {
   try {
@@ -43,17 +35,8 @@ export async function SocialProof() {
       <div className="mb-5 text-center text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
         Works in every MCP client
       </div>
-      {/* Compatibility wall — bordered wordmark cells (one grid, even rhythm). */}
-      <div className="mx-auto grid max-w-5xl grid-cols-2 gap-px overflow-hidden border border-border bg-border sm:grid-cols-4 lg:grid-cols-7">
-        {CLIENTS.map((c) => (
-          <div
-            key={c}
-            className="flex items-center justify-center bg-card/40 px-3 py-5 text-center font-display text-sm text-muted-foreground/90 transition-colors hover:bg-card hover:text-foreground"
-          >
-            {c}
-          </div>
-        ))}
-      </div>
+      {/* Compatibility wall — real client logos (monochrome, currentColor). */}
+      <ClientLogos />
       <div className="mx-auto mt-8 flex max-w-2xl flex-wrap items-center justify-center gap-x-10 gap-y-3">
         {stats.map((s) => (
           <div key={s.label} className="text-center">
