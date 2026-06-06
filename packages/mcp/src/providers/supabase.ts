@@ -9,6 +9,7 @@
  * holds keys server-side via the BYOK broker.
  */
 
+import { AsyncLocalStorage } from "node:async_hooks";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { loadSession, isSessionExpired } from "../config.js";
 
@@ -16,6 +17,23 @@ export interface SupabaseEnv {
   url: string;
   anonKey: string;
   userJwt?: string;
+}
+
+/**
+ * Per-request session context for the hosted HTTP gateway (mcp.mosadd.com).
+ *
+ * stdio runs one user per process, so credentials live in process.env. The
+ * hosted gateway serves MANY users from one process — sharing process.env would
+ * leak user A's JWT into user B's concurrent request. The gateway instead
+ * resolves the caller's session (Bearer api key → hub-key-exchange) and runs the
+ * whole request inside `runWithSupabaseEnv(env, …)`; `readSupabaseEnv()` reads
+ * this store first and falls back to process.env, so stdio is unaffected.
+ */
+const requestEnv = new AsyncLocalStorage<SupabaseEnv>();
+
+/** Run `fn` (and every tool call it triggers) with a per-request Supabase session. */
+export function runWithSupabaseEnv<T>(env: SupabaseEnv, fn: () => T): T {
+  return requestEnv.run(env, fn);
 }
 
 export class MissingSupabaseEnvError extends Error {
@@ -29,6 +47,12 @@ export class MissingSupabaseEnvError extends Error {
 }
 
 export function readSupabaseEnv(): SupabaseEnv {
+  // Hosted HTTP gateway: a per-request session set via runWithSupabaseEnv wins
+  // over any process-global env (multi-tenant safety). stdio has no store → falls
+  // through to the env/login resolution below.
+  const perRequest = requestEnv.getStore();
+  if (perRequest) return perRequest;
+
   // Canonical env vars are MOSADD_*; the legacy M0SSAD_* names are still
   // honored (deprecated) so anyone who set them before the brand sweep keeps
   // working. Env vars take precedence; fall back to the session saved by

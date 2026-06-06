@@ -1,0 +1,22 @@
+{
+  "name": "@mosadd/mcp-http",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Hosted MCP gateway (Streamable HTTP) for mcp.mosadd.com — serves @mosadd/mcp over HTTP with per-request, multi-tenant auth (Bearer mosadd_sk_live_… -> hub-key-exchange).",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "@mosadd/mcp": "file:../../packages/mcp"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  },
+  "engines": { "node": ">=18" }
+}
