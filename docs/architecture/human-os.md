@@ -13,7 +13,7 @@ Like a real OS gives you `open()`, `read()`, `write()`, `socket()`, `fork()`, mo
 - `mROOM` — ephemeral group rooms + no-account join links
 - `mTALK` — push-to-talk voice
 - `mAIL` — email
-- `mKB` — encrypted knowledge base (RAG recall)
+- `mRAG` — encrypted knowledge base (RAG recall)
 
 Each `m*` is a **module** you `add` to your system.
 
@@ -67,7 +67,7 @@ This makes the system **extensible**. New modules go through the RFC process (se
                      ▼
 ┌─────────────────────────────────────────────────────────┐
 │  System call interface (@mosadd/mcp + @mosadd/ai)       │
-│  - Tools: mDM_send, mTALK_open, mKB_search, ...         │
+│  - Tools: mDM_send, mTALK_open, mRAG_search, ...         │
 │  - Adapters: @mosadd/ai/vercel, /langchain, /openai     │
 └────────────────────┬────────────────────────────────────┘
                      │

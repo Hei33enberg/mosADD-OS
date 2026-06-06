@@ -25,7 +25,7 @@ on this page.
 | **Dev `mDM_send_unencrypted`** | **Plaintext** (deprecated) | **Yes** | Migration fallback; will be removed. |
 | **Dev `mIRC_post_message`** | **Plaintext base64** (alpha) | **Yes** | Not the app's group-key format → app clients can't read it. |
 | **Dev `mROOM_send_message`** | **Plaintext base64** (alpha) | **Yes** | `v0.2` target: Double Ratchet / group key. |
-| **Dev `mKB_search`** | Reads the plaintext RAG index | **Yes** | Inherits the RAG caveat. |
+| **Dev `mRAG_search`** | Reads the plaintext RAG index | **Yes** | Inherits the RAG caveat. |
 
 ## The three honest caveats
 
@@ -45,7 +45,7 @@ now state the plaintext status inline.
 
 ### 3. RAG / search is fundamentally not zero-knowledge
 Vector search needs content indexed in plaintext on the server. Anything searchable
-via app RAG or `mKB_search` is, by construction, readable by the server. We therefore
+via app RAG or `mRAG_search` is, by construction, readable by the server. We therefore
 make indexing **opt-in and off by default**, and we do **not** describe RAG-indexed
 data as covered by the zero-knowledge guarantee. "Zero-knowledge" applies to the
 encrypted message paths above — not to the search index.

@@ -36,7 +36,7 @@ npx -y @mosadd/mcp
 | **mROOM** (9) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_send_message`, `mROOM_list_messages` | **No other registered MCP server exposes single-call guest links** |
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
 | **mAIL** (4) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete` | Every user gets `<userId>@mosadd.com` for free |
-| **mKB** (2) | `mKB_ingest`, `mKB_search` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
+| **mRAG** (2) | `mRAG_ingest`, `mRAG_search` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
 
 **52 tools across 6 live modules** (12+20+9+5+4+2), plus the `comms_capabilities` discovery tool. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
@@ -81,7 +81,7 @@ This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.
 | `mTALK` | Push-to-talk voice, LLM-as-participant | **alpha (shipped)** |
 | `mAIL` | Email, every user gets `<id>@mosadd.com` | **alpha (shipped)** |
 | `mIRC` | Persistent channels (Discord/Slack semantics) | **alpha (shipped)** |
-| `mKB` | Knowledge base — RAG recall (hybrid vector+BM25) | **alpha (shipped)** |
+| `mRAG` | Knowledge base — RAG recall (hybrid vector+BM25) | **alpha (shipped)** |
 | `mROOM` | Ephemeral rooms + no-account join links | **alpha (shipped)** |
 
 Plus [`@mosadd/threat-engine`](./packages/threat-engine) — the embeddable 167-event threat radar that scores every operation.

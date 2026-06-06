@@ -191,7 +191,7 @@ npx -y @mosadd/mcp@alpha`}</pre>
           <div className="border border-border p-4 bg-card">
             <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Pro</div>
             <div className="text-lg font-bold mb-1">$9/mo</div>
-            <div className="text-xs text-muted-foreground mb-4">50k messages · mKB (rag-search) · 10h PTT</div>
+            <div className="text-xs text-muted-foreground mb-4">50k messages · mRAG (rag-search) · 10h PTT</div>
             <button onClick={() => upgrade("pro")} disabled={busy} className="w-full bg-primary text-primary-foreground px-3 py-2 text-xs font-bold uppercase tracking-widest hover:opacity-70 transition" style={busy ? { opacity: 0.5, cursor: "not-allowed" } : {}}>
               Upgrade
             </button>

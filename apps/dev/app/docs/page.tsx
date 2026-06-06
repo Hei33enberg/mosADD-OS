@@ -29,7 +29,7 @@ export default function DocsIndexPage() {
         <li><code className="font-mono text-primary">mROOM</code> — ephemeral rooms + no-account join links</li>
         <li><code className="font-mono text-primary">mTALK</code> — push-to-talk (PTT + LLM in the same room)</li>
         <li><code className="font-mono text-primary">mAIL</code> — agent email</li>
-        <li><code className="font-mono text-primary">mKB</code> — encrypted knowledge base (RAG recall)</li>
+        <li><code className="font-mono text-primary">mRAG</code> — encrypted knowledge base (RAG recall)</li>
       </Ul>
       <P>
         All exposed through a <strong>single MCP server</strong>, plus an Anthropic Skills bundle as a bonus for Claude users.

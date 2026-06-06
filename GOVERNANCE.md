@@ -11,7 +11,7 @@ Anyone who opens an issue, comments on a discussion, submits a PR, helps with do
 Contributors with merge rights. Two kinds:
 
 - **Core maintainers** — full repo access, can land changes to anything, set direction
-- **Channel maintainers** — merge rights for a specific `m*` module or area (e.g. `mTALK`, `mKB`, `providers/livekit`)
+- **Channel maintainers** — merge rights for a specific `m*` module or area (e.g. `mTALK`, `mRAG`, `providers/livekit`)
 
 Becoming a maintainer:
 1. Land 5+ meaningful PRs over 3+ months

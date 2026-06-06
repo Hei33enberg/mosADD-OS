@@ -13,7 +13,7 @@ Skills are a Claude-only convenience layer on top of the [`@mosadd/mcp`](../pack
 | [`mirc/SKILL.md`](mirc/SKILL.md) | mIRC | Persistent Discord/Slack-style channels |
 | [`mail/SKILL.md`](mail/SKILL.md) | mAIL | Email from `<userId>@mosadd.com` |
 | [`mtalk/SKILL.md`](mtalk/SKILL.md) | mTALK | Push-to-talk voice rooms (half-duplex floor control) |
-| [`mkb/SKILL.md`](mkb/SKILL.md) | mKB | RAG recall over the user's own messages/emails/calls |
+| [`mrag/SKILL.md`](mrag/SKILL.md) | mRAG | RAG recall over the user's own messages/emails/calls |
 
 ## Plugin marketplace entry
 

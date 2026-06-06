@@ -35,13 +35,13 @@ export default function McpPage() {
           [<code key="7" className="font-mono text-primary">mAIL_send</code>, 'Send email'],
           [<code key="8" className="font-mono text-primary">mTALK_press</code>, 'Press push-to-talk: request the floor (half-duplex)'],
           [<code key="9" className="font-mono text-primary">mTALK_join</code>, 'Get LiveKit credentials to join a PTT room'],
-          [<code key="10" className="font-mono text-primary">mKB_search</code>, "Search/answer over the user's own data (RAG)"],
+          [<code key="10" className="font-mono text-primary">mRAG_search</code>, "Search/answer over the user's own data (RAG)"],
           ['…', <span key="more">full list in <Anchor href="/docs/modules">modules reference</Anchor></span>],
         ]}
       />
 
       <P>
-        Total surface today: <strong>52 tools across 6 live modules</strong> — mDM ×12 (incl. 4 voice), mIRC ×20, mROOM ×9, mAIL ×4, mTALK ×5, mKB ×2 — plus the <code className="font-mono text-primary">comms_capabilities</code> discovery tool.
+        Total surface today: <strong>52 tools across 6 live modules</strong> — mDM ×12 (incl. 4 voice), mIRC ×20, mROOM ×9, mAIL ×4, mTALK ×5, mRAG ×2 — plus the <code className="font-mono text-primary">comms_capabilities</code> discovery tool.
       </P>
 
       <H2>Transports</H2>

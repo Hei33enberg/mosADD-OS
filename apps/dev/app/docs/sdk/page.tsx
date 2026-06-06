@@ -42,7 +42,7 @@ const agent = new Agent({
       <H2>Anthropic Agents</H2>
       <Pre lang="ts">{`import { mosadd } from '@mosadd/ai/anthropic';
 
-const tools = mosadd({ modules: ['mDM', 'mROOM', 'mKB'] });`}</Pre>
+const tools = mosadd({ modules: ['mDM', 'mROOM', 'mRAG'] });`}</Pre>
 
       <H2>Bring your own framework</H2>
       <P>

@@ -25,7 +25,7 @@ This naming choice has cascading effects on:
 ## Naming rules
 
 1. **Prefix `m`** — lowercase, no separator. Always.
-2. **Module name** — UPPERCASE 2-8 letters, alphanumeric only. Examples: `mDM`, `mTALK`, `mIRC`, `mROOM`, `mKB`.
+2. **Module name** — UPPERCASE 2-8 letters, alphanumeric only. Examples: `mDM`, `mTALK`, `mIRC`, `mROOM`, `mRAG`.
 3. **MCP tools** — `m<NAME>_<operation>` snake_case for operation. Examples: `mDM_send`, `mROOM_create_guest_link`, `mTALK_open`.
 4. **No version suffix in name** — versioning via package version, not `mDM2` etc.
 
@@ -36,7 +36,7 @@ This naming choice has cascading effects on:
 - `mROOM` — Ephemeral rooms + no-account join links
 - `mTALK` — Push-to-talk voice
 - `mAIL` — Email
-- `mKB` — Knowledge base (RAG recall)
+- `mRAG` — Knowledge base (RAG recall)
 
 New modules require an accepted RFC (semantic primitive, ≥2 backend providers, radar hooks, MCP tool surface).
 

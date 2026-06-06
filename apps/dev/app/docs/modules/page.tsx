@@ -26,7 +26,7 @@ export default function ModulesPage() {
           [<Anchor key="mroom" href="/docs/modules/mroom">mROOM</Anchor>, 'Ephemeral rooms + group voice + no-account guest links', 'alpha'],
           [<Anchor key="mail" href="/docs/modules/mail">mAIL</Anchor>, 'Mail — every user gets <userId>@mosadd.com; send/view/list/delete', 'alpha'],
           [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, 'Push-to-talk with LLM-in-room support', 'alpha'],
-          [<Anchor key="mkb" href="/docs/modules/mkb">mKB</Anchor>, 'Encrypted knowledge base — semantic recall (RAG)', 'alpha'],
+          [<Anchor key="mrag" href="/docs/modules/mrag">mRAG</Anchor>, 'Encrypted knowledge base — semantic recall (RAG)', 'alpha'],
         ]}
       />
 

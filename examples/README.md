@@ -28,6 +28,6 @@ Quickstart configs for the agent runtimes that consume `@mosadd/mcp`.
 - **mROOM** (9): create, create_guest_link ★, join, leave, close, list, send_message, list_messages + admin
 - **mTALK** (5): open, join, press, release, state — half-duplex push-to-talk
 - **mAIL** (4): send, view, list, delete
-- **mKB** (2): ingest, search — RAG recall over your own data
+- **mRAG** (2): ingest, search — RAG recall over your own data
 
 All names follow [RFC 0001](../docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>`. Full reference: [packages/mcp/README.md](../packages/mcp/README.md).

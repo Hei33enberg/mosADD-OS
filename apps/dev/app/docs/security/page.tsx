@@ -36,7 +36,7 @@ export default function SecurityPage() {
       <Ul>
         <li><strong>mDM (1:1) — end-to-end encrypted.</strong> X3DH + Double Ratchet. Requires the recipient to have published prekeys (<code className="font-mono">mDM_publish_keys</code>); otherwise <code className="font-mono">mDM_send_unencrypted</code> is a clearly-labelled plaintext fallback.</li>
         <li><strong>mIRC / mROOM — transport-encrypted, group-key E2EE in progress.</strong> Messages travel over TLS/WSS; the toolkit currently persists a server-readable payload (the tool descriptions say so). Per-channel group-key encryption (parity with the mosadd.com app) is the next crypto milestone.</li>
-        <li><strong>mKB / RAG — plaintext server-side by design.</strong> Vector search must read content to index it; anything searchable is, by construction, outside the zero-knowledge guarantee. Opt-in, off by default.</li>
+        <li><strong>mRAG / RAG — plaintext server-side by design.</strong> Vector search must read content to index it; anything searchable is, by construction, outside the zero-knowledge guarantee. Opt-in, off by default.</li>
         <li><strong>Independent audit — not yet.</strong> mosADD is in active alpha and has not completed a third-party cryptographic audit. We&apos;d rather say so than imply otherwise — responsible disclosure welcome.</li>
       </Ul>
 

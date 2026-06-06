@@ -2,7 +2,7 @@
 
 MCP server for [mosadd](https://mosadd.dev) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **3.0.0-alpha.4** — **52 live tools across 6 live modules** (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mKB) + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 167-event radar in front.
+> **3.0.0-alpha.4** — **52 live tools across 6 live modules** (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mRAG) + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 167-event radar in front.
 
 ## Install
 
@@ -53,7 +53,7 @@ In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling 
 
 ## Tools shipped in alpha
 
-**52 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mKB) + the `comms_capabilities` discovery tool. Highlights per module:
+**52 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mRAG) + the `comms_capabilities` discovery tool. Highlights per module:
 
 | Module | Tools | What it does |
 |---|---|---|
@@ -62,7 +62,7 @@ In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling 
 | **mROOM** (9) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_send_message`, `mROOM_list_messages` | Ephemeral rooms + single-call no-account guest links |
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
 | **mAIL** (4) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete` | Mail; every user gets `<id>@mosadd.com` |
-| **mKB** (2) | `mKB_ingest`, `mKB_search` | RAG recall over the user's own data (hybrid vector + BM25) |
+| **mRAG** (2) | `mRAG_ingest`, `mRAG_search` | RAG recall over the user's own data (hybrid vector + BM25) |
 
 All tool names follow [RFC 0001](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 

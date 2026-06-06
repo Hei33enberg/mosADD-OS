@@ -140,7 +140,7 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
     expect(names).toContain("mROOM_create_guest_link");
     expect(names).toContain("mAIL_send");
     expect(names).toContain("mTALK_press"); // mTALK PTT now shipped
-    expect(names).toContain("mKB_search"); // mKB RAG-for-devs now shipped
+    expect(names).toContain("mRAG_search"); // mRAG RAG-for-devs now shipped
     expect(names).toContain("mIRC_post_message"); // channel messaging now shipped
 
     // Total tool count today (grows as modules ship)

@@ -33,7 +33,7 @@ mosadd treats human communication as an OS treats IPC: orthogonal primitives acc
 - **mROOM** — Ephemeral rooms + no-signup guest links (USP — no other registered server exposes this)
 - **mAIL** — Email from `<userId>@mosadd.com`
 - **mTALK** — Push-to-talk + LLM-in-room
-- **mKB** — Knowledge base RAG recall
+- **mRAG** — Knowledge base RAG recall
 
 Plus the embeddable `@mosadd/threat-engine` — a 167-event threat radar that scores every operation.
 

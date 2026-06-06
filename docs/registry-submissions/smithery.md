@@ -48,7 +48,7 @@ mosadd is the OS for human communications: instead of stitching Twilio + LiveKit
 - mROOM (9 tools) — Ephemeral rooms with no-account guest join links (USP)
 - mTALK (5 tools) — Push-to-talk voice with agent-in-room
 - mAIL (4 tools) — Email from `<userId>@mosadd.com`
-- mKB (2 tools) — Encrypted knowledge base, RAG recall
+- mRAG (2 tools) — Encrypted knowledge base, RAG recall
 
 Plus the embeddable `@mosadd/threat-engine` — a 167-event threat radar.
 

@@ -16,7 +16,7 @@ Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosa
 - [ ] Anonymous identity recovery — descoped ([LINEAR-2170](https://linear.app/ip-ra/issue/LINEAR-2170))
 - [x] Anti-abuse PoW + rate limits ([LINEAR-2171](https://linear.app/ip-ra/issue/LINEAR-2171))
 - [ ] Messaging backbone: nwaku P2P ([LINEAR-2173](https://linear.app/ip-ra/issue/LINEAR-2173))
-- [x] Native channels (6 live): mDM, mIRC, mROOM, **mTALK (killer feature)**, mAIL, mKB ([LINEAR-2146](https://linear.app/ip-ra/issue/LINEAR-2146)-[2152](https://linear.app/ip-ra/issue/LINEAR-2152))
+- [x] Native channels (6 live): mDM, mIRC, mROOM, **mTALK (killer feature)**, mAIL, mRAG ([LINEAR-2146](https://linear.app/ip-ra/issue/LINEAR-2146)-[2152](https://linear.app/ip-ra/issue/LINEAR-2152))
 - [x] SDK adapters: Vercel AI SDK + LangChain + OpenAI Agents + Anthropic Agents ([LINEAR-2153](https://linear.app/ip-ra/issue/LINEAR-2153))
 - [x] Claude Code plugin + Anthropic Skills bundle ([LINEAR-2154](https://linear.app/ip-ra/issue/LINEAR-2154))
 - [x] Example apps (6 shipped) ([LINEAR-2155](https://linear.app/ip-ra/issue/LINEAR-2155))

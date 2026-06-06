@@ -10,7 +10,7 @@ const modules = [
   { name: 'mROOM', desc: 'Ephemeral group rooms. No residual server state after teardown.', tools: 9, url: '/docs/modules/mroom' },
   { name: 'mAIL', desc: 'Encrypted agent mail with threat hooks, priority and auto-destruct.', tools: 4, url: '/docs/modules/mail' },
   { name: 'mTALK', desc: 'Encrypted push-to-talk voice. Anomaly detection on the media path.', tools: 5, url: '/docs/modules/mtalk' },
-  { name: 'mKB', desc: 'Encrypted knowledge base. Semantic recall (RAG) over your own data.', tools: 2, url: '/docs/modules/mkb' },
+  { name: 'mRAG', desc: 'Encrypted knowledge base. Semantic recall (RAG) over your own data.', tools: 2, url: '/docs/modules/mrag' },
 ];
 
 const threats = [

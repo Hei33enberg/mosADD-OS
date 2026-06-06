@@ -24,11 +24,11 @@ Most registries want the same fields. Keep these consistent:
 
 - **Name**: `@mosadd/mcp`
 - **Display name**: `mosadd — A human OS. Add.`
-- **One-liner**: `Operating system for human communications. mDM · mIRC · mROOM · mTALK · mAIL · mKB — 52 live tools across 6 modules, one MCP server.`
+- **One-liner**: `Operating system for human communications. mDM · mIRC · mROOM · mTALK · mAIL · mRAG — 52 live tools across 6 modules, one MCP server.`
 - **Repo**: `https://github.com/Hei33enberg/mosadd-os`
 - **License**: `Apache-2.0`
 - **Author**: `mosadd contributors`
 - **Homepage**: `https://mosadd.dev`
 - **Install**: `npx -y @mosadd/mcp`
 - **Tags**: `messaging`, `voice`, `email`, `agents`, `apache-2`, `open-source`
-- **OS modules listed**: mDM (alpha), mIRC (alpha), mROOM (alpha — incl. guest links USP), mAIL (alpha), mTALK (alpha — PTT), mKB (alpha — RAG)
+- **OS modules listed**: mDM (alpha), mIRC (alpha), mROOM (alpha — incl. guest links USP), mAIL (alpha), mTALK (alpha — PTT), mRAG (alpha — RAG)
