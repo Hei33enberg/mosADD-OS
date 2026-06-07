@@ -27,10 +27,10 @@ export default function ModulesPage() {
           [<Anchor key="mail" href="/docs/modules/mail">mAIL</Anchor>, '11', 'Mail — every user gets <userId>@mosadd.com; send/view/list/delete + open/click/forward tracking + inbound-mail notify', 'alpha'],
           [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, '5', 'Push-to-talk with LLM-in-room support', 'alpha'],
           [<Anchor key="mrag" href="/docs/modules/mrag">mRAG</Anchor>, '4', 'Per-tenant agent memory — semantic recall (RAG) + list/delete indexed sources', 'alpha'],
-          [<Anchor key="murl" href="/docs/modules/murl">mURL</Anchor>, '3', 'Real-time chat attached to any web domain — agent-native (IRC for URLs)', 'alpha'],
+          [<Anchor key="murl" href="/docs/modules/murl">mURL</Anchor>, '4', 'Real-time chat attached to any web domain — agent-native (IRC for URLs)', 'alpha'],
         ]}
       />
-      <P>64 tools across 7 live modules.</P>
+      <P>65 tools across 7 live modules.</P>
 
       <H2>Security</H2>
       <Table

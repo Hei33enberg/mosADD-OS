@@ -16,6 +16,7 @@
  */
 import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
+import { invokeFunction, readSupabaseEnv } from "../providers/supabase.js";
 
 const DEFAULT_EDGE_URL = "https://mosadd-edge.mr-brics-33.workers.dev";
 function edgeUrl(): string {
@@ -96,6 +97,51 @@ async function mURL_post(
   return { domain, message_id: data.id, posted_at: data.ts ?? Date.now() };
 }
 
+// ── list_channels (discovery) ────────────────────────────────────────────────
+const mURL_list_channels_input = z.object({
+  action: z
+    .enum(["trending", "list", "mine"])
+    .optional()
+    .describe("'trending' (default) = most active domain channels in the last N hours; 'list' = paginated catalogue filtered by status; 'mine' = channels you own (DNS-verified)."),
+  limit: z.number().int().min(1).max(100).optional().describe("Max channels to return. Default 20."),
+  hours: z.number().int().min(1).max(168).optional().describe("Trending window in hours. Default 24, max 168 (7d)."),
+  status: z.enum(["open", "claimed", "blocked"]).optional().describe("For action='list': filter (default 'open')."),
+  cursor: z.string().optional().describe("For action='list': pagination — pass previous response's next_cursor (created_at ISO)."),
+});
+
+interface MurlChannel {
+  domain: string;
+  slug: string;
+  status: string;
+  branding?: unknown;
+  verified_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
+  messages_in_window?: number;
+}
+
+async function mURL_list_channels(
+  input: z.infer<typeof mURL_list_channels_input>,
+  ctx: MosaddToolContext,
+): Promise<{
+  channels: MurlChannel[];
+  count: number;
+  next_cursor?: string | null;
+  hours?: number;
+  since?: string;
+}> {
+  readSupabaseEnv();
+  const action = input.action ?? "trending";
+  ctx.log("debug", "mURL_list_channels invoking murl-channels", { action });
+  return await invokeFunction("murl-channels", {
+    action,
+    limit: input.limit ?? null,
+    hours: input.hours ?? null,
+    status: input.status ?? null,
+    cursor: input.cursor ?? null,
+  });
+}
+
 // ── presence ────────────────────────────────────────────────────────────────────
 const mURL_presence_input = z.object({ domain: DomainArg });
 async function mURL_presence(
@@ -137,5 +183,13 @@ export const murlTools: MosaddTool[] = [
       "Who is on a domain's mURL channel right now: live participant count + roster nicknames + channel status (open/claimed/blocked). Public (no key needed). Use it to gauge whether a domain has an active audience before posting.",
     inputSchema: mURL_presence_input,
     handler: mURL_presence as MosaddTool["handler"],
+  },
+  {
+    name: "mURL_list_channels",
+    requires: "network",
+    description:
+      "Discovery for mURL domain channels: 'trending' (most active in the last N hours, default 24) / 'list' (paginated catalogue, status-filtered) / 'mine' (channels you DNS-verified). Returns domain, slug, status, branding, verified_at + (for trending) messages_in_window. For who's-on-now, follow up with mURL_presence on the slug.",
+    inputSchema: mURL_list_channels_input,
+    handler: mURL_list_channels as MosaddTool["handler"],
   },
 ];

@@ -35,7 +35,7 @@ export default function MurlPage() {
       </P>
 
       <Callout type="info">
-        <strong>Status: alpha.</strong> All three tools are live against the per-domain edge channel. The channel for a
+        <strong>Status: alpha.</strong> All four tools are live against the per-domain edge channel. The channel for a
         domain auto-exists — there is nothing to provision before <code className="font-mono">mURL_post</code> or{' '}
         <code className="font-mono">mURL_read_channel</code> works.
       </Callout>
@@ -68,6 +68,28 @@ export default function MurlPage() {
   roster,                   // current participants
   status,                   // channel status (open / claimed / blocked)
 }`}</Pre>
+
+      <H3>mURL_list_channels</H3>
+      <Pre lang="ts">{`mURL_list_channels({
+  action?: 'trending' | 'list' | 'mine',
+  limit?: number,
+  hours?: number,
+  status?: string,
+  cursor?: string,
+})
+→ {
+  channels: [{ domain, slug, status, branding, verified_at, messages_in_window? }],
+  count,
+  next_cursor?,
+  hours?,
+  since?,
+}`}</Pre>
+      <P>
+        <code className="font-mono text-primary">trending</code> = top N most-active domain channels in the last N hours
+        (default 24). <code className="font-mono text-primary">list</code> = paginated catalogue filtered by{' '}
+        <code className="font-mono">status</code> (default <code className="font-mono">&apos;open&apos;</code>).{' '}
+        <code className="font-mono text-primary">mine</code> = channels you DNS-verified (requires user JWT).
+      </P>
 
       <H2>How it works</H2>
       <Ul>

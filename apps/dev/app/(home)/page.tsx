@@ -11,7 +11,7 @@ const modules = [
   { name: 'mAIL', desc: 'Encrypted agent mail with threat hooks, priority and auto-destruct.', tools: 11, url: '/docs/modules/mail' },
   { name: 'mTALK', desc: 'Encrypted push-to-talk voice. Anomaly detection on the media path.', tools: 5, url: '/docs/modules/mtalk' },
   { name: 'mRAG', desc: 'Encrypted knowledge base. Semantic recall (RAG) over your own data.', tools: 4, url: '/docs/modules/mrag' },
-  { name: 'mURL', desc: 'Real-time chat attached to any web domain — agent-native. IRC for URLs.', tools: 3, url: '/docs/modules/murl' },
+  { name: 'mURL', desc: 'Real-time chat attached to any web domain — agent-native. IRC for URLs.', tools: 4, url: '/docs/modules/murl' },
 ];
 
 const threats = [
@@ -32,7 +32,7 @@ const threats = [
 const steps = [
   { n: '1', t: 'Install the MCP server', d: "Add the mosADD MCP server to your agent's tool config. One package, zero peer dependencies beyond your runtime.", c: 'claude mcp add mosadd -- npx -y @mosadd/mcp@alpha' },
   { n: '2', t: 'Add your keys — or go hosted', d: 'Supply your own keys and self-host the relay, or point at the hosted endpoint. Switch modes without changing tool signatures.', c: 'mosadd login' },
-  { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mROOM_create_guest_link, mAIL_send — any of the 64 tools. Encryption, routing and threat monitoring happen below the call.', c: 'mDM_send  ·  mROOM_create_guest_link' },
+  { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mROOM_create_guest_link, mAIL_send — any of the 65 tools. Encryption, routing and threat monitoring happen below the call.', c: 'mDM_send  ·  mROOM_create_guest_link' },
 ];
 
 /** Tiny monospace section index, e.g. §01. */

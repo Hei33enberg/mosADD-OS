@@ -4,7 +4,7 @@ Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosa
 
 ## Phase 1 — Public OS core
 
-> **Substantially shipped (3.0.0-alpha).** The toolkit is live — **64 tools across 7 modules**. The [README "What's live today"](../README.md) is the authoritative status. Open items below: P2P backbone, hosted MCP, and MCP-registry submissions.
+> **Substantially shipped (3.0.0-alpha).** The toolkit is live — **65 tools across 7 modules**. The [README "What's live today"](../README.md) is the authoritative status. Open items below: P2P backbone, hosted MCP, and MCP-registry submissions.
 
 - [x] Monorepo scaffold + Apache-2.0 + governance
 - [x] `@mosadd/crypto` — X3DH + Double Ratchet, powers mDM E2EE ([LINEAR-2142](https://linear.app/ip-ra/issue/LINEAR-2142))
