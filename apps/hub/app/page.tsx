@@ -25,7 +25,7 @@ export default async function Home() {
       <section className="container py-12">
         <h1 className="text-3xl font-black tracking-widest uppercase">Your mosadd hub.</h1>
         <p className="mt-4 text-muted-foreground max-w-2xl">
-          Self-serve dashboard for <code>@mosadd/mcp</code>. Sign in, issue an API key, paste a one-line install snippet into Claude Code / Cursor / your agent. 57 live MCP tools across 6 modules, $0 to start.
+          Self-serve dashboard for <code>@mosadd/mcp</code>. Sign in, issue an API key, paste a one-line install snippet into Claude Code / Cursor / your agent. 59 live MCP tools across 6 modules, $0 to start.
         </p>
 
         <div className="mt-8 flex gap-4">

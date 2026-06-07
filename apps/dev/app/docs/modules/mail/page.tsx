@@ -76,6 +76,25 @@ export default function MailPage() {
     total_opens, total_clicks, forwarded_emails,
   } }`}</Pre>
 
+      <H3>mAIL_revoke</H3>
+      <Pre lang="ts">{`mAIL_revoke({ message_id, restore?: boolean })   // recall reader access (Virtru-style); restore:true re-enables
+→ { ok, message_id, revoked, expires_at }`}</Pre>
+      <P>
+        Disables future secure-reader access to a sent email — the recipient can no longer open it in mosadd&apos;s
+        renderer. It <strong>cannot claw back content the recipient has already read</strong> (or copied/screenshotted);
+        it only disables future reader access. Pass <code className="font-mono">restore: true</code> to re-enable.
+      </P>
+
+      <H3>mAIL_audit_export</H3>
+      <Pre lang="ts">{`mAIL_audit_export({ message_id })
+→ { audit, signature, algo: "HMAC-SHA256", note }`}</Pre>
+      <P>
+        A tamper-evident, HMAC-SHA256-signed engagement audit report (RMail-style) for legal/compliance use — the
+        signature lets a third party verify the engagement record was not altered after export. Note it is a
+        <strong> signed activity ledger, not a qualified delivery receipt</strong> (it is not an ERDS / electronic
+        registered delivery service attestation).
+      </P>
+
       <H2>Engagement tracking</H2>
       <P>
         Outbound mail is sent with a tracking pixel and link-wrapping, so <strong>opens and link clicks

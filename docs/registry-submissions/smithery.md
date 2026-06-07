@@ -36,18 +36,18 @@ startCommand:
 
 **Title:** mosadd — A human OS. Add.
 
-**Tagline:** Operating system for human communications. DMs, rooms with guest links, channels, email, push-to-talk, knowledge recall — 57 tools today.
+**Tagline:** Operating system for human communications. DMs, rooms with guest links, channels, email, push-to-talk, knowledge recall — 59 tools today.
 
 **Long description:**
 
 mosadd is the OS for human communications: instead of stitching Twilio + LiveKit + Resend + Matrix yourself, you call OS-level semantic primitives — `mROOM.create_with_link` instead of provisioning a LiveKit room + generating a JWT + emailing the URL + signing the alias.
 
-**57 live tools across 6 live modules (3.0.0-alpha):**
+**59 live tools across 6 live modules (3.0.0-alpha):**
 - mDM (12 tools) — Encrypted direct messages + 1:1 voice, multi-thread per contact (USP)
 - mIRC (20 tools) — Discord/Slack-style persistent encrypted channels
 - mROOM (9 tools) — Ephemeral rooms with no-account guest join links (USP)
 - mTALK (5 tools) — Push-to-talk voice with agent-in-room
-- mAIL (7 tools) — Email from `<userId>@mosadd.com`
+- mAIL (9 tools) — Email from `<userId>@mosadd.com`
 - mRAG (4 tools) — Encrypted knowledge base, RAG recall
 
 Plus the embeddable `@mosadd/threat-engine` — a 167-event threat radar.

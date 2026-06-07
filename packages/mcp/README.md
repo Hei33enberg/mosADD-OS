@@ -2,7 +2,7 @@
 
 MCP server for [mosadd](https://mosadd.dev) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **3.0.0-alpha.4** — **57 live tools across 6 live modules** (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mRAG) + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 167-event radar in front.
+> **3.0.0-alpha.4** — **59 live tools across 6 live modules** (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mRAG) + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 167-event radar in front.
 
 ## Install
 
@@ -53,7 +53,7 @@ In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling 
 
 ## Tools shipped in alpha
 
-**57 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mRAG) + the `comms_capabilities` discovery tool. Highlights per module:
+**59 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mRAG) + the `comms_capabilities` discovery tool. Highlights per module:
 
 | Module | Tools | What it does |
 |---|---|---|
@@ -61,7 +61,7 @@ In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling 
 | **mIRC** (20) | `mIRC_create/list/get/update/delete`, member RBAC ops, `mIRC_post_message`, `mIRC_list_messages` + admin | Persistent Discord/Slack-style channels |
 | **mROOM** (9) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_send_message`, `mROOM_list_messages` | Ephemeral rooms + single-call no-account guest links |
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
-| **mAIL** (7) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete`, `mAIL_stats`, `mAIL_events`, `mAIL_metrics` | Mail; every user gets `<id>@mosadd.com` |
+| **mAIL** (9) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete`, `mAIL_stats`, `mAIL_events`, `mAIL_metrics`, `mAIL_revoke`, `mAIL_audit_export` | Mail; every user gets `<id>@mosadd.com`. `mAIL_revoke` recalls secure-reader access; `mAIL_audit_export` emits an HMAC-SHA256-signed engagement audit |
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own data (hybrid vector + BM25) |
 
 All tool names follow [RFC 0001](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
