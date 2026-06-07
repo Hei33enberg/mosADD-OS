@@ -31,6 +31,26 @@ const mAIL_send_input = z.object({
   cc: z.array(EmailAddress).max(50).optional(),
   bcc: z.array(EmailAddress).max(50).optional(),
   reply_to: EmailAddress.optional(),
+  tracking: z
+    .boolean()
+    .optional()
+    .describe("Open-pixel + link-click tracking. Default true. Set false to send with NO tracking (privacy / GDPR-friendly)."),
+  force_reader: z
+    .boolean()
+    .optional()
+    .describe("Default false. If true, the email body is a stub only and the recipient must open it in mosadd's secure reader — maximizes tracking (print/copy/time-on-read become observable). Best for confidential / legal mail."),
+  disclose_tracking: z
+    .boolean()
+    .optional()
+    .describe("Default false. If true (and tracking on), append a tracking-disclosure footer to the email — recommended for GDPR/ePrivacy compliance."),
+  watermark: z
+    .union([z.boolean(), z.string().max(120)])
+    .optional()
+    .describe("Inject a faint recipient watermark into the secure reader (shows in screenshots/prints). Pass true to watermark with the recipient address, or a custom string."),
+  auto_destruct: z
+    .enum(["1h", "24h", "7d"])
+    .optional()
+    .describe("Self-destruct timer: the secure-reader link expires after this window."),
 });
 
 const mAIL_view_input = z.object({
@@ -236,7 +256,7 @@ export const mailTools: MosaddTool[] = [
     name: "mAIL_send",
     requires: "network",
     description:
-      "Send an email from the user's mosadd address (<userId>@mosadd.com). Pass body_text or body_html (or both). Supports cc, bcc, reply_to.",
+      "Send an email from the user's mosadd address (<userId>@mosadd.com). Pass body_text or body_html (or both). Supports cc, bcc, reply_to. Monitoring/legal options: tracking (open+click, default on; set false for no tracking), force_reader (stub email → recipient opens in mosadd's secure reader, unlocking print/copy/time-on-read tracking + revoke), watermark (recipient watermark visible in screenshots/prints), disclose_tracking (GDPR footer), auto_destruct ('1h'|'24h'|'7d').",
     inputSchema: mAIL_send_input,
     handler: mAIL_send as MosaddTool["handler"],
   },
