@@ -63,6 +63,18 @@ const mAIL_events_input = z.object({
 
 const mAIL_metrics_input = z.object({});
 
+const mAIL_revoke_input = z.object({
+  message_id: MessageId,
+  restore: z
+    .boolean()
+    .optional()
+    .describe("Set true to UN-revoke (restore access). Default false = revoke."),
+});
+
+const mAIL_audit_export_input = z.object({
+  message_id: MessageId,
+});
+
 interface MailListItem {
   message_id: string;
   direction: "inbound" | "outbound";
@@ -188,6 +200,27 @@ async function mAIL_metrics(
   return await invokeFunction("mp0st-stats", {});
 }
 
+async function mAIL_revoke(
+  input: z.infer<typeof mAIL_revoke_input>,
+  ctx: MosaddToolContext,
+): Promise<{ ok: true; message_id: string; revoked: boolean; expires_at: string | null }> {
+  readSupabaseEnv();
+  ctx.log("debug", "mAIL_revoke invoking mp0st-revoke", { message_id: input.message_id, restore: !!input.restore });
+  return await invokeFunction("mp0st-revoke", {
+    message_id: input.message_id,
+    restore: input.restore ?? false,
+  });
+}
+
+async function mAIL_audit_export(
+  input: z.infer<typeof mAIL_audit_export_input>,
+  ctx: MosaddToolContext,
+): Promise<{ audit: Record<string, unknown>; signature: string; algo: string; note: string }> {
+  readSupabaseEnv();
+  ctx.log("debug", "mAIL_audit_export invoking mp0st-audit", { message_id: input.message_id });
+  return await invokeFunction("mp0st-audit", { message_id: input.message_id });
+}
+
 // ---- Registration ----
 
 export const mailTools: MosaddTool[] = [
@@ -245,5 +278,21 @@ export const mailTools: MosaddTool[] = [
       "Mailbox-wide engagement aggregate across the user's sent mail: total_sent, opened_emails, open_rate_pct, total_opens, total_clicks, forwarded_emails. Owner-scoped.",
     inputSchema: mAIL_metrics_input,
     handler: mAIL_metrics as MosaddTool["handler"],
+  },
+  {
+    name: "mAIL_revoke",
+    requires: "network",
+    description:
+      "Revoke (recall) a sent email's secure-reader access by message_id — the recipient can no longer open the full message via the mosadd reader link (Virtru-style recall, immediate). Pass restore:true to re-enable. HONEST LIMIT: cannot un-send or claw back content the recipient already read, copied, or screenshotted — only disables future reader access. Owner-scoped.",
+    inputSchema: mAIL_revoke_input,
+    handler: mAIL_revoke as MosaddTool["handler"],
+  },
+  {
+    name: "mAIL_audit_export",
+    requires: "network",
+    description:
+      "Export a tamper-evident engagement audit report for one sent email (RMail-style): full event trail (opens, clicks, reader print/copy/forward signals) + totals, plus an HMAC-SHA256 signature over the canonical JSON so the report can be proven unaltered. For legal/compliance use. HONEST LIMIT: proves what mosadd observed; it is not a qualified delivery receipt (ERDS). Owner-scoped.",
+    inputSchema: mAIL_audit_export_input,
+    handler: mAIL_audit_export as MosaddTool["handler"],
   },
 ];
