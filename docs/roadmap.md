@@ -4,7 +4,7 @@ Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosa
 
 ## Phase 1 — Public OS core
 
-> **Substantially shipped (3.0.0-alpha).** The toolkit is live — **60 tools across 6 modules**. The [README "What's live today"](../README.md) is the authoritative status. Open items below: P2P backbone, hosted MCP, and MCP-registry submissions.
+> **Substantially shipped (3.0.0-alpha).** The toolkit is live — **64 tools across 7 modules**. The [README "What's live today"](../README.md) is the authoritative status. Open items below: P2P backbone, hosted MCP, and MCP-registry submissions.
 
 - [x] Monorepo scaffold + Apache-2.0 + governance
 - [x] `@mosadd/crypto` — X3DH + Double Ratchet, powers mDM E2EE ([LINEAR-2142](https://linear.app/ip-ra/issue/LINEAR-2142))
@@ -16,7 +16,7 @@ Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosa
 - [ ] Anonymous identity recovery — descoped ([LINEAR-2170](https://linear.app/ip-ra/issue/LINEAR-2170))
 - [x] Anti-abuse PoW + rate limits ([LINEAR-2171](https://linear.app/ip-ra/issue/LINEAR-2171))
 - [ ] Messaging backbone: nwaku P2P ([LINEAR-2173](https://linear.app/ip-ra/issue/LINEAR-2173))
-- [x] Native channels (6 live): mDM, mIRC, mROOM, **mTALK (killer feature)**, mAIL, mRAG ([LINEAR-2146](https://linear.app/ip-ra/issue/LINEAR-2146)-[2152](https://linear.app/ip-ra/issue/LINEAR-2152))
+- [x] Native channels (7 live): mDM, mIRC, mROOM, **mTALK (killer feature)**, mAIL, mRAG, mURL ([LINEAR-2146](https://linear.app/ip-ra/issue/LINEAR-2146)-[2152](https://linear.app/ip-ra/issue/LINEAR-2152))
 - [x] SDK adapters: Vercel AI SDK + LangChain + OpenAI Agents + Anthropic Agents ([LINEAR-2153](https://linear.app/ip-ra/issue/LINEAR-2153))
 - [x] Claude Code plugin + Anthropic Skills bundle ([LINEAR-2154](https://linear.app/ip-ra/issue/LINEAR-2154))
 - [x] Example apps (6 shipped) ([LINEAR-2155](https://linear.app/ip-ra/issue/LINEAR-2155))

@@ -102,6 +102,14 @@ const mAIL_consent_input = z.object({
   recipient: EmailAddress.optional().describe("Required for 'check' and 'optin'."),
 });
 
+const mAIL_notify_input = z.object({
+  since: z
+    .string()
+    .optional()
+    .describe("ISO-8601 cursor — return only events newer than this. Pass the previous response's `cursor` to poll for new activity."),
+  limit: z.number().int().min(1).max(200).optional().describe("Max events. Default 50."),
+});
+
 interface MailListItem {
   message_id: string;
   direction: "inbound" | "outbound";
@@ -257,6 +265,19 @@ async function mAIL_consent(
   return await invokeFunction("mp0st-consent", { action: input.action, recipient: input.recipient ?? null });
 }
 
+async function mAIL_notify(
+  input: z.infer<typeof mAIL_notify_input>,
+  ctx: MosaddToolContext,
+): Promise<{
+  events: Array<{ message_id: string; subject: string | null; to: string | null; event_type: string; device: string | null; link_url: string | null; at: string }>;
+  cursor: string | null;
+  count: number;
+}> {
+  readSupabaseEnv();
+  ctx.log("debug", "mAIL_notify invoking mp0st-notify", { since: input.since });
+  return await invokeFunction("mp0st-notify", { action: "feed", since: input.since ?? null, limit: input.limit ?? 50 });
+}
+
 // ---- Registration ----
 
 export const mailTools: MosaddTool[] = [
@@ -338,5 +359,13 @@ export const mailTools: MosaddTool[] = [
       "Manage recipient tracking opt-outs (GDPR/ePrivacy). action 'list' = recipients who opted out of your tracking; 'check' {recipient} = whether one opted out; 'optin' {recipient} = re-enable. Recipients self-opt-out via the footer link in your tracked emails; mAIL_send then automatically sends them with NO pixel/link-wrap. Owner-scoped.",
     inputSchema: mAIL_consent_input,
     handler: mAIL_consent as MosaddTool["handler"],
+  },
+  {
+    name: "mAIL_notify",
+    requires: "network",
+    description:
+      "Recent engagement feed across ALL your sent mail — the 'who just opened/clicked my mail' notifications stream (opens, clicks, forwards, reader print/copy signals), newest first, each with the email subject + recipient. Poll: pass the returned `cursor` back as `since` to get only new activity. Owner-scoped.",
+    inputSchema: mAIL_notify_input,
+    handler: mAIL_notify as MosaddTool["handler"],
   },
 ];

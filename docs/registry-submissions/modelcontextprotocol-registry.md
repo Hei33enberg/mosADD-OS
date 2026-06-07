@@ -10,7 +10,7 @@ name: "@mosadd/mcp"
 displayName: "mosadd — A human OS. Add."
 description: |
   Operating system for human communications. Exposes mosadd OS modules
-  (mDM, mIRC, mROOM, mAIL, mTALK, mRAG) as MCP tools — 60 live tools across 6
+  (mDM, mIRC, mROOM, mAIL, mTALK, mRAG, mURL) as MCP tools — 64 live tools across 7
   modules. RFC 0001 naming convention m<MODULE>_<operation>. Apache-2.0,
   vendor-agnostic by design.
 homepage: "https://mosadd.dev"
@@ -85,7 +85,7 @@ tags:
 
 > ## Add mosadd MCP server (`@mosadd/mcp`)
 >
-> mosadd is an operating system for human communications, distributed as an MCP server that exposes semantic primitives — `mDM` for direct messages, `mROOM` for ephemeral rooms with guest links, `mIRC` for persistent channels, `mAIL` for email, `mTALK` for push-to-talk, `mRAG` for knowledge recall — through 60 tools today (more channels coming).
+> mosadd is an operating system for human communications, distributed as an MCP server that exposes semantic primitives — `mDM` for direct messages, `mROOM` for ephemeral rooms with guest links, `mIRC` for persistent channels, `mAIL` for email, `mTALK` for push-to-talk, `mRAG` for knowledge recall, `mURL` for agent-native per-domain chat — through 64 tools today (more channels coming).
 >
 > **Repo:** https://github.com/Hei33enberg/mosadd-os
 > **License:** Apache-2.0
