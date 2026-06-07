@@ -21,14 +21,26 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: 'pnpm'
+
+      - name: Lockfile drift check (fails fast if package.json ↔ pnpm-lock.yaml desynced)
+        run: |
+          # Mirrors the frozen install but flagged clearly. Catches the class of bug
+          # where a merged PR rewrites the lockfile without preserving root `pnpm.overrides`.
+          set +e
+          pnpm install --frozen-lockfile --dry-run 2>&1 | tee /tmp/lockcheck.log
+          if grep -q "ERR_PNPM_LOCKFILE" /tmp/lockcheck.log; then
+            echo "::error::Lockfile is out of sync with package.json. Run \`pnpm install --lockfile-only\` locally and commit pnpm-lock.yaml."
+            exit 1
+          fi
+          set -e
 
       - name: Install
         run: pnpm install --frozen-lockfile

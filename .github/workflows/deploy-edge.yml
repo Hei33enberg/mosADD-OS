@@ -23,9 +23,9 @@ jobs:
       run:
         working-directory: apps/edge
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           # Wrangler v4 requires Node 22+. Bumped from 20 when the `npx wrangler@latest
           # secret put` steps started failing (LINEAR-2675/E6 deploy run #26861783449).
