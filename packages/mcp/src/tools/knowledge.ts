@@ -112,6 +112,49 @@ async function mRAG_ingest(
   return { indexed: data.indexed ?? 0, chunk_count: data.chunk_count ?? 0 };
 }
 
+const mRAG_list_sources_input = z.object({});
+
+interface RagSourceEntry {
+  source_type: string;
+  source_id: string | null;
+  thread_id: string | null;
+  title: string | null;
+  chunks: number;
+  first_indexed: string;
+  last_indexed: string;
+}
+
+async function mRAG_list_sources(
+  _input: z.infer<typeof mRAG_list_sources_input>,
+  ctx: MosaddToolContext,
+): Promise<{ sources: RagSourceEntry[]; total_sources: number; total_chunks: number }> {
+  readSupabaseEnv();
+  ctx.log("debug", "mRAG_list_sources via rag-sources");
+  return await invokeFunction("rag-sources", { action: "list" });
+}
+
+const mRAG_delete_input = z
+  .object({
+    source_id: z.string().optional().describe("Delete every indexed chunk with this source_id (from mRAG_list_sources)."),
+    thread_id: z.string().optional().describe("Delete every indexed chunk associated with this thread_id."),
+  })
+  .refine((v) => v.source_id || v.thread_id, {
+    message: "Provide source_id or thread_id — mRAG_delete refuses to purge the whole index.",
+  });
+
+async function mRAG_delete(
+  input: z.infer<typeof mRAG_delete_input>,
+  ctx: MosaddToolContext,
+): Promise<{ ok: true; deleted: number; source_id: string | null; thread_id: string | null }> {
+  readSupabaseEnv();
+  ctx.log("debug", "mRAG_delete via rag-sources", { source_id: input.source_id, thread_id: input.thread_id });
+  return await invokeFunction("rag-sources", {
+    action: "delete",
+    source_id: input.source_id ?? null,
+    thread_id: input.thread_id ?? null,
+  });
+}
+
 export const knowledgeTools: MosaddTool[] = [
   {
     name: "mRAG_ingest",
@@ -128,5 +171,21 @@ export const knowledgeTools: MosaddTool[] = [
       "Search and answer questions over the USER'S OWN mosadd data (messages, emails, calls, notes) with a private per-user RAG index — hybrid vector + keyword retrieval, reranked, grounded in cited sources (no fabrication). Use it to recall 'what did X say about Y', summarize a thread, or pull facts the user has received. Returns an answer plus the source snippets it used. This is agent memory (mRAG = RAG over your own data) over the user's communications, available outside the mosadd app. NOTE: RAG requires content to be indexed server-side in plaintext, so anything searchable here is NOT covered by the zero-knowledge / E2EE guarantee — only data the user has explicitly opted into indexing is searchable. See docs/security/e2ee-posture.md.",
     inputSchema: mRAG_search_input,
     handler: mRAG_search as MosaddTool["handler"],
+  },
+  {
+    name: "mRAG_list_sources",
+    requires: "network",
+    description:
+      "List what is currently indexed in the user's private knowledge base, grouped by source (source_type, source_id, thread_id, title) with per-source chunk counts and first/last indexed timestamps. Use it to see what mRAG_search can recall, and to find a source_id to remove with mRAG_delete. Owner-scoped.",
+    inputSchema: mRAG_list_sources_input,
+    handler: mRAG_list_sources as MosaddTool["handler"],
+  },
+  {
+    name: "mRAG_delete",
+    requires: "network",
+    description:
+      "Remove indexed content from the user's knowledge base by source_id or thread_id (from mRAG_list_sources). Deletes every embedded chunk for that source so mRAG_search can no longer recall it. Requires source_id or thread_id (will not purge the whole index). Returns the number of chunks deleted. Owner-scoped.",
+    inputSchema: mRAG_delete_input,
+    handler: mRAG_delete as MosaddTool["handler"],
   },
 ];

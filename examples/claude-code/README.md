@@ -57,7 +57,7 @@ Claude calls `mAIL_send`.
 
 ## All tools available
 
-See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (52 live tools across 6 live modules: mDM incl. voice / mIRC / mROOM / mAIL / mTALK / mRAG).
+See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (57 live tools across 6 live modules: mDM incl. voice / mIRC / mROOM / mAIL / mTALK / mRAG).
 
 ## Troubleshooting
 

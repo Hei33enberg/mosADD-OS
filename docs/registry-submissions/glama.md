@@ -19,7 +19,7 @@
 
 ## Summary
 
-mosadd is an MCP-native operating system for human communications. **52 live tools across 6 live modules** in alpha (mDM, mIRC, mROOM, mAIL, mTALK, mRAG), plus the embeddable `@mosadd/threat-engine` 167-event radar.
+mosadd is an MCP-native operating system for human communications. **57 live tools across 6 live modules** in alpha (mDM, mIRC, mROOM, mAIL, mTALK, mRAG), plus the embeddable `@mosadd/threat-engine` 167-event radar.
 
 ## Differentiators
 
@@ -32,7 +32,7 @@ mosadd is an MCP-native operating system for human communications. **52 live too
 ## Maturity
 
 - Smoke test pass — stdio MCP responds correctly to `initialize` + `tools/list`
-- 52 tools registered, schemas validated with Zod
+- 57 tools registered, schemas validated with Zod
 - BYOK env-var config (MOSADD_SUPABASE_URL, ANON_KEY, USER_JWT)
 - Builds clean (tsup + DTS gen)
 - Apache-2.0 with NOTICE for third-party attribution

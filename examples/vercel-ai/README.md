@@ -68,4 +68,4 @@ mosadd({ modules: ["mDM", "mROOM", "mIRC", "mAIL"] })
 mosadd({})
 ```
 
-Today: 52 live tools across 6 live modules (mDM incl. voice / mIRC / mROOM / mAIL / mTALK / mRAG).
+Today: 57 live tools across 6 live modules (mDM incl. voice / mIRC / mROOM / mAIL / mTALK / mRAG).

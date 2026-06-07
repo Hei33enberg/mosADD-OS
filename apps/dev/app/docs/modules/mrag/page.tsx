@@ -50,6 +50,21 @@ export default function MragPage() {
   chunks_found: number,
 }`}</Pre>
 
+      <H3>mRAG_list_sources</H3>
+      <Pre lang="ts">{`mRAG_list_sources({})   // what's indexed, grouped by source
+→ {
+  sources: [{ source_type, source_id, thread_id, title, chunks, first_indexed, last_indexed }],
+  total_sources: number,
+  total_chunks: number,
+}`}</Pre>
+
+      <H3>mRAG_delete</H3>
+      <Pre lang="ts">{`mRAG_delete({
+  source_id?: string,       // delete every chunk for this source…
+  thread_id?: string,       // …and/or this thread (one is required)
+})
+→ { ok: true, deleted: number }   // removes it from future mRAG_search. Your own index only.`}</Pre>
+
       <H2>How it works</H2>
       <Ul>
         <li>Content is chunked and embedded with one pinned 1536-dim model (dimension-validated end to end).</li>

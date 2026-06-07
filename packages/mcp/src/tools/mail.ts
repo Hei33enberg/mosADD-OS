@@ -53,6 +53,16 @@ const mAIL_list_input = z.object({
     .describe("Pagination cursor: pass the previous response's next_cursor to get the next (older) page."),
 });
 
+const mAIL_stats_input = z.object({
+  message_id: MessageId,
+});
+
+const mAIL_events_input = z.object({
+  message_id: MessageId,
+});
+
+const mAIL_metrics_input = z.object({});
+
 interface MailListItem {
   message_id: string;
   direction: "inbound" | "outbound";
@@ -120,6 +130,64 @@ async function mAIL_delete(
   });
 }
 
+interface MailEngagement {
+  message_id: string;
+  subject: string;
+  to: string;
+  direction: string;
+  status: string;
+  sent_at: string;
+  open_count: number;
+  unique_opens: number;
+  click_count: number;
+  forwarded: boolean;
+  first_opened_at: string | null;
+  last_opened_at: string | null;
+  events_by_type: Record<string, number>;
+  total_events: number;
+}
+
+async function mAIL_stats(
+  input: z.infer<typeof mAIL_stats_input>,
+  ctx: MosaddToolContext,
+): Promise<{ summary: MailEngagement }> {
+  readSupabaseEnv();
+  ctx.log("debug", "mAIL_stats invoking mp0st-stats", { message_id: input.message_id });
+  return await invokeFunction<{ summary: MailEngagement }>("mp0st-stats", {
+    message_id: input.message_id,
+  });
+}
+
+async function mAIL_events(
+  input: z.infer<typeof mAIL_events_input>,
+  ctx: MosaddToolContext,
+): Promise<{
+  summary: MailEngagement;
+  events: Array<{ event_type: string; at: string; device: string | null; ip_hash: string | null; link_url: string | null }>;
+}> {
+  readSupabaseEnv();
+  ctx.log("debug", "mAIL_events invoking mp0st-stats", { message_id: input.message_id });
+  return await invokeFunction("mp0st-stats", { message_id: input.message_id, events: true });
+}
+
+async function mAIL_metrics(
+  _input: z.infer<typeof mAIL_metrics_input>,
+  ctx: MosaddToolContext,
+): Promise<{
+  mailbox: {
+    total_sent: number;
+    opened_emails: number;
+    open_rate_pct: number;
+    total_opens: number;
+    total_clicks: number;
+    forwarded_emails: number;
+  };
+}> {
+  readSupabaseEnv();
+  ctx.log("debug", "mAIL_metrics invoking mp0st-stats");
+  return await invokeFunction("mp0st-stats", {});
+}
+
 // ---- Registration ----
 
 export const mailTools: MosaddTool[] = [
@@ -153,5 +221,29 @@ export const mailTools: MosaddTool[] = [
       "Delete one of the user's emails by message_id (from mAIL_list). Soft-delete — it stops showing in mAIL_list. Owner-scoped: only your own mail.",
     inputSchema: mAIL_delete_input,
     handler: mAIL_delete as MosaddTool["handler"],
+  },
+  {
+    name: "mAIL_stats",
+    requires: "network",
+    description:
+      "Engagement summary for one sent email (by message_id): open_count, unique_opens, click_count, whether it was likely forwarded, first/last opened time, and a breakdown of tracked event types. Opens/clicks are real (tracking pixel + link-wrap); forward detection is best-effort (IP-subnet diversity). Owner-scoped.",
+    inputSchema: mAIL_stats_input,
+    handler: mAIL_stats as MosaddTool["handler"],
+  },
+  {
+    name: "mAIL_events",
+    requires: "network",
+    description:
+      "Raw engagement timeline for one email (by message_id): every tracked event (pixel_open, link_click, forwarded, page_view, copy/print/focus signals) with timestamp, device type and link URL. Use mAIL_stats for the rollup; use this for the per-event detail. Owner-scoped.",
+    inputSchema: mAIL_events_input,
+    handler: mAIL_events as MosaddTool["handler"],
+  },
+  {
+    name: "mAIL_metrics",
+    requires: "network",
+    description:
+      "Mailbox-wide engagement aggregate across the user's sent mail: total_sent, opened_emails, open_rate_pct, total_opens, total_clicks, forwarded_emails. Owner-scoped.",
+    inputSchema: mAIL_metrics_input,
+    handler: mAIL_metrics as MosaddTool["handler"],
   },
 ];

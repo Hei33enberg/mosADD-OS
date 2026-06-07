@@ -24,7 +24,7 @@ Most registries want the same fields. Keep these consistent:
 
 - **Name**: `@mosadd/mcp`
 - **Display name**: `mosadd — A human OS. Add.`
-- **One-liner**: `Operating system for human communications. mDM · mIRC · mROOM · mTALK · mAIL · mRAG — 52 live tools across 6 modules, one MCP server.`
+- **One-liner**: `Operating system for human communications. mDM · mIRC · mROOM · mTALK · mAIL · mRAG — 57 live tools across 6 modules, one MCP server.`
 - **Repo**: `https://github.com/Hei33enberg/mosadd-os`
 - **License**: `Apache-2.0`
 - **Author**: `mosadd contributors`

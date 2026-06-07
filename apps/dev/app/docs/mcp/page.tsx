@@ -41,7 +41,7 @@ export default function McpPage() {
       />
 
       <P>
-        Total surface today: <strong>52 tools across 6 live modules</strong> — mDM ×12 (incl. 4 voice), mIRC ×20, mROOM ×9, mAIL ×4, mTALK ×5, mRAG ×2 — plus the <code className="font-mono text-primary">comms_capabilities</code> discovery tool.
+        Total surface today: <strong>57 tools across 6 live modules</strong> — mDM ×12 (incl. 4 voice), mIRC ×20, mROOM ×9, mAIL ×7, mTALK ×5, mRAG ×4 — plus the <code className="font-mono text-primary">comms_capabilities</code> discovery tool.
       </P>
 
       <H2>Transports</H2>

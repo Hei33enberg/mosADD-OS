@@ -11,7 +11,7 @@ Modular primitives — DMs, channels, rooms, push-to-talk, email, knowledge — 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha-orange)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-52%20live-00ff7f)](packages/mcp)
+[![Tools](https://img.shields.io/badge/tools-57%20live-00ff7f)](packages/mcp)
 [![Release](https://img.shields.io/github/v/release/Hei33enberg/mosadd-os?include_prereleases&label=release)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![mosadd.dev](https://img.shields.io/badge/site-mosadd.dev-5af082)](https://mosadd.dev)
 
@@ -27,7 +27,7 @@ Modular primitives — DMs, channels, rooms, push-to-talk, email, knowledge — 
 npx -y @mosadd/mcp
 ```
 
-…starts an MCP server with **52 tools** across 6 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send mail, run a push-to-talk room, or recall facts from its own knowledge base — all through your own mosadd backend (BYOK).
+…starts an MCP server with **57 tools** across 6 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send mail, run a push-to-talk room, or recall facts from its own knowledge base — all through your own mosadd backend (BYOK).
 
 | Channel | Tools | Highlight |
 |---|---|---|
@@ -35,10 +35,10 @@ npx -y @mosadd/mcp
 | **mIRC** (20) | 5 channel ops (`mIRC_create/list/get/update/delete`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) + message + admin ops | Discord/Slack-style persistent channels, full RBAC + chat |
 | **mROOM** (9) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_send_message`, `mROOM_list_messages` | **No other registered MCP server exposes single-call guest links** |
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
-| **mAIL** (4) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete` | Every user gets `<userId>@mosadd.com` for free |
-| **mRAG** (2) | `mRAG_ingest`, `mRAG_search` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
+| **mAIL** (7) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete`, `mAIL_stats`, `mAIL_events`, `mAIL_metrics` | Every user gets `<userId>@mosadd.com` for free |
+| **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
 
-**52 tools across 6 live modules** (12+20+9+5+4+2), plus the `comms_capabilities` discovery tool. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
+**57 tools across 6 live modules** (12+20+9+5+7+4), plus the `comms_capabilities` discovery tool. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
 ## Quickstart (60 seconds)
 

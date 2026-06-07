@@ -19,22 +19,23 @@ export default function ModulesPage() {
 
       <H2>Native channels</H2>
       <Table
-        headers={['Module', 'Description', 'Status']}
+        headers={['Module', 'Tools', 'Description', 'Status']}
         rows={[
-          [<Anchor key="mdm" href="/docs/modules/mdm">mDM</Anchor>, 'Encrypted 1:1 text + full-duplex voice/video — Ed25519 identity, forward secrecy', 'alpha'],
-          [<Anchor key="mirc" href="/docs/modules/mirc">mIRC</Anchor>, 'Persistent encrypted channels (Discord/Slack semantics)', 'alpha'],
-          [<Anchor key="mroom" href="/docs/modules/mroom">mROOM</Anchor>, 'Ephemeral rooms + group voice + no-account guest links', 'alpha'],
-          [<Anchor key="mail" href="/docs/modules/mail">mAIL</Anchor>, 'Mail — every user gets <userId>@mosadd.com; send/view/list/delete', 'alpha'],
-          [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, 'Push-to-talk with LLM-in-room support', 'alpha'],
-          [<Anchor key="mrag" href="/docs/modules/mrag">mRAG</Anchor>, 'Encrypted knowledge base — semantic recall (RAG)', 'alpha'],
+          [<Anchor key="mdm" href="/docs/modules/mdm">mDM</Anchor>, '12', 'Encrypted 1:1 text + full-duplex voice/video — Ed25519 identity, forward secrecy', 'alpha'],
+          [<Anchor key="mirc" href="/docs/modules/mirc">mIRC</Anchor>, '20', 'Persistent encrypted channels (Discord/Slack semantics)', 'alpha'],
+          [<Anchor key="mroom" href="/docs/modules/mroom">mROOM</Anchor>, '9', 'Ephemeral rooms + group voice + no-account guest links', 'alpha'],
+          [<Anchor key="mail" href="/docs/modules/mail">mAIL</Anchor>, '7', 'Mail — every user gets <userId>@mosadd.com; send/view/list/delete + open/click/forward tracking', 'alpha'],
+          [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, '5', 'Push-to-talk with LLM-in-room support', 'alpha'],
+          [<Anchor key="mrag" href="/docs/modules/mrag">mRAG</Anchor>, '4', 'Per-tenant agent memory — semantic recall (RAG) + list/delete indexed sources', 'alpha'],
         ]}
       />
+      <P>57 tools across 6 live modules.</P>
 
       <H2>Security</H2>
       <Table
-        headers={['Module', 'Description', 'Status']}
+        headers={['Module', 'Tools', 'Description', 'Status']}
         rows={[
-          [<Anchor key="threat-engine" href="/docs/modules/threat-engine">threat-engine</Anchor>, '167-event threat taxonomy + scoring (embeddable radar engine)', 'alpha'],
+          [<Anchor key="threat-engine" href="/docs/modules/threat-engine">threat-engine</Anchor>, '—', '167-event threat taxonomy + scoring (embeddable radar engine)', 'alpha'],
         ]}
       />
 

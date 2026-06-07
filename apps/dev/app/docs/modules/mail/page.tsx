@@ -53,6 +53,39 @@ export default function MailPage() {
       <Pre lang="ts">{`mAIL_delete({ message_id })   // soft-delete; drops out of mAIL_list. Your own mail only.
 → { ok: true, message_id, deleted: true }`}</Pre>
 
+      <H3>mAIL_stats</H3>
+      <Pre lang="ts">{`mAIL_stats({ message_id })   // engagement rollup for one sent email
+→ { summary: {
+    message_id, subject, to, direction, status, sent_at,
+    open_count, unique_opens, click_count, forwarded,
+    first_opened_at, last_opened_at,
+    events_by_type, total_events,
+  } }`}</Pre>
+
+      <H3>mAIL_events</H3>
+      <Pre lang="ts">{`mAIL_events({ message_id })   // raw engagement timeline
+→ { summary, events: {
+    event_type,            // pixel_open | link_click | forwarded | page_view | copy_detected | print_detected | ...
+    at, device, ip_hash, link_url,
+  }[] }`}</Pre>
+
+      <H3>mAIL_metrics</H3>
+      <Pre lang="ts">{`mAIL_metrics({})   // mailbox-wide aggregate across sent mail
+→ { mailbox: {
+    total_sent, opened_emails, open_rate_pct,
+    total_opens, total_clicks, forwarded_emails,
+  } }`}</Pre>
+
+      <H2>Engagement tracking</H2>
+      <P>
+        Outbound mail is sent with a tracking pixel and link-wrapping, so <strong>opens and link clicks
+        are measured reliably</strong> (per-recipient, IP-hashed for GDPR). <code className="font-mono">mAIL_stats</code>/<code className="font-mono">mAIL_events</code>/<code className="font-mono">mAIL_metrics</code> read
+        those events back. <strong>Forward detection</strong> is best-effort (inferred from IP /16 subnet diversity);
+        <strong> print / copy / save / re-edit</strong> are only observable when the recipient reads mail in mosadd&apos;s
+        own renderer (mosadd.com) — for mail that lands in Gmail/Outlook only open + click are reliable. The pixel is
+        privacy-sensitive: disclose tracking to recipients and honour opt-out where required.
+      </P>
+
       <H2>Providers</H2>
       <Ul>
         <li><strong>Resend</strong> — default outbound (BYOK <code className="font-mono">MOSADD_RESEND_API_KEY</code>)</li>

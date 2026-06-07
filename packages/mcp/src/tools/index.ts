@@ -1,7 +1,7 @@
 /**
  * Tool registry. Each m* module contributes a set of tools.
  *
- * Live modules (6): mDM, mIRC, mROOM, mTALK, mAIL, mRAG — 52 tools + comms_capabilities.
+ * Live modules (6): mDM, mIRC, mROOM, mTALK, mAIL, mRAG — 57 tools + comms_capabilities.
  * mCALL is carrier-pending (no telephony carrier live yet): its tools live in
  * tools/mcall.ts but are NOT registered here, so an agent only ever discovers
  * tools that actually work. Re-register the one line below when a carrier ships.
