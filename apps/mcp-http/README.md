@@ -1,6 +1,6 @@
 # @mosadd/mcp-http — hosted MCP gateway (mcp.mosadd.com)
 
-Serves the full `@mosadd/mcp` tool surface (the 6 live modules, 59 tools) over
+Serves the full `@mosadd/mcp` tool surface (the 6 live modules, 60 tools) over
 **Streamable HTTP**, so remote / server-side agents (n8n, your own backend,
 hosted Claude, ChatGPT) can use mosadd without running the stdio binary locally.
 
@@ -34,7 +34,7 @@ curl -s http://localhost:3030/mcp \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 
-Verified locally: `initialize` → 200, `tools/list` → 59 tools (mDM/mIRC/mROOM/
+Verified locally: `initialize` → 200, `tools/list` → 60 tools (mDM/mIRC/mROOM/
 mTALK/mAIL/mRAG), `tools/call mROOM_list` → real backend response, bad key → 401.
 
 ## Deploy (mcp.mosadd.com)

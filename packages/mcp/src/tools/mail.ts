@@ -95,6 +95,13 @@ const mAIL_audit_export_input = z.object({
   message_id: MessageId,
 });
 
+const mAIL_consent_input = z.object({
+  action: z
+    .enum(["list", "check", "optin"])
+    .describe("'list' = recipients who opted out of your tracking; 'check' = is one recipient opted out; 'optin' = re-enable tracking for a recipient."),
+  recipient: EmailAddress.optional().describe("Required for 'check' and 'optin'."),
+});
+
 interface MailListItem {
   message_id: string;
   direction: "inbound" | "outbound";
@@ -241,6 +248,15 @@ async function mAIL_audit_export(
   return await invokeFunction("mp0st-audit", { message_id: input.message_id });
 }
 
+async function mAIL_consent(
+  input: z.infer<typeof mAIL_consent_input>,
+  ctx: MosaddToolContext,
+): Promise<Record<string, unknown>> {
+  readSupabaseEnv();
+  ctx.log("debug", "mAIL_consent invoking mp0st-consent", { action: input.action });
+  return await invokeFunction("mp0st-consent", { action: input.action, recipient: input.recipient ?? null });
+}
+
 // ---- Registration ----
 
 export const mailTools: MosaddTool[] = [
@@ -314,5 +330,13 @@ export const mailTools: MosaddTool[] = [
       "Export a tamper-evident engagement audit report for one sent email (RMail-style): full event trail (opens, clicks, reader print/copy/forward signals) + totals, plus an HMAC-SHA256 signature over the canonical JSON so the report can be proven unaltered. For legal/compliance use. HONEST LIMIT: proves what mosadd observed; it is not a qualified delivery receipt (ERDS). Owner-scoped.",
     inputSchema: mAIL_audit_export_input,
     handler: mAIL_audit_export as MosaddTool["handler"],
+  },
+  {
+    name: "mAIL_consent",
+    requires: "network",
+    description:
+      "Manage recipient tracking opt-outs (GDPR/ePrivacy). action 'list' = recipients who opted out of your tracking; 'check' {recipient} = whether one opted out; 'optin' {recipient} = re-enable. Recipients self-opt-out via the footer link in your tracked emails; mAIL_send then automatically sends them with NO pixel/link-wrap. Owner-scoped.",
+    inputSchema: mAIL_consent_input,
+    handler: mAIL_consent as MosaddTool["handler"],
   },
 ];

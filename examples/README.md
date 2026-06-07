@@ -21,13 +21,13 @@ Quickstart configs for the agent runtimes that consume `@mosadd/mcp`.
 
 ## What you get
 
-**59 live MCP tools across 6 modules** (+ the `comms_capabilities` discovery tool):
+**60 live MCP tools across 6 modules** (+ the `comms_capabilities` discovery tool):
 
 - **mDM** (12): list_contacts, publish_keys, send, send_unencrypted, edit, delete, list, respond_request + 4 voice ops
 - **mIRC** (20): create, list, get, update, delete, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops
 - **mROOM** (9): create, create_guest_link ★, join, leave, close, list, send_message, list_messages + admin
 - **mTALK** (5): open, join, press, release, state — half-duplex push-to-talk
-- **mAIL** (9): send, view, list, delete, stats, events, metrics, revoke, audit_export
+- **mAIL** (10): send, view, list, delete, stats, events, metrics, revoke, audit_export, consent
 - **mRAG** (4): ingest, search, list_sources, delete — RAG recall over your own data
 
 All names follow [RFC 0001](../docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>`. Full reference: [packages/mcp/README.md](../packages/mcp/README.md).

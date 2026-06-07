@@ -95,6 +95,17 @@ export default function MailPage() {
         registered delivery service attestation).
       </P>
 
+      <H3>mAIL_consent</H3>
+      <Pre lang="ts">{`mAIL_consent({
+  action: 'list' | 'check' | 'optin',
+  recipient?: string,   // required for 'check' / 'optin'
+})
+→ opt-out list / status`}</Pre>
+      <P>
+        Recipient tracking opt-out management. Recipients self-opt-out via the footer link in tracked emails;
+        <code className="font-mono"> mAIL_send</code> then auto-skips pixel/link-wrap for them (GDPR/ePrivacy).
+      </P>
+
       <H2>Engagement tracking</H2>
       <P>
         Outbound mail is sent with a tracking pixel and link-wrapping, so <strong>opens and link clicks

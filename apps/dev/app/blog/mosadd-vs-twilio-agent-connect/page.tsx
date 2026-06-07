@@ -46,7 +46,7 @@ export default function Post() {
 
         <H2>What an OS does instead</H2>
         <P>
-          mosadd is the layer below the channels. One MCP server exposes 59 tools across DM, channels, rooms,
+          mosadd is the layer below the channels. One MCP server exposes 60 tools across DM, channels, rooms,
           mail, push-to-talk and knowledge recall. You bring your own keys — LiveKit, Resend, OpenAI, Supabase — or self-host the whole thing for
           $0, forever, under Apache-2.0. The provider is a swappable seam, not a landlord.
         </P>

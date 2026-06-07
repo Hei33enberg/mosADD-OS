@@ -57,7 +57,7 @@ export default async function OpengraphImage() {
           <div style={{ display: 'flex', gap: 22 }}>
             <span>Apache-2.0</span>
             <span>·</span>
-            <span>59 MCP tools</span>
+            <span>60 MCP tools</span>
             <span>·</span>
             <span>BYOK</span>
           </div>
