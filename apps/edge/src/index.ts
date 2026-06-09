@@ -643,6 +643,8 @@ export class ChannelDO {
       const drained = await this.flush();
       // Snapshot the in-memory recent ring for hibernation recovery (Phase 0.3).
       if (this.recentMem !== null) await this.state.storage.put("recent", this.recentMem);
+      // Phase 1: beacon metrics to Supabase (best-effort, never blocks flush).
+      void this.beaconMetrics().catch(() => {});
       // Still have pending? Re-arm.
       const left = (await this.state.storage.get<PendingMessage[]>("pending")) ?? [];
       if (left.length > 0) await this.state.storage.setAlarm(Date.now() + FLUSH_INTERVAL_MS);
@@ -652,6 +654,36 @@ export class ChannelDO {
       // On error, re-arm sooner — at-least-once delivery; nothing is lost.
       await this.state.storage.setAlarm(Date.now() + Math.min(15_000, FLUSH_INTERVAL_MS * 2));
     }
+  }
+
+  /** Phase 1: POST key DO health metrics to channel0-metrics-ingest every alarm
+   *  tick. Fire-and-forget — if the EF is down we just skip the sample. The
+   *  channel_id tag lets dashboards slice per-room. */
+  private async beaconMetrics(): Promise<void> {
+    if (!this.env.SUPABASE_URL || !this.env.CF_INGEST_SECRET) return;
+    const channelId = (await this.state.storage.get<string>("channel_id")) ?? "";
+    const pending = (await this.state.storage.get<PendingMessage[]>("pending")) ?? [];
+    const wsCount = this.state.getWebSockets().length;
+    const tags = channelId ? { slug: channelId } : {};
+
+    const metrics = [
+      { metric: "ws_count",             value: wsCount,             tags },
+      { metric: "pending_depth",        value: pending.length,      tags },
+      { metric: "rl_map_size",          value: this.rl.size,        tags },
+      { metric: "burst_map_size",       value: this.burst.size,     tags },
+      { metric: "repeat_map_size",      value: this.repeat.size,    tags },
+      { metric: "dropped_pending",      value: this.droppedPending, tags },
+      { metric: "channel_ceiling_count",value: this.channelBucket.count, tags },
+    ];
+
+    await fetch(`${this.env.SUPABASE_URL}/functions/v1/channel0-metrics-ingest`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.env.CF_INGEST_SECRET}`,
+      },
+      body: JSON.stringify({ metrics }),
+    });
   }
 
   /** Drain up to FLUSH_BATCH_MAX pending messages to Supabase via
