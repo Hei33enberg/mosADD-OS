@@ -215,6 +215,10 @@ export class ChannelDO {
   private ensure: EnsureCache | null = null;
   /** Count of pending messages dropped under sustained flush backpressure (surfaced via metrics). */
   private droppedPending = 0;
+  /** Phase 0.3 cost fix: recent-history ring kept in MEMORY (best-effort) and
+   *  snapshotted to storage once per flush, instead of a durable put per message.
+   *  Lazy-loaded on first use (and after hibernation). Supabase is the SoR. */
+  private recentMem: StoredMessage[] | null = null;
 
   constructor(state: DurableObjectState, env: Env) {
     this.state = state;
@@ -493,7 +497,7 @@ export class ChannelDO {
       const entry = await this.verifyKey(apiKey ?? "");
       if (!entry.valid) return json({ error: "invalid_key" }, { status: 401 });
       const limit = Math.max(1, Math.min(HISTORY_LIMIT, Number(url.searchParams.get("limit") ?? "50")));
-      const buf = (await this.state.storage.get<StoredMessage[]>("recent")) ?? [];
+      const buf = await this.ensureRecent();
       return json({ messages: buf.slice(-limit) });
     }
 
@@ -583,11 +587,20 @@ export class ChannelDO {
   async webSocketError(_ws: WebSocket, _err: unknown): Promise<void> { /* swallow */ }
 
   // ── State ─────────────────────────────────────────────────────────────────
+  /** Lazy-load the recent ring into memory (after cold start / hibernation). */
+  private async ensureRecent(): Promise<StoredMessage[]> {
+    if (this.recentMem === null) {
+      this.recentMem = (await this.state.storage.get<StoredMessage[]>("recent")) ?? [];
+    }
+    return this.recentMem;
+  }
+
   private async append(msg: StoredMessage): Promise<void> {
-    const buf = (await this.state.storage.get<StoredMessage[]>("recent")) ?? [];
+    const buf = await this.ensureRecent();
     buf.push(msg);
     if (buf.length > HISTORY_LIMIT) buf.splice(0, buf.length - HISTORY_LIMIT);
-    await this.state.storage.put("recent", buf);
+    // No per-message storage.put — recent lives in memory and is snapshotted to
+    // storage on each flush (alarm). Saves one durable write per message (cost).
 
     // E3 (LINEAR-2679): queue for async flush to Supabase as system-of-record.
     // We attach channel_id so the ingest endpoint can route. At-least-once:
@@ -628,6 +641,8 @@ export class ChannelDO {
     try {
       this.sweepMaps();
       const drained = await this.flush();
+      // Snapshot the in-memory recent ring for hibernation recovery (Phase 0.3).
+      if (this.recentMem !== null) await this.state.storage.put("recent", this.recentMem);
       // Still have pending? Re-arm.
       const left = (await this.state.storage.get<PendingMessage[]>("pending")) ?? [];
       if (left.length > 0) await this.state.storage.setAlarm(Date.now() + FLUSH_INTERVAL_MS);
