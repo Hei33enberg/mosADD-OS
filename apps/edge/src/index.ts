@@ -46,6 +46,11 @@ const RL_PER_MIN_HUB = 600;
 const RL_PER_MIN_ANON = 90;
 const FLUSH_INTERVAL_MS = 5_000;
 const FLUSH_BATCH_MAX = 500;
+// Phase 0 hardening: bound the durable pending queue (drop-oldest on overflow —
+// better to lose the oldest few than to OOM the DO and lose everything) and cap
+// concurrent sockets per anonymous identity (anti token-replay amplification).
+const PENDING_MAX = 10_000;
+const MAX_SOCKETS_PER_IDENTITY = 5;
 
 // Hardening — per-socket burst + per-channel ceiling + content rules.
 const MSG_MAX_LEN          = 2_000;
@@ -208,6 +213,8 @@ export class ChannelDO {
   private channelBucket = { window_start: 0, count: 0 };
   /** channel0: domain-status cache (one entry — the DO is per-channel). */
   private ensure: EnsureCache | null = null;
+  /** Count of pending messages dropped under sustained flush backpressure (surfaced via metrics). */
+  private droppedPending = 0;
 
   constructor(state: DurableObjectState, env: Env) {
     this.state = state;
@@ -375,6 +382,32 @@ export class ChannelDO {
     return { ok: true, retry_after: 0 };
   }
 
+  /** Phase 0: drop stale per-identity tracking so rl/burst/repeat can't grow
+   *  unbounded during sustained activity (they used to leak → OOM). Runs each
+   *  alarm tick; hibernation clears memory when the room goes fully idle. */
+  private sweepMaps(): void {
+    const now = Date.now();
+    const minute = Math.floor(now / 60_000);
+    for (const [k, b] of this.rl) if (b.window_start < minute) this.rl.delete(k);
+    for (const [k, arr] of this.burst) {
+      while (arr.length && now - arr[0] > 10_000) arr.shift();
+      if (arr.length === 0) this.burst.delete(k);
+    }
+    const live = new Set<string>();
+    for (const ws of this.state.getWebSockets()) {
+      const t = (this.state.getTags(ws) ?? [])[0];
+      if (typeof t === "string") live.add(t);
+    }
+    for (const k of this.repeat.keys()) if (!live.has(k)) this.repeat.delete(k);
+    // Hard backstop: never let any map exceed a sane bound (drop-oldest).
+    this.capMap(this.rl); this.capMap(this.burst); this.capMap(this.repeat);
+  }
+  private capMap(m: Map<string, unknown>, max = 50_000): void {
+    if (m.size <= max) return;
+    let drop = m.size - max;
+    for (const k of m.keys()) { if (drop-- <= 0) break; m.delete(k); }
+  }
+
   // ── Router ────────────────────────────────────────────────────────────────
   async fetch(req: Request): Promise<Response> {
     const url = new URL(req.url);
@@ -474,6 +507,19 @@ export class ChannelDO {
    *  client to consider the handshake successful. Without echo, browsers
    *  reject the connection. */
   private async handleWsUpgrade(entry: KeyCacheEntry, echoProto: string | null): Promise<Response> {
+    // Phase 0 (B1): cap concurrent sockets per ANONYMOUS identity — one minted
+    // 5-min token must not open thousands of sockets (token-replay amplification).
+    // Hub-key relays legitimately multiplex many users, so the cap is anon-only
+    // (anon entries carry a nick; hub-key entries don't).
+    if (entry.nick) {
+      let same = 0;
+      for (const ws of this.state.getWebSockets()) {
+        if ((this.state.getTags(ws) ?? [])[0] === entry.hash) same++;
+      }
+      if (same >= MAX_SOCKETS_PER_IDENTITY) {
+        return json({ error: "too_many_connections" }, { status: 429 });
+      }
+    }
     const pair = new WebSocketPair();
     const client = pair[0];
     const server = pair[1];
@@ -551,6 +597,12 @@ export class ChannelDO {
     if (channelId) {
       const pending = (await this.state.storage.get<PendingMessage[]>("pending")) ?? [];
       pending.push({ ...msg, channel_id: channelId });
+      // Backpressure: if Supabase ingest is stuck, bound the queue (drop-oldest)
+      // so a slow sink can't OOM the DO. Losing the oldest few beats losing all.
+      if (pending.length > PENDING_MAX) {
+        this.droppedPending += pending.length - PENDING_MAX;
+        pending.splice(0, pending.length - PENDING_MAX);
+      }
       await this.state.storage.put("pending", pending);
       // Schedule an alarm if none is set. setAlarm(absolute ms epoch).
       const cur = await this.state.storage.getAlarm();
@@ -574,6 +626,7 @@ export class ChannelDO {
    *  We use it as the periodic flush trigger (LINEAR-2679). */
   async alarm(): Promise<void> {
     try {
+      this.sweepMaps();
       const drained = await this.flush();
       // Still have pending? Re-arm.
       const left = (await this.state.storage.get<PendingMessage[]>("pending")) ?? [];
