@@ -1,25 +1,14 @@
-// Post-build: move dist/src/sidepanel/index.html → dist/sidepanel.html, patch
-// absolute asset paths → relative, drop the now-empty dist/src/ tree.
-import { readFileSync, writeFileSync, rmSync, existsSync, statSync } from "node:fs";
+// Post-build cleanup: drop any nested dist/src/ tree a bundler may leave behind.
+// The extension's only surface is the in-page docked panel (content script);
+// there is no sidepanel build anymore.
+import { rmSync, existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dist = resolve(__dirname, "..", "dist");
-const nested = resolve(dist, "src", "sidepanel", "index.html");
-const target = resolve(dist, "sidepanel.html");
+const srcTree = resolve(dist, "src");
 
-if (!existsSync(nested)) {
-  console.error("[finalize] sidepanel html not at expected path:", nested);
-  process.exit(1);
-}
+if (existsSync(srcTree)) rmSync(srcTree, { recursive: true, force: true });
 
-let html = readFileSync(nested, "utf8");
-html = html
-  .replace(/(?<=src=")\/(?=[^\/])/g, "./")
-  .replace(/(?<=href=")\/(?=[^\/])/g, "./");
-
-writeFileSync(target, html);
-rmSync(resolve(dist, "src"), { recursive: true, force: true });
-
-console.log(`[finalize] sidepanel.html → ${statSync(target).size} bytes`);
+console.log("[finalize] ok — in-page panel only (no sidepanel)");

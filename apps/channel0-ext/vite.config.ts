@@ -1,8 +1,9 @@
 import { defineConfig } from "vite";
 import { resolve } from "node:path";
 
-// Sidepanel + background entries.
-// Content script built separately (vite.config.content.ts) as single IIFE.
+// Background service worker entry. The chat UI is the in-page docked panel
+// (content script, built separately in vite.config.content.ts as a single IIFE).
+// No sidepanel — the in-page panel is the only surface.
 export default defineConfig({
   build: {
     outDir: "dist",
@@ -11,7 +12,6 @@ export default defineConfig({
     minify: false,
     rollupOptions: {
       input: {
-        sidepanel: resolve(__dirname, "src/sidepanel/index.html"),
         background: resolve(__dirname, "src/background/index.ts"),
       },
       output: {
