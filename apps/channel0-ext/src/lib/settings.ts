@@ -31,15 +31,30 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 const KEY = "channel0.settings";
+const MIN_PANEL_W = 300, MAX_PANEL_W = 620;
 
 let memCache: Settings | null = null;
+
+/** Defend against a corrupted/stale chrome.storage entry: clamp the panel width
+ *  and coerce every enum/bool back into range so a bad value can't break render. */
+function sanitize(s: Settings): Settings {
+  const width = Number(s.panelWidth);
+  return {
+    ...s,
+    panelSide: s.panelSide === "left" ? "left" : "right",
+    panelWidth: Number.isFinite(width) ? Math.max(MIN_PANEL_W, Math.min(MAX_PANEL_W, width)) : DEFAULT_SETTINGS.panelWidth,
+    brandMatch: s.brandMatch === "off" ? "off" : "auto",
+    skinId: typeof s.skinId === "string" && s.skinId ? s.skinId : DEFAULT_SETTINGS.skinId,
+    bubbleVisible: typeof s.bubbleVisible === "boolean" ? s.bubbleVisible : DEFAULT_SETTINGS.bubbleVisible,
+  };
+}
 
 export async function getSettings(): Promise<Settings> {
   if (memCache) return memCache;
   try {
     const got = await chrome.storage.sync.get(KEY);
     const s = (got?.[KEY] ?? {}) as Partial<Settings>;
-    memCache = { ...DEFAULT_SETTINGS, ...s, bubble: { ...DEFAULT_SETTINGS.bubble, ...(s.bubble ?? {}) } };
+    memCache = sanitize({ ...DEFAULT_SETTINGS, ...s, bubble: { ...DEFAULT_SETTINGS.bubble, ...(s.bubble ?? {}) } });
     return memCache;
   } catch {
     memCache = { ...DEFAULT_SETTINGS };
@@ -49,7 +64,7 @@ export async function getSettings(): Promise<Settings> {
 
 export async function patchSettings(patch: Partial<Settings>): Promise<Settings> {
   const cur = await getSettings();
-  const next: Settings = { ...cur, ...patch, bubble: { ...cur.bubble, ...(patch.bubble ?? {}) } };
+  const next: Settings = sanitize({ ...cur, ...patch, bubble: { ...cur.bubble, ...(patch.bubble ?? {}) } });
   memCache = next;
   try { await chrome.storage.sync.set({ [KEY]: next }); } catch { /* memory only */ }
   return next;

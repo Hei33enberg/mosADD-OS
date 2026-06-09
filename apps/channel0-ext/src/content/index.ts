@@ -52,10 +52,14 @@ function clearBrandOverlay(shadow: ShadowRoot, host: HTMLElement): void {
 }
 
 /** Choose + apply the brand accent. Precedence: owner > server-seeded > local
- *  cache > freshly extracted. Never throws — on any failure the dark shell stays. */
+ *  cache > freshly extracted. Never throws — on any failure the dark shell stays.
+ *  `allowExtract` gates the (expensive) host-page DOM scan: false applies only
+ *  already-known colors instantly (no scan), true permits a fresh extraction.
+ *  Bootstrap passes false and defers the single scan to the settle tick, so we
+ *  never scan twice per first visit and never scan at all on a cache hit. */
 async function resolveAndApplyBrand(
   shadow: ShadowRoot, host: HTMLElement, domain: string,
-  ownerAccent: string | null, seededAccent: string | null,
+  ownerAccent: string | null, seededAccent: string | null, allowExtract: boolean,
 ): Promise<void> {
   try {
     const authoritative = (isHex6(ownerAccent) && ownerAccent) || (isHex6(seededAccent) && seededAccent) || null;
@@ -63,6 +67,7 @@ async function resolveAndApplyBrand(
 
     const cached = await getBrand(domain);
     if (cached) applyBrandOverlay(shadow, host, cached.accent); // instant, no flicker
+    if (!allowExtract) return;
 
     const stale = !cached || Date.now() - cached.ts > BRAND_TTL_MS || cached.src === "fallback";
     if (stale) {
@@ -82,10 +87,10 @@ async function resolveAndApplyBrand(
 /** Set the base shell, then apply or clear the brand overlay per eligibility. */
 function applyLook(
   shadow: ShadowRoot, host: HTMLElement, s: Settings, domain: string,
-  ownerAccent: string | null, seededAccent: string | null,
+  ownerAccent: string | null, seededAccent: string | null, allowExtract = false,
 ): void {
   setShadowSkin(host, baseSkinFor(s));
-  if (brandEligible(s)) void resolveAndApplyBrand(shadow, host, domain, ownerAccent, seededAccent);
+  if (brandEligible(s)) void resolveAndApplyBrand(shadow, host, domain, ownerAccent, seededAccent, allowExtract);
   else clearBrandOverlay(shadow, host);
 }
 
@@ -216,16 +221,17 @@ async function bootstrap(norm: { domain: string; slug: string }): Promise<void> 
   applyLook(shadow, host, settings, norm.domain, ownerAccent, seededAccent);
   if (document.body) document.body.appendChild(host);
   else document.addEventListener("DOMContentLoaded", () => document.body?.appendChild(host));
-  // Some sites set theme-color / brand CSS late — re-resolve once shortly after.
+  // Single deferred scan: the host page may set theme-color / brand CSS late, so
+  // we extract once after it settles (and only if no owner/seeded/cached brand).
   setTimeout(() => {
     void getSettings().then((s) => {
-      if (brandEligible(s)) void resolveAndApplyBrand(shadow, host, norm.domain, ownerAccent, seededAccent);
+      if (brandEligible(s)) void resolveAndApplyBrand(shadow, host, norm.domain, ownerAccent, seededAccent, true);
     });
   }, 1500);
 
   // React to look changes from any surface (dock picker, side panel, site sync).
   function onSkin(s: Settings): void {
-    applyLook(shadow, host, s, norm.domain, ownerAccent, seededAccent);
+    applyLook(shadow, host, s, norm.domain, ownerAccent, seededAccent, true);
     if (panel) {
       panel.root.classList.toggle("c0-matched", host.hasAttribute(BRAND_ATTR));
       if (panel.skinsOverlay && panel.skinsOverlay.style.display !== "none") renderSkinsOverlay(panel.skinsOverlay, s);
@@ -240,7 +246,7 @@ async function bootstrap(norm: { domain: string; slug: string }): Promise<void> 
     const ab = b.auto_brand as { accent?: unknown } | null | undefined;
     seededAccent = ab && typeof ab.accent === "string" ? ab.accent : null;
     void getSettings().then((s) => {
-      applyLook(shadow, host, s, norm.domain, ownerAccent, seededAccent);
+      applyLook(shadow, host, s, norm.domain, ownerAccent, seededAccent, true);
       if (panel) panel.root.classList.toggle("c0-matched", host.hasAttribute(BRAND_ATTR));
     });
   }
@@ -441,6 +447,13 @@ function buildStyles(): HTMLStyleElement {
     .c0-dock-body > * { flex: 1; min-width: 0; }
     .c0-grip { flex: 0 0 6px; cursor: col-resize; background: transparent; }
     .c0-grip:hover { background: var(--m-glow, rgba(0,255,122,0.35)); }
+
+    /* Narrow viewports (small phones / split-screen): take the full width and
+       drop the resize grip — a 300px dock on a 360px screen is unusable. */
+    @media (max-width: 460px) {
+      .c0-dock { width: 100vw !important; max-width: 100vw; }
+      .c0-grip { display: none; }
+    }
 
     /* Louder non-affiliation banner in "match this site" mode (BM-6). */
     .c0-dock.c0-matched .c0-notice {

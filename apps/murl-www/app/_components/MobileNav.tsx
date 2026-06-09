@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { BrowserButtons } from './BrowserButtons';
 
@@ -16,19 +16,40 @@ const links = [
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
+
+  // Close on Escape and lock body scroll while the menu is open.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open]);
+
   return (
     <div className="md:hidden">
       <button
         type="button"
-        aria-label="Menu"
+        aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
+        aria-controls="murl-mobile-nav"
         onClick={() => setOpen((v) => !v)}
-        className="rounded-none border border-border px-2 py-1 text-sm text-foreground"
+        className="rounded-none border border-border px-3 py-2 text-sm text-foreground"
       >
         {open ? '✕' : '≡'}
       </button>
       {open ? (
-        <div className="absolute left-0 right-0 top-14 border-b border-border bg-background/95 backdrop-blur">
+        <div
+          id="murl-mobile-nav"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site menu"
+          className="absolute left-0 right-0 top-14 border-b border-border bg-background/95 backdrop-blur"
+        >
           <nav className="mx-auto flex max-w-6xl flex-col px-6 py-3 text-sm">
             {links.map((l) => (
               <Link

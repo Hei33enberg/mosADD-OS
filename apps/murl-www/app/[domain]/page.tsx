@@ -6,6 +6,10 @@ import { JoinController } from './join-client';
 
 interface PageProps { params: Promise<{ domain: string }> }
 
+// ISR: render once, refresh activity at most every 30s instead of hitting the
+// trending edge fn on every single visit (N+1 under load).
+export const revalidate = 30;
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { domain: raw } = await params;
   const norm = normalizeDomain(decodeURIComponent(raw));
@@ -23,7 +27,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 async function fetchActivity(slug: string): Promise<{ messages: number; status: string } | null> {
   try {
-    const r = await fetch(`${TRENDING_URL}?minutes=120`, { cache: 'no-store' });
+    // 5s timeout so a slow/down edge fn never hangs the server render; cached 30s.
+    const r = await fetch(`${TRENDING_URL}?minutes=120`, {
+      next: { revalidate: 30 },
+      signal: AbortSignal.timeout(5000),
+    });
     if (!r.ok) return null;
     const data = (await r.json()) as { items?: Array<{ slug: string; messages: number; status: string }> };
     const hit = data.items?.find((i) => i.slug === slug);
@@ -52,7 +60,7 @@ export default async function ChannelLanding({ params }: PageProps) {
 
       <div className="mt-6 inline-flex items-center gap-3 rounded-none border border-border bg-card px-4 py-2 text-xs">
         <span className="live-dot" />
-        {activity == null && <span className="text-muted-foreground">checking activity…</span>}
+        {activity == null && <span className="text-muted-foreground">live activity unavailable right now</span>}
         {activity != null && activity.status === 'blocked' && (
           <span className="text-destructive">chat disabled by the website owner</span>
         )}
