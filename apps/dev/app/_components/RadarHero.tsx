@@ -39,10 +39,12 @@ export function RadarHero() {
         </div>
 
         <h1
-          className="max-w-4xl font-display font-bold uppercase text-foreground"
+          className="max-w-4xl text-balance font-display font-bold uppercase text-foreground"
           style={{ fontSize: 'clamp(2.1rem, 5.4vw, 4.5rem)', lineHeight: 1.05, letterSpacing: '0.045em' }}
         >
-          Iron Dome Multi-Channel Messenger{' '}
+          <span className="whitespace-nowrap">Iron Dome</span>{' '}
+          <span className="whitespace-nowrap">Multi-Channel</span>{' '}
+          Messenger{' '}
           <span className="whitespace-nowrap text-primary text-glow">· MCP</span>
         </h1>
 
