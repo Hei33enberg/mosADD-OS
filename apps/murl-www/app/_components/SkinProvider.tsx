@@ -2,38 +2,29 @@
 
 import { useEffect } from 'react';
 import {
-  applySkinToDocument,
   readSkinFromStorage,
   writeSkinToStorage,
   listenForSkinSync,
 } from '../../lib/skins/runtime/site';
 import { SKIN_BY_ID } from '../../lib/skins/registry';
-import { DEFAULT_SKIN_ID } from '../../lib/skins/contract';
 
 /**
- * Boots the active skin from localStorage on first paint + subscribes to
- * skin-sync messages posted by the extension content script. Single source
- * of truth: `<html data-murl-skin="X">`.
+ * Boots the active skin from localStorage and broadcasts it to the chat demos
+ * via the `murl-skin-change` event. Skins are scoped to the chat panels (see
+ * useActiveSkin), NOT the marketing site — so the site stays on-brand and the
+ * picker never re-themes itself. Also picks up skin-sync messages posted by the
+ * installed extension content script.
  */
 export function SkinProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const stored = readSkinFromStorage();
-    applySkinToDocument(stored);
+    window.dispatchEvent(new CustomEvent('murl-skin-change', { detail: stored }));
     const unsub = listenForSkinSync((id) => {
       if (!SKIN_BY_ID[id]) return;
-      applySkinToDocument(id);
       writeSkinToStorage(id);
       window.dispatchEvent(new CustomEvent('murl-skin-change', { detail: id }));
     });
-    // expose for picker
-    window.dispatchEvent(new CustomEvent('murl-skin-change', { detail: stored }));
     return unsub;
   }, []);
   return <>{children}</>;
 }
-
-/** Boot-time inline script body to avoid a flash of default skin on first
- *  paint (set the attribute before React hydrates). Inject in <head>. */
-export const SKIN_BOOT_SCRIPT = `
-(function(){try{var v=localStorage.getItem('murl-skin');if(v){document.documentElement.setAttribute('data-murl-skin',v);}else{document.documentElement.setAttribute('data-murl-skin','${DEFAULT_SKIN_ID}');}}catch(e){document.documentElement.setAttribute('data-murl-skin','${DEFAULT_SKIN_ID}');}})();
-`;

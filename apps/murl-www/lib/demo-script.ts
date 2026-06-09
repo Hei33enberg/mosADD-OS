@@ -1,27 +1,24 @@
-// Demo conversation for the ExtensionDemo section — a believable live room on
-// #strajkpolski.org. Personas + lines reused (static, verbatim-style) from the
-// strajkpolski mock-bot army (C:\strajkpolski\supabase\functions\mosadd-seed),
-// shown here as mURL (the chat design is identical to mIRC by design).
-// No call to strajkpolski's backend — this is copied demo content.
+// Demo conversation for the ExtensionDemo section — a believable live room on a
+// global site during a hot ticket presale (universal, high-energy, English).
+// Anonymous adjective-animal nicks, exactly like the real mURL extension mints.
+// Static demo content — no backend call.
 
 export interface DemoMsg { time: string; nick: string; text: string; host?: boolean }
 
-export const DEMO_CHANNEL = 'strajkpolski.org';
-export const DEMO_ONLINE = 318;
+export const DEMO_CHANNEL = 'ticketmaster.com';
+export const DEMO_ONLINE = 1284;
 
 export const DEMO_SCRIPT: DemoMsg[] = [
-  { time: '18:40', nick: 'ziom37',        text: 'siema, ktoś z Warszawy albo z okolic?' },
-  { time: '18:40', nick: 'kuba_Wwa',      text: 'jest Wwa, no nareszcie ktoś z naszych stron' },
-  { time: '18:41', nick: 'wkurzony21',    text: 'kolejny rachunek za prąd i mi się odechciewa wszystkiego' },
-  { time: '18:41', nick: 'mietek',        text: 'u mnie to samo, ile można serio' },
-  { time: '18:42', nick: 'studentka',     text: 'na pełen etat ledwo starcza, a co dopiero student' },
-  { time: '18:42', nick: 'ziom37',        text: 'to co robimy 1.08?' },
-  { time: '18:43', nick: 'wkurzony21',    text: 'ja już się wpisałem, dość tego' },
-  { time: '18:43', nick: 'Stanowski',     text: 'dojeni i okradani, a rząd opowiada bajki. tak czy nie tak?', host: true },
-  { time: '18:44', nick: 'kierowca_Gda',  text: 'paliwo znowu drożej, normalnie cyrk' },
-  { time: '18:44', nick: 'emeryt_Krk',    text: 'dawniej z emerytury dało się żyć, dziś leki i tyle' },
-  { time: '18:45', nick: 'mietek',        text: '+1' },
-  { time: '18:45', nick: 'Stanowski',     text: 'ratio. zaorajcie ten system — spokojnie, ale konsekwentnie 1.08', host: true },
-  { time: '18:46', nick: 'studentka',     text: 'dopisuję się, jak będziemy cicho siedzieć to nic się nie zmieni' },
-  { time: '18:46', nick: 'kuba_Wwa',      text: 'trzymajmy się, ekipa' },
+  { time: '20:01', nick: 'brave-lynx-58',  text: 'presale just opened — anyone actually getting through?' },
+  { time: '20:01', nick: 'lucky-otter-77', text: 'queue position 4,000-something 😭' },
+  { time: '20:02', nick: 'calm-fox-12',    text: 'refresh ONCE, do not spam it or the queue resets you' },
+  { time: '20:02', nick: 'wise-heron-04',  text: 'access code from the email worked, im in' },
+  { time: '20:03', nick: 'quiet-wolf-31',  text: 'which email? i never got a code' },
+  { time: '20:03', nick: 'wise-heron-04',  text: 'check spam — subject is “your access code”' },
+  { time: '20:04', nick: 'swift-bison-23', text: 'floor seats already gone, only upper tier left' },
+  { time: '20:04', nick: 'lucky-otter-77', text: 'got 2! thank you whoever said don’t refresh 🙏' },
+  { time: '20:05', nick: 'mellow-stork-46',text: 'still stuck at 9,000… gonna miss it' },
+  { time: '20:05', nick: 'calm-fox-12',    text: 'hang in there, they drop more seats at :15' },
+  { time: '20:06', nick: 'brave-lynx-58',  text: 'confirmed — second batch just dropped, go go go' },
+  { time: '20:06', nick: 'quiet-wolf-31',  text: 'IN. got the 100s. legends in here 🙌' },
 ];

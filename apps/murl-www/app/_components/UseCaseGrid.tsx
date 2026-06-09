@@ -1,23 +1,23 @@
 const cases = [
   {
-    room: '#allegro.pl',
+    room: '#amazon.com',
     tag: 'Shops',
     title: 'Shop with backup',
     body: '“Is this seller legit? Does it run small? Anyone got a working code?” Get real answers from people buying the same thing right now.',
     hue: 'var(--room-1)',
   },
   {
-    room: '#onet.pl',
-    tag: 'Articles & portals',
+    room: '#bbc.com',
+    tag: 'News & articles',
     title: 'React to the story',
-    body: 'Comment sections are slow and full of bots. mURL is the live reaction — talk to other readers on the article while it’s hot.',
+    body: 'Comment sections are slow and full of bots. mURL is the live reaction — talk to other readers on the story while it’s breaking.',
     hue: 'var(--room-3)',
   },
   {
-    room: '#gov.site',
-    tag: 'Institutions & services',
-    title: 'Figure it out together',
-    body: 'Stuck on a form, an outage, a confusing process? Compare notes with other people on the exact same page, in real time.',
+    room: '#ticketmaster.com',
+    tag: 'Drops & live events',
+    title: 'Get through together',
+    body: 'Stuck in a queue, hunting a code, racing a presale? Compare notes with everyone else on the exact same page, in real time.',
     hue: 'var(--room-2)',
   },
 ];

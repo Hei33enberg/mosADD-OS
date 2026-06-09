@@ -7,7 +7,7 @@ import { Analytics } from '@vercel/analytics/next';
 import { SiteHeader } from './_components/SiteHeader';
 import { SiteFooter } from './_components/SiteFooter';
 import { PostHogProvider } from './_components/PostHogProvider';
-import { SkinProvider, SKIN_BOOT_SCRIPT } from './_components/SkinProvider';
+import { SkinProvider } from './_components/SkinProvider';
 import { getAllSkinsCss } from '../lib/skins/registry';
 import { SITE_URL } from '../lib/site';
 
@@ -57,11 +57,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${jetbrains.variable} dark`} suppressHydrationWarning>
       <head>
-        {/* All skin overrides stamped once — the active one is selected via
-            the `data-murl-skin` attribute on <html>. */}
+        {/* All skin overrides stamped once. A chat demo selects its skin via a
+            `data-murl-skin` attribute on a `.m-root` wrapper (scoped to the chat,
+            never the marketing site). */}
         <style id="m-skin-css" dangerouslySetInnerHTML={{ __html: ALL_SKINS_CSS }} />
-        {/* Set the data-attribute BEFORE React hydrates to avoid a FOUC. */}
-        <script dangerouslySetInnerHTML={{ __html: SKIN_BOOT_SCRIPT }} />
       </head>
       <body className="relative flex min-h-screen flex-col bg-background text-foreground antialiased">
         <div aria-hidden className="grid-bg pointer-events-none fixed inset-0 z-0 opacity-60" />

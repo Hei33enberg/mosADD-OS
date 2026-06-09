@@ -158,64 +158,66 @@
  * ============================================================================= */
 
 .c0-chat { position: relative; display: flex; flex-direction: column; overflow: hidden;
-  background: #000; color: #fff;
-  font-family: ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  background: var(--m-bg, #000); color: var(--m-fg, #fff);
+  font-family: var(--m-font-mono, ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace);
   font-size: 12px; line-height: 1.45; height: 100%; min-height: 0; }
 .c0-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0;
   background-image:
-    linear-gradient(rgba(0,255,122,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,122,0.06) 1px, transparent 1px);
+    linear-gradient(var(--m-grid, rgba(0,255,122,0.06)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--m-grid, rgba(0,255,122,0.06)) 1px, transparent 1px);
   background-size: 24px 24px; }
 .c0-chat > :not(.c0-bg) { position: relative; z-index: 1; }
 
 .c0-head { display: flex; align-items: center; gap: 6px; padding: 6px 10px; min-height: 26px;
-  background: #000; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.2); }
+  background: var(--m-bg, #000); color: var(--m-fg, #fff); border-bottom: 1px solid var(--m-border, rgba(255,255,255,0.2)); }
 .c0-head-title { font-weight: 700; letter-spacing: 0.04em; font-size: 12px;
   min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   display: flex; align-items: center; gap: 4px; }
-.c0-head-title .c0-mirc { color: rgba(255,255,255,0.55); text-transform: lowercase; }
-.c0-head-title .c0-domain { color: #00ff7a; }
+.c0-head-title .c0-mirc { color: var(--m-fg-muted, rgba(255,255,255,0.55)); text-transform: lowercase; }
+.c0-head-title .c0-domain { color: var(--m-primary, #00ff7a); }
 .c0-head-live { display: inline-flex; align-items: center; gap: 3px; font-size: 10px;
-  color: rgba(255,255,255,0.4); margin-left: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+  color: var(--m-fg-muted, rgba(255,255,255,0.4)); margin-left: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
 .c0-head-live .c0-dot { width: 5px; height: 5px; border-radius: 50%;
-  background: #00ff7a; box-shadow: 0 0 4px #00ff7a; animation: c0-pulse 1.6s ease-in-out infinite; }
+  background: var(--m-primary, #00ff7a); box-shadow: 0 0 4px var(--m-glow, #00ff7a); animation: c0-pulse 1.6s ease-in-out infinite; }
 @keyframes c0-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 .c0-head-spacer { flex: 1; }
-.c0-head-btn { background: transparent; color: rgba(255,255,255,0.5);
-  border: 1px solid rgba(255,255,255,0.15); width: 20px; height: 20px; padding: 0;
+.c0-head-btn { background: transparent; color: var(--m-fg-muted, rgba(255,255,255,0.5));
+  border: 1px solid var(--m-border, rgba(255,255,255,0.15)); width: 20px; height: 20px; padding: 0;
   display: inline-flex; align-items: center; justify-content: center; line-height: 0; }
 .c0-head-btn svg { width: 11px; height: 11px; display: block; }
 
 .c0-notice { padding: 5px 10px; font-size: 10px; line-height: 1.4;
-  color: rgba(255,255,255,0.4); background: rgba(0,0,0,0.85);
-  border-bottom: 1px solid rgba(255,255,255,0.08); letter-spacing: 0.01em; }
-.c0-notice b { color: rgba(0,255,122,0.85); font-weight: 600; }
+  color: var(--m-fg-muted, rgba(255,255,255,0.4)); background: var(--m-card, rgba(0,0,0,0.85));
+  border-bottom: 1px solid var(--m-border, rgba(255,255,255,0.08)); letter-spacing: 0.01em; }
+.c0-notice b { color: var(--m-primary, rgba(0,255,122,0.85)); font-weight: 600; }
 
-.c0-feed { flex: 1; min-height: 0; overflow-y: auto; padding: 8px 10px;
-  display: flex; flex-direction: column; gap: 2px; }
+/* Bottom-pinned feed: the demo renders a fixed rolling window of messages, so
+   the panel never resizes — new lines slide in at the bottom, old ones roll off. */
+.c0-feed { flex: 1; min-height: 0; overflow: hidden; padding: 8px 10px;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; }
 .c0-row { display: flex; gap: 6px; align-items: baseline; font-size: 12px; }
-.c0-time { color: rgba(255,255,255,0.3); font-size: 10px; flex-shrink: 0; min-width: 38px; }
-.c0-nick { font-weight: 700; color: #00ff7a; flex-shrink: 0; white-space: nowrap; }
-.c0-nick.is-me { color: #fff; }
-.c0-nick.is-host { color: #ffd23f; }
-.c0-text { color: #fff; word-break: break-word; white-space: pre-wrap; flex: 1; min-width: 0; }
-.c0-system .c0-nick { color: rgba(255,255,255,0.3); }
-.c0-system .c0-text { color: rgba(255,255,255,0.45); font-style: italic; }
+.c0-time { color: var(--m-fg-muted, rgba(255,255,255,0.3)); font-size: 10px; flex-shrink: 0; min-width: 38px; }
+.c0-nick { font-weight: 700; color: var(--m-primary, #00ff7a); flex-shrink: 0; white-space: nowrap; }
+.c0-nick.is-me { color: var(--m-fg, #fff); }
+.c0-nick.is-host { color: var(--m-warning, #ffd23f); }
+.c0-text { color: var(--m-fg, #fff); word-break: break-word; white-space: pre-wrap; flex: 1; min-width: 0; }
+.c0-system .c0-nick { color: var(--m-fg-muted, rgba(255,255,255,0.3)); }
+.c0-system .c0-text { color: var(--m-fg-muted, rgba(255,255,255,0.45)); font-style: italic; }
 
-.c0-compose { display: flex; gap: 4px; padding: 8px 10px; background: #000;
-  border-top: 1px solid rgba(255,255,255,0.2); }
-.c0-compose input { flex: 1; min-width: 0; background: rgba(255,255,255,0.04); color: #fff;
-  border: 1px solid rgba(255,255,255,0.2); padding: 6px 8px; font-size: 12px; outline: none; font-family: inherit; }
-.c0-compose input::placeholder { color: rgba(255,255,255,0.25); }
-.c0-compose .c0-send { flex-shrink: 0; background: #00ff7a; color: #000; border: 1px solid #00ff7a;
-  padding: 0 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-family: inherit; }
+.c0-compose { display: flex; gap: 4px; padding: 8px 10px; background: var(--m-bg, #000);
+  border-top: 1px solid var(--m-border, rgba(255,255,255,0.2)); }
+.c0-compose input { flex: 1; min-width: 0; background: var(--m-card, rgba(255,255,255,0.04)); color: var(--m-fg, #fff);
+  border: 1px solid var(--m-border, rgba(255,255,255,0.2)); padding: 6px 8px; font-size: 12px; outline: none; font-family: inherit; }
+.c0-compose input::placeholder { color: var(--m-fg-muted, rgba(255,255,255,0.25)); }
+.c0-compose .c0-send { flex-shrink: 0; background: var(--m-primary, #00ff7a); color: var(--m-primary-fg, #000); border: 1px solid var(--m-primary, #00ff7a);
+  padding: 0 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-family: inherit; display: inline-flex; align-items: center; }
 
 .c0-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  padding: 6px 10px; background: #000; border-top: 1px solid rgba(255,255,255,0.12);
+  padding: 6px 10px; background: var(--m-bg, #000); border-top: 1px solid var(--m-border, rgba(255,255,255,0.12));
   font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; }
-.c0-foot-you { color: rgba(255,255,255,0.4); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.c0-foot-you b { color: rgba(255,255,255,0.7); }
-.c0-foot-brand { color: #00ff7a; font-weight: 700; white-space: nowrap; }
+.c0-foot-you { color: var(--m-fg-muted, rgba(255,255,255,0.4)); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c0-foot-you b { color: var(--m-fg, rgba(255,255,255,0.7)); }
+.c0-foot-brand { color: var(--m-primary, #00ff7a); font-weight: 700; white-space: nowrap; }
 
 /* Floating bubble (the draggable launcher) — from content/index.ts buildStyles(). */
 .c0-bubble { width: 56px; height: 56px; border-radius: 28px;
@@ -227,50 +229,10 @@
 .c0-bubble .c0-bubble-dot { width: 8px; height: 8px; border-radius: 4px; background: var(--m-primary, #00ff7a);
   margin-right: 6px; box-shadow: 0 0 8px var(--m-glow, #00ff7a); }
 
-/* ============================================================================
- * Skin bridge — when a skin is active, route all the legacy shadcn-style
- * tokens through `--m-*` so existing Tailwind utilities (`bg-background`,
- * `text-primary`, `text-foreground`, `border-border`…) follow the theme.
- *
- * The cheap+correct route: drive html/body backgrounds directly from --m-*
- * (this beats any Tailwind utility that touches the same property) and bridge
- * the few HSL-component tokens via raw color overrides for the most common
- * surfaces. The room hues are decoration; they don't need to track.
- * ========================================================================= */
-:root[data-murl-skin] body,
-:root[data-murl-skin] html {
-  background: var(--m-bg);
-  color: var(--m-fg);
-}
-:root[data-murl-skin] .bg-background { background-color: var(--m-bg) !important; }
-:root[data-murl-skin] .bg-card,
-:root[data-murl-skin] .bg-card\/40,
-:root[data-murl-skin] .bg-card\/60,
-:root[data-murl-skin] .bg-card\/30 { background-color: var(--m-card) !important; }
-:root[data-murl-skin] .text-foreground { color: var(--m-fg) !important; }
-:root[data-murl-skin] .text-muted-foreground { color: var(--m-fg-muted) !important; }
-:root[data-murl-skin] .text-primary { color: var(--m-primary) !important; }
-:root[data-murl-skin] .bg-primary { background-color: var(--m-primary) !important; }
-:root[data-murl-skin] .text-primary-foreground { color: var(--m-primary-fg) !important; }
-:root[data-murl-skin] .border-border,
-:root[data-murl-skin] .border-x,
-:root[data-murl-skin] .border-y,
-:root[data-murl-skin] .border-t,
-:root[data-murl-skin] .border-b,
-:root[data-murl-skin] .border-l,
-:root[data-murl-skin] .border-r,
-:root[data-murl-skin] .border { border-color: var(--m-border) !important; }
-:root[data-murl-skin] .text-destructive { color: var(--m-danger) !important; }
-:root[data-murl-skin] .text-warning { color: var(--m-warning) !important; }
-:root[data-murl-skin] * { border-color: var(--m-border); }
-:root[data-murl-skin] .grid-bg {
-  background-image:
-    linear-gradient(var(--m-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--m-grid) 1px, transparent 1px);
-}
-:root[data-murl-skin] .text-glow {
-  text-shadow: 0 0 22px var(--m-glow);
-}
+/* Skins are scoped to the mURL CHAT DEMOS, not the marketing site. A demo wraps
+ * its .c0-chat in `<div className="m-root" data-murl-skin="X">`; the stamped
+ * m-skin-css then sets --m-* on that subtree only. The site stays on-brand
+ * (dark + neon green) so the theme picker never re-themes itself. */
 
 @media (prefers-reduced-motion: reduce) {
   .c0-head-live .c0-dot { animation: none; }
