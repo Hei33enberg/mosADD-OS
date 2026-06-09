@@ -166,9 +166,9 @@
     "message": "Motyw"
   },
   "skinAutoLabel": {
-    "message": "Dopasuj do strony"
+    "message": "Dopasuj kolor strony"
   },
   "skinAutoHint": {
-    "message": "użyj kolorów tej strony"
+    "message": "kolor marki tej strony na ciemnym motywie mURL"
   }
 }

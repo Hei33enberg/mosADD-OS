@@ -27,16 +27,20 @@ export class JoinError extends Error {
 
 export async function joinDomain(args: {
   domain: string; deviceToken: string; nick: string;
+  /** Locally-extracted host brand accent (#rrggbb) to seed the shared per-domain
+   *  brand server-side. Optional — server validates + first-writer-wins. */
+  brandAccent?: string;
   /** Cancels the mint (and any PoW retry) if the chat is destroyed mid-flight. */
   signal?: AbortSignal;
 }): Promise<JoinResult> {
   const { joinUrl } = await getEndpoints();
   const { signal } = args;
+  const brand = args.brandAccent ? { brand_accent: args.brandAccent } : {};
 
   let r = await fetch(joinUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ domain: args.domain, device_token: args.deviceToken, nick: args.nick }),
+    body: JSON.stringify({ domain: args.domain, device_token: args.deviceToken, nick: args.nick, ...brand }),
     signal,
   });
 
@@ -56,7 +60,7 @@ export async function joinDomain(args: {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           domain: args.domain, device_token: args.deviceToken, nick: args.nick,
-          pow_ts: sol.ts, pow_nonce: sol.nonce,
+          pow_ts: sol.ts, pow_nonce: sol.nonce, ...brand,
         }),
         signal,
       });

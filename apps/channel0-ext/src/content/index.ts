@@ -13,39 +13,84 @@ import { t } from "../lib/i18n";
 import { applySkinToShadow, setShadowSkin, normalizeSkinId } from "../skins/runtime/extension";
 import { SKINS } from "../skins/registry";
 import { SKIN_SYNC_EVENT } from "../skins/contract";
-import { extractAutoTokens, autoSkinCss } from "./auto-skin";
+import { extractBrandAccent, brandAccentCss } from "./auto-skin";
+import { getBrand, setBrand } from "../lib/brand-store";
 
-// Synthetic "match this site" skin — extracted live from the host page (BM-1).
-const AUTO_ID = "auto";
-const AUTO_STYLE_ID = "m-skin-auto";
+// BM-1: accent-only brand match. Keep the mosadd-dark shell and overlay ONLY the
+// host site's brand color onto our accent tokens, cached per-domain.
+const AUTO_ID = "auto";                 // legacy full-match skin id — retired, mapped to the dark shell
+const BRAND_STYLE_ID = "m-skin-brand";
+const BRAND_ATTR = "data-murl-brand";
+const BRAND_TTL_MS = 1000 * 60 * 60 * 24 * 7; // re-extract weekly; cache wins in-between (no flicker)
 
-/** Extract the host page's palette, inject it as the `auto` skin, activate it. */
-function applyAutoSkin(shadow: ShadowRoot, host: HTMLElement): void {
+// The base shell skin. The legacy full-match "auto" id is retired → its shell is
+// our dark base; brand now rides as an accent-only overlay on top.
+function baseSkinFor(s: Settings): string {
+  return s.skinId === AUTO_ID ? "mosadd-dark" : s.skinId;
+}
+// Brand overlay applies only on the default dark shell — an explicit static skin
+// choice is the user's call and suppresses it (precedence rule #4).
+function brandEligible(s: Settings): boolean {
+  return s.brandMatch !== "off" && (s.skinId === "mosadd-dark" || s.skinId === AUTO_ID);
+}
+function isHex6(a: string | null | undefined): a is string {
+  return typeof a === "string" && /^#[0-9a-f]{6}$/i.test(a);
+}
+
+function applyBrandOverlay(shadow: ShadowRoot, host: HTMLElement, accentHex: string): void {
+  // Appended LAST → equal specificity to the base skin block but later in source
+  // order, so accent tokens win without !important. brandAccentCss re-guards
+  // contrast against our dark shell, so owner/seeded colors are safe too.
+  let st = shadow.getElementById(BRAND_STYLE_ID) as HTMLStyleElement | null;
+  if (!st) { st = document.createElement("style"); st.id = BRAND_STYLE_ID; shadow.appendChild(st); }
+  st.textContent = brandAccentCss(accentHex);
+  host.setAttribute(BRAND_ATTR, accentHex);
+}
+function clearBrandOverlay(shadow: ShadowRoot, host: HTMLElement): void {
+  shadow.getElementById(BRAND_STYLE_ID)?.remove();
+  host.removeAttribute(BRAND_ATTR);
+}
+
+/** Choose + apply the brand accent. Precedence: owner > server-seeded > local
+ *  cache > freshly extracted. Never throws — on any failure the dark shell stays. */
+async function resolveAndApplyBrand(
+  shadow: ShadowRoot, host: HTMLElement, domain: string,
+  ownerAccent: string | null, seededAccent: string | null,
+): Promise<void> {
   try {
-    const tokens = extractAutoTokens();
-    let st = shadow.getElementById(AUTO_STYLE_ID) as HTMLStyleElement | null;
-    if (!st) { st = document.createElement("style"); st.id = AUTO_STYLE_ID; shadow.appendChild(st); }
-    st.textContent = autoSkinCss(tokens);
-    host.setAttribute("data-murl-skin", AUTO_ID);
-    host.style.colorScheme = tokens.scheme;
+    const authoritative = (isHex6(ownerAccent) && ownerAccent) || (isHex6(seededAccent) && seededAccent) || null;
+    if (authoritative) { applyBrandOverlay(shadow, host, authoritative); return; }
+
+    const cached = await getBrand(domain);
+    if (cached) applyBrandOverlay(shadow, host, cached.accent); // instant, no flicker
+
+    const stale = !cached || Date.now() - cached.ts > BRAND_TTL_MS || cached.src === "fallback";
+    if (stale) {
+      const b = extractBrandAccent();
+      if (b.ok) {
+        applyBrandOverlay(shadow, host, b.accent);
+        await setBrand(domain, { accent: b.accent, ts: Date.now(), src: b.src });
+      } else if (!cached) {
+        clearBrandOverlay(shadow, host); // no real brand here → plain mURL default
+      }
+    }
   } catch {
-    // Extraction failed → never ship a broken panel; fall back to the default.
-    shadow.getElementById(AUTO_STYLE_ID)?.remove();
-    setShadowSkin(host, "mosadd-dark");
+    clearBrandOverlay(shadow, host);
   }
 }
 
-/** Apply whichever skin is active: the synthetic auto skin or a static one. */
-function applyActiveSkin(shadow: ShadowRoot, host: HTMLElement, skinId: string): void {
-  if (skinId === AUTO_ID) { applyAutoSkin(shadow, host); return; }
-  // Switching to a static skin → drop the synthetic auto <style> (tidy hygiene;
-  // the selector wouldn't match anyway once the host attribute changes).
-  shadow.getElementById(AUTO_STYLE_ID)?.remove();
-  setShadowSkin(host, skinId);
+/** Set the base shell, then apply or clear the brand overlay per eligibility. */
+function applyLook(
+  shadow: ShadowRoot, host: HTMLElement, s: Settings, domain: string,
+  ownerAccent: string | null, seededAccent: string | null,
+): void {
+  setShadowSkin(host, baseSkinFor(s));
+  if (brandEligible(s)) void resolveAndApplyBrand(shadow, host, domain, ownerAccent, seededAccent);
+  else clearBrandOverlay(shadow, host);
 }
 
-/** Render the in-dock theme picker: "Match this site" (auto) + 8 static skins. */
-function renderSkinsOverlay(ov: HTMLElement, activeId: string): void {
+/** Render the in-dock theme picker: "Match this site's color" + static skins. */
+function renderSkinsOverlay(ov: HTMLElement, settings: Settings): void {
   ov.textContent = "";
   const head = document.createElement("div"); head.className = "c0-skins-head";
   const h3 = document.createElement("h3"); h3.textContent = t("skinsTitle");
@@ -55,32 +100,34 @@ function renderSkinsOverlay(ov: HTMLElement, activeId: string): void {
   head.appendChild(h3); head.appendChild(x);
   ov.appendChild(head);
 
-  // "Match this site" — the auto skin.
+  const brandOn = brandEligible(settings);
+
+  // "Match this site's color" — accent-only brand overlay on the dark shell.
   const auto = document.createElement("button");
   auto.type = "button";
-  auto.className = "c0-skin-auto" + (activeId === AUTO_ID ? " active" : "");
+  auto.className = "c0-skin-auto" + (brandOn ? " active" : "");
   const ic = document.createElement("span"); ic.className = "ic"; ic.textContent = "✦";
   const tx = document.createElement("span"); tx.className = "tx";
   const b = document.createElement("b"); b.textContent = t("skinAutoLabel");
   const hint = document.createElement("span"); hint.textContent = t("skinAutoHint");
   tx.appendChild(b); tx.appendChild(hint);
   auto.appendChild(ic); auto.appendChild(tx);
-  auto.addEventListener("click", () => { void patchSettings({ skinId: AUTO_ID }); });
+  auto.addEventListener("click", () => { void patchSettings({ brandMatch: "auto", skinId: "mosadd-dark" }); });
   ov.appendChild(auto);
 
-  // Static skins grid.
+  // Static skins grid. Picking one is an explicit choice → turn brand match off.
   const grid = document.createElement("div"); grid.className = "c0-skins-grid";
   for (const skin of SKINS) {
     const tile = document.createElement("button");
     tile.type = "button";
-    tile.className = "c0-skin-tile" + (skin.id === activeId ? " active" : "");
+    tile.className = "c0-skin-tile" + (!brandOn && skin.id === settings.skinId ? " active" : "");
     const sw = document.createElement("div"); sw.className = "c0-skin-sw";
     for (const c of [skin.preview.bg, skin.preview.fg, skin.preview.primary]) {
       const i = document.createElement("i"); i.style.background = c; sw.appendChild(i);
     }
     const nm = document.createElement("div"); nm.className = "nm"; nm.textContent = skin.label;
     tile.appendChild(sw); tile.appendChild(nm);
-    tile.addEventListener("click", () => { void patchSettings({ skinId: skin.id }); });
+    tile.addEventListener("click", () => { void patchSettings({ skinId: skin.id, brandMatch: "off" }); });
     grid.appendChild(tile);
   }
   ov.appendChild(grid);
@@ -102,7 +149,8 @@ window.addEventListener("message", (e: MessageEvent) => {
   // against echoes of our own broadcast.
   if (e.data.kind === SKIN_SYNC_EVENT && e.data.source === "site") {
     const id = normalizeSkinId(e.data.id);
-    void patchSettings({ skinId: id });
+    // The site picked an explicit static skin → turn brand match off so it sticks.
+    void patchSettings({ skinId: id, brandMatch: "off" });
   }
 });
 
@@ -154,43 +202,59 @@ async function ageGateAndBootstrap(norm: { domain: string; slug: string }): Prom
 async function bootstrap(norm: { domain: string; slug: string }): Promise<void> {
   const settings = await getSettings();
 
+  // Brand accents from the server (owner-claimed / seeded), learned on join.
+  let ownerAccent: string | null = null;
+  let seededAccent: string | null = null;
+
   const host = document.createElement("div");
   host.setAttribute("data-mosadd-channel0", "");
   host.style.cssText = "all: initial; position: fixed; inset: 0; pointer-events: none; z-index: 2147483647;";
   const shadow = host.attachShadow({ mode: "closed" });
   shadow.appendChild(buildStyles());
-  // Stamp all static skin CSS once; then activate the current skin (which may
-  // be the synthetic "auto" skin extracted from the host page).
-  applySkinToShadow(shadow, host, settings.skinId);
-  applyActiveSkin(shadow, host, settings.skinId);
+  // Stamp all static skin CSS once, set the dark shell, then overlay the brand.
+  applySkinToShadow(shadow, host, baseSkinFor(settings));
+  applyLook(shadow, host, settings, norm.domain, ownerAccent, seededAccent);
   if (document.body) document.body.appendChild(host);
   else document.addEventListener("DOMContentLoaded", () => document.body?.appendChild(host));
-  // Some sites set theme-color / brand CSS late — re-sample once shortly after.
-  if (settings.skinId === AUTO_ID) {
-    setTimeout(() => { void getSettings().then((s) => { if (s.skinId === AUTO_ID) applyAutoSkin(shadow, host); }); }, 1500);
-  }
+  // Some sites set theme-color / brand CSS late — re-resolve once shortly after.
+  setTimeout(() => {
+    void getSettings().then((s) => {
+      if (brandEligible(s)) void resolveAndApplyBrand(shadow, host, norm.domain, ownerAccent, seededAccent);
+    });
+  }, 1500);
 
-  // React to skin changes from any surface (dock picker, side panel, site sync).
-  function onSkin(skinId: string): void {
-    applyActiveSkin(shadow, host, skinId);
+  // React to look changes from any surface (dock picker, side panel, site sync).
+  function onSkin(s: Settings): void {
+    applyLook(shadow, host, s, norm.domain, ownerAccent, seededAccent);
     if (panel) {
-      panel.root.classList.toggle("c0-matched", skinId === AUTO_ID);
-      if (panel.skinsOverlay && panel.skinsOverlay.style.display !== "none") renderSkinsOverlay(panel.skinsOverlay, skinId);
+      panel.root.classList.toggle("c0-matched", host.hasAttribute(BRAND_ATTR));
+      if (panel.skinsOverlay && panel.skinsOverlay.style.display !== "none") renderSkinsOverlay(panel.skinsOverlay, s);
     }
   }
-  onSettingsChange((s) => onSkin(s.skinId));
+  onSettingsChange((s) => onSkin(s));
 
-  // Tell the murl.mosadd.com landing page about the current skin so the
-  // hero / demo / trending board match the panel the user already sees.
-  // The synthetic "auto" skin is extension-only (the site has no host page to
-  // match) — never broadcast it; the site would ignore it anyway.
+  // Apply server-side brand the moment join returns it (owner > seeded) and
+  // refresh the louder non-affiliation banner.
+  function onBranding(b: Record<string, unknown>): void {
+    ownerAccent = typeof b.accent_color === "string" ? b.accent_color : null;
+    const ab = b.auto_brand as { accent?: unknown } | null | undefined;
+    seededAccent = ab && typeof ab.accent === "string" ? ab.accent : null;
+    void getSettings().then((s) => {
+      applyLook(shadow, host, s, norm.domain, ownerAccent, seededAccent);
+      if (panel) panel.root.classList.toggle("c0-matched", host.hasAttribute(BRAND_ATTR));
+    });
+  }
+
+  // Tell the murl.mosadd.com landing page about the current static skin so its
+  // hero / demo / trending board match the panel. Brand match is extension-only
+  // (the site has no host page to read) — don't broadcast while it's active.
   if (location.host === "murl.mosadd.com") {
-    const sendSkin = (id: string) => {
-      if (id === AUTO_ID) return;
-      try { window.postMessage({ kind: SKIN_SYNC_EVENT, id, source: "extension" }, location.origin); } catch { /* */ }
+    const sendSkin = (s: Settings) => {
+      if (brandEligible(s)) return;
+      try { window.postMessage({ kind: SKIN_SYNC_EVENT, id: s.skinId, source: "extension" }, location.origin); } catch { /* */ }
     };
-    sendSkin(settings.skinId);
-    onSettingsChange((s) => sendSkin(s.skinId));
+    sendSkin(settings);
+    onSettingsChange((s) => sendSkin(s));
   }
 
   const bubble = renderBubble(shadow, settings);
@@ -216,7 +280,7 @@ async function bootstrap(norm: { domain: string; slug: string }): Promise<void> 
     skinsOverlay.className = "c0-skins";
     skinsOverlay.style.display = "none";
     root.appendChild(skinsOverlay);
-    if (s.skinId === AUTO_ID) root.classList.add("c0-matched");
+    if (host.hasAttribute(BRAND_ATTR)) root.classList.add("c0-matched");
     shadow.appendChild(root);
     const dockAction: ToolbarAction = side === "right"
       ? { icon: "dock-left",  i18nKey: "tooltipDockLeft",  onClick: () => { void switchSide("left"); } }
@@ -226,7 +290,7 @@ async function bootstrap(norm: { domain: string; slug: string }): Promise<void> 
       dockAction,
       { icon: "close", i18nKey: "tooltipClose", onClick: () => closePanel() },
     ];
-    const handle = mountChat(body, { domain: norm.domain, actions, onPresence(c) { bubble.setCount(c); } });
+    const handle = mountChat(body, { domain: norm.domain, actions, onPresence(c) { bubble.setCount(c); }, onBranding });
     panel = { handle, root, skinsOverlay };
     setupResize(grip, root, side);
   }
@@ -236,7 +300,7 @@ async function bootstrap(norm: { domain: string; slug: string }): Promise<void> 
     const ov = panel.skinsOverlay;
     if (ov.style.display === "none") {
       const st = await getSettings();
-      renderSkinsOverlay(ov, st.skinId);
+      renderSkinsOverlay(ov, st);
       ov.style.display = "block";
     } else {
       ov.style.display = "none";

@@ -17,6 +17,7 @@ export interface Settings {
   panelSide: "left" | "right";   // which edge the docked panel attaches to
   panelWidth: number;            // px, clamped 300..620
   skinId: string;                // @mosadd/skins id — controls the look of chat + bubble
+  brandMatch: "auto" | "off";    // BM-1: auto-tint accents with the host site's brand color (per-domain)
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -26,6 +27,7 @@ export const DEFAULT_SETTINGS: Settings = {
   panelSide: "right",
   panelWidth: 380,
   skinId: "mosadd-dark",
+  brandMatch: "auto",
 };
 
 const KEY = "channel0.settings";

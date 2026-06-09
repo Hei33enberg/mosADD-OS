@@ -61,8 +61,8 @@ const FALLBACK: Record<MsgId, string> = {
   tooltipShare: "Share this room",
   tooltipSkins: "Theme",
   skinsTitle: "Theme",
-  skinAutoLabel: "Match this site",
-  skinAutoHint: "adopt this site's colors",
+  skinAutoLabel: "Match this site's color",
+  skinAutoHint: "this site's brand color on the mURL dark theme",
 };
 
 export function t(id: MsgId, ...subs: string[]): string {

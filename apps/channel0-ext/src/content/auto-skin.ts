@@ -151,6 +151,59 @@ export function extractAutoTokens(): AutoTokens {
   };
 }
 
+// =============================================================================
+// BM-1 (accent-only): extract ONLY the host page's brand color and overlay it on
+// our accent tokens, keeping the mURL dark shell intact. Unlike the full `auto`
+// skin above, this never touches bg/fg/card — the panel always looks like mURL,
+// just wearing the site's brand color. Contrast is guaranteed against OUR dark
+// surface (#0a0a0a), never the host bg, so the accent is never unreadable here.
+// =============================================================================
+
+/** Our dark shell surface (mosadd-dark --m-card). Brand accents are contrast-
+ *  checked against THIS, so any extracted/owner/seeded color reads on our panel. */
+const OUR_DARK_BG: RGB = { r: 10, g: 10, b: 10 };
+/** Target a hair above the 4.5 AA line so the accent still clears AA *after* the
+ *  float→8-bit-hex quantization (a bare 4.5 target can round to 4.49). */
+const BRAND_MIN_CONTRAST = 4.6;
+
+export interface BrandAccent {
+  accent: string;
+  ok: boolean; // false = no real brand found (fallback green); don't persist as authoritative
+  src: "root" | "meta" | "ranked" | "fallback";
+}
+
+/** Pull just the brand accent from the host page, made readable on our shell. */
+export function extractBrandAccent(): BrandAccent {
+  let raw: RGB | null = null;
+  let src: BrandAccent["src"] = "fallback";
+  const fromRoot = rootCustomAccent();
+  if (fromRoot) { raw = fromRoot; src = "root"; }
+  if (!raw) { const m = metaThemeAccent(); if (m) { raw = m; src = "meta"; } }
+  if (!raw) { const r = rankedAccent(readBg()); if (r) { raw = r; src = "ranked"; } }
+  if (!raw) return { accent: C.toHex(DARK_FALLBACK_ACCENT), ok: false, src: "fallback" };
+  const guarded = C.ensureContrast(raw, OUR_DARK_BG, BRAND_MIN_CONTRAST);
+  return { accent: C.toHex(guarded), ok: true, src };
+}
+
+/** Overlay CSS: brand accent on accent tokens ONLY, keyed on `data-murl-brand`.
+ *  Re-runs the contrast guard so owner/seeded colors (not just locally-extracted
+ *  ones) are always readable on our dark shell. */
+export function brandAccentCss(accentHex: string): string {
+  const parsed = C.parseColor(accentHex) ?? DARK_FALLBACK_ACCENT;
+  const accent = C.ensureContrast(parsed, OUR_DARK_BG, BRAND_MIN_CONTRAST);
+  const hex = C.toHex(accent);
+  const nicks = buildNicks(accent, OUR_DARK_BG, "dark");
+  const vars = [
+    `--m-primary:${hex}`,
+    `--m-accent:${hex}`,
+    `--m-primary-fg:${C.isLight(accent) ? "#0a0a0a" : "#000000"}`,
+    `--m-glow:${C.rgbaStr(accent, 0.45)}`,
+    `--m-grid:${C.rgbaStr(accent, 0.06)}`,
+    ...nicks.map((n, i) => `--m-nick-${i + 1}:${n}`),
+  ].join(";");
+  return `:host([data-murl-brand]), :root[data-murl-brand], .m-root[data-murl-brand] { ${vars} }`;
+}
+
 /** Produce the CSS for the synthetic `auto` skin (triple-selector, like every
  *  other skin) so the existing data-murl-skin="auto" switch picks it up. */
 export function autoSkinCss(t: AutoTokens): string {

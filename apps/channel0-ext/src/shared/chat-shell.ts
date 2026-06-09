@@ -11,6 +11,7 @@ import { getDeviceToken, getNickFor, setNickFor } from "../lib/identity-store";
 import { joinDomain, openChannelSocket, sendChat, type ChatMessage, type JoinResult } from "../lib/client";
 import { t } from "../lib/i18n";
 import { reportMessage, type ReportReason } from "../lib/moderation";
+import { getBrand } from "../lib/brand-store";
 
 export interface ToolbarAction {
   icon: "dock-left" | "dock-right" | "settings" | "close" | "flame" | "share" | "skins";
@@ -24,6 +25,9 @@ export interface MountOptions {
   actions?: ToolbarAction[];
   autoJoinIfKnown?: boolean;
   onPresence?: (count: number) => void;
+  /** Server branding from join (owner accent_color / seeded auto_brand) — lets
+   *  the content script resolve the per-domain brand accent (BM-1 precedence). */
+  onBranding?: (branding: Record<string, unknown>) => void;
 }
 
 export interface MountHandle { destroy(): void; }
@@ -45,7 +49,7 @@ const ICON_SVG: Record<ToolbarAction["icon"], string> = {
 function pad(n: number): string { return n.toString().padStart(2, "0"); }
 
 export function mountChat(container: HTMLElement, opts: MountOptions): MountHandle {
-  const { domain, actions = [], autoJoinIfKnown = true, onPresence } = opts;
+  const { domain, actions = [], autoJoinIfKnown = true, onPresence, onBranding } = opts;
   let ws: WebSocket | null = null;
   let destroyed = false;
   let manualClose = false;
@@ -264,9 +268,13 @@ export function mountChat(container: HTMLElement, opts: MountOptions): MountHand
     if (destroyed || manualClose) return;
     try {
       // Re-mint on every (re)connect → always a fresh 5-min token, no expiry death.
-      const join: JoinResult = await joinDomain({ domain, deviceToken, nick, signal: abort.signal });
+      // Carry the locally-extracted brand accent so the first visitor seeds the
+      // shared per-domain brand server-side (Phase 2); first-writer-wins server-side.
+      const brandAccent = (await getBrand(domain))?.accent;
+      const join: JoinResult = await joinDomain({ domain, deviceToken, nick, brandAccent, signal: abort.signal });
       if (destroyed) return;
       applyBranding(head, pinSlot, join.branding ?? {}, join.status);
+      onBranding?.(join.branding ?? {});
       if (join.status === "blocked") {
         setConn("");
         pushSystem(feed, t("errBlocked"));
