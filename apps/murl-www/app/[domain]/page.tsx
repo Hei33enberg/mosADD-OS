@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
+import type { CSSProperties } from 'react';
 import { notFound } from 'next/navigation';
 import { normalizeDomain } from '../../lib/domain';
-import { TRENDING_URL } from '../../lib/site';
+import { TRENDING_URL, MURL_CHANNELS_URL } from '../../lib/site';
 import { JoinController } from './join-client';
 
 interface PageProps { params: Promise<{ domain: string }> }
@@ -39,15 +40,58 @@ async function fetchActivity(slug: string): Promise<{ messages: number; status: 
   } catch { return null; }
 }
 
+/** BM-5 Phase 2.5: the room's brand color (owner accent_color > seeded auto_brand),
+ *  so the landing wears the same accent as the in-chat panel. Null = keep default. */
+async function fetchBrandAccent(slug: string): Promise<string | null> {
+  try {
+    const r = await fetch(MURL_CHANNELS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'domain', slug }),
+      next: { revalidate: 60 },
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!r.ok) return null;
+    const d = (await r.json()) as { channel?: { branding?: { accent_color?: unknown; auto_brand?: { accent?: unknown } } } | null };
+    const b = d.channel?.branding;
+    const owner = typeof b?.accent_color === 'string' ? b.accent_color : null;
+    const seeded = typeof b?.auto_brand?.accent === 'string' ? b.auto_brand.accent : null;
+    const accent = owner ?? seeded;
+    return accent && /^#[0-9a-f]{6}$/i.test(accent) ? accent : null;
+  } catch { return null; }
+}
+
+/** Brand hex → "H S% L%" so it can drive the site's `--primary` HSL token. */
+function hexToHslTriplet(hex: string): string | null {
+  const m = /^#([0-9a-f]{6})$/i.exec(hex);
+  if (!m) return null;
+  const r = parseInt(hex.slice(1, 3), 16) / 255, g = parseInt(hex.slice(3, 5), 16) / 255, b = parseInt(hex.slice(5, 7), 16) / 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
+  let h = 0, s = 0;
+  if (d) {
+    s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+    switch (mx) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      default: h = (r - g) / d + 4; break;
+    }
+    h *= 60;
+  }
+  return `${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+}
+
 export default async function ChannelLanding({ params }: PageProps) {
   const { domain: raw } = await params;
   const norm = normalizeDomain(decodeURIComponent(raw));
   if (!norm) notFound();
 
-  const activity = await fetchActivity(norm.slug);
+  const [activity, accent] = await Promise.all([fetchActivity(norm.slug), fetchBrandAccent(norm.slug)]);
+  // Tint only the accent token (--primary); the rest of the page stays mURL.
+  const hsl = accent ? hexToHslTriplet(accent) : null;
+  const brandStyle = hsl ? ({ '--primary': hsl } as CSSProperties) : undefined;
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-14">
+    <div className="mx-auto max-w-3xl px-6 py-14" style={brandStyle}>
       <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">mURL · #{norm.domain}</div>
       <h1 className="font-display mt-2 text-4xl font-bold text-foreground md:text-5xl">
         Join the chat for <span className="text-primary">#{norm.domain}</span>

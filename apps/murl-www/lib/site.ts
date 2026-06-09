@@ -12,6 +12,11 @@ export const DEMO_MODE = true;
 export const TRENDING_URL =
   'https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/channel0-trending';
 
+// Per-domain discovery (status + branding for one slug) — powers the /[domain]
+// brand tint (BM-5 Phase 2.5). Public edge fn (verify_jwt=false).
+export const MURL_CHANNELS_URL =
+  'https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/murl-channels';
+
 export const MOSADD_DEV = 'https://mosadd.dev';
 export const MOSADD_COM = 'https://mosadd.com';
 export const GITHUB_URL = 'https://github.com/Hei33enberg/mosadd-os';
