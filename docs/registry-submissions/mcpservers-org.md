@@ -26,7 +26,7 @@
 
 > ## Add mosadd MCP server
 >
-> An OS for human communications, MCP-native. 65 live tools across 7 modules (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mRAG, mURL), plus the embeddable 167-event threat-engine.
+> An OS for human communications, MCP-native. 65 live tools across 7 modules (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mRAG, mURL), plus the embeddable 166-event threat-engine.
 >
 > **Differentiator:** `mROOM_create_guest_link` generates a short-lived no-signup URL — one MCP call from any agent, no other registered server exposes this.
 >

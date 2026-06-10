@@ -10,7 +10,7 @@
  * their own Supabase URL + anon key + a session JWT via env vars (BYOK).
  *
  * Phase 2 will route through the hosted gateway (mcp.mosadd.com) with the
- * 167-event radar middleware in front, and replace the plaintext
+ * 166-event radar middleware in front, and replace the plaintext
  * encrypted_payload with real X3DH + Double Ratchet via @mosadd/crypto.
  */
 

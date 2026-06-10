@@ -51,7 +51,7 @@ mosadd is the OS for human communications: instead of stitching Twilio + LiveKit
 - mRAG (4 tools) — Encrypted knowledge base, RAG recall
 - mURL (4 tools) — Real-time chat attached to any web domain, agent-native ("IRC for URLs")
 
-Plus the embeddable `@mosadd/threat-engine` — a 167-event threat radar.
+Plus the embeddable `@mosadd/threat-engine` — a 166-event threat radar.
 
 **License:** Apache-2.0. **Repo:** https://github.com/Hei33enberg/mosadd-os
 

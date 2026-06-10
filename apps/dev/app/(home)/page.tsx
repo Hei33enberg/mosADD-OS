@@ -25,7 +25,7 @@ const threats = [
   },
   {
     t: 'Threat radar — Iron Dome',
-    d: 'The Iron Dome detection layer scans for known spyware signatures, SS7 routing anomalies, IMSI-catcher fingerprints and exfiltration patterns — designed to flag Pegasus-class implants. The same 167-event engine shipping in @mosadd/threat-engine.',
+    d: 'The Iron Dome detection layer scans for known spyware signatures, SS7 routing anomalies, IMSI-catcher fingerprints and exfiltration patterns — designed to flag Pegasus-class implants. The same 166-event engine shipping in @mosadd/threat-engine.',
   },
 ];
 
@@ -101,7 +101,7 @@ export default function HomePage() {
         <SectionTag n="03" label="Iron Dome" />
         <h2 className="font-display text-3xl font-semibold tracking-tight">Iron Dome is not a feature. It is the kernel.</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          mosadd ships the same 167-event threat engine (<code className="font-mono text-primary">@mosadd/threat-engine</code>) that powers
+          mosadd ships the same 166-event threat engine (<code className="font-mono text-primary">@mosadd/threat-engine</code>) that powers
           mosadd.com as a package you embed in your own app — the radar is a primitive you get, not a hosted service watching your traffic.
         </p>
         <div className="mt-8 grid gap-px overflow-hidden border border-border bg-border md:grid-cols-3">

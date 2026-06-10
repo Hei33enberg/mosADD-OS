@@ -36,7 +36,7 @@ export default function ModulesPage() {
       <Table
         headers={['Module', 'Tools', 'Description', 'Status']}
         rows={[
-          [<Anchor key="threat-engine" href="/docs/modules/threat-engine">threat-engine</Anchor>, '—', '167-event threat taxonomy + scoring (embeddable radar engine)', 'alpha'],
+          [<Anchor key="threat-engine" href="/docs/modules/threat-engine">threat-engine</Anchor>, '—', '166-event threat taxonomy + scoring (embeddable radar engine)', 'alpha'],
         ]}
       />
 

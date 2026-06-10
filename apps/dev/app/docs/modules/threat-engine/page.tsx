@@ -4,31 +4,31 @@ import { Prose, H1, Lead, H2, H3, P, Ul, Pre, Table, Anchor, Callout } from '../
 export const metadata: Metadata = {
   title: 'Threat Engine',
   description:
-    'The 167-event threat taxonomy + scoring — the kernel security primitive, as an embeddable package. @mosadd/threat-engine ships the same engine that powers the mosadd.com radar.',
+    'The 166-event threat taxonomy + scoring — the kernel security primitive, as an embeddable package. @mosadd/threat-engine ships the same engine that powers the mosadd.com radar.',
 };
 
 export default function ThreatEnginePage() {
   return (
     <Prose>
       <H1>Threat Engine</H1>
-      <Lead>The 167-event threat taxonomy + scoring — the kernel security primitive, as an embeddable package.</Lead>
+      <Lead>The 166-event threat taxonomy + scoring — the kernel security primitive, as an embeddable package.</Lead>
 
       <P>
         <code className="font-mono text-primary">@mosadd/threat-engine</code> (Apache-2.0) is the{' '}
         <strong>same engine</strong> that powers the mosadd.com app&apos;s radar. Ship it in <em>your</em> app
-        (Electron / mobile / web) so you don&apos;t have to rewrite 167 detections from scratch. It is a pure,
+        (Electron / mobile / web) so you don&apos;t have to rewrite 166 detections from scratch. It is a pure,
         side-effect-free decision function — events in, a defensive verdict out — so it runs anywhere with no backend.
       </P>
 
       <Callout type="info">
-        <strong>Status: alpha.</strong> The decision engine is live and embeddable today. The full 167-event taxonomy
+        <strong>Status: alpha.</strong> The decision engine is live and embeddable today. The full 166-event taxonomy
         port lands incrementally across the <code className="font-mono">3.0.0-alpha</code> line.
       </Callout>
 
       <H2>Install</H2>
       <Pre lang="bash">{`npm i @mosadd/threat-engine@alpha`}</Pre>
 
-      <H2>The 167-event taxonomy</H2>
+      <H2>The 166-event taxonomy</H2>
       <P>
         Every module&apos;s &ldquo;Threat radar hooks&rdquo; emits events tagged with one of six category prefixes.
         Here is the reference so you finally know what each one means:

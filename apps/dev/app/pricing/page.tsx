@@ -90,7 +90,7 @@ const tiers: Tier[] = [
       'Unlimited MAT / messages / RAG searches',
       'SSO / SAML · RBAC · NIS2 audit-log retention',
       'DPA · dedicated infra · 99.95% SLO',
-      'Threat radar 167-event feed',
+      'Threat radar 166-event feed',
       'Self-host in your VPC also supported',
     ],
     cta: { label: 'Talk to us', href: 'mailto:hello@mosadd.com?subject=mosadd%20Enterprise' },
@@ -196,7 +196,7 @@ export default function PricingPage() {
             'NIS2-grade audit-log retention',
             'E2EE (X3DH + Double Ratchet) on mDM',
             'BYOK key broker — your provider keys never leave you',
-            'Threat radar: 167-event scoring across every channel',
+            'Threat radar: 166-event scoring across every channel',
             'DPA + dedicated channel + 99.95% uptime SLO',
           ].map((f) => (
             <div key={f} className="flex gap-2">

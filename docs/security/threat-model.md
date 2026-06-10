@@ -2,7 +2,7 @@
 
 Last reviewed: 2026-05-27. Owner: AG (Hei33enberg).
 
-STRIDE-derived threat model for the public Apache-2.0 layer of mosadd. Covers the MCP server and the per-channel m* modules. The proprietary hub (radar 167-event, BYOK broker, billing) has its own private threat model in a separate proprietary repo.
+STRIDE-derived threat model for the public Apache-2.0 layer of mosadd. Covers the MCP server and the per-channel m* modules. The proprietary hub (radar 166-event, BYOK broker, billing) has its own private threat model in a separate proprietary repo.
 
 ## Scope
 
@@ -18,7 +18,7 @@ Out of scope:
 - The hosted hub (`mcp.mosadd.com`, `hub.mosadd.com`) — proprietary
 - Consumer apps (`mosadd.com`, PWA, Android, iOS, Electron)
 - Hardware firmware (separate project, out of scope here)
-- The 167-event radar middleware
+- The 166-event radar middleware
 
 ## Assets
 

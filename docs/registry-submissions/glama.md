@@ -19,14 +19,14 @@
 
 ## Summary
 
-mosadd is an MCP-native operating system for human communications. **65 live tools across 7 live modules** in alpha (mDM, mIRC, mROOM, mAIL, mTALK, mRAG, mURL), plus the embeddable `@mosadd/threat-engine` 167-event radar.
+mosadd is an MCP-native operating system for human communications. **65 live tools across 7 live modules** in alpha (mDM, mIRC, mROOM, mAIL, mTALK, mRAG, mURL), plus the embeddable `@mosadd/threat-engine` 166-event radar.
 
 ## Differentiators
 
 1. **Semantic OS primitives** vs vendor-wrappers. `mROOM_create_guest_link` is one MCP call; competitors require composing 4-5 SDKs.
 2. **No-account join links** — generate a short-lived URL that lets a guest enter a room without signing up for mosadd. No other registered MCP server exposes this.
 3. **Multi-thread per contact** — DMs can have multiple named threads with the same contact, unlike WhatsApp/Telegram's flat chat model.
-4. **167-event threat radar** middleware — every operation emits events; Phase 2 hub scores them and can block abuse, deepfakes, prompt-injection cross-platform.
+4. **166-event threat radar** middleware — every operation emits events; Phase 2 hub scores them and can block abuse, deepfakes, prompt-injection cross-platform.
 5. **Vendor-agnostic by design** — same primitives over Supabase (today), with a forked LiveKit + nwaku P2P backbone in follow-ups. Your keys or self-host.
 
 ## Maturity

@@ -36,7 +36,7 @@ mosadd treats human communication as an OS treats IPC: orthogonal primitives acc
 - **mRAG** — Knowledge base RAG recall
 - **mURL** — Real-time chat attached to any web domain, agent-native ("IRC for URLs")
 
-Plus the embeddable `@mosadd/threat-engine` — a 167-event threat radar that scores every operation.
+Plus the embeddable `@mosadd/threat-engine` — a 166-event threat radar that scores every operation.
 
 ## Categories
 

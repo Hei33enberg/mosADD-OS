@@ -86,7 +86,7 @@ This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.
 | `mROOM` | Ephemeral rooms + no-account join links | **alpha (shipped)** |
 | `mURL` | Real-time chat attached to any web domain, agent-native ("IRC for URLs") | **alpha (shipped)** |
 
-Plus [`@mosadd/threat-engine`](./packages/threat-engine) — the embeddable 167-event threat radar that scores every operation.
+Plus [`@mosadd/threat-engine`](./packages/threat-engine) — the embeddable 166-event threat radar that scores every operation.
 
 ## Architecture
 
@@ -100,7 +100,7 @@ Plus [`@mosadd/threat-engine`](./packages/threat-engine) — the embeddable 167-
 
 **Commercial hub** (proprietary, hosted at `mcp.mosadd.com` + `hub.mosadd.com`):
 - Hosted MCP gateway with OAuth + BYOK key broker
-- 167-event threat radar middleware (the moat)
+- 166-event threat radar middleware (the moat)
 - Unified billing across providers
 - Enterprise self-host packaging + NIS2 audit trail
 

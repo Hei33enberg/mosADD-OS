@@ -21,7 +21,7 @@ export default function SecurityPage() {
         <li><strong>Zero-knowledge storage.</strong> The hosted layer stores opaque ciphertext for encrypted surfaces; it can&apos;t be compelled to produce plaintext it never holds.</li>
         <li><strong>RLS on every table.</strong> Row-level security is enforced per-tenant across the whole schema, with coverage verified in CI.</li>
         <li><strong>Cryptographic identity.</strong> Ed25519, not email/phone — no PII at the identity layer.</li>
-        <li><strong>Threat radar (DECK).</strong> The same 167-event detection engine that flags Pegasus-class implants on <strong>mosadd.com</strong> ships as <code className="font-mono text-primary">@mosadd/threat-engine</code> — the dev toolkit stays comms-focused, and you embed the engine as a kernel primitive in your own app. See <Anchor href="/docs/modules/threat-engine">threat-engine</Anchor>.</li>
+        <li><strong>Threat radar (DECK).</strong> The same 166-event detection engine that flags Pegasus-class implants on <strong>mosadd.com</strong> ships as <code className="font-mono text-primary">@mosadd/threat-engine</code> — the dev toolkit stays comms-focused, and you embed the engine as a kernel primitive in your own app. See <Anchor href="/docs/modules/threat-engine">threat-engine</Anchor>.</li>
         <li><strong>Hardened supply chain.</strong> SBOM (SPDX 2.3) per package, CodeQL, gitleaks and license-check on every PR. Apache-2.0 — audit the source yourself.</li>
       </Ul>
 

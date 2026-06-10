@@ -94,7 +94,7 @@ Shells are functional standalone if user has their own Supabase backend (BYOK). 
 - Single-sign-on across shells (OAuth via `hub.mosadd.com`)
 - Cross-device sync of channels/threads/contacts
 - Billing for hosted PSTN minutes / hosted PTT minutes
-- 167-event radar evaluation server-side
+- 166-event radar evaluation server-side
 
 A user can run apps/web today against their own Supabase without ever touching the hub. The hub is a convenience product.
 

@@ -191,22 +191,22 @@ npx -y @mosadd/mcp@alpha`}</pre>
           <div className="border border-border p-4 bg-card">
             <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Pro</div>
             <div className="text-lg font-bold mb-1">$9/mo</div>
-            <div className="text-xs text-muted-foreground mb-4">50k messages · mRAG (rag-search) · 10h PTT</div>
+            <div className="text-xs text-muted-foreground mb-4">10,000 MAT · 1,000 RAG searches · 5 keys · PAYG cap 2× plan</div>
             <button onClick={() => upgrade("pro")} disabled={busy} className="w-full bg-primary text-primary-foreground px-3 py-2 text-xs font-bold uppercase tracking-widest hover:opacity-70 transition" style={busy ? { opacity: 0.5, cursor: "not-allowed" } : {}}>
               Upgrade
             </button>
           </div>
           <div className="border border-border p-4 bg-card">
             <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Team</div>
-            <div className="text-lg font-bold mb-1">$49/mo</div>
-            <div className="text-xs text-muted-foreground mb-4">500k messages · 10 seats · 100h PTT</div>
+            <div className="text-lg font-bold mb-1">$29/mo</div>
+            <div className="text-xs text-muted-foreground mb-4">100,000 MAT · 10,000 RAG searches · unlimited keys · white-label</div>
             <button onClick={() => upgrade("team")} disabled={busy} className="w-full bg-primary text-primary-foreground px-3 py-2 text-xs font-bold uppercase tracking-widest hover:opacity-70 transition" style={busy ? { opacity: 0.5, cursor: "not-allowed" } : {}}>
               Upgrade
             </button>
           </div>
         </div>
         <p className="text-xs text-muted-foreground mt-4">
-          Stripe TEST mode. Use a test card like <code>4242 4242 4242 4242</code> · any future date · any CVC.
+          Secure checkout via Stripe. Hard spend cap = 2× plan price — no surprise bills. Cancel anytime.
         </p>
       </section>
 

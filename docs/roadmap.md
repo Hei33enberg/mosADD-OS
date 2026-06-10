@@ -29,7 +29,7 @@ Operated by mosadd commercial entity at [hub.mosadd.com](https://hub.mosadd.com)
 
 - [ ] Hosted MCP `mcp.mosadd.com` with OAuth ([LINEAR-2158](https://linear.app/ip-ra/issue/LINEAR-2158))
 - [ ] BYOK key brokerage ([LINEAR-2159](https://linear.app/ip-ra/issue/LINEAR-2159))
-- [ ] **167-event threat radar middleware (THE MOAT)** ([LINEAR-2160](https://linear.app/ip-ra/issue/LINEAR-2160))
+- [ ] **166-event threat radar middleware (THE MOAT)** ([LINEAR-2160](https://linear.app/ip-ra/issue/LINEAR-2160))
 - [ ] Stripe pricing tiers ([LINEAR-2161](https://linear.app/ip-ra/issue/LINEAR-2161))
 - [ ] SaaS dashboard ([LINEAR-2162](https://linear.app/ip-ra/issue/LINEAR-2162))
 

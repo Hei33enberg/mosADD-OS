@@ -95,6 +95,6 @@ tags:
 > - **OS-level semantic primitives**, not vendor wrappers. RFC 0001 formalizes the `m<MODULE>_<operation>` naming convention.
 > - **mROOM_create_guest_link** — single MCP call generates a short-lived no-signup join URL. To my knowledge no other registered server exposes this.
 > - **Vendor-agnostic provider abstraction** — same primitives work over Supabase today, with a forked LiveKit + nwaku (p2p) backbone in follow-ups. Bring your own keys or self-host.
-> - **Threat-radar middleware** hooks (167-event taxonomy) — emitted from every operation, scored server-side by the commercial hub (Phase 2).
+> - **Threat-radar middleware** hooks (166-event taxonomy) — emitted from every operation, scored server-side by the commercial hub (Phase 2).
 >
 > Happy to address any review comments. Maintainer contact: see CODEOWNERS in the repo.

@@ -16,7 +16,8 @@ export default function QuickstartPage() {
       <Pre lang="bash">{`claude mcp add mosadd -- npx -y @mosadd/mcp@alpha`}</Pre>
       <P>Restart Claude Code. The <code className="font-mono text-primary">mosadd</code> MCP server is now connected. Try:</P>
       <Callout type="info">
-        Send a DM to <code className="font-mono">alice@mosadd</code>: "first message from Claude"
+        Send a DM with <code className="font-mono">mDM_send</code> — the recipient is a mosadd account id (a UUID).
+        Grab yours from the <Anchor href="https://mosadd.dev/hub">hub</Anchor> and message your own id to watch it round-trip.
       </Callout>
       <P>Claude will call <code className="font-mono text-primary">mDM_send</code> under the hood.</P>
 
@@ -49,21 +50,23 @@ export default function QuickstartPage() {
         until then, use the local stdio server (<code className="font-mono">npx @mosadd/mcp@alpha</code>) with your hub key.
       </P>
 
-      <H2 id="byok-config">BYOK config</H2>
-      <P>Local stdio uses env vars per provider:</P>
-      <Pre lang="bash">{`# DM / IRC / ROOM (default Supabase backend)
-MOSADD_SUPABASE_URL=...
-MOSADD_SUPABASE_KEY=...
-
-# mAIL outbound
-MOSADD_RESEND_API_KEY=...
-
-# mTALK / mROOM voice (LiveKit)
-MOSADD_LIVEKIT_URL=wss://...
-MOSADD_LIVEKIT_API_KEY=...
-MOSADD_LIVEKIT_API_SECRET=...`}</Pre>
+      <H2 id="byok-config">Auth config</H2>
       <P>
-        Missing keys = that channel is disabled in <code className="font-mono text-primary">comms_capabilities</code>. No-op fail closed.
+        <strong>Recommended — one hosted key.</strong> Paste a single hub key; the server exchanges it for a
+        scoped session, so every tool acts as the key&apos;s owner. mAIL (email) and voice run through the mosadd
+        relay — no provider keys to manage.
+      </P>
+      <Pre lang="bash">{`MOSADD_API_KEY=mk_...   # from mosadd.dev/hub`}</Pre>
+      <P>
+        <strong>Or bring your own Supabase backend</strong> (advanced / self-host). These are the exact vars the
+        server reads:
+      </P>
+      <Pre lang="bash">{`MOSADD_SUPABASE_URL=https://<project>.supabase.co
+MOSADD_SUPABASE_ANON_KEY=...
+MOSADD_USER_JWT=...   # a signed-in user's access token`}</Pre>
+      <P>
+        Missing auth = that channel is disabled in <code className="font-mono text-primary">comms_capabilities</code>. No-op, fail closed.
+        See <Anchor href="/docs/auth">auth</Anchor> for the full hub-key vs BYOK vs embed breakdown.
       </P>
 
       <H3>Next steps</H3>
