@@ -19,11 +19,7 @@ export default function DevelopersPage() {
   return (
     <div className="mx-auto max-w-4xl px-6">
       {/* Hero */}
-      <section className="relative overflow-hidden border-x border-border px-6 py-16 md:py-20">
-        <span className="hud-bracket hud-tl" />
-        <span className="hud-bracket hud-tr" />
-        <span className="hud-bracket hud-bl" />
-        <span className="hud-bracket hud-br" />
+      <section className="relative overflow-hidden px-6 py-16 md:py-20">
         <div className="mb-4 text-xs uppercase tracking-[0.3em] text-primary/80">mURL · for developers</div>
         <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-foreground md:text-5xl">
           mURL is for <span className="text-primary text-glow">people</span>, not a platform.
@@ -36,7 +32,7 @@ export default function DevelopersPage() {
       </section>
 
       {/* → mIRC funnel */}
-      <section className="border-x border-b border-border px-6 py-14">
+      <section className="px-6 py-14">
         <div className="border border-primary/30 bg-primary/[0.05] p-8">
           <div className="mb-2 text-xs uppercase tracking-[0.25em] text-muted-foreground">Building chat yourself?</div>
           <h2 className="font-display text-3xl font-semibold">
@@ -64,7 +60,7 @@ export default function DevelopersPage() {
       </section>
 
       {/* mURL is open source (transparency, not a product pitch) */}
-      <section className="grid gap-px border-x border-b border-border bg-border md:grid-cols-2">
+      <section className="grid gap-px bg-border md:grid-cols-2">
         <div className="bg-background p-8">
           <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary/80">Open source</div>
           <h3 className="font-display text-xl font-semibold">Curious how mURL works?</h3>
@@ -90,7 +86,7 @@ export default function DevelopersPage() {
         </div>
       </section>
 
-      <section className="border-x border-b border-border px-6 py-10 text-sm text-muted-foreground">
+      <section className="px-6 py-10 text-sm text-muted-foreground">
         Just here to chat? <Link className="text-primary underline" href="/">Get mURL</Link> — it’s free.
       </section>
     </div>

@@ -51,11 +51,7 @@ export default function Channel0Page() {
   return (
     <div className="mx-auto max-w-6xl px-6">
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden border-x border-border">
-        <span className="hud-bracket hud-tl" />
-        <span className="hud-bracket hud-tr" />
-        <span className="hud-bracket hud-bl" />
-        <span className="hud-bracket hud-br" />
+      <section className="relative overflow-hidden">
         <div className="scan-sweep" />
         <div className="px-6 py-24 md:py-32">
           <div className="mb-5 text-xs uppercase tracking-[0.35em] text-primary/80">
@@ -112,7 +108,7 @@ export default function Channel0Page() {
       </section>
 
       {/* ── Install in 3 steps ── */}
-      <section className="border-x border-b border-border px-6 py-16">
+      <section className="px-6 py-16">
         <div className="mb-8">
           <div className="mb-2 text-xs uppercase tracking-[0.25em] text-muted-foreground">Install</div>
           <h2 className="font-display text-3xl font-semibold">Live on any site in three steps</h2>
@@ -151,7 +147,7 @@ export default function Channel0Page() {
       </section>
 
       {/* ── Why it works ── */}
-      <section className="grid gap-8 border-x border-b border-border px-6 py-16 md:grid-cols-3">
+      <section className="grid gap-8 px-6 py-16 md:grid-cols-3">
         {why.map((w) => (
           <div key={w.title}>
             <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary">{w.kicker}</div>
@@ -162,7 +158,7 @@ export default function Channel0Page() {
       </section>
 
       {/* ── Stack ── */}
-      <section className="border-x border-b border-border px-6 py-16">
+      <section className="px-6 py-16">
         <div className="mb-8">
           <div className="mb-2 text-xs uppercase tracking-[0.25em] text-muted-foreground">Stack</div>
           <h2 className="font-display text-3xl font-semibold">
@@ -184,7 +180,7 @@ export default function Channel0Page() {
       </section>
 
       {/* ── For domain owners ── */}
-      <section id="own-a-domain" className="border-x border-b border-border px-6 py-16 scroll-mt-20">
+      <section id="own-a-domain" className="px-6 py-16 scroll-mt-20">
         <div className="grid gap-8 md:grid-cols-2">
           <div>
             <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary">Own a domain?</div>
@@ -221,7 +217,7 @@ _mosadd-murl.zalando.pl.  IN  TXT  "v=0; key=<your-token>"`}</Terminal>
       </section>
 
       {/* ── Energizer note ── */}
-      <section className="border-x border-b border-border px-6 py-16">
+      <section className="px-6 py-16">
         <div className="grid gap-8 md:grid-cols-[1fr_auto]">
           <div>
             <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary">Why we built it</div>
@@ -247,7 +243,7 @@ _mosadd-murl.zalando.pl.  IN  TXT  "v=0; key=<your-token>"`}</Terminal>
       </section>
 
       {/* ── Legal posture ── */}
-      <section className="border-x border-b border-border px-6 py-12">
+      <section className="px-6 py-12">
         <div className="grid gap-4 md:grid-cols-[200px_1fr]">
           <div className="font-display text-sm text-primary">Legal posture</div>
           <div className="text-sm text-muted-foreground">
