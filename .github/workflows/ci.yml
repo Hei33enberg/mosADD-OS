@@ -82,3 +82,30 @@ jobs:
             npm pack --dry-run 2>&1 | tail -5
             cd ../..
           done
+
+  # Standalone Next.js apps live outside the pnpm workspace (own package-lock, npm),
+  # so the package job above never builds them. Build them here so a TS error or a
+  # broken import in the public site/hub can't merge undetected. (murl-www and
+  # channel0-ext are a separate agent's lane and deploy independently.)
+  apps:
+    name: apps · typecheck + build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [dev, hub]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+      - name: Install (apps/${{ matrix.app }})
+        working-directory: apps/${{ matrix.app }}
+        run: npm ci || npm install
+      - name: Typecheck (apps/${{ matrix.app }})
+        working-directory: apps/${{ matrix.app }}
+        run: npm run typecheck --if-present
+      - name: Build (apps/${{ matrix.app }})
+        working-directory: apps/${{ matrix.app }}
+        run: npm run build
