@@ -13,6 +13,10 @@ on:
         description: 'access (public, restricted)'
         required: true
         default: 'public'
+      move_latest:
+        description: 'also point npm "latest" at the current version (so a bare `npm i @mosadd/mcp` gets the current build, not the oldest)'
+        required: false
+        default: 'false'
 
 jobs:
   publish:
@@ -81,3 +85,21 @@ jobs:
           npm install "@mosadd/mcp@$TAG"
           ls node_modules/@mosadd/mcp/dist/bin/mcp.js
           echo "✓ @mosadd/mcp@$TAG installs and has the bin"
+
+      - name: Move 'latest' dist-tag (optional)
+        if: ${{ github.event.inputs.move_latest == 'true' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # Point `latest` at the version in each package.json so a bare
+          # `npm install @mosadd/<pkg>` resolves to the current build instead of
+          # the very first alpha.0 publish.
+          for pkg in protocol crypto providers core threat-engine bridges mcp ai; do
+            V=$(node -p "require('./packages/$pkg/package.json').version")
+            echo "→ @mosadd/$pkg@$V → latest"
+            if ! npm dist-tag add "@mosadd/$pkg@$V" latest 2> /tmp/dt.err; then
+              cat /tmp/dt.err
+              echo "↷ skip @mosadd/$pkg (not published at $V?)"
+            fi
+          done
+          echo "✓ latest dist-tags moved"
