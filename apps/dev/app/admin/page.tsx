@@ -22,7 +22,8 @@ interface Stats {
   overage_revenue_usd_month: number;
   mat_total_month: number;
   payg_enabled_count: number;
-  recent_creators: { user_id: string; product: string; created_at: string; last_used_at: string | null }[];
+  customers: { user_id: string; email: string | null; tier: string; mat_used_month: number; payg_enabled: boolean; keys_active: number; products: string[]; last_active: string | null }[];
+  recent_creators: { user_id: string; email?: string | null; product: string; created_at: string; last_used_at: string | null }[];
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -195,6 +196,24 @@ export default function AdminPage() {
               <div key={t} className="border border-border bg-card/30 p-3 text-center">
                 <div className="font-mono text-xl font-bold">{pm[t] ?? 0}</div>
                 <div className="text-[11px] uppercase tracking-widest text-muted-foreground">{t}</div>
+              </div>
+            ))}
+          </div>
+
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
+            Customers <span className="text-muted-foreground/60">({stats.customers?.length ?? 0})</span>
+          </h2>
+          <div className="border border-border divide-y divide-border mb-6">
+            {(!stats.customers || stats.customers.length === 0) && (
+              <div className="p-3 text-sm text-muted-foreground">No customers yet.</div>
+            )}
+            {(stats.customers ?? []).map((c) => (
+              <div key={c.user_id} className="flex items-center justify-between gap-3 p-3 text-xs">
+                <span className="font-mono truncate max-w-[220px]" title={c.user_id}>{c.email ?? `${c.user_id.slice(0, 8)}…`}</span>
+                <span className={`uppercase tracking-widest ${c.tier === 'free' ? 'text-muted-foreground' : 'text-primary'}`}>{c.tier}</span>
+                <span className="text-muted-foreground whitespace-nowrap">{c.keys_active} key{c.keys_active === 1 ? '' : 's'}</span>
+                <span className="text-muted-foreground whitespace-nowrap">{c.mat_used_month.toLocaleString()} MAT{c.payg_enabled ? ' · PAYG' : ''}</span>
+                <span className="text-muted-foreground whitespace-nowrap">{c.last_active ? new Date(c.last_active).toLocaleDateString() : '—'}</span>
               </div>
             ))}
           </div>
