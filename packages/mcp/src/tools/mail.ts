@@ -127,13 +127,17 @@ interface MailListItem {
 async function mAIL_send(
   input: z.infer<typeof mAIL_send_input>,
   ctx: MosaddToolContext,
-): Promise<{ message_id: string; queued_at: string }> {
+): Promise<{ message_id: string; status: string; is_internal: boolean }> {
   readSupabaseEnv();
   if (!input.body_text && !input.body_html) {
     throw new Error("mAIL_send requires at least one of body_text or body_html.");
   }
   ctx.log("debug", "mAIL_send invoking mp0st-send", { to: input.to });
-  return await invokeFunction<{ message_id: string; queued_at: string }>("mp0st-send", input);
+  // mp0st-send returns { ok, email_id, status, is_internal } — remap email_id to the
+  // tool's message_id contract (email_id IS the message id). Surface backend errors.
+  const res = await invokeFunction<{ ok?: boolean; email_id?: string; status?: string; is_internal?: boolean; error?: string }>("mp0st-send", input);
+  if (res.error) throw new Error(res.error);
+  return { message_id: res.email_id ?? "", status: res.status ?? "sent", is_internal: res.is_internal ?? false };
 }
 
 async function mAIL_view(

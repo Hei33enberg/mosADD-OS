@@ -108,9 +108,13 @@ async function mIRC_update(
 ): Promise<{ channel: unknown }> {
   readSupabaseEnv();
   ctx.log("debug", "mIRC_update invoking channel-manage", { channel_id: input.channel_id });
+  // channel-manage reads `description`, not `topic` — map it so topic edits aren't
+  // silently dropped.
+  const { topic, ...rest } = input as typeof input & { topic?: string };
+  const payload = topic !== undefined ? { ...rest, description: topic } : { ...rest };
   return await invokeFunction<{ channel: unknown }>("channel-manage", {
     action: "update",
-    ...input,
+    ...payload,
   });
 }
 
