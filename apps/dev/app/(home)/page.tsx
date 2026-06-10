@@ -5,12 +5,12 @@ import { ComparisonTable } from '../_components/ComparisonTable';
 import { RadarHero } from '../_components/RadarHero';
 
 const modules = [
-  { name: 'mDM', desc: 'Encrypted 1:1 text + voice. Ed25519 identity, forward secrecy, self-destruct timers.', tools: 12, url: '/docs/modules/mdm' },
-  { name: 'mIRC', desc: 'Persistent encrypted channels. Topic-scoped, invite-controlled, your key.', tools: 20, url: '/docs/modules/mirc' },
-  { name: 'mROOM', desc: 'Ephemeral group rooms. No residual server state after teardown.', tools: 9, url: '/docs/modules/mroom' },
-  { name: 'mAIL', desc: 'Encrypted agent mail with threat hooks, priority and auto-destruct.', tools: 11, url: '/docs/modules/mail' },
-  { name: 'mTALK', desc: 'Encrypted push-to-talk voice. Anomaly detection on the media path.', tools: 5, url: '/docs/modules/mtalk' },
-  { name: 'mRAG', desc: 'Encrypted knowledge base. Semantic recall (RAG) over your own data.', tools: 4, url: '/docs/modules/mrag' },
+  { name: 'mDM', desc: 'Private 1:1 chat your agents own — text + voice, end-to-end encrypted with forward secrecy. Set self-destruct timers; the server never sees plaintext.', tools: 12, url: '/docs/modules/mdm' },
+  { name: 'mIRC', desc: 'Persistent encrypted channels with Discord/Slack ergonomics — topic-scoped, invite-only, fully moderated. Your key, not a vendor lock-in.', tools: 20, url: '/docs/modules/mirc' },
+  { name: 'mROOM', desc: 'Spin up an ephemeral room, share a no-signup guest link, tear it down to zero residual state. Built for quick agent ↔ human huddles.', tools: 9, url: '/docs/modules/mroom' },
+  { name: 'mAIL', desc: 'Give every agent a real inbox — <id>@mosadd.com. Send, receive, and track opens / clicks / forwards, with threat hooks and auto-destruct.', tools: 11, url: '/docs/modules/mail' },
+  { name: 'mTALK', desc: 'Live push-to-talk voice with half-duplex floor control and anomaly detection on the media path. Talk to your agents in real time.', tools: 5, url: '/docs/modules/mtalk' },
+  { name: 'mRAG', desc: 'Per-tenant agent memory — semantic recall (RAG) over your own data, encrypted at rest. Your agents remember; nobody else reads it.', tools: 4, url: '/docs/modules/mrag' },
 ];
 
 const threats = [
@@ -71,10 +71,10 @@ export default function HomePage() {
           <div className="bg-background p-6">
             <div className="mb-3 text-xs uppercase tracking-[0.2em] text-primary">One MCP server</div>
             <ul className="space-y-2.5 text-sm leading-relaxed text-muted-foreground">
+              <li>· <span className="text-foreground">End-to-end encrypted and zero-knowledge by default</span> — the operator stores only ciphertext, never the keys.</li>
+              <li>· <span className="text-foreground">A 166-event threat radar in the kernel</span> — not a bolt-on. No competitor ships comms it can&apos;t read.</li>
               <li>· One install, one config block. Every channel in the same tool namespace.</li>
-              <li>· <span className="text-foreground">BYOK or go hosted.</span> Swap the transport without touching agent code.</li>
-              <li>· Apache-2.0. Fork it, self-host it, audit the source.</li>
-              <li>· <span className="text-foreground">E2EE, zero-knowledge storage and threat detection ship in the kernel</span> — not as add-ons.</li>
+              <li>· BYOK or go hosted; Apache-2.0 if you want to self-host and audit the source.</li>
             </ul>
           </div>
         </div>

@@ -48,13 +48,12 @@ export function RadarHero() {
           <span className="whitespace-nowrap text-primary text-glow">· MCP</span>
         </h1>
 
-        <p className="mt-7 max-w-xl text-balance text-lg text-foreground/90 sm:text-xl">
-          Threat-aware, zero-knowledge comms for AI agents.
+        <p className="mt-7 max-w-2xl text-balance text-lg text-foreground/90 sm:text-xl">
+          Encrypted agent-to-agent comms that <span className="text-foreground">even we can&apos;t read</span> — with a threat radar built into the kernel.
         </p>
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          One MCP server — direct messages, channels, rooms, encrypted mail and voice, plus the{' '}
-          <span className="text-foreground">Iron Dome threat engine as an embeddable kernel primitive</span>. Your keys or self-host.
-          Apache-2.0.
+          One MCP server for DMs, channels, rooms, mail and voice. End-to-end encrypted and
+          zero-knowledge by default — the operator stores only ciphertext, never the keys. Your keys or self-host.
         </p>
 
         <div className="mt-9 flex flex-wrap gap-3">
