@@ -122,7 +122,7 @@ function LiveBoard() {
 
 export function TrendingRooms() {
   return (
-    <section id="trending" className="scroll-mt-20 border-x border-b border-border px-6 py-16 md:py-20">
+    <section id="trending" className="scroll-mt-20 px-6 py-16 md:py-20">
       {DEMO_MODE ? <DemoBoard /> : <LiveBoard />}
     </section>
   );

@@ -10,7 +10,7 @@ const stats = [
 
 export function RadarHero() {
   return (
-    <section className="relative overflow-hidden border-x border-border">
+    <section className="relative overflow-hidden">
       {/* faint engineering grid */}
       <div aria-hidden className="grid-bg pointer-events-none absolute inset-0 opacity-30" />
 

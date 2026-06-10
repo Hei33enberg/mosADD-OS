@@ -27,7 +27,7 @@ const qa = [
 
 export function FAQ() {
   return (
-    <section id="faq" className="scroll-mt-20 border-x border-b border-border px-6 py-16 md:py-20">
+    <section id="faq" className="scroll-mt-20 px-6 py-16 md:py-20">
       <div className="mb-10">
         <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary/80">FAQ</div>
         <h2 className="font-display text-3xl font-semibold md:text-4xl">The honest answers</h2>

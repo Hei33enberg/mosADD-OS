@@ -56,7 +56,7 @@ export default function HomePage() {
       <SocialProof />
 
       {/* ── §01 Problem → solution ── */}
-      <section className="border-x border-b border-border px-6 py-16">
+      <section className="px-6 py-16">
         <SectionTag n="01" label="The glue-code tax" />
         <h2 className="font-display mb-8 text-3xl font-semibold tracking-tight">You should not be writing glue code.</h2>
         <div className="grid gap-px overflow-hidden border border-border bg-border md:grid-cols-2">
@@ -82,7 +82,7 @@ export default function HomePage() {
       </section>
 
       {/* ── §02 Comparison ── */}
-      <section id="comparison" className="border-x border-b border-border px-6 py-16 scroll-mt-20">
+      <section id="comparison" className="px-6 py-16 scroll-mt-20">
         <SectionTag n="02" label="vs single-vendor stacks" />
         <h2 className="font-display text-3xl font-semibold tracking-tight">Single-vendor is not a security posture.</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
@@ -96,7 +96,7 @@ export default function HomePage() {
       </section>
 
       {/* ── §03 Threat-aware (Iron Dome differentiator) ── */}
-      <section className="relative overflow-hidden border-x border-b border-border px-6 py-16">
+      <section className="relative overflow-hidden px-6 py-16">
         <div aria-hidden className="pointer-events-none absolute -right-32 top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-primary/[0.06] blur-[120px]" />
         <SectionTag n="03" label="Iron Dome" />
         <h2 className="font-display text-3xl font-semibold tracking-tight">Iron Dome is not a feature. It is the kernel.</h2>
@@ -115,7 +115,7 @@ export default function HomePage() {
       </section>
 
       {/* ── §04 Modules ── */}
-      <section className="border-x border-b border-border px-6 py-16">
+      <section className="px-6 py-16">
         <div className="flex items-end justify-between">
           <div>
             <SectionTag n="04" label="m* channels" />
@@ -147,7 +147,7 @@ export default function HomePage() {
       </section>
 
       {/* ── §05 How it works ── */}
-      <section className="border-x border-b border-border px-6 py-16">
+      <section className="px-6 py-16">
         <SectionTag n="05" label="Setup" />
         <h2 className="font-display mb-8 text-3xl font-semibold tracking-tight">Three commands to operational.</h2>
         <div className="grid gap-6 md:grid-cols-3">
@@ -166,7 +166,7 @@ export default function HomePage() {
       </section>
 
       {/* ── §06 CTA ── */}
-      <section className="border-x border-b border-border px-6 py-20">
+      <section className="px-6 py-20">
         <SectionTag n="06" label="Open source" />
         <h2 className="font-display mb-3 text-3xl font-semibold tracking-tight">
           Open source. Audit it yourself.<span className="term-cursor" />
