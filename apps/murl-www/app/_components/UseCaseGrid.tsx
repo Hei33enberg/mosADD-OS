@@ -24,7 +24,7 @@ const cases = [
 
 export function UseCaseGrid() {
   return (
-    <section id="use-cases" className="scroll-mt-20 px-6 py-16 md:py-20">
+    <section id="use-cases" className="scroll-mt-20 py-16 md:py-20">
       <div className="mb-10">
         <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary/80">Use cases</div>
         <h2 className="font-display text-3xl font-semibold md:text-4xl">

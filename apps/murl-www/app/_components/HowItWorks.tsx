@@ -20,7 +20,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how" className="scroll-mt-20 px-6 py-16 md:py-20">
+    <section id="how" className="scroll-mt-20 py-16 md:py-20">
       <div className="mb-10">
         <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary/80">How it works</div>
         <h2 className="font-display text-3xl font-semibold md:text-4xl">Three taps and you’re in the room.</h2>

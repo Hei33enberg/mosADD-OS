@@ -23,7 +23,7 @@ export function ExtensionDemo() {
   });
 
   return (
-    <section id="demo" className="scroll-mt-20 px-6 py-16 md:py-20">
+    <section id="demo" className="scroll-mt-20 py-16 md:py-20">
       <div className="mb-10 max-w-2xl">
         <div className="mb-2 text-xs uppercase tracking-[0.25em] text-primary/80">See it in action</div>
         <h2 className="font-display text-3xl font-semibold md:text-4xl">

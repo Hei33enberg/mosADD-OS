@@ -33,7 +33,7 @@ export function RadarHero() {
       {/* left→right fade keeps the copy crisp over the radar */}
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-background/92 to-transparent sm:via-background/75" />
 
-      <div className="relative z-10 px-6 py-24 sm:py-28 md:py-36 lg:py-44">
+      <div className="relative z-10 py-24 sm:py-28 md:py-36 lg:py-44">
         <div className="mb-6 text-[11px] uppercase tracking-[0.35em] text-primary/80">
           mosadd.dev · MCP · Apache-2.0
         </div>

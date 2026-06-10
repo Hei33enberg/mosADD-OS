@@ -19,7 +19,7 @@ const SHORTCODE = `[mosadd_mirc]
 
 export default function WordPressInstallPage() {
   return (
-    <Prose>
+    <Prose className="px-6 py-14">
       <H1>mosadd mIRC for WordPress</H1>
       <Lead>
         Free Apache-2.0 plugin that adds the mIRC chat widget to any WordPress site. Five skins, ten placements,

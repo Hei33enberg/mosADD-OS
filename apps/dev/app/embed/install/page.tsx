@@ -19,7 +19,7 @@ const SNIPPET = `<div id="mosadd-mirc"
 
 export default function EmbedInstallPage() {
   return (
-    <Prose>
+    <Prose className="px-6 py-14">
       <H1>Install the mIRC embed</H1>
       <Lead>
         Same 6-line snippet on every platform. Below: where exactly each CMS lets
@@ -177,7 +177,7 @@ ${SNIPPET.split('\n').map(l => '  ' + l).join('\n')}
 
       <P>
         Next: <Anchor href="/embed">about the embed</Anchor> · <Anchor href="/pricing">pricing</Anchor> ·{' '}
-        <Anchor href="/pricing">pricing</Anchor> · <Anchor href="https://mosadd.dev/embed/new">create a key</Anchor>
+        <Anchor href="https://mosadd.dev/embed/new">create a key</Anchor>
       </P>
     </Prose>
   );

@@ -52,7 +52,7 @@ export default function EmbedLandingPage() {
     <div className="mx-auto max-w-6xl px-6">
       {/* ── Hero ── */}
       <section className="relative overflow-hidden">
-        <div className="px-6 py-24 md:py-28">
+        <div className="py-24 md:py-28">
           <div className="mb-5 text-xs uppercase tracking-[0.35em] text-primary/80">mosadd.dev · embed</div>
           <h1 className="font-display text-5xl font-bold leading-[0.95] tracking-tight text-foreground md:text-6xl">
             A live chat on your site,
@@ -88,7 +88,7 @@ export default function EmbedLandingPage() {
       </section>
 
       {/* ── Snippet ── */}
-      <section className="px-6 py-16">
+      <section className="py-16">
         <div className="mb-6">
           <div className="mb-2 text-xs uppercase tracking-[0.25em] text-muted-foreground">The snippet</div>
           <h2 className="font-display text-3xl font-semibold">This is the entire integration</h2>
@@ -101,7 +101,7 @@ export default function EmbedLandingPage() {
       </section>
 
       {/* ── 3 steps ── */}
-      <section className="grid gap-4 px-6 py-16 md:grid-cols-3">
+      <section className="grid gap-4 py-16 md:grid-cols-3">
         {steps.map((s) => (
           <div key={s.n} className="rounded-none border border-border p-5">
             <div className="mb-2 font-display text-sm text-primary">{s.n}.</div>
@@ -112,7 +112,7 @@ export default function EmbedLandingPage() {
       </section>
 
       {/* ── Where to install ── */}
-      <section className="px-6 py-16">
+      <section className="py-16">
         <div className="mb-6">
           <div className="mb-2 text-xs uppercase tracking-[0.25em] text-muted-foreground">Install anywhere</div>
           <h2 className="font-display text-3xl font-semibold">Same snippet, every platform</h2>
@@ -128,7 +128,7 @@ export default function EmbedLandingPage() {
       </section>
 
       {/* ── Skins ── */}
-      <section className="px-6 py-16">
+      <section className="py-16">
         <div className="mb-6">
           <div className="mb-2 text-xs uppercase tracking-[0.25em] text-muted-foreground">Skins</div>
           <h2 className="font-display text-3xl font-semibold">Five skins ship in the bundle</h2>
@@ -148,7 +148,7 @@ export default function EmbedLandingPage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="px-6 py-16">
+      <section className="py-16">
         <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
           <div>
             <h2 className="font-display text-3xl font-semibold">

@@ -31,7 +31,7 @@ export async function SocialProof() {
   ];
 
   return (
-    <section className="px-6 py-10">
+    <section className="py-10">
       <div className="mb-5 text-center text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
         Works in every MCP client
       </div>

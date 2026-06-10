@@ -13,7 +13,7 @@ export default function HomePage() {
     <div className="mx-auto max-w-6xl px-6">
       {/* ── Hero ── */}
       <section className="hero-glow relative overflow-hidden">
-        <div className="grid items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.05fr_0.95fr] md:py-24">
+        <div className="grid items-center gap-10 py-14 md:grid-cols-[1.05fr_0.95fr] md:py-24">
           {/* copy */}
           <div className="fade-up min-w-0">
             <div className="mb-5 inline-flex items-center gap-2 border border-border bg-card/40 px-3 py-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">
@@ -60,7 +60,7 @@ export default function HomePage() {
       <FAQ />
 
       {/* ── Final CTA ── */}
-      <section className="px-6 py-20 text-center">
+      <section className="py-20 text-center">
         <h2 className="font-display mx-auto max-w-2xl text-2xl font-semibold sm:text-3xl md:text-4xl">
           Every website is better with people in it.
         </h2>

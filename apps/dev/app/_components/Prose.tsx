@@ -11,7 +11,7 @@ import { CopyButton } from './CopyButton';
  */
 export function Prose({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <article className={`max-w-3xl text-neutral-200 leading-relaxed ${className}`}>
+    <article className={`mx-auto max-w-3xl text-neutral-200 leading-relaxed ${className}`}>
       {children}
     </article>
   );

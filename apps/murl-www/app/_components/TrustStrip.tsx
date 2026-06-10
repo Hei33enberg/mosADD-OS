@@ -9,7 +9,7 @@ const points = [
 
 export function TrustStrip() {
   return (
-    <section className="px-6 py-16 md:py-20">
+    <section className="py-16 md:py-20">
       <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
         {points.map((p) => (
           <div key={p.k} className="bg-card/40 p-6 backdrop-blur-sm">
