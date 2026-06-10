@@ -3,7 +3,7 @@ import { Logo } from './Logo';
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border text-xs text-muted-foreground">
+    <footer className="text-xs text-muted-foreground">
       <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-6 py-12 md:grid-cols-5">
         <div className="col-span-2">
           <Logo size="base" />
@@ -43,9 +43,12 @@ export function SiteFooter() {
           </ul>
         </div>
       </div>
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-border px-6 py-4">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4">
         <div>© {new Date().getFullYear()} mosadd contributors · TRUST NO TRACE.</div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
+          <Link href="/legal/terms" className="hover:text-foreground">Terms</Link>
+          <Link href="/legal/privacy" className="hover:text-foreground">Privacy</Link>
+          <Link href="/legal/dpa" className="hover:text-foreground">DPA</Link>
           <a href="https://mosadd.com" className="hover:text-foreground">mosadd.com</a>
           <a href="https://github.com/Hei33enberg/mosadd-os" className="hover:text-foreground">GitHub</a>
           <a href="https://github.com/Hei33enberg/mosadd-os/security/policy" className="hover:text-foreground">Security</a>
