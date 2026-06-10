@@ -17,7 +17,7 @@ export default function PrivacyPage() {
 
         <H2>1. What we collect</H2>
         <Ul>
-          <li><strong>Account data</strong> — your email and authentication identifiers (via Google or magic link).</li>
+          <li><strong>Account data</strong> — your email and authentication identifiers (via GitHub or magic link).</li>
           <li><strong>API keys</strong> — stored hashed; we cannot recover the plaintext.</li>
           <li><strong>Usage &amp; telemetry</strong> — message/MAT counters, plan, timestamps, IP and coarse request metadata used for quotas, billing, security and abuse-prevention.</li>
           <li><strong>Billing data</strong> — handled by Stripe; we store a customer id and plan, not card numbers.</li>

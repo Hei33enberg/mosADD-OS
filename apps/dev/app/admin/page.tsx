@@ -107,10 +107,10 @@ export default function AdminPage() {
     if (token) void load();
   }, [token, load]);
 
-  const google = useCallback(async () => {
+  const github = useCallback(async () => {
     if (!supabase) return;
     await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: 'github',
       options: { redirectTo: `${window.location.origin}/admin` },
     });
   }, [supabase]);
@@ -145,10 +145,10 @@ export default function AdminPage() {
         <h1 className="font-mono text-2xl font-bold uppercase mb-1">mosADD admin</h1>
         <p className="text-sm text-muted-foreground mb-6">Owner-only dashboard. Sign in to continue.</p>
         <button
-          onClick={google}
+          onClick={github}
           className="bg-primary text-primary-foreground font-bold uppercase tracking-widest text-xs px-4 py-2 mb-4"
         >
-          Continue with Google
+          Continue with GitHub
         </button>
         {sent ? (
           <p className="text-sm text-primary">Magic link sent — check your inbox.</p>
