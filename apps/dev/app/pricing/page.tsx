@@ -158,6 +158,43 @@ export default function PricingPage() {
         ))}
       </div>
 
+      {/* What's a MAT? */}
+      <div className="mt-16">
+        <Prose>
+          <H2>What counts as a MAT?</H2>
+          <P>
+            A <strong>MAT</strong> (Monthly Active Thread-action) is one delivered, end-to-end-encrypted
+            message or tracked action — a sent DM, a channel post, a tracked email open, a granted voice
+            floor. Unlike a raw API or tool call, <strong>every MAT carries encryption, delivery and
+            threat-radar scoring</strong>, so one MAT is worth more than one bare call elsewhere.
+          </P>
+        </Prose>
+        <div className="mt-6 overflow-x-auto border border-border">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-card/40 text-left text-xs uppercase tracking-widest text-muted-foreground">
+                <th className="px-4 py-3 font-medium">Plan</th>
+                <th className="px-4 py-3 font-medium">Included MAT / mo</th>
+                <th className="px-4 py-3 font-medium">Overage</th>
+                <th className="px-4 py-3 font-medium">Roughly fits</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border text-muted-foreground">
+              <tr><td className="px-4 py-3 text-foreground">Free</td><td className="px-4 py-3">1,000</td><td className="px-4 py-3">hard stop · no card on file</td><td className="px-4 py-3">a hobby bot / first integration</td></tr>
+              <tr><td className="px-4 py-3 text-foreground">Pro · $9</td><td className="px-4 py-3">10,000</td><td className="px-4 py-3">$0.001 / MAT, capped 2× plan</td><td className="px-4 py-3">a production agent</td></tr>
+              <tr><td className="px-4 py-3 text-foreground">Team · $29</td><td className="px-4 py-3">100,000</td><td className="px-4 py-3">$0.001 / MAT, capped 2× plan</td><td className="px-4 py-3">a small product / newsroom</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <Prose>
+          <P>
+            For scale: <strong>$0.001 / MAT = $1 per 1,000</strong> delivered, encrypted, threat-scored
+            actions — encryption, delivery and radar included. A raw tool-call on a tool-aggregator buys
+            none of that. Your hard spend cap (default 2× plan price) means you never get a surprise bill.
+          </P>
+        </Prose>
+      </div>
+
       {/* Calculator */}
       <div className="mt-16">
         <Prose>
