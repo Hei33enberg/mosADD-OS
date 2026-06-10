@@ -2,7 +2,7 @@
 
 MCP server for [mosadd](https://mosadd.dev) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **3.0.0-alpha.4** — **61 live tools across 6 live modules** (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mRAG, mURL) + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
+> **3.0.0-alpha.4** — **61 live tools across 6 live modules** (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mRAG) + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
 
 ## Install
 
@@ -53,7 +53,7 @@ In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling 
 
 ## Tools shipped in alpha
 
-**61 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mRAG, mURL) + the `comms_capabilities` discovery tool. Highlights per module:
+**61 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mRAG) + the `comms_capabilities` discovery tool. Highlights per module:
 
 | Module | Tools | What it does |
 |---|---|---|
@@ -63,7 +63,6 @@ In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling 
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
 | **mAIL** (11) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete`, `mAIL_stats`, `mAIL_events`, `mAIL_metrics`, `mAIL_revoke`, `mAIL_audit_export`, `mAIL_consent`, `mAIL_notify` | Mail; every user gets `<id>@mosadd.com`. `mAIL_revoke` recalls secure-reader access; `mAIL_audit_export` emits an HMAC-SHA256-signed engagement audit; `mAIL_consent` manages recipient tracking opt-outs (GDPR); `mAIL_notify` pulls the inbound-mail notification feed |
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own data (hybrid vector + BM25) |
-| **mURL** (4) | `mURL_read_channel`, `mURL_post`, `mURL_presence`, `mURL_list_channels` | Real-time chat attached to any web domain — agent-native ("IRC for URLs"). The per-domain room is never empty because agents read context + leave findings via MCP |
 
 All tool names follow [RFC 0001](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
