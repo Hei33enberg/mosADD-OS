@@ -86,6 +86,23 @@ export default function AdminPage() {
     }
   }, [token]);
 
+  const revokeUser = useCallback(async (userId: string, label: string) => {
+    if (!token) return;
+    if (!window.confirm(`Revoke all embed keys for ${label}? Their integrations stop working immediately.`)) return;
+    try {
+      const r = await fetch(STATS_ENDPOINT, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'revoke_user_keys', user_id: userId }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d?.error ?? 'revoke failed');
+      await load();
+    } catch (e: any) {
+      setErr(e?.message ?? 'revoke failed');
+    }
+  }, [token, load]);
+
   useEffect(() => {
     if (token) void load();
   }, [token, load]);
@@ -226,6 +243,11 @@ export default function AdminPage() {
                 <span className="text-muted-foreground whitespace-nowrap">{c.keys_active} key{c.keys_active === 1 ? '' : 's'}</span>
                 <span className="text-muted-foreground whitespace-nowrap">{c.mat_used_month.toLocaleString()} MAT{c.payg_enabled ? ' · PAYG' : ''}</span>
                 <span className="text-muted-foreground whitespace-nowrap">{c.last_active ? new Date(c.last_active).toLocaleDateString() : '—'}</span>
+                {c.keys_active > 0 ? (
+                  <button onClick={() => revokeUser(c.user_id, c.email ?? c.user_id)} className="text-destructive/70 hover:text-destructive whitespace-nowrap">revoke</button>
+                ) : (
+                  <span className="text-muted-foreground/30">—</span>
+                )}
               </div>
             ))}
           </div>
