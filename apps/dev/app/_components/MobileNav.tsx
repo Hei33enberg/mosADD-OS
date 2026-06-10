@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
 const links = [
-  { href: '/hub', label: 'Sign in →', primary: true },
-  { href: '/embed', label: 'Embed' },
+  { href: '/embed', label: 'Embed', primary: true },
   { href: '/docs', label: 'Docs' },
   { href: '/docs/quickstart', label: 'Quickstart' },
   { href: '/docs/auth', label: 'Credentials' },
@@ -55,7 +54,7 @@ export function MobileNav() {
   }, [open]);
 
   return (
-    <div className="md:hidden">
+    <div>
       <button
         ref={buttonRef}
         type="button"

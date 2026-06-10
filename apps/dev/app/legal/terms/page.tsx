@@ -8,8 +8,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-14">
-      <Prose>
+    <Prose className="px-6 py-14">
         <H1>Terms of Service</H1>
         <Lead>These terms govern your use of the mosadd hosted service at mosadd.dev — the developer hub, the MCP toolkit and the embed widget. By creating an account or using the service you agree to them.</Lead>
         <Callout type="info">
@@ -53,6 +52,5 @@ export default function TermsPage() {
 
         <p className="mt-8 text-xs text-muted-foreground">See also our <Anchor href="/legal/privacy">Privacy Policy</Anchor> and <Anchor href="/legal/dpa">Data Processing Addendum</Anchor>.</p>
       </Prose>
-    </div>
   );
 }

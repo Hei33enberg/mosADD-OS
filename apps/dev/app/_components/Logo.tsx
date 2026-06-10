@@ -18,12 +18,12 @@ export function Logo({
   return (
     <span className={`font-bold leading-none text-foreground ${sizes[size]}`}>
       mos<span className="text-primary">ADD</span>
-      <span className="align-super ml-0.5 text-[0.55em] font-bold text-primary">™</span>
       {suffix ? (
-        <span className="ml-2 align-middle text-[0.5em] font-medium uppercase tracking-[0.3em] text-muted-foreground">
+        <span className="ml-1.5 align-middle text-[0.6em] font-medium uppercase tracking-[0.3em] text-muted-foreground">
           {suffix}
         </span>
       ) : null}
+      <span className="align-super ml-0.5 text-[0.55em] font-bold text-primary">™</span>
     </span>
   );
 }

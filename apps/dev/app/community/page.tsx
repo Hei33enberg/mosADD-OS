@@ -21,39 +21,39 @@ export default function CommunityPage() {
             href="https://github.com/Hei33enberg/mosadd-os/discussions"
             target="_blank"
             rel="noreferrer"
-            className="block border border-neutral-800 rounded-lg p-5 hover:border-primary/40 hover:bg-neutral-900/50 transition group"
+            className="block border border-border rounded-none p-5 hover:border-primary/40 hover:bg-card/50 transition group"
           >
             <div className="text-primary text-xs uppercase tracking-widest mb-2">GitHub</div>
-            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-primary transition">Discussions</div>
-            <p className="text-sm text-neutral-400">Long-form architecture chats, Q&amp;A, "show &amp; tell" demos.</p>
+            <div className="font-display text-lg text-foreground mb-1 group-hover:text-primary transition">Discussions</div>
+            <p className="text-sm text-muted-foreground">Long-form architecture chats, Q&amp;A, "show &amp; tell" demos.</p>
           </a>
           <div
             aria-disabled="true"
-            className="block border border-neutral-800/60 rounded-lg p-5 opacity-60 cursor-not-allowed"
+            className="block border border-border/60 rounded-none p-5 opacity-60 cursor-not-allowed"
           >
             <div className="text-muted-foreground text-xs uppercase tracking-widest mb-2">Realtime</div>
-            <div className="font-display text-lg text-neutral-200 mb-1">Discord <span className="text-neutral-500">· soon</span></div>
-            <p className="text-sm text-neutral-400">Real-time channel launching with the Phase 1 community kickoff. Not live yet — for now use GitHub Discussions for design questions.</p>
+            <div className="font-display text-lg text-foreground mb-1">Discord <span className="text-muted-foreground">· soon</span></div>
+            <p className="text-sm text-muted-foreground">Real-time channel launching with the Phase 1 community kickoff. Not live yet — for now use GitHub Discussions for design questions.</p>
           </div>
           <a
             href="https://github.com/Hei33enberg/mosadd-os/issues"
             target="_blank"
             rel="noreferrer"
-            className="block border border-neutral-800 rounded-lg p-5 hover:border-primary/40 hover:bg-neutral-900/50 transition group"
+            className="block border border-border rounded-none p-5 hover:border-primary/40 hover:bg-card/50 transition group"
           >
             <div className="text-primary text-xs uppercase tracking-widest mb-2">Bug tracker</div>
-            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-primary transition">Issues</div>
-            <p className="text-sm text-neutral-400">Found a bug, want to suggest a feature, or propose a new module.</p>
+            <div className="font-display text-lg text-foreground mb-1 group-hover:text-primary transition">Issues</div>
+            <p className="text-sm text-muted-foreground">Found a bug, want to suggest a feature, or propose a new module.</p>
           </a>
           <a
             href="https://x.com/mosaddcom"
             target="_blank"
             rel="noreferrer"
-            className="block border border-neutral-800 rounded-lg p-5 hover:border-primary/40 hover:bg-neutral-900/50 transition group"
+            className="block border border-border rounded-none p-5 hover:border-primary/40 hover:bg-card/50 transition group"
           >
             <div className="text-primary text-xs uppercase tracking-widest mb-2">Updates</div>
-            <div className="font-display text-lg text-neutral-100 mb-1 group-hover:text-primary transition">@mosaddcom on X</div>
-            <p className="text-sm text-neutral-400">Releases, RFC accept/reject, hardware launches.</p>
+            <div className="font-display text-lg text-foreground mb-1 group-hover:text-primary transition">@mosaddcom on X</div>
+            <p className="text-sm text-muted-foreground">Releases, RFC accept/reject, hardware launches.</p>
           </a>
         </div>
 

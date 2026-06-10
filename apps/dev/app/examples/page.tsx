@@ -75,17 +75,17 @@ export default function ExamplesPage() {
             href={ex.url}
             target="_blank"
             rel="noreferrer"
-            className="block border border-neutral-800 rounded-lg p-5 hover:border-primary/40 hover:bg-neutral-900/50 transition group"
+            className="block border border-border rounded-none p-5 hover:border-primary/40 hover:bg-card/50 transition group"
           >
-            <div className="text-[10px] uppercase tracking-widest text-neutral-500 mb-2">{ex.framework}</div>
-            <div className="font-display text-lg text-neutral-100 group-hover:text-primary transition mb-2">{ex.title}</div>
-            <p className="text-sm text-neutral-400 leading-relaxed">{ex.blurb}</p>
+            <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">{ex.framework}</div>
+            <div className="font-display text-lg text-foreground group-hover:text-primary transition mb-2">{ex.title}</div>
+            <p className="text-sm text-muted-foreground leading-relaxed">{ex.blurb}</p>
             <div className="mt-4 text-xs font-mono text-primary group-hover:underline">examples/{ex.slug} ↗</div>
           </a>
         ))}
       </div>
 
-      <div className="mt-12 border-t border-neutral-800 pt-8 text-sm text-neutral-500 max-w-3xl">
+      <div className="mt-12 border-t border-border pt-8 text-sm text-muted-foreground max-w-3xl">
         Don't see your framework?{' '}
         <a
           href="https://github.com/Hei33enberg/mosadd-os/issues/new"

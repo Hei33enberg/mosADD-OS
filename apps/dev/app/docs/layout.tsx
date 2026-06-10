@@ -46,13 +46,13 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
         <nav className="space-y-8 text-sm">
           {nav.map((section) => (
             <div key={section.section}>
-              <div className="text-[10px] uppercase tracking-widest text-neutral-500 mb-3">{section.section}</div>
+              <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">{section.section}</div>
               <ul className="space-y-1.5">
                 {section.items.map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="block px-2 py-1 -mx-2 rounded text-neutral-400 hover:text-neutral-100 hover:bg-neutral-900/50 transition"
+                      className="block px-2 py-1 -mx-2 rounded-none text-muted-foreground hover:text-foreground hover:bg-card/50 transition"
                     >
                       {item.label}
                     </Link>

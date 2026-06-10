@@ -8,8 +8,7 @@ export const metadata: Metadata = {
 
 export default function DpaPage() {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-14">
-      <Prose>
+    <Prose className="px-6 py-14">
         <H1>Data Processing Addendum</H1>
         <Lead>This DPA forms part of the <Anchor href="/legal/terms">Terms of Service</Anchor> and applies where mosadd processes personal data on your behalf (you = controller, mosadd = processor) under GDPR Article 28.</Lead>
         <Callout type="info">
@@ -55,6 +54,5 @@ export default function DpaPage() {
 
         <p className="mt-8 text-xs text-muted-foreground">This DPA is read together with the <Anchor href="/legal/terms">Terms of Service</Anchor> and <Anchor href="/legal/privacy">Privacy Policy</Anchor>.</p>
       </Prose>
-    </div>
   );
 }

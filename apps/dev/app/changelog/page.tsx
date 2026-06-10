@@ -39,7 +39,7 @@ function renderBody(md: string) {
   for (const raw of lines) {
     const line = raw.replace(/\r$/, '');
     if (line.trim().startsWith('```')) {
-      out.push(inCode ? '</code></pre>' : '<pre class="bg-neutral-900/70 border border-neutral-800 rounded p-3 overflow-x-auto text-xs font-mono my-3"><code>');
+      out.push(inCode ? '</code></pre>' : '<pre class="bg-card/70 border border-border rounded-none p-3 overflow-x-auto text-xs font-mono my-3"><code>');
       inCode = !inCode;
       continue;
     }
@@ -48,12 +48,12 @@ function renderBody(md: string) {
       out.push('\n');
       continue;
     }
-    if (/^### /.test(line)) out.push(`<h4 class="font-display text-sm font-semibold mt-4 mb-1 text-neutral-100">${line.slice(4)}</h4>`);
-    else if (/^## /.test(line)) out.push(`<h3 class="font-display text-base font-semibold mt-5 mb-2 text-neutral-100">${line.slice(3)}</h3>`);
-    else if (/^# /.test(line)) out.push(`<h2 class="font-display text-lg font-semibold mt-5 mb-2 text-neutral-100">${line.slice(2)}</h2>`);
-    else if (/^[-*] /.test(line)) out.push(`<li class="text-neutral-300 ml-5 list-disc marker:text-neutral-600">${inlineFormat(line.replace(/^[-*] /, ''))}</li>`);
+    if (/^### /.test(line)) out.push(`<h4 class="font-display text-sm font-semibold mt-4 mb-1 text-foreground">${line.slice(4)}</h4>`);
+    else if (/^## /.test(line)) out.push(`<h3 class="font-display text-base font-semibold mt-5 mb-2 text-foreground">${line.slice(3)}</h3>`);
+    else if (/^# /.test(line)) out.push(`<h2 class="font-display text-lg font-semibold mt-5 mb-2 text-foreground">${line.slice(2)}</h2>`);
+    else if (/^[-*] /.test(line)) out.push(`<li class="text-muted-foreground ml-5 list-disc marker:text-muted-foreground/40">${inlineFormat(line.replace(/^[-*] /, ''))}</li>`);
     else if (line.trim() === '') out.push('<br />');
-    else out.push(`<p class="text-neutral-300 my-2 leading-relaxed">${inlineFormat(line)}</p>`);
+    else out.push(`<p class="text-muted-foreground my-2 leading-relaxed">${inlineFormat(line)}</p>`);
   }
   return out.join('');
 }
@@ -63,8 +63,8 @@ function inlineFormat(s: string) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/`([^`]+)`/g, '<code class="font-mono text-primary text-[0.9em] px-1 rounded bg-neutral-900 border border-neutral-800">$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-neutral-100">$1</strong>')
+    .replace(/`([^`]+)`/g, '<code class="font-mono text-primary text-[0.9em] px-1 rounded-none bg-card border border-border">$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-foreground">$1</strong>')
     // Markdown link → <a> — but only when the URL uses http(s): or a same-origin
     // relative path. Anything else (javascript:, data:, vbscript:, ftp:) is rendered
     // as plain text so a crafted release note cannot inject script-scheme URLs.
@@ -95,22 +95,22 @@ export default async function ChangelogPage() {
 
       <div className="space-y-8 mt-10">
         {releases.map((r) => (
-          <article key={r.tag_name} className="border-l-2 border-neutral-800 pl-6 hover:border-primary/60 transition">
+          <article key={r.tag_name} className="border-l-2 border-border pl-6 hover:border-primary/60 transition">
             <div className="flex items-baseline gap-3 mb-2 flex-wrap">
               <a
                 href={r.html_url}
                 target="_blank"
                 rel="noreferrer"
-                className="font-display text-2xl text-neutral-100 hover:text-primary transition"
+                className="font-display text-2xl text-foreground hover:text-primary transition"
               >
                 {r.name || r.tag_name}
               </a>
               {r.prerelease ? (
-                <span className="text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 rounded border border-amber-500/40 text-amber-400">
+                <span className="text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 rounded-none border border-amber-500/40 text-amber-400">
                   pre-release
                 </span>
               ) : null}
-              <span className="text-xs text-neutral-500">
+              <span className="text-xs text-muted-foreground">
                 {new Date(r.published_at).toLocaleDateString('en-US', { dateStyle: 'long' })}
               </span>
             </div>

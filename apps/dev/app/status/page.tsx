@@ -31,7 +31,7 @@ export default async function StatusPage() {
     const styles: Record<string, string> = {
       ok: 'text-primary border-primary/40 bg-primary/5',
       down: 'text-red-400 border-red-500/40 bg-red-500/5',
-      pending: 'text-neutral-500 border-neutral-700 bg-neutral-900/50',
+      pending: 'text-muted-foreground border-border bg-card/50',
     };
     const labels: Record<string, string> = {
       ok: 'Operational',
@@ -39,8 +39,8 @@ export default async function StatusPage() {
       pending: 'Coming soon',
     };
     return (
-      <span className={`inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 rounded border ${styles[s]}`}>
-        <span className={`w-1.5 h-1.5 rounded-full ${s === 'ok' ? 'bg-primary' : s === 'down' ? 'bg-red-400' : 'bg-neutral-600'}`} />
+      <span className={`inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 rounded-none border ${styles[s]}`}>
+        <span className={`w-1.5 h-1.5 rounded-full ${s === 'ok' ? 'bg-primary' : s === 'down' ? 'bg-red-400' : 'bg-muted-foreground/40'}`} />
         {labels[s]}
       </span>
     );

@@ -8,8 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-14">
-      <Prose>
+    <Prose className="px-6 py-14">
         <H1>Privacy Policy</H1>
         <Lead>How we handle personal data for the mosadd hosted service. We are privacy-first by design: for end-to-end-encrypted channels we store only ciphertext and never hold the keys to read it.</Lead>
         <Callout type="info">
@@ -68,6 +67,5 @@ export default function PrivacyPage() {
         <H2>9. Changes</H2>
         <P>We will post updates here with a new “last updated” date. See also our <Anchor href="/legal/terms">Terms of Service</Anchor> and <Anchor href="/legal/dpa">Data Processing Addendum</Anchor>.</P>
       </Prose>
-    </div>
   );
 }
