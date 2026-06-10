@@ -689,20 +689,29 @@ export class ChannelDO {
   /** Drain up to FLUSH_BATCH_MAX pending messages to Supabase via
    *  message-ingest-batch. Idempotent: the endpoint upserts by message id.
    *  On success the batch is removed from `pending`. On failure the batch
-   *  stays and the alarm will retry. */
+   *  stays and the alarm will retry.
+   *
+   *  B3 hardening: each batch gets a unique batch_id (UUID) and an HMAC-SHA256
+   *  signature over the payload body. The EF verifies the HMAC (integrity) and
+   *  deduplicates by batch_id (replay prevention). */
   private async flush(): Promise<number> {
     if (!this.env.SUPABASE_URL || !this.env.CF_INGEST_SECRET) return 0;
     const pending = (await this.state.storage.get<PendingMessage[]>("pending")) ?? [];
     if (pending.length === 0) return 0;
     const batch = pending.slice(0, FLUSH_BATCH_MAX);
 
+    const batchId = crypto.randomUUID();
+    const bodyStr = JSON.stringify({ messages: batch, batch_id: batchId });
+    const hmac = await hmacSha256(this.env.CF_INGEST_SECRET, bodyStr);
+
     const r = await fetch(`${this.env.SUPABASE_URL}/functions/v1/message-ingest-batch`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${this.env.CF_INGEST_SECRET}`,
+        "X-Ingest-HMAC": hmac,
       },
-      body: JSON.stringify({ messages: batch }),
+      body: bodyStr,
     });
     if (!r.ok) throw new Error(`ingest failed: ${r.status}`);
 
@@ -715,4 +724,13 @@ export class ChannelDO {
 async function sha256Hex(s: string): Promise<string> {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
   return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/** HMAC-SHA256 for B3 ingest integrity. Returns hex string. */
+async function hmacSha256(secret: string, data: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"],
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(data));
+  return Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
