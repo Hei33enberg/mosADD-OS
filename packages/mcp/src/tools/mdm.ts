@@ -329,9 +329,12 @@ async function mDM_respond_request(
 ): Promise<{ ok: true }> {
   readSupabaseEnv();
   ctx.log("debug", "mDM_respond_request invoking message-request-respond", input);
+  // message-request-respond expects action:"respond" + status accepted/rejected
+  // (not action:"accept"/"reject"). Map it.
   await invokeFunction<{ ok: boolean }>("message-request-respond", {
+    action: "respond",
     request_id: input.request_id,
-    action: input.action,
+    status: input.action === "accept" ? "accepted" : "rejected",
   });
   return { ok: true };
 }

@@ -95,13 +95,16 @@ export class SupabaseDmProvider implements DmProvider {
         encrypted_payload: string;
         created_at: string;
       }>;
-      next_cursor?: string | null;
+      cursor?: string | null;
+      has_more?: boolean;
     };
+    // message-list paginates history via `before` (a created_at marker) and returns
+    // the next marker as `cursor` — NOT `cursor` in / `next_cursor` out.
     const data = await invokeFunction<MessageListResponse>("message-list", {
       space_id: "dm",
       thread_id: args.threadId,
       limit: args.limit ?? 50,
-      cursor: args.cursor,
+      before: args.cursor,
     });
     return {
       messages: (data?.messages ?? []).map((m) => ({
@@ -111,7 +114,7 @@ export class SupabaseDmProvider implements DmProvider {
         timestamp: m.created_at,
         threadId: m.thread_id,
       })),
-      nextCursor: data?.next_cursor ?? null,
+      nextCursor: data?.has_more ? (data?.cursor ?? null) : null,
     };
   }
 }
