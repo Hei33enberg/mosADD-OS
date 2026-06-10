@@ -22,6 +22,18 @@
 
 export const VERSION = "3.0.0-alpha.4" as const;
 
+/**
+ * The full canonical threat-event taxonomy (categories, default severities,
+ * auto-actions, per-platform availability) + scoring/lookup helpers. This is the
+ * "radar" catalog the engine scores against. `THREAT_EVENTS` is the source of
+ * truth; `THREAT_EVENT_COUNT` exposes the live count so no number is ever stale.
+ */
+export * from "./taxonomy";
+import { THREAT_EVENTS } from "./taxonomy";
+
+/** Number of canonical threat-event types shipped in this build. */
+export const THREAT_EVENT_COUNT = THREAT_EVENTS.length;
+
 /** Defensive actions the engine can recommend. The host executes them. */
 export type ThreatAction =
   /** No defensive action — record the telemetry only. */
