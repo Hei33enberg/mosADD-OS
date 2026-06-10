@@ -5,10 +5,11 @@ import { getSupabase, HUB_KEYS_ENDPOINT, SUPABASE_CONFIGURED } from './supabaseC
 
 type Key = { id: string; name: string; key_prefix: string; plan: string; created_at: string };
 
-const CHECKOUT = {
-  pro: 'https://buy.stripe.com/cNidR862hdwG9QxboQ3VC00',
-  team: 'https://buy.stripe.com/5kQ00ieyN50a2o5gJa3VC01',
-};
+// Checkout goes through create-checkout-session (injects supabase_user_id into the
+// Stripe session metadata so the webhook can apply the plan) — NOT a raw Payment
+// Link, which can't link the purchase back to the buyer.
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+const CHECKOUT_ENDPOINT = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/create-checkout-session` : '';
 
 function snippet(key: string) {
   return `claude mcp add mosadd \\
@@ -26,6 +27,28 @@ export default function HubPage() {
   const [busy, setBusy] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [sent, setSent] = useState(false);
+  const [checkoutErr, setCheckoutErr] = useState<string | null>(null);
+
+  async function upgrade(plan: 'pro' | 'team') {
+    if (!token || !CHECKOUT_ENDPOINT) return;
+    setBusy(true);
+    setCheckoutErr(null);
+    try {
+      const res = await fetch(CHECKOUT_ENDPOINT, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error ?? 'checkout failed');
+      if (d.url) { window.location.href = d.url; return; }
+      setCheckoutErr(d.updated ? 'Your plan was updated.' : 'Checkout could not start.');
+    } catch (e) {
+      setCheckoutErr(e instanceof Error ? e.message : 'checkout failed');
+    } finally {
+      setBusy(false);
+    }
+  }
 
   useEffect(() => {
     if (!supabase) {
@@ -210,9 +233,10 @@ export default function HubPage() {
 
       <h2 className="font-display mt-12 mb-3 text-lg font-semibold">Plan</h2>
       <div className="flex flex-wrap gap-3">
-        <a href={CHECKOUT.pro} className="rounded-none border border-primary/50 px-4 py-2 text-sm text-primary hover:bg-primary/10">Upgrade to Pro — $9/mo →</a>
-        <a href={CHECKOUT.team} className="rounded-none border border-border px-4 py-2 text-sm text-foreground hover:border-primary/50">Team — $29/mo →</a>
+        <button onClick={() => upgrade('pro')} disabled={busy} className="rounded-none border border-primary/50 px-4 py-2 text-sm text-primary hover:bg-primary/10 disabled:opacity-60">Upgrade to Pro — $9/mo →</button>
+        <button onClick={() => upgrade('team')} disabled={busy} className="rounded-none border border-border px-4 py-2 text-sm text-foreground hover:border-primary/50 disabled:opacity-60">Team — $29/mo →</button>
       </div>
+      {checkoutErr && <p className="mt-2 text-xs text-destructive">{checkoutErr}</p>}
       <p className="mt-3 text-xs text-muted-foreground">
         Free tier active by default — 1,000 outbound msg/mo via MCP, then it stops (no surprise bill, no card on file).
         Your key works with <code className="font-mono">npx -y @mosadd/mcp@alpha</code> — no server to run, no Supabase

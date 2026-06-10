@@ -22,6 +22,7 @@ interface Stats {
   overage_revenue_usd_month: number;
   mat_total_month: number;
   payg_enabled_count: number;
+  billing?: { account_id?: string; charges_enabled?: boolean; payouts_enabled?: boolean; details_submitted?: boolean; error?: string } | null;
   customers: { user_id: string; email: string | null; tier: string; mat_used_month: number; payg_enabled: boolean; keys_active: number; products: string[]; last_active: string | null }[];
   recent_creators: { user_id: string; email?: string | null; product: string; created_at: string; last_used_at: string | null }[];
 }
@@ -179,6 +180,17 @@ export default function AdminPage() {
 
       {stats && (
         <>
+          {stats.billing && (
+            <div className={`mb-4 flex flex-wrap items-center gap-2 border-l-2 p-3 text-sm ${stats.billing.charges_enabled ? 'border-primary bg-primary/5 text-primary' : 'border-destructive bg-destructive/5 text-destructive'}`}>
+              <span className="font-bold uppercase tracking-widest text-xs">Stripe</span>
+              {stats.billing.charges_enabled ? (
+                <span>LIVE — taking payments{stats.billing.payouts_enabled ? ' · payouts on' : ' · payouts pending'}{stats.billing.account_id ? ` · ${stats.billing.account_id}` : ''}</span>
+              ) : (
+                <span>NOT taking payments — {stats.billing.error ?? (stats.billing.details_submitted ? 'charges disabled' : 'account not activated')}</span>
+              )}
+            </div>
+          )}
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
             <Stat label="Creators" value={stats.creators_total} sub="distinct active keys" />
             <Stat label="Embed keys" value={stats.embed_keys_active} sub={`${stats.embed_keys_used_24h} used 24h`} />
