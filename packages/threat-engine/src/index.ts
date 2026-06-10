@@ -20,7 +20,7 @@
  * with no authority and no side-effects.
  */
 
-export const VERSION = "3.0.0-alpha.4" as const;
+export const VERSION = "3.0.0-alpha.5" as const;
 
 /**
  * The full canonical threat-event taxonomy (categories, default severities,
