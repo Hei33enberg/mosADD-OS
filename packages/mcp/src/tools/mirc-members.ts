@@ -28,8 +28,8 @@ const MemberIdentity = z
   .describe("Target user's identity id (UUID). From mDM_list_contacts or radar logs.");
 
 const Role = z
-  .enum(["owner", "admin", "moderator", "member", "guest"])
-  .describe("Member role within the channel.");
+  .enum(["superadmin", "admin", "moderator", "member"])
+  .describe("Role to assign. owner = channel creator (not assignable); promote up to one tier below your own.");
 
 const mIRC_join_input = z.object({
   channel_id: ChannelId,
@@ -90,9 +90,17 @@ async function invokeChannelMembers(
   body: Record<string, unknown>,
   ctx: MosaddToolContext,
 ): Promise<unknown> {
+  // Map the toolkit's intuitive input field names to the exact ones the
+  // channel-members-manage Edge Function reads. Without this, kick/ban/unban/
+  // set-role/set-ptt all 400 ("target_identity_id required"), set-role is
+  // ignored, and set-ptt silently disables PTT (missing can_ptt → false).
+  const b: Record<string, unknown> = { ...body };
+  if ("identity_id" in b) { b.target_identity_id = b.identity_id; delete b.identity_id; }
+  if ("role" in b) { b.new_role = b.role; delete b.role; }
+  if ("ptt_enabled" in b) { b.can_ptt = b.ptt_enabled; delete b.ptt_enabled; }
   readSupabaseEnv();
-  ctx.log("debug", `mIRC.${action}`, body);
-  return await invokeFunction("channel-members-manage", { action, ...body });
+  ctx.log("debug", `mIRC.${action}`, b);
+  return await invokeFunction("channel-members-manage", { action, ...b });
 }
 
 // ---- Registration ----

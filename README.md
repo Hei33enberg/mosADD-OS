@@ -27,7 +27,7 @@ Modular primitives — DMs, channels, rooms, push-to-talk, email, knowledge — 
 npx -y @mosadd/mcp
 ```
 
-…starts an MCP server with **65 tools** across 7 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send mail, run a push-to-talk room, recall facts from its own knowledge base, or join the real-time chat attached to any web domain — all through your own mosadd backend (BYOK).
+…starts an MCP server with **61 tools** across 6 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send mail, run a push-to-talk room, recall facts from its own knowledge base, or join the real-time chat attached to any web domain — all through your own mosadd backend (BYOK).
 
 | Channel | Tools | Highlight |
 |---|---|---|
@@ -39,7 +39,7 @@ npx -y @mosadd/mcp
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
 | **mURL** (4) | `mURL_read_channel`, `mURL_post`, `mURL_presence`, `mURL_list_channels` | Real-time chat attached to any web domain — agent-native ("IRC for URLs") |
 
-**65 tools across 7 live modules** (12+20+9+5+11+4+4), plus the `comms_capabilities` discovery tool. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
+**61 tools across 6 live modules** (12+20+9+5+11+4+4), plus the `comms_capabilities` discovery tool. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
 ## Quickstart (60 seconds)
 

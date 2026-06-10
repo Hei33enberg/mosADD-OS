@@ -10,7 +10,7 @@ export default function ModulesPage() {
   return (
     <Prose>
       <H1>Modules</H1>
-      <Lead>The live m* modules in the mosadd OS — seven encrypted channels + the threat engine.</Lead>
+      <Lead>The live m* modules in the mosadd OS — six encrypted channels + the threat engine.</Lead>
 
       <P>
         Per <Anchor href="https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md">RFC 0001</Anchor>, every module is named{' '}
@@ -27,10 +27,9 @@ export default function ModulesPage() {
           [<Anchor key="mail" href="/docs/modules/mail">mAIL</Anchor>, '11', 'Mail — every user gets <userId>@mosadd.com; send/view/list/delete + open/click/forward tracking + inbound-mail notify', 'alpha'],
           [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, '5', 'Push-to-talk with LLM-in-room support', 'alpha'],
           [<Anchor key="mrag" href="/docs/modules/mrag">mRAG</Anchor>, '4', 'Per-tenant agent memory — semantic recall (RAG) + list/delete indexed sources', 'alpha'],
-          [<Anchor key="murl" href="/docs/modules/murl">mURL</Anchor>, '4', 'Real-time chat attached to any web domain — agent-native (IRC for URLs)', 'alpha'],
         ]}
       />
-      <P>65 tools across 7 live modules.</P>
+      <P>61 tools across 6 live modules.</P>
 
       <H2>Security</H2>
       <Table
