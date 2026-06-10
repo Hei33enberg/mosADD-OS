@@ -68,6 +68,9 @@ async function main(): Promise<void> {
     hubUrl: process.env.MOSADD_HUB_URL,
     mode: (process.env.MOSADD_MODE as "cloud" | "local" | "self-host" | undefined),
     logLevel: (process.env.MOSADD_LOG_LEVEL as "debug" | "info" | "warn" | "error" | undefined),
+    // stdio is single-tenant: the session lives in env (set by bootstrapFromApiKey
+    // above), so auto-publish this identity's prekeys on boot → mDM is reachable.
+    autoPublishKeys: true,
   });
 
   const transport = new StdioServerTransport();

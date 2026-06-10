@@ -43,6 +43,15 @@ export interface MosaddServerOptions {
    * network adapter. A carrier-aware host supplies e.g. a radio DmProvider here.
    */
   providers?: Partial<ProviderRegistry>;
+  /**
+   * When true, publish this identity's mDM prekey bundle once on startup
+   * (best-effort, non-fatal) so peers can open an E2EE session without the user
+   * manually running mDM_publish_keys first. Fixes the cold-start where mDM_send
+   * fails for every recipient because nobody has published keys. Used by the
+   * stdio binary; the hosted per-request transport leaves this off (it publishes
+   * per authenticated session instead).
+   */
+  autoPublishKeys?: boolean;
 }
 
 export interface MosaddToolContext {

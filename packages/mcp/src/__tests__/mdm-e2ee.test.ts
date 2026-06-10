@@ -21,6 +21,7 @@ import type {
 import { mdmTools } from "../tools/mdm.js";
 import { InMemoryMdmKeyStore } from "../crypto/mdm-session.js";
 import { InMemoryVoiceProvider } from "../providers/memory-voice.js";
+import { createMosaddServer } from "../server.js";
 import type { MosaddToolContext } from "../types.js";
 
 /** Shared store: message log + key directory, both keyed in one place. */
@@ -174,5 +175,38 @@ describe("mDM E2EE golden path — X3DH handshake + ratchet, both directions", (
     await expect(tool("mDM_send")({ to: "bob", text: "intercept me" }, alice)).rejects.toThrow(
       /signature verification|man-in-the-middle/i,
     );
+  });
+});
+
+describe("auto-publish prekeys on startup (LINEAR-3104 cold-start fix)", () => {
+  it("publishes the local prekey bundle when autoPublishKeys is set", async () => {
+    const backend = new SharedBackend();
+    createMosaddServer({
+      mode: "local",
+      autoPublishKeys: true,
+      providers: {
+        dm: new ClientProvider(backend, "self-agent"),
+        keys: new InMemoryMdmKeyStore(),
+        voice: new InMemoryVoiceProvider("self-agent"),
+      },
+    });
+    // fire-and-forget; getOwnMaterial() does async key generation, so flush.
+    await new Promise((r) => setTimeout(r, 50));
+    expect(backend.bundles.has("self-agent")).toBe(true);
+    expect(backend.bundles.get("self-agent")!.byteLength).toBeGreaterThan(0);
+  });
+
+  it("does NOT publish when autoPublishKeys is unset (hosted/default)", async () => {
+    const backend = new SharedBackend();
+    createMosaddServer({
+      mode: "local",
+      providers: {
+        dm: new ClientProvider(backend, "quiet-agent"),
+        keys: new InMemoryMdmKeyStore(),
+        voice: new InMemoryVoiceProvider("quiet-agent"),
+      },
+    });
+    await new Promise((r) => setTimeout(r, 50));
+    expect(backend.bundles.has("quiet-agent")).toBe(false);
   });
 });

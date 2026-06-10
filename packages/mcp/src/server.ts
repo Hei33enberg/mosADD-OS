@@ -6,7 +6,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { allTools } from "./tools/index.js";
 import { SupabaseDmProvider } from "./providers/supabase-dm.js";
 import { SupabaseVoiceProvider } from "./providers/supabase-voice.js";
-import { InMemoryMdmKeyStore } from "./crypto/mdm-session.js";
+import { InMemoryMdmKeyStore, publishOwnPrekeys } from "./crypto/mdm-session.js";
 import type { MosaddServerOptions, MosaddToolContext, ProviderRegistry } from "./types.js";
 
 /**
@@ -44,6 +44,18 @@ export function createMosaddServer(options: MosaddServerOptions = {}) {
       }
     },
   };
+
+  // Cold-start fix: make this identity reachable for inbound E2EE DMs the moment
+  // the server is up, so mDM_send works without every recipient first running
+  // mDM_publish_keys. Best-effort and non-fatal — it needs an authenticated
+  // session, so it silently skips when there is none (BYOK without a JWT, offline,
+  // etc.) and never blocks startup. Uses the SAME keystore the tools use, so the
+  // published identity matches what mDM_send/encryptForPeer will use this process.
+  if (options.autoPublishKeys) {
+    void publishOwnPrekeys(providers.keys, providers.dm)
+      .then((r) => ctx.log("debug", "auto-published mDM prekeys", { one_time_prekeys: r.oneTimePrekeyCount }))
+      .catch((err) => ctx.log("debug", "auto-publish mDM prekeys skipped", { error: String(err) }));
+  }
 
   const server = new McpServer(
     {
