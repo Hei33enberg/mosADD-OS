@@ -1,7 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+
+// Local-only "your verified domains" memory (C1 / LINEAR-3152). domain-verify
+// is anonymous, so there's no server-side "owner" record we can query by
+// account. We track here in the browser any domain this user has successfully
+// verified, so /domains stops being a one-at-a-time tool.
+const DOMAINS_STORAGE_KEY = 'mosadd:my-domains';
+interface VerifiedDomain { domain: string; verified_at: string; status: string }
+function loadVerifiedDomains(): VerifiedDomain[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(DOMAINS_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((d): d is VerifiedDomain => d && typeof d.domain === 'string');
+  } catch { return []; }
+}
+function persistVerifiedDomain(d: VerifiedDomain) {
+  if (typeof window === 'undefined') return;
+  try {
+    const all = loadVerifiedDomains().filter((x) => x.domain !== d.domain);
+    all.unshift(d);
+    window.localStorage.setItem(DOMAINS_STORAGE_KEY, JSON.stringify(all.slice(0, 50)));
+  } catch { /* quota / disabled — best-effort */ }
+}
+function forgetVerifiedDomain(domain: string) {
+  if (typeof window === 'undefined') return;
+  try {
+    const all = loadVerifiedDomains().filter((x) => x.domain !== domain);
+    window.localStorage.setItem(DOMAINS_STORAGE_KEY, JSON.stringify(all));
+  } catch { /* ignore */ }
+}
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const VERIFY_URL = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/domain-verify` : '';
@@ -47,6 +79,14 @@ export default function DomainsPage() {
   const [phase, setPhase] = useState<'idle' | 'loading' | 'challenge' | 'verified' | 'blocked' | 'open' | 'err'>('idle');
   const [err, setErr] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [myDomains, setMyDomains] = useState<VerifiedDomain[]>([]);
+  useEffect(() => { setMyDomains(loadVerifiedDomains()); }, []);
+  useEffect(() => {
+    if (data && data.verified_at && (data.status === 'verified' || data.status === 'blocked' || data.status === 'open')) {
+      persistVerifiedDomain({ domain: data.domain, verified_at: data.verified_at, status: data.status });
+      setMyDomains(loadVerifiedDomains());
+    }
+  }, [data]);
 
   async function startChallenge() {
     setErr(null);
@@ -128,6 +168,52 @@ export default function DomainsPage() {
         (theme, pinned message, official badge), free for verified owners. Verification is at the apex —{' '}
         <span className="font-mono">_mosadd-murl.&lt;domain&gt;</span>.
       </p>
+
+      {phase === 'idle' && myDomains.length > 0 && (
+        <div className="mt-10 rounded-none border border-border p-6">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Your verified domains</h2>
+            <span className="text-[11px] text-muted-foreground/70">{myDomains.length}</span>
+          </div>
+          <div className="divide-y divide-border">
+            {myDomains.map((d) => (
+              <div key={d.domain} className="flex items-center gap-3 py-2 text-xs">
+                <span className="font-mono text-foreground truncate" title={d.domain}>{d.domain}</span>
+                <span className={`uppercase tracking-[0.15em] text-[10px] ${d.status === 'blocked' ? 'text-destructive' : d.status === 'open' ? 'text-muted-foreground' : 'text-primary'}`}>
+                  {d.status}
+                </span>
+                <span className="text-muted-foreground">verified {new Date(d.verified_at).toISOString().slice(0, 10)}</span>
+                <div className="ml-auto flex gap-2">
+                  <Link
+                    href={`/domains/${encodeURIComponent(d.domain)}/stats`}
+                    className="rounded-none border border-border px-2 py-1 text-[11px] hover:border-primary/60 hover:text-primary"
+                  >
+                    Stats
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => { setDomain(d.domain); startChallenge(); }}
+                    className="rounded-none border border-border px-2 py-1 text-[11px] hover:border-primary/60 hover:text-primary"
+                  >
+                    Manage
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { forgetVerifiedDomain(d.domain); setMyDomains(loadVerifiedDomains()); }}
+                    className="rounded-none border border-border px-2 py-1 text-[11px] text-muted-foreground hover:text-foreground"
+                    title="Remove from this list — does not affect server-side verification."
+                  >
+                    Forget
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-[10px] text-muted-foreground/80">
+            Stored locally in this browser. Verification itself lives on the server.
+          </p>
+        </div>
+      )}
 
       {phase === 'idle' && (
         <div className="mt-10 rounded-none border border-border p-6">
