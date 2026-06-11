@@ -25,10 +25,24 @@ type Usage = {
   period?: string | null;
 };
 
+type EmbedKey = {
+  id: string;
+  pk_prefix: string;
+  name: string;
+  product: string;
+  allowed_origins: string[];
+  allowed_channels: string[];
+  created_at: string;
+  last_used_at: string | null;
+};
+
+type HubTab = 'mcp' | 'embed';
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const CHECKOUT_ENDPOINT = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/create-checkout-session` : '';
 const PORTAL_ENDPOINT = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/create-portal-session` : '';
 const USAGE_ENDPOINT = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/hub-usage` : '';
+const EMBED_KEYS_ENDPOINT = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/embed-keys` : '';
 
 function snippet(key: string) {
   return `claude mcp add mosadd \\
@@ -60,6 +74,38 @@ export default function HubPage() {
   const [copied, setCopied] = useState<string | null>(null);
   const [usage, setUsage] = useState<Usage | null>(null);
   const [portalBusy, setPortalBusy] = useState(false);
+  const [hubTab, setHubTab] = useState<HubTab>('mcp');
+  const [embedKeys, setEmbedKeys] = useState<EmbedKey[] | null>(null);
+  const [embedErr, setEmbedErr] = useState<string | null>(null);
+
+  const loadEmbedKeys = useCallback(async () => {
+    if (!token || !EMBED_KEYS_ENDPOINT) return;
+    setEmbedErr(null);
+    try {
+      const r = await fetch(EMBED_KEYS_ENDPOINT, { headers: { Authorization: `Bearer ${token}` } });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d?.error ?? 'load failed');
+      setEmbedKeys(d.keys ?? []);
+    } catch (e) {
+      setEmbedErr(e instanceof Error ? e.message : 'load failed');
+      setEmbedKeys([]);
+    }
+  }, [token]);
+
+  const revokeEmbed = useCallback(async (id: string, name: string) => {
+    if (!token) return;
+    if (!window.confirm(`Revoke "${name}"? Any site using this key will stop working immediately.`)) return;
+    try {
+      const r = await fetch(`${EMBED_KEYS_ENDPOINT}?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!r.ok) throw new Error('revoke failed');
+      await loadEmbedKeys();
+    } catch (e) {
+      setEmbedErr(e instanceof Error ? e.message : 'revoke failed');
+    }
+  }, [token, loadEmbedKeys]);
 
   async function manageBilling() {
     if (!token || !PORTAL_ENDPOINT) return;
@@ -140,6 +186,7 @@ export default function HubPage() {
   }, [token]);
 
   useEffect(() => { if (token) { loadKeys(); loadUsage(); } }, [token, loadKeys, loadUsage]);
+  useEffect(() => { if (token && hubTab === 'embed' && embedKeys == null) void loadEmbedKeys(); }, [token, hubTab, embedKeys, loadEmbedKeys]);
 
   useEffect(() => {
     if (token && keysLoaded && keys.length === 0 && !fresh && !busy && !autoIssued.current) {
@@ -303,6 +350,31 @@ export default function HubPage() {
         <UsageCard usage={usage} plan={planInfo} onManageBilling={manageBilling} portalBusy={portalBusy} />
       ) : null}
 
+      {/* ── tabs (A5) ───────────────────────────────────────────────── */}
+      <div className="flex items-end gap-1 mb-6 border-b border-border">
+        {([
+          { id: 'mcp', label: 'MCP keys' },
+          { id: 'embed', label: 'Embed' },
+        ] as { id: HubTab; label: string }[]).map((t) => {
+          const active = hubTab === t.id;
+          return (
+            <button
+              key={t.id}
+              onClick={() => setHubTab(t.id)}
+              className={
+                'px-3 py-2 text-xs uppercase tracking-widest border-b-2 transition-colors ' +
+                (active ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground')
+              }
+            >
+              {t.label}
+              {t.id === 'embed' && embedKeys ? (
+                <span className="ml-1.5 text-[10px] text-muted-foreground/70">{embedKeys.length}</span>
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+
       {/* ── new key banner ──────────────────────────────────────────── */}
       {fresh ? (
         <div className="mb-8 border border-primary/40 bg-primary/[0.05] p-5">
@@ -331,6 +403,7 @@ export default function HubPage() {
       ) : null}
 
       {/* ── two-column layout ───────────────────────────────────────── */}
+      {hubTab === 'mcp' && (
       <div className="grid md:grid-cols-[1fr_320px] gap-8">
         {/* left: keys */}
         <div>
@@ -424,6 +497,90 @@ export default function HubPage() {
           </div>
         </div>
       </div>
+      )}
+
+      {hubTab === 'embed' && (
+      <div>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Embed keys</h2>
+          <Link
+            href="/embed/new"
+            className="rounded-none bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            + New embed
+          </Link>
+        </div>
+        {embedErr && (
+          <div className="border-l-2 border-destructive bg-destructive/5 p-3 text-xs text-destructive mb-4">{embedErr}</div>
+        )}
+        {embedKeys == null ? (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : embedKeys.length === 0 ? (
+          <div className="border border-dashed border-border p-8 text-center">
+            <p className="text-sm text-muted-foreground mb-4">No embed keys yet. Add a mIRC chat widget to your site — it&apos;s free on every plan.</p>
+            <Link
+              href="/embed/new"
+              className="inline-block rounded-none bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+            >
+              Create your first embed
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {embedKeys.map((k) => (
+              <div key={k.id} className="border border-border bg-card/30 p-4">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="min-w-0">
+                    <div className="font-mono font-bold text-foreground truncate">{k.name}</div>
+                    <code className="text-xs text-muted-foreground">{k.pk_prefix}…</code>
+                  </div>
+                  <button
+                    onClick={() => revokeEmbed(k.id, k.name)}
+                    className="text-xs uppercase tracking-widest text-muted-foreground hover:text-destructive border border-border px-3 py-1.5 hover:border-destructive shrink-0"
+                  >
+                    Revoke
+                  </button>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <div className="uppercase tracking-widest text-muted-foreground mb-1">Channel</div>
+                    <code className="font-mono">{k.allowed_channels[0] ?? '—'}</code>
+                  </div>
+                  <div>
+                    <div className="uppercase tracking-widest text-muted-foreground mb-1">Allowed on</div>
+                    <ul className="space-y-0.5">
+                      {(k.allowed_origins ?? []).map((o) => (
+                        <li key={o}><code className="font-mono">{o}</code></li>
+                      ))}
+                      {(k.allowed_origins ?? []).length === 0 && <li className="text-muted-foreground/70">any (no allow-list)</li>}
+                    </ul>
+                  </div>
+                </div>
+                <div className="mt-3 pt-3 border-t border-border flex justify-between items-center text-[11px] text-muted-foreground">
+                  <span>Created {new Date(k.created_at).toLocaleDateString()}</span>
+                  <span>{k.last_used_at ? `Last used ${timeAgo(k.last_used_at)}` : 'Never used'}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="mt-6 border border-border p-5">
+          <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">White-label</div>
+          {planInfo.id === 'team' || planInfo.id === 'enterprise' ? (
+            <p className="text-sm text-muted-foreground">Team plan: the &ldquo;powered by mosadd&rdquo; badge is off by default.</p>
+          ) : usage?.payg_enabled || (currentPlan === 'pro') ? (
+            <p className="text-sm text-muted-foreground">
+              Remove the badge for <span className="text-foreground">$3/mo</span> via the <button onClick={manageBilling} className="underline hover:text-primary">billing portal</button>, or
+              {' '}<Link href="/pricing" className="underline hover:text-primary">upgrade to Team</Link> for white-label included.
+            </p>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Embed shows a small &ldquo;powered by mosadd&rdquo; badge on Free. <Link href="/pricing" className="underline hover:text-primary">Upgrade</Link> to remove it.
+            </p>
+          )}
+        </div>
+      </div>
+      )}
     </Shell>
   );
 }
