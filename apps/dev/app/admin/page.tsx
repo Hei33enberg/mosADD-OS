@@ -4,12 +4,31 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getSupabase, SUPABASE_CONFIGURED } from '../hub/supabaseClient';
 
-// Founder admin dashboard for the mosadd.dev BUSINESS (embed/hub): creators,
-// embed keys, plan mix, MAT usage, PAYG overage revenue, estimated MRR.
-// Admin-gated server-side by dev-admin-stats (user_roles role='admin').
+// Founder admin dashboard for the mosadd.dev BUSINESS.
+// Tabs: Overview | Customers | Ops | Moderation. Admin-gated server-side
+// (user_roles role='admin') by dev-admin-stats (Overview/Customers) and
+// admin-ops (Ops/Moderation).
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const STATS_ENDPOINT = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/dev-admin-stats` : '';
+const OPS_ENDPOINT = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/admin-ops` : '';
+
+interface Customer {
+  user_id: string;
+  email: string | null;
+  tier: string;
+  mat_used_month: number;
+  msg_used_month?: number;
+  search_used_month?: number;
+  payg_enabled: boolean;
+  paid_usd_month?: number;
+  spend_cap_usd_month?: number | null;
+  brand_removal_paid?: boolean;
+  stripe_customer_id?: string | null;
+  keys_active: number;
+  products: string[];
+  last_active: string | null;
+}
 
 interface Stats {
   generated_at: string;
@@ -23,12 +42,33 @@ interface Stats {
   mat_total_month: number;
   payg_enabled_count: number;
   billing?: { account_id?: string; charges_enabled?: boolean; payouts_enabled?: boolean; details_submitted?: boolean; error?: string } | null;
-  customers: { user_id: string; email: string | null; tier: string; mat_used_month: number; payg_enabled: boolean; keys_active: number; products: string[]; last_active: string | null }[];
+  customers: Customer[];
   recent_creators: { user_id: string; email?: string | null; product: string; created_at: string; last_used_at: string | null }[];
 }
 
+interface Ops {
+  generated_at: string;
+  alerts: Array<{ id: string; source: string; severity: string; subject: string; body?: string; created_at: string; resolved_at?: string | null }>;
+  health_checks: Array<{ name: string; url: string; status?: string | null; latency_ms?: number | null; consecutive_failures?: number; last_checked_at?: string | null; last_ok_at?: string | null; enabled?: boolean }>;
+  provider_status: Array<{ provider: string; balance_usd_cents?: number | null; threshold_warn_cents?: number | null; threshold_critical_cents?: number | null; last_alert_level?: string | null; last_checked_at?: string | null }>;
+  worker_metrics_1h: Record<string, { count: number; sum: number; avg: number; max: number; latest: number; latest_ts: string }>;
+  ops_digests: Array<{ ts: string; summary?: Record<string, unknown> | null; body?: string | null }>;
+  moderation: {
+    reports_queue: Array<{ message_id: string; channel_slug: string; reasons: string[]; first: string; latest: string; count: number }>;
+    device_bans: Array<{ device_hash: string; reason?: string | null; created_at: string; expires_at?: string | null }>;
+  };
+}
+
+type TabId = 'overview' | 'customers' | 'ops' | 'moderation';
+const TABS: { id: TabId; label: string }[] = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'customers', label: 'Customers' },
+  { id: 'ops', label: 'Ops' },
+  { id: 'moderation', label: 'Moderation' },
+];
+
 function Shell({ children }: { children: React.ReactNode }) {
-  return <div className="mx-auto max-w-4xl px-6 py-14">{children}</div>;
+  return <div className="mx-auto max-w-6xl px-6 py-12">{children}</div>;
 }
 
 function Stat({ label, value, sub }: { label: string; value: React.ReactNode; sub?: string }) {
@@ -41,6 +81,20 @@ function Stat({ label, value, sub }: { label: string; value: React.ReactNode; su
   );
 }
 
+function fmtAgo(iso?: string | null): string {
+  if (!iso) return '—';
+  const d = Date.now() - new Date(iso).getTime();
+  if (d < 60_000) return 'just now';
+  if (d < 3_600_000) return `${Math.floor(d / 60_000)}m ago`;
+  if (d < 86_400_000) return `${Math.floor(d / 3_600_000)}h ago`;
+  return `${Math.floor(d / 86_400_000)}d ago`;
+}
+
+function fmtDollars(usd?: number | null): string {
+  if (usd == null) return '—';
+  return `$${usd.toFixed(2)}`;
+}
+
 export default function AdminPage() {
   const supabase = getSupabase();
   const [ready, setReady] = useState(false);
@@ -49,8 +103,11 @@ export default function AdminPage() {
   const [loginEmail, setLoginEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [stats, setStats] = useState<Stats | null>(null);
+  const [ops, setOps] = useState<Ops | null>(null);
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
+  const [tab, setTab] = useState<TabId>('overview');
+  const [openCustomer, setOpenCustomer] = useState<string | null>(null);
 
   useEffect(() => {
     if (!supabase) {
@@ -79,10 +136,21 @@ export default function AdminPage() {
       if (r.status === 403) throw new Error('Your account is not an admin. Ask the owner to grant the admin role.');
       if (!r.ok) throw new Error(data?.error ?? 'failed to load');
       setStats(data as Stats);
-    } catch (e: any) {
-      setErr(e?.message ?? 'failed to load');
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'failed to load');
     } finally {
       setLoading(false);
+    }
+  }, [token]);
+
+  const loadOps = useCallback(async () => {
+    if (!token || !OPS_ENDPOINT) return;
+    try {
+      const r = await fetch(OPS_ENDPOINT, { headers: { Authorization: `Bearer ${token}` } });
+      if (!r.ok) return;
+      setOps(await r.json());
+    } catch {
+      /* admin-ops may not be deployed in this env — silent */
     }
   }, [token]);
 
@@ -98,14 +166,17 @@ export default function AdminPage() {
       const d = await r.json();
       if (!r.ok) throw new Error(d?.error ?? 'revoke failed');
       await load();
-    } catch (e: any) {
-      setErr(e?.message ?? 'revoke failed');
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'revoke failed');
     }
   }, [token, load]);
 
   useEffect(() => {
-    if (token) void load();
-  }, [token, load]);
+    if (token) {
+      void load();
+      void loadOps();
+    }
+  }, [token, load, loadOps]);
 
   const github = useCallback(async () => {
     if (!supabase) return;
@@ -173,6 +244,9 @@ export default function AdminPage() {
 
   const pm = stats?.plan_mix ?? {};
   const subs = stats?.active_dev_subs ?? {};
+  const openAlerts = ops?.alerts?.length ?? 0;
+  const failingChecks = ops?.health_checks?.filter((h) => h.status && h.status.toLowerCase() !== 'ok' && h.status.toLowerCase() !== 'healthy').length ?? 0;
+  const queueDepth = ops?.moderation?.reports_queue?.length ?? 0;
 
   return (
     <Shell>
@@ -189,13 +263,38 @@ export default function AdminPage() {
         </div>
       </div>
 
+      {/* tabs */}
+      <div className="flex items-end gap-1 mb-6 border-b border-border">
+        {TABS.map((t) => {
+          const active = tab === t.id;
+          let badge: React.ReactNode = null;
+          if (t.id === 'ops' && (openAlerts + failingChecks) > 0)
+            badge = <span className="ml-1.5 text-[10px] text-destructive">●</span>;
+          if (t.id === 'moderation' && queueDepth > 0)
+            badge = <span className="ml-1.5 text-[10px] text-destructive">{queueDepth}</span>;
+          return (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={
+                'px-3 py-2 text-xs uppercase tracking-widest border-b-2 transition-colors ' +
+                (active ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground')
+              }
+            >
+              {t.label}
+              {badge}
+            </button>
+          );
+        })}
+      </div>
+
       {err && (
         <div className="border-l-2 border-destructive bg-destructive/5 p-3 mb-4 text-sm text-destructive">{err}</div>
       )}
 
       {loading && !stats && <div className="text-muted-foreground">Loading stats…</div>}
 
-      {stats && (
+      {tab === 'overview' && stats && (
         <>
           {stats.billing && (
             <div className={`mb-4 flex flex-wrap items-center gap-2 border-l-2 p-3 text-sm ${stats.billing.charges_enabled ? 'border-primary bg-primary/5 text-primary' : 'border-destructive bg-destructive/5 text-destructive'}`}>
@@ -229,31 +328,8 @@ export default function AdminPage() {
             ))}
           </div>
 
-          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
-            Customers <span className="text-muted-foreground/60">({stats.customers?.length ?? 0})</span>
-          </h2>
-          <div className="border border-border divide-y divide-border mb-6">
-            {(!stats.customers || stats.customers.length === 0) && (
-              <div className="p-3 text-sm text-muted-foreground">No customers yet.</div>
-            )}
-            {(stats.customers ?? []).map((c) => (
-              <div key={c.user_id} className="flex items-center justify-between gap-3 p-3 text-xs">
-                <span className="font-mono truncate max-w-[220px]" title={c.user_id}>{c.email ?? `${c.user_id.slice(0, 8)}…`}</span>
-                <span className={`uppercase tracking-widest ${c.tier === 'free' ? 'text-muted-foreground' : 'text-primary'}`}>{c.tier}</span>
-                <span className="text-muted-foreground whitespace-nowrap">{c.keys_active} key{c.keys_active === 1 ? '' : 's'}</span>
-                <span className="text-muted-foreground whitespace-nowrap">{c.mat_used_month.toLocaleString()} MAT{c.payg_enabled ? ' · PAYG' : ''}</span>
-                <span className="text-muted-foreground whitespace-nowrap">{c.last_active ? new Date(c.last_active).toLocaleDateString() : '—'}</span>
-                {c.keys_active > 0 ? (
-                  <button onClick={() => revokeUser(c.user_id, c.email ?? c.user_id)} className="text-destructive/70 hover:text-destructive whitespace-nowrap">revoke</button>
-                ) : (
-                  <span className="text-muted-foreground/30">—</span>
-                )}
-              </div>
-            ))}
-          </div>
-
           <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Recent creators</h2>
-          <div className="border border-border divide-y divide-border">
+          <div className="border border-border divide-y divide-border mb-4">
             {stats.recent_creators.length === 0 && (
               <div className="p-3 text-sm text-muted-foreground">No embed keys yet.</div>
             )}
@@ -271,8 +347,234 @@ export default function AdminPage() {
 
           <p className="text-[11px] text-muted-foreground mt-4">
             Generated {new Date(stats.generated_at).toLocaleString()} ·{' '}
-            <button onClick={load} className="underline hover:text-foreground">refresh</button>
+            <button onClick={() => { void load(); void loadOps(); }} className="underline hover:text-foreground">refresh</button>
           </p>
+        </>
+      )}
+
+      {tab === 'customers' && stats && (
+        <>
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
+            Customers <span className="text-muted-foreground/60">({stats.customers?.length ?? 0})</span>
+          </h2>
+          <div className="border border-border divide-y divide-border">
+            {(!stats.customers || stats.customers.length === 0) && (
+              <div className="p-3 text-sm text-muted-foreground">No customers yet.</div>
+            )}
+            {(stats.customers ?? []).map((c) => {
+              const open = openCustomer === c.user_id;
+              return (
+                <div key={c.user_id} className="text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setOpenCustomer(open ? null : c.user_id)}
+                    className="w-full flex items-center justify-between gap-3 p-3 text-left hover:bg-card/40"
+                  >
+                    <span className="font-mono truncate max-w-[220px]" title={c.user_id}>{c.email ?? `${c.user_id.slice(0, 8)}…`}</span>
+                    <span className={`uppercase tracking-widest ${c.tier === 'free' ? 'text-muted-foreground' : 'text-primary'}`}>{c.tier}</span>
+                    <span className="text-muted-foreground whitespace-nowrap">{c.keys_active} key{c.keys_active === 1 ? '' : 's'}</span>
+                    <span className="text-muted-foreground whitespace-nowrap">{c.mat_used_month.toLocaleString()} MAT{c.payg_enabled ? ' · PAYG' : ''}</span>
+                    <span className="text-muted-foreground whitespace-nowrap">{c.last_active ? new Date(c.last_active).toLocaleDateString() : '—'}</span>
+                    <span className="text-muted-foreground">{open ? '▾' : '▸'}</span>
+                  </button>
+                  {open && (
+                    <div className="bg-card/30 px-3 pb-3 pt-1 grid gap-3 md:grid-cols-3 text-[11px]">
+                      <div>
+                        <div className="text-muted-foreground uppercase tracking-widest mb-1">Usage</div>
+                        <div>MAT: <span className="font-mono">{c.mat_used_month.toLocaleString()}</span></div>
+                        <div>Messages: <span className="font-mono">{(c.msg_used_month ?? 0).toLocaleString()}</span></div>
+                        <div>RAG: <span className="font-mono">{(c.search_used_month ?? 0).toLocaleString()}</span></div>
+                      </div>
+                      <div>
+                        <div className="text-muted-foreground uppercase tracking-widest mb-1">Billing</div>
+                        <div>PAYG: {c.payg_enabled ? 'on' : 'off'}</div>
+                        <div>Paid this mo: <span className="font-mono">{fmtDollars(c.paid_usd_month)}</span></div>
+                        <div>Spend cap: <span className="font-mono">{c.spend_cap_usd_month != null ? fmtDollars(c.spend_cap_usd_month) : 'default (2× plan)'}</span></div>
+                        <div>Brand removal: {c.brand_removal_paid ? 'paid' : '—'}</div>
+                      </div>
+                      <div>
+                        <div className="text-muted-foreground uppercase tracking-widest mb-1">Account</div>
+                        <div className="break-all">user_id: <span className="font-mono">{c.user_id}</span></div>
+                        <div>Products: {c.products.length ? c.products.join(', ') : '—'}</div>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {c.stripe_customer_id ? (
+                            <a
+                              href={`https://dashboard.stripe.com/customers/${c.stripe_customer_id}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="border border-border px-2 py-1 hover:border-primary/60 hover:text-primary"
+                            >
+                              Stripe customer ↗
+                            </a>
+                          ) : (
+                            <span className="text-muted-foreground/60">no Stripe customer</span>
+                          )}
+                          {c.keys_active > 0 && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); void revokeUser(c.user_id, c.email ?? c.user_id); }}
+                              className="border border-destructive/30 text-destructive/80 px-2 py-1 hover:bg-destructive/5"
+                            >
+                              Revoke {c.keys_active} key{c.keys_active === 1 ? '' : 's'}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {tab === 'ops' && (
+        <>
+          {!ops ? (
+            <div className="text-sm text-muted-foreground">Loading ops…</div>
+          ) : (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <Stat label="Open alerts" value={ops.alerts.length} sub={`${ops.alerts.filter((a) => a.severity === 'critical').length} critical`} />
+                <Stat label="Health checks" value={ops.health_checks.length} sub={`${failingChecks} failing`} />
+                <Stat label="Providers" value={ops.provider_status.length} sub={`${ops.provider_status.filter((p) => p.last_alert_level && p.last_alert_level !== 'ok').length} alerting`} />
+                <Stat label="Worker metrics 1h" value={Object.keys(ops.worker_metrics_1h).length} sub="distinct series" />
+              </div>
+
+              <div>
+                <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Open alerts</h2>
+                {ops.alerts.length === 0 ? (
+                  <div className="border border-border p-3 text-sm text-muted-foreground">No open alerts.</div>
+                ) : (
+                  <div className="border border-border divide-y divide-border">
+                    {ops.alerts.map((a) => (
+                      <div key={a.id} className="p-3 text-xs">
+                        <div className="flex items-baseline gap-3">
+                          <span className={`uppercase tracking-widest text-[10px] ${a.severity === 'critical' ? 'text-destructive' : a.severity === 'warn' ? 'text-primary' : 'text-muted-foreground'}`}>{a.severity}</span>
+                          <span className="text-muted-foreground">{a.source}</span>
+                          <span className="ml-auto text-muted-foreground">{fmtAgo(a.created_at)}</span>
+                        </div>
+                        <div className="mt-1 text-foreground">{a.subject}</div>
+                        {a.body && <div className="mt-1 text-muted-foreground whitespace-pre-wrap break-words">{a.body.slice(0, 280)}{a.body.length > 280 ? '…' : ''}</div>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Health checks</h2>
+                <div className="border border-border divide-y divide-border">
+                  {ops.health_checks.map((h) => {
+                    const ok = (h.status ?? '').toLowerCase() === 'ok' || (h.status ?? '').toLowerCase() === 'healthy';
+                    return (
+                      <div key={h.name} className="flex items-center gap-3 p-3 text-xs">
+                        <span className={`text-[10px] ${ok ? 'text-primary' : 'text-destructive'}`}>{ok ? '●' : '●'}</span>
+                        <span className="font-mono w-48 truncate" title={h.name}>{h.name}</span>
+                        <span className="text-muted-foreground w-20 text-right">{h.latency_ms != null ? `${h.latency_ms} ms` : '—'}</span>
+                        <span className="text-muted-foreground">{h.consecutive_failures ? `${h.consecutive_failures} fail` : 'ok'}</span>
+                        <span className="ml-auto text-muted-foreground">checked {fmtAgo(h.last_checked_at)}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Provider status</h2>
+                <div className="border border-border divide-y divide-border">
+                  {ops.provider_status.map((p) => (
+                    <div key={p.provider} className="flex items-center gap-3 p-3 text-xs">
+                      <span className="font-mono w-32 uppercase">{p.provider}</span>
+                      <span className="text-muted-foreground">
+                        {p.balance_usd_cents != null ? `$${(p.balance_usd_cents / 100).toFixed(2)}` : '—'}
+                      </span>
+                      <span className={`uppercase tracking-widest text-[10px] ${p.last_alert_level === 'critical' ? 'text-destructive' : p.last_alert_level === 'warn' ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {p.last_alert_level ?? '—'}
+                      </span>
+                      <span className="ml-auto text-muted-foreground">checked {fmtAgo(p.last_checked_at)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {Object.keys(ops.worker_metrics_1h).length > 0 && (
+                <div>
+                  <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Worker metrics — last hour</h2>
+                  <div className="border border-border divide-y divide-border">
+                    {Object.entries(ops.worker_metrics_1h).map(([metric, v]) => (
+                      <div key={metric} className="flex items-center gap-3 p-3 text-xs">
+                        <span className="font-mono w-56 truncate" title={metric}>{metric}</span>
+                        <span className="text-muted-foreground w-24 text-right">latest <span className="text-foreground font-mono">{v.latest.toLocaleString()}</span></span>
+                        <span className="text-muted-foreground w-24 text-right">avg <span className="text-foreground font-mono">{v.avg.toFixed(2)}</span></span>
+                        <span className="text-muted-foreground w-24 text-right">max <span className="text-foreground font-mono">{v.max.toLocaleString()}</span></span>
+                        <span className="ml-auto text-muted-foreground">{fmtAgo(v.latest_ts)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <p className="text-[11px] text-muted-foreground">
+                Generated {new Date(ops.generated_at).toLocaleString()} ·{' '}
+                <button onClick={loadOps} className="underline hover:text-foreground">refresh</button>
+              </p>
+            </div>
+          )}
+        </>
+      )}
+
+      {tab === 'moderation' && (
+        <>
+          {!ops ? (
+            <div className="text-sm text-muted-foreground">Loading moderation queue…</div>
+          ) : (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                  Reports queue <span className="text-muted-foreground/60">({ops.moderation.reports_queue.length})</span>
+                </h2>
+                <p className="text-[11px] text-muted-foreground mb-2">
+                  Messages auto-hide at 3 reports (DB trigger). Admin unhide / device ban actions land in B4.
+                </p>
+                {ops.moderation.reports_queue.length === 0 ? (
+                  <div className="border border-border p-3 text-sm text-muted-foreground">Queue empty.</div>
+                ) : (
+                  <div className="border border-border divide-y divide-border">
+                    {ops.moderation.reports_queue.map((r) => (
+                      <div key={r.message_id} className="flex items-center gap-3 p-3 text-xs">
+                        <span className={`font-mono ${r.count >= 3 ? 'text-destructive' : 'text-foreground'}`}>{r.count}×</span>
+                        <span className="text-muted-foreground">#{r.channel_slug}</span>
+                        <span className="font-mono text-muted-foreground truncate max-w-[220px]" title={r.message_id}>{r.message_id.slice(0, 12)}…</span>
+                        <span className="text-muted-foreground truncate max-w-[260px]" title={r.reasons.join(', ')}>{r.reasons.join(', ') || '—'}</span>
+                        <span className="ml-auto text-muted-foreground">latest {fmtAgo(r.latest)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                  Device bans <span className="text-muted-foreground/60">({ops.moderation.device_bans.length})</span>
+                </h2>
+                {ops.moderation.device_bans.length === 0 ? (
+                  <div className="border border-border p-3 text-sm text-muted-foreground">No active device bans.</div>
+                ) : (
+                  <div className="border border-border divide-y divide-border">
+                    {ops.moderation.device_bans.map((b) => (
+                      <div key={b.device_hash} className="flex items-center gap-3 p-3 text-xs">
+                        <span className="font-mono text-muted-foreground truncate max-w-[260px]" title={b.device_hash}>{b.device_hash.slice(0, 18)}…</span>
+                        <span className="text-muted-foreground truncate max-w-[200px]">{b.reason ?? '—'}</span>
+                        <span className="text-muted-foreground">{b.expires_at ? `expires ${fmtAgo(b.expires_at)}` : 'permanent'}</span>
+                        <span className="ml-auto text-muted-foreground">banned {fmtAgo(b.created_at)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </>
       )}
     </Shell>
