@@ -46,6 +46,37 @@ export default function OwnerStatsPage() {
 
   const maxHourly = data ? Math.max(1, ...data.last_24h.hourly) : 1;
 
+  // C2 / 3154: download the on-screen numbers as CSV (no PII — aggregates only).
+  function downloadCsv() {
+    if (!data) return;
+    const now = new Date();
+    const hours = data.last_24h.hourly.map((v, i) => {
+      const hr = new Date(now.getTime() - (data.last_24h.hourly.length - 1 - i) * 3600_000);
+      return `${hr.toISOString()},${v}`;
+    });
+    const csv = [
+      `# mURL stats for ${data.domain}`,
+      `# generated_at,${now.toISOString()}`,
+      `# slug,${data.slug}`,
+      '',
+      'window,messages,unique_senders',
+      `last_24h,${data.last_24h.messages},${data.last_24h.unique_senders}`,
+      `last_7d,${data.last_7d.messages},${data.last_7d.unique_senders}`,
+      '',
+      'hour_iso,messages',
+      ...hours,
+    ].join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `mosadd-murl-${data.domain}-${now.toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="mx-auto max-w-3xl px-6 py-14">
       <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">mURL · mURL owner analytics · free</div>
@@ -118,10 +149,18 @@ export default function OwnerStatsPage() {
             </div>
           </div>
 
-          <div className="text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
             <Link className="underline" href="/domains">← Back to /domains</Link>
-            {' · '}
+            <span>·</span>
             <Link className="underline" href={`/c/${rawDomain}`}>landing</Link>
+            <span>·</span>
+            <button
+              type="button"
+              onClick={downloadCsv}
+              className="rounded-none border border-border px-2 py-1 text-[11px] uppercase tracking-[0.15em] hover:border-primary/60 hover:text-primary"
+            >
+              Download CSV
+            </button>
           </div>
         </div>
       )}

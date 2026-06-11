@@ -37,6 +37,8 @@ interface Stats {
   embed_keys_used_24h: number;
   plan_mix: Record<string, number>;
   active_dev_subs: Record<string, number>;
+  active_consumer_subs?: Record<string, number>;
+  consumer_mrr_estimate_usd?: number;
   mrr_estimate_usd: number;
   overage_revenue_usd_month: number;
   mat_total_month: number;
@@ -57,14 +59,18 @@ interface Ops {
     reports_queue: Array<{ message_id: string; channel_slug: string; reasons: string[]; first: string; latest: string; count: number }>;
     device_bans: Array<{ device_hash: string; reason?: string | null; created_at: string; expires_at?: string | null }>;
   };
+  murl?: {
+    trending_24h: Array<{ slug: string; n: number }>;
+  };
 }
 
-type TabId = 'overview' | 'customers' | 'ops' | 'moderation';
+type TabId = 'overview' | 'customers' | 'ops' | 'moderation' | 'murl';
 const TABS: { id: TabId; label: string }[] = [
   { id: 'overview', label: 'Overview' },
   { id: 'customers', label: 'Customers' },
   { id: 'ops', label: 'Ops' },
   { id: 'moderation', label: 'Moderation' },
+  { id: 'murl', label: 'mURL' },
 ];
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -344,6 +350,37 @@ export default function AdminPage() {
             <Stat label="Team subs" value={subs.team ?? 0} sub="$29/mo each" />
           </div>
 
+          {/* B5: consumer (mosadd.com) revenue alongside dev hub */}
+          {(stats.active_consumer_subs || stats.consumer_mrr_estimate_usd != null) && (
+            <>
+              <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                Consumer (mosadd.com) revenue
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                <Stat
+                  label="Consumer MRR"
+                  value={`$${(stats.consumer_mrr_estimate_usd ?? 0).toLocaleString()}`}
+                  sub="active operator + command"
+                />
+                <Stat
+                  label="Operator subs"
+                  value={stats.active_consumer_subs?.operator ?? 0}
+                  sub="$29/mo each"
+                />
+                <Stat
+                  label="Command subs"
+                  value={stats.active_consumer_subs?.command ?? 0}
+                  sub="$89/mo each"
+                />
+                <Stat
+                  label="Sovereign"
+                  value={stats.active_consumer_subs?.sovereign ?? 0}
+                  sub="custom (excluded from MRR)"
+                />
+              </div>
+            </>
+          )}
+
           <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Plan mix</h2>
           <div className="grid grid-cols-4 gap-3 mb-6">
             {(['free', 'pro', 'team', 'enterprise'] as const).map((t) => (
@@ -545,6 +582,81 @@ export default function AdminPage() {
                 Generated {new Date(ops.generated_at).toLocaleString()} ·{' '}
                 <button onClick={loadOps} className="underline hover:text-foreground">refresh</button>
               </p>
+            </div>
+          )}
+        </>
+      )}
+
+      {tab === 'murl' && (
+        <>
+          {!ops ? (
+            <div className="text-sm text-muted-foreground">Loading mURL room metrics…</div>
+          ) : (
+            <div className="space-y-6">
+              {Object.keys(ops.worker_metrics_1h).length > 0 && (
+                <div>
+                  <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Room health — last hour (worker)</h2>
+                  <div className="border border-border divide-y divide-border">
+                    {Object.entries(ops.worker_metrics_1h).map(([metric, v]) => (
+                      <div key={metric} className="flex items-center gap-3 p-3 text-xs">
+                        <span className="font-mono w-56 truncate" title={metric}>{metric}</span>
+                        <span className="text-muted-foreground w-24 text-right">latest <span className="text-foreground font-mono">{v.latest.toLocaleString()}</span></span>
+                        <span className="text-muted-foreground w-24 text-right">avg <span className="text-foreground font-mono">{v.avg.toFixed(2)}</span></span>
+                        <span className="text-muted-foreground w-24 text-right">max <span className="text-foreground font-mono">{v.max.toLocaleString()}</span></span>
+                        <span className="ml-auto text-muted-foreground">{fmtAgo(v.latest_ts)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                  Top rooms — last 24h
+                </h2>
+                {!ops.murl?.trending_24h || ops.murl.trending_24h.length === 0 ? (
+                  <div className="border border-border p-3 text-sm text-muted-foreground">No trending rooms in the last 24h.</div>
+                ) : (
+                  <div className="border border-border divide-y divide-border">
+                    {ops.murl.trending_24h.map((r, i) => (
+                      <div key={r.slug} className="flex items-center gap-3 p-3 text-xs">
+                        <span className="font-mono text-muted-foreground w-8 text-right">#{i + 1}</span>
+                        <a
+                          href={`https://murl.mosadd.com/${encodeURIComponent(r.slug)}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="font-mono text-foreground hover:text-primary truncate flex-1"
+                        >
+                          {r.slug}
+                        </a>
+                        <span className="text-muted-foreground whitespace-nowrap">{r.n.toLocaleString()} msgs</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                  Recent ops digests
+                </h2>
+                {ops.ops_digests.length === 0 ? (
+                  <div className="border border-border p-3 text-sm text-muted-foreground">No digests yet.</div>
+                ) : (
+                  <div className="border border-border divide-y divide-border">
+                    {ops.ops_digests.slice(0, 5).map((d, i) => (
+                      <div key={i} className="p-3 text-xs">
+                        <div className="text-muted-foreground mb-1">{new Date(d.ts).toLocaleString()}</div>
+                        {d.body && (
+                          <pre className="whitespace-pre-wrap font-mono text-foreground/80 text-[11px] max-h-40 overflow-y-auto">
+                            {d.body.slice(0, 600)}{d.body.length > 600 ? '\n…' : ''}
+                          </pre>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </>

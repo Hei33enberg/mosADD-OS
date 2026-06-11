@@ -92,6 +92,27 @@ export default function HubPage() {
     }
   }, [token]);
 
+  // A6 / 3142: inline rename for embed keys via PATCH. (renameMcp lives after
+  // loadKeys is declared further down, to satisfy hooks ordering.)
+  const renameEmbed = useCallback(async (id: string, currentName: string) => {
+    if (!token) return;
+    const next = window.prompt('Rename embed', currentName);
+    if (next == null) return;
+    const trimmed = next.trim().slice(0, 64);
+    if (!trimmed || trimmed === currentName) return;
+    try {
+      const r = await fetch(EMBED_KEYS_ENDPOINT, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, name: trimmed }),
+      });
+      if (!r.ok) throw new Error('rename failed');
+      await loadEmbedKeys();
+    } catch (e) {
+      setEmbedErr(e instanceof Error ? e.message : 'rename failed');
+    }
+  }, [token, loadEmbedKeys]);
+
   const revokeEmbed = useCallback(async (id: string, name: string) => {
     if (!token) return;
     if (!window.confirm(`Revoke "${name}"? Any site using this key will stop working immediately.`)) return;
@@ -174,6 +195,26 @@ export default function HubPage() {
     if (res.ok) setKeys((await res.json()).keys ?? []);
     setKeysLoaded(true);
   }, [token]);
+
+  // A6 / 3142: inline rename for MCP keys via PATCH. Lives after loadKeys.
+  const renameMcp = useCallback(async (id: string, currentName: string) => {
+    if (!token) return;
+    const next = window.prompt('Rename key', currentName);
+    if (next == null) return;
+    const trimmed = next.trim().slice(0, 60);
+    if (!trimmed || trimmed === currentName) return;
+    try {
+      const r = await fetch(HUB_KEYS_ENDPOINT, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, name: trimmed }),
+      });
+      if (!r.ok) throw new Error('rename failed');
+      await loadKeys();
+    } catch (e) {
+      console.error(e);
+    }
+  }, [token, loadKeys]);
 
   const loadUsage = useCallback(async () => {
     if (!token || !USAGE_ENDPOINT) return;
@@ -422,23 +463,39 @@ export default function HubPage() {
               <p className="px-4 py-8 text-sm text-muted-foreground text-center">No keys yet — one is being created for you.</p>
             ) : (
               keys.map((k) => (
-                <div key={k.id} className="flex items-center justify-between px-4 py-3 group">
+                <div key={k.id} className="flex items-center justify-between gap-3 px-4 py-3 group">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <code className="font-mono text-sm text-foreground truncate">{k.key_prefix}…</code>
+                      <button
+                        type="button"
+                        onClick={() => renameMcp(k.id, k.name)}
+                        title="Click to rename"
+                        className="font-mono text-sm text-foreground truncate hover:text-primary"
+                      >
+                        {k.name || 'default'}
+                      </button>
                       <span className="shrink-0 border border-border px-1.5 py-0.5 text-[9px] uppercase tracking-widest text-muted-foreground">{k.plan}</span>
                     </div>
                     <div className="mt-0.5 text-[10px] text-muted-foreground">
-                      Created {new Date(k.created_at).toLocaleDateString('en-US', { dateStyle: 'medium' })}
+                      <code className="font-mono">{k.key_prefix}…</code>
+                      {' · '}Created {new Date(k.created_at).toLocaleDateString('en-US', { dateStyle: 'medium' })}
                       {k.last_used_at ? ` · last used ${timeAgo(k.last_used_at)}` : ' · never used'}
                     </div>
                   </div>
-                  <button
-                    onClick={() => revoke(k.id)}
-                    className="shrink-0 opacity-0 group-hover:opacity-100 text-xs text-destructive/70 hover:text-destructive transition-opacity"
-                  >
-                    Revoke
-                  </button>
+                  <div className="shrink-0 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => renameMcp(k.id, k.name)}
+                      className="text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      Rename
+                    </button>
+                    <button
+                      onClick={() => revoke(k.id)}
+                      className="text-xs text-destructive/70 hover:text-destructive"
+                    >
+                      Revoke
+                    </button>
+                  </div>
                 </div>
               ))
             )}
@@ -531,15 +588,30 @@ export default function HubPage() {
               <div key={k.id} className="border border-border bg-card/30 p-4">
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div className="min-w-0">
-                    <div className="font-mono font-bold text-foreground truncate">{k.name}</div>
-                    <code className="text-xs text-muted-foreground">{k.pk_prefix}…</code>
+                    <button
+                      type="button"
+                      onClick={() => renameEmbed(k.id, k.name)}
+                      title="Click to rename"
+                      className="font-mono font-bold text-foreground truncate hover:text-primary text-left"
+                    >
+                      {k.name}
+                    </button>
+                    <code className="block text-xs text-muted-foreground">{k.pk_prefix}…</code>
                   </div>
-                  <button
-                    onClick={() => revokeEmbed(k.id, k.name)}
-                    className="text-xs uppercase tracking-widest text-muted-foreground hover:text-destructive border border-border px-3 py-1.5 hover:border-destructive shrink-0"
-                  >
-                    Revoke
-                  </button>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={() => renameEmbed(k.id, k.name)}
+                      className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground border border-border px-3 py-1.5 hover:border-primary/50"
+                    >
+                      Rename
+                    </button>
+                    <button
+                      onClick={() => revokeEmbed(k.id, k.name)}
+                      className="text-xs uppercase tracking-widest text-muted-foreground hover:text-destructive border border-border px-3 py-1.5 hover:border-destructive"
+                    >
+                      Revoke
+                    </button>
+                  </div>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4 text-xs">
                   <div>
