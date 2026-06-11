@@ -1,12 +1,28 @@
 /** @type {import('next').NextConfig} */
+//
+// hub.mosadd.com is being retired in favour of mosadd.dev/hub (LINEAR-3143 /
+// A7). One domain = docs + panel = best funnel; maintaining two SSR Next apps
+// for the same job bled features (the embed addon was invisible on .dev, plan
+// limits drifted) and operations.
+//
+// Until the DNS flip happens, this app responds to every request with a
+// permanent (308) redirect to https://mosadd.dev/hub. The auth callback
+// (/auth/callback) and login (/login) routes redirect too — Supabase OAuth /
+// magic-link redirect URLs should already be moving to mosadd.dev/hub as part
+// of A4 (LINEAR-3140).
 const nextConfig = {
   reactStrictMode: true,
-  // Env that's safe to expose to the browser. SUPABASE_URL is public; the anon
-  // key is also public-by-design (RLS protects data). The service role is NEVER
-  // exposed here — Stripe writes etc. go through the Supabase edge functions.
-  env: {
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://rooffhgbxafyjcwmwpsy.supabase.co",
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
+  async redirects() {
+    return [
+      // Specific high-value paths -> /hub root on the canonical domain
+      { source: "/", destination: "https://mosadd.dev/hub", permanent: true },
+      { source: "/dashboard", destination: "https://mosadd.dev/hub", permanent: true },
+      { source: "/embed", destination: "https://mosadd.dev/embed/new", permanent: true },
+      { source: "/embed/new", destination: "https://mosadd.dev/embed/new", permanent: true },
+      { source: "/login", destination: "https://mosadd.dev/hub", permanent: true },
+      // Catch-all for anything else
+      { source: "/:path*", destination: "https://mosadd.dev/hub", permanent: true },
+    ];
   },
 };
 export default nextConfig;
