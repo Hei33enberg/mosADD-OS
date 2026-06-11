@@ -154,6 +154,27 @@ export default function AdminPage() {
     }
   }, [token]);
 
+  const mod = useCallback(async (action: string, payload: Record<string, unknown>, confirmMsg: string) => {
+    if (!token) return;
+    if (!window.confirm(confirmMsg)) return;
+    setErr('');
+    try {
+      const r = await fetch(STATS_ENDPOINT, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, ...payload }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d?.error ?? `${action} failed`);
+      await loadOps();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : `${action} failed`);
+    }
+  }, [token, loadOps]);
+
+  const [banHash, setBanHash] = useState('');
+  const [banReason, setBanReason] = useState('');
+
   const revokeUser = useCallback(async (userId: string, label: string) => {
     if (!token) return;
     if (!window.confirm(`Revoke all embed keys for ${label}? Their integrations stop working immediately.`)) return;
@@ -547,7 +568,13 @@ export default function AdminPage() {
                         <span className="text-muted-foreground">#{r.channel_slug}</span>
                         <span className="font-mono text-muted-foreground truncate max-w-[220px]" title={r.message_id}>{r.message_id.slice(0, 12)}…</span>
                         <span className="text-muted-foreground truncate max-w-[260px]" title={r.reasons.join(', ')}>{r.reasons.join(', ') || '—'}</span>
-                        <span className="ml-auto text-muted-foreground">latest {fmtAgo(r.latest)}</span>
+                        <span className="text-muted-foreground">latest {fmtAgo(r.latest)}</span>
+                        <button
+                          onClick={() => mod('unhide_message', { message_id: r.message_id }, `Unhide message ${r.message_id.slice(0, 12)}…?\nThis reverses the auto-hide.`)}
+                          className="ml-auto border border-border px-2 py-1 text-[11px] hover:border-primary/60 hover:text-primary"
+                        >
+                          Unhide
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -567,11 +594,48 @@ export default function AdminPage() {
                         <span className="font-mono text-muted-foreground truncate max-w-[260px]" title={b.device_hash}>{b.device_hash.slice(0, 18)}…</span>
                         <span className="text-muted-foreground truncate max-w-[200px]">{b.reason ?? '—'}</span>
                         <span className="text-muted-foreground">{b.expires_at ? `expires ${fmtAgo(b.expires_at)}` : 'permanent'}</span>
-                        <span className="ml-auto text-muted-foreground">banned {fmtAgo(b.created_at)}</span>
+                        <span className="text-muted-foreground">banned {fmtAgo(b.created_at)}</span>
+                        <button
+                          onClick={() => mod('unban_device', { device_hash: b.device_hash }, `Unban device ${b.device_hash.slice(0, 18)}…?`)}
+                          className="ml-auto border border-border px-2 py-1 text-[11px] hover:border-primary/60 hover:text-primary"
+                        >
+                          Unban
+                        </button>
                       </div>
                     ))}
                   </div>
                 )}
+              </div>
+
+              <div className="border border-border p-3">
+                <h3 className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">Ban a device hash</h3>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!banHash) return;
+                    void mod('ban_device', { device_hash: banHash, reason: banReason || 'admin' }, `Ban device ${banHash.slice(0, 18)}…? They will be blocked from joining mURL channels.`);
+                    setBanHash('');
+                    setBanReason('');
+                  }}
+                  className="flex flex-wrap gap-2 text-xs"
+                >
+                  <input
+                    type="text"
+                    required
+                    value={banHash}
+                    onChange={(e) => setBanHash(e.target.value)}
+                    placeholder="device_hash"
+                    className="font-mono flex-1 min-w-[200px] bg-background border border-border px-2 py-1.5"
+                  />
+                  <input
+                    type="text"
+                    value={banReason}
+                    onChange={(e) => setBanReason(e.target.value)}
+                    placeholder="reason (optional)"
+                    className="flex-1 min-w-[160px] bg-background border border-border px-2 py-1.5"
+                  />
+                  <button className="border border-border px-3 py-1.5 hover:border-destructive hover:text-destructive">Ban device</button>
+                </form>
               </div>
             </div>
           )}
