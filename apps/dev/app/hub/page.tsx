@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { getSupabase, HUB_KEYS_ENDPOINT, SUPABASE_CONFIGURED } from './supabaseClient';
+import { getPlan, fmtLimit, defaultSpendCapUsd, OVERAGE_RATE_USD, type Plan } from '../_lib/plans';
 
 type Key = {
   id: string;
@@ -13,14 +14,21 @@ type Key = {
   last_used_at: string | null;
 };
 
+type Usage = {
+  tier: string;
+  mat_count_month: number;
+  msg_count_month: number;
+  search_count_month: number;
+  spend_cap_usd_month: number | null;
+  paid_usd_month: number;
+  payg_enabled: boolean;
+  period?: string | null;
+};
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const CHECKOUT_ENDPOINT = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/create-checkout-session` : '';
-
-const PLAN_LIMITS: Record<string, { label: string; mat: number; price: string }> = {
-  free: { label: 'Free', mat: 1000, price: '$0' },
-  pro: { label: 'Pro', mat: 25000, price: '$9/mo' },
-  team: { label: 'Team', mat: 100000, price: '$29/mo' },
-};
+const PORTAL_ENDPOINT = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/create-portal-session` : '';
+const USAGE_ENDPOINT = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/hub-usage` : '';
 
 function snippet(key: string) {
   return `claude mcp add mosadd \\
@@ -50,6 +58,27 @@ export default function HubPage() {
   const [sent, setSent] = useState(false);
   const [checkoutErr, setCheckoutErr] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [usage, setUsage] = useState<Usage | null>(null);
+  const [portalBusy, setPortalBusy] = useState(false);
+
+  async function manageBilling() {
+    if (!token || !PORTAL_ENDPOINT) return;
+    setPortalBusy(true);
+    setCheckoutErr(null);
+    try {
+      const res = await fetch(PORTAL_ENDPOINT, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ return_path: '/hub' }),
+      });
+      const d = await res.json();
+      if (!res.ok || !d.url) throw new Error(d?.error ?? 'Could not open billing portal.');
+      window.location.href = d.url;
+    } catch (e) {
+      setCheckoutErr(e instanceof Error ? e.message : 'Could not open billing portal.');
+      setPortalBusy(false);
+    }
+  }
 
   async function upgrade(plan: 'pro' | 'team') {
     if (!token || !CHECKOUT_ENDPOINT) return;
@@ -100,7 +129,17 @@ export default function HubPage() {
     setKeysLoaded(true);
   }, [token]);
 
-  useEffect(() => { if (token) loadKeys(); }, [token, loadKeys]);
+  const loadUsage = useCallback(async () => {
+    if (!token || !USAGE_ENDPOINT) return;
+    try {
+      const res = await fetch(USAGE_ENDPOINT, { headers: { Authorization: `Bearer ${token}` } });
+      if (res.ok) setUsage(await res.json());
+    } catch {
+      /* hub-usage not deployed yet — card stays hidden */
+    }
+  }, [token]);
+
+  useEffect(() => { if (token) { loadKeys(); loadUsage(); } }, [token, loadKeys, loadUsage]);
 
   useEffect(() => {
     if (token && keysLoaded && keys.length === 0 && !fresh && !busy && !autoIssued.current) {
@@ -215,8 +254,8 @@ export default function HubPage() {
   }
 
   /* ── dashboard ───────────────────────────────────────────────────── */
-  const currentPlan = keys.length > 0 ? keys[0].plan : 'free';
-  const planInfo = PLAN_LIMITS[currentPlan] ?? PLAN_LIMITS.free;
+  const currentPlan = usage?.tier ?? (keys.length > 0 ? keys[0].plan : 'free');
+  const planInfo = getPlan(currentPlan);
 
   return (
     <Shell>
@@ -244,9 +283,18 @@ export default function HubPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
         <StatCard label="Plan" value={planInfo.label} sub={planInfo.price} accent />
         <StatCard label="API keys" value={String(keys.length)} sub={keys.length === 1 ? 'active key' : 'active keys'} />
-        <StatCard label="MAT limit" value={planInfo.mat.toLocaleString()} sub="msg/month" />
+        <StatCard
+          label="MAT used"
+          value={usage ? usage.mat_count_month.toLocaleString() : fmtLimit(planInfo.mat)}
+          sub={usage ? `of ${fmtLimit(planInfo.mat)} / mo` : 'MAT / month'}
+        />
         <StatCard label="Last active" value={keys.length > 0 ? timeAgo(keys[0].last_used_at) : '—'} sub="most recent key use" />
       </div>
+
+      {/* ── usage ───────────────────────────────────────────────────── */}
+      {usage ? (
+        <UsageCard usage={usage} plan={planInfo} onManageBilling={manageBilling} portalBusy={portalBusy} />
+      ) : null}
 
       {/* ── new key banner ──────────────────────────────────────────── */}
       {fresh ? (
@@ -327,7 +375,7 @@ export default function HubPage() {
               <span className="text-sm text-muted-foreground">{planInfo.price}</span>
             </div>
             <div className="text-xs text-muted-foreground mb-4">
-              {planInfo.mat.toLocaleString()} outbound msg/mo · hard cap at 2x plan price
+              {fmtLimit(planInfo.mat)} MAT / mo · hard cap at 2× plan price
             </div>
             {currentPlan === 'free' ? (
               <div className="space-y-2">
@@ -375,6 +423,58 @@ export default function HubPage() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return <div className="mx-auto max-w-5xl px-6 py-14">{children}</div>;
+}
+
+function Meter({ label, used, limit }: { label: string; used: number; limit: number | null }) {
+  const pct = limit && limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 0;
+  const over = limit != null && used > limit;
+  return (
+    <div>
+      <div className="mb-1 flex items-baseline justify-between">
+        <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">{label}</span>
+        <span className="font-mono text-xs text-foreground">
+          {used.toLocaleString()}<span className="text-muted-foreground"> / {fmtLimit(limit)}</span>
+        </span>
+      </div>
+      <div className="h-1.5 w-full overflow-hidden border border-border bg-card">
+        <div className={`h-full ${over ? 'bg-destructive' : 'bg-primary'}`} style={{ width: `${limit == null ? 4 : pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function UsageCard({ usage, plan, onManageBilling, portalBusy }: { usage: Usage; plan: Plan; onManageBilling: () => void; portalBusy: boolean }) {
+  const isPaid = plan.id === 'pro' || plan.id === 'team';
+  const cap = usage.spend_cap_usd_month ?? defaultSpendCapUsd(plan.id);
+  return (
+    <div className="mb-10 border border-border p-5">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          Usage this month{usage.period ? ` · ${usage.period}` : ''}
+        </h2>
+        {isPaid ? (
+          <button
+            onClick={onManageBilling}
+            disabled={portalBusy}
+            className="rounded-none border border-border px-3 py-1.5 text-xs text-foreground hover:border-primary/50 disabled:opacity-60"
+          >
+            {portalBusy ? '…' : 'Manage billing'}
+          </button>
+        ) : null}
+      </div>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Meter label="MAT" used={usage.mat_count_month} limit={plan.mat} />
+        <Meter label="Messages" used={usage.msg_count_month} limit={plan.messages} />
+        <Meter label="RAG searches" used={usage.search_count_month} limit={plan.ragSearches} />
+      </div>
+      <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1 text-[11px] text-muted-foreground">
+        <span>Overage: {usage.payg_enabled ? `$${OVERAGE_RATE_USD.toFixed(3)} / extra MAT` : 'off — hard stop at cap'}</span>
+        {usage.payg_enabled ? (
+          <span>This month: ${usage.paid_usd_month.toFixed(2)}{cap ? ` / $${cap.toFixed(2)} cap` : ''}</span>
+        ) : null}
+      </div>
+    </div>
+  );
 }
 
 function StatCard({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: boolean }) {
