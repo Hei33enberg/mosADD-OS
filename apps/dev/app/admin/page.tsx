@@ -199,13 +199,18 @@ export default function AdminPage() {
     }
   }, [token, load, loadOps]);
 
+  // Anchor admin auth callback to the canonical URL (A4 / LINEAR-3140) so a
+  // user signing in from hub.mosadd.com / preview / staging always lands back
+  // on mosadd.dev/admin.
+  const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'https://mosadd.dev/admin';
+
   const github = useCallback(async () => {
     if (!supabase) return;
     await supabase.auth.signInWithOAuth({
       provider: 'github',
-      options: { redirectTo: `${window.location.origin}/admin` },
+      options: { redirectTo: ADMIN_URL },
     });
-  }, [supabase]);
+  }, [supabase, ADMIN_URL]);
 
   const magicLink = useCallback(
     async (e: React.FormEvent) => {
@@ -213,11 +218,11 @@ export default function AdminPage() {
       if (!supabase) return;
       await supabase.auth.signInWithOtp({
         email: loginEmail,
-        options: { emailRedirectTo: `${window.location.origin}/admin` },
+        options: { emailRedirectTo: ADMIN_URL },
       });
       setSent(true);
     },
-    [supabase, loginEmail],
+    [supabase, loginEmail, ADMIN_URL],
   );
 
   if (!ready) return <Shell><div className="text-muted-foreground">Loading…</div></Shell>;

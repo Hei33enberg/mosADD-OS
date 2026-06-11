@@ -177,12 +177,19 @@ export default function HubPage() {
     setTimeout(() => setCopied(null), 2000);
   }
 
+  // Anchor the magic-link + OAuth redirect to the canonical hub URL (A4 /
+  // LINEAR-3140). Using `window.location.origin` previously meant a user who
+  // followed a stale hub.mosadd.com link or a preview deployment could end up
+  // back on the wrong host after auth. Override with NEXT_PUBLIC_HUB_URL when
+  // testing in non-prod (defaults to https://mosadd.dev/hub).
+  const HUB_URL = process.env.NEXT_PUBLIC_HUB_URL ?? 'https://mosadd.dev/hub';
+
   async function magicLink(e: React.FormEvent) {
     e.preventDefault();
     if (!supabase) return;
     await supabase.auth.signInWithOtp({
       email: loginEmail,
-      options: { emailRedirectTo: `${window.location.origin}/hub` },
+      options: { emailRedirectTo: HUB_URL },
     });
     setSent(true);
   }
@@ -190,7 +197,7 @@ export default function HubPage() {
     if (!supabase) return;
     await supabase.auth.signInWithOAuth({
       provider: 'github',
-      options: { redirectTo: `${window.location.origin}/hub` },
+      options: { redirectTo: HUB_URL },
     });
   }
 
