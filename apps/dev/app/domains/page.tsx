@@ -288,7 +288,7 @@ export default function DomainsPage() {
           <div className="mt-1">Disable the mURL room on your domain. Verified owners only.</div>
         </div>
         <div>
-          <div className="font-display text-sm text-primary">Paid (soon)</div>
+          <div className="font-display text-sm text-primary">Free for verified owners</div>
           <div className="mt-1">Branded &ldquo;official&rdquo; tier: theme, pinned message, official badge, analytics.</div>
         </div>
         <div>
