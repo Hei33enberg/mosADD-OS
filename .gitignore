@@ -54,3 +54,8 @@ docs/api/
 forks/*/node_modules/
 forks/*/dist/
 forks/*/build/
+
+# Local build / CLI artifacts (generated, never commit)
+**/supabase/.temp/
+apps/channel0-ext/*.zip
+apps/dev/public/v1.js.map
