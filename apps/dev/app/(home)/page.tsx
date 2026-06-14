@@ -24,7 +24,7 @@ const threats = [
   },
   {
     t: 'Threat radar — Iron Dome',
-    d: 'The Iron Dome detection layer scans for known spyware signatures, SS7 routing anomalies, IMSI-catcher fingerprints and exfiltration patterns — designed to flag Pegasus-class implants. The same 166-event engine shipping in @mosadd/threat-engine.',
+    d: 'A 166-event detection taxonomy informed by the same Amnesty International / Citizen Lab research that documents mobile spyware — it flags the device-integrity and network anomalies surveillanceware relies on: rooted / tampered devices, sideloaded apps, stalkerware-style abuse and MITM. The same engine shipping in @mosadd/threat-engine.',
   },
 ];
 
