@@ -18,15 +18,15 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://mosadd.dev'),
   title: {
-    default: 'mosADD MCP — Iron Dome Multi-Channel Messenger for AI agents',
+    default: 'mosADD MCP — when your AI agent needs a human',
     template: '%s · mosadd.dev',
   },
   description:
-    'One MCP server: encrypted DMs, channels, rooms, mail, voice and knowledge base for AI agents. E2EE in the kernel, threat radar included, BYOK or self-host. Apache-2.0.',
+    'The human-in-the-loop layer for AI agents. One MCP server: guest-link rooms, push-to-talk voice and a private E2EE DM to pull a human into the loop — plus a real inbox and a 166-event threat radar. BYOK or self-host. Apache-2.0.',
   applicationName: 'mosadd.dev',
   openGraph: {
-    title: 'mosADD MCP — Iron Dome Multi-Channel Messenger · MCP',
-    description: 'Threat-aware, zero-knowledge comms for AI agents. One MCP server, every channel — your keys or self-host. Apache-2.0. TRUST NO TRACE.',
+    title: 'mosADD MCP — when your AI agent needs a human',
+    description: 'Pull a human into the room with your agent — live voice, full context, private E2EE DM, in one link. Threat radar in the kernel. Your keys or self-host. Apache-2.0. TRUST NO TRACE.',
     url: 'https://mosadd.dev',
     siteName: 'mosadd.dev',
     locale: 'en_US',
@@ -34,8 +34,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'mosADD MCP — Iron Dome Multi-Channel Messenger · MCP',
-    description: 'Threat-aware, zero-knowledge comms for AI agents. One MCP server, every channel. Apache-2.0.',
+    title: 'mosADD MCP — when your AI agent needs a human',
+    description: 'The human-in-the-loop layer for AI agents. One MCP server — huddle, reach, remember. Threat radar in the kernel. Apache-2.0.',
   },
 };
 

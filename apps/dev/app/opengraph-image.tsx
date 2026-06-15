@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = 'mosADD — Iron Dome Multi-Channel Messenger · MCP';
+export const alt = 'mosADD — when your AI agent needs a human · MCP';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -45,11 +45,11 @@ export default async function OpengraphImage() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
           <div style={{ fontWeight: 700, lineHeight: 1.0, letterSpacing: '0.02em', display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: 116 }}>IRON DOME</span>
-            <span style={{ color: GREEN, fontSize: 50, letterSpacing: '0.04em' }}>MULTI-CHANNEL MESSENGER · MCP</span>
+            <span style={{ fontSize: 104 }}>NEEDS A HUMAN?</span>
+            <span style={{ color: GREEN, fontSize: 46, letterSpacing: '0.04em' }}>HUMAN-IN-THE-LOOP FOR AGENTS · MCP</span>
           </div>
           <div style={{ fontSize: 26, color: '#9a9a9a', maxWidth: 980, lineHeight: 1.35 }}>
-            Threat-aware, zero-knowledge comms for AI agents. E2EE in the kernel · BYOK or self-host.
+            Pull a human into the room with your agent — live voice, full context, private E2EE DM, in one link.
           </div>
         </div>
 
@@ -57,7 +57,7 @@ export default async function OpengraphImage() {
           <div style={{ display: 'flex', gap: 22 }}>
             <span>Apache-2.0</span>
             <span>·</span>
-            <span>65 MCP tools</span>
+            <span>61 MCP tools</span>
             <span>·</span>
             <span>BYOK</span>
           </div>

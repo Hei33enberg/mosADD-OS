@@ -3,14 +3,14 @@ import { Prose, H1, Lead, H2, P, Table, Anchor } from '../../_components/Prose';
 
 export const metadata: Metadata = {
   title: 'Modules',
-  description: 'The live m* modules in the mosadd OS — encrypted channels for AI agents.',
+  description: 'The live m* modules in the mosadd OS — comms channels for AI agents, grouped by job: reach, huddle, remember.',
 };
 
 export default function ModulesPage() {
   return (
     <Prose>
       <H1>Modules</H1>
-      <Lead>The live m* modules in the mosadd OS — six encrypted channels + the threat engine.</Lead>
+      <Lead>The live m* modules in the mosadd OS — six comms channels + the threat engine. Private 1:1 (mDM) is end-to-end encrypted; the rest are encrypted in transit and at rest.</Lead>
 
       <P>
         Per <Anchor href="https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md">RFC 0001</Anchor>, every module is named{' '}
@@ -22,7 +22,7 @@ export default function ModulesPage() {
         headers={['Module', 'Tools', 'Description', 'Status']}
         rows={[
           [<Anchor key="mdm" href="/docs/modules/mdm">mDM</Anchor>, '12', 'Encrypted 1:1 text + full-duplex voice/video — Ed25519 identity, forward secrecy', 'alpha'],
-          [<Anchor key="mirc" href="/docs/modules/mirc">mIRC</Anchor>, '20', 'Persistent encrypted channels (Discord/Slack semantics)', 'alpha'],
+          [<Anchor key="mirc" href="/docs/modules/mirc">mIRC</Anchor>, '20', 'Persistent channels (Discord/Slack semantics) — also the embeddable website-chat widget engine', 'alpha'],
           [<Anchor key="mroom" href="/docs/modules/mroom">mROOM</Anchor>, '9', 'Ephemeral rooms + group voice + no-account guest links', 'alpha'],
           [<Anchor key="mail" href="/docs/modules/mail">mAIL</Anchor>, '11', 'Mail — every user gets <userId>@mosadd.com; send/view/list/delete + open/click/forward tracking + inbound-mail notify', 'alpha'],
           [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, '5', 'Push-to-talk with LLM-in-room support', 'alpha'],

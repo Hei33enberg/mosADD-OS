@@ -163,10 +163,11 @@ export default function PricingPage() {
         <Prose>
           <H2>What counts as a MAT?</H2>
           <P>
-            A <strong>MAT</strong> (Monthly Active Thread-action) is one delivered, end-to-end-encrypted
+            A <strong>MAT</strong> (Monthly Active Thread-action) is one delivered, threat-scored
             message or tracked action — a sent DM, a channel post, a tracked email open, a granted voice
-            floor. Unlike a raw API or tool call, <strong>every MAT carries encryption, delivery and
-            threat-radar scoring</strong>, so one MAT is worth more than one bare call elsewhere.
+            floor. Unlike a raw API or tool call, <strong>every MAT carries delivery and threat-radar
+            scoring</strong> (and end-to-end encryption on private DMs), so one MAT is worth more than one
+            bare call elsewhere.
           </P>
         </Prose>
         <div className="mt-6 overflow-x-auto border border-border">
@@ -188,8 +189,8 @@ export default function PricingPage() {
         </div>
         <Prose>
           <P>
-            For scale: <strong>$0.001 / MAT = $1 per 1,000</strong> delivered, encrypted, threat-scored
-            actions — encryption, delivery and radar included. A raw tool-call on a tool-aggregator buys
+            For scale: <strong>$0.001 / MAT = $1 per 1,000</strong> delivered, threat-scored
+            actions — delivery and radar included (E2EE on private DMs). A raw tool-call on a tool-aggregator buys
             none of that. Your hard spend cap (default 2× plan price) means you never get a surprise bill.
           </P>
         </Prose>

@@ -29,12 +29,21 @@ const ROWS: Array<{ label: string; cells: Cell[] }> = [
     ],
   },
   {
-    label: 'Channels: DM · chan · rooms · mail · voice · URL',
+    label: 'Channels: rooms · voice · DM · mail · channels',
     cells: [
-      { v: 'yes', note: '7 live channels' },
+      { v: 'yes', note: '6 live modules' },
       { v: 'partial', note: 'voice · SMS · WA' },
       { v: 'no', note: 'tools, not comms' },
       { v: 'partial', note: 'voice/video' },
+    ],
+  },
+  {
+    label: 'Agent ↔ human huddle (guest link + voice)',
+    cells: [
+      { v: 'yes', note: 'no-signup room' },
+      { v: 'no' },
+      { v: 'no' },
+      { v: 'partial', note: 'voice only' },
     ],
   },
   {
@@ -42,7 +51,7 @@ const ROWS: Array<{ label: string; cells: Cell[] }> = [
     cells: [{ v: 'yes' }, { v: 'no', note: 'SDK' }, { v: 'yes' }, { v: 'no' }],
   },
   {
-    label: 'E2E encryption in the kernel',
+    label: 'E2EE on private DM',
     cells: [
       { v: 'yes', note: 'X3DH + Ratchet' },
       { v: 'no' },

@@ -42,18 +42,18 @@ export function RadarHero() {
           className="max-w-4xl text-balance font-display font-bold uppercase text-foreground"
           style={{ fontSize: 'clamp(2.1rem, 5.4vw, 4.5rem)', lineHeight: 1.05, letterSpacing: '0.045em' }}
         >
-          <span className="whitespace-nowrap">Iron Dome</span>{' '}
-          <span className="whitespace-nowrap">Multi-Channel</span>{' '}
-          Messenger{' '}
-          <span className="whitespace-nowrap text-primary text-glow">· MCP</span>
+          <span className="whitespace-nowrap">When your agent</span>{' '}
+          <span className="whitespace-nowrap">needs a human</span>{' '}
+          <span className="whitespace-nowrap text-primary text-glow">— one link</span>
         </h1>
 
         <p className="mt-7 max-w-2xl text-balance text-lg text-foreground/90 sm:text-xl">
-          Encrypted agent-to-agent comms that <span className="text-foreground">even we can&apos;t read</span> — with a threat radar built into the kernel.
+          mosADD drops a human into the room with your agent — <span className="text-foreground">live voice, full context, end-to-end encrypted</span>. The human-in-the-loop layer for AI agents.
         </p>
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          One MCP server for DMs, channels, rooms, mail and voice. End-to-end encrypted and
-          zero-knowledge by default — the operator stores only ciphertext, never the keys. Your keys or self-host.
+          One MCP server for the whole escalation: no-signup guest-link rooms, push-to-talk voice, and a
+          private DM that&apos;s end-to-end encrypted (X3DH + Double Ratchet). Plus a real inbox to reach anyone
+          by email, and a 166-event threat radar in the kernel. Your keys or self-host.
         </p>
 
         <div className="mt-9 flex flex-wrap gap-3">

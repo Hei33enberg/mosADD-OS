@@ -4,27 +4,34 @@ import { SocialProof } from '../_components/SocialProof';
 import { ComparisonTable } from '../_components/ComparisonTable';
 import { RadarHero } from '../_components/RadarHero';
 
+// Grouped by the job, not the channel. HUDDLE (get a human in the loop) leads —
+// it's the one thing only mosADD does. REACH (email the outside world) and
+// REMEMBER (agent memory) support it.
 const modules = [
-  { name: 'mDM', desc: 'Private 1:1 chat your agents own — text + voice, end-to-end encrypted with forward secrecy. Set self-destruct timers; the server never sees plaintext.', tools: 12, url: '/docs/modules/mdm' },
-  { name: 'mIRC', desc: 'Persistent encrypted channels with Discord/Slack ergonomics — topic-scoped, invite-only, fully moderated. Your key, not a vendor lock-in.', tools: 20, url: '/docs/modules/mirc' },
-  { name: 'mROOM', desc: 'Spin up an ephemeral room, share a no-signup guest link, tear it down to zero residual state. Built for quick agent ↔ human huddles.', tools: 9, url: '/docs/modules/mroom' },
-  { name: 'mAIL', desc: 'Give every agent a real inbox — <id>@mosadd.com. Send, receive, and track opens / clicks / forwards, with threat hooks and auto-destruct.', tools: 11, url: '/docs/modules/mail' },
-  { name: 'mTALK', desc: 'Live push-to-talk voice with half-duplex floor control and anomaly detection on the media path. Talk to your agents in real time.', tools: 5, url: '/docs/modules/mtalk' },
-  { name: 'mRAG', desc: 'Per-tenant agent memory — semantic recall (RAG) over your own data, encrypted at rest. Your agents remember; nobody else reads it.', tools: 4, url: '/docs/modules/mrag' },
+  // ── HUDDLE: agent ↔ human, live ──
+  { name: 'mROOM', desc: 'Your agent spins an ephemeral room and drops a no-signup guest link to a human. They huddle, decide, the room tears down to zero residual state. The human-in-the-loop moment.', tools: 9, url: '/docs/modules/mroom', tag: 'huddle' },
+  { name: 'mTALK', desc: 'Live push-to-talk voice with half-duplex floor control — your agent and a human in the same call, in real time. Anomaly detection on the media path.', tools: 5, url: '/docs/modules/mtalk', tag: 'huddle' },
+  { name: 'mDM', desc: 'Private 1:1 thread your agent owns — text + voice, end-to-end encrypted (X3DH + Double Ratchet) with forward secrecy. The server sees ciphertext only.', tools: 12, url: '/docs/modules/mdm', tag: 'huddle' },
+  // ── REACH: agent ↔ the outside world ──
+  { name: 'mAIL', desc: 'A real inbox your agent can be reached at — <id>@mosadd.com or your own domain. Send, receive and parse email from anyone; open / click tracking. Standard mail transport (not E2EE).', tools: 11, url: '/docs/modules/mail', tag: 'reach' },
+  // ── REMEMBER: agent memory ──
+  { name: 'mRAG', desc: 'Per-tenant agent memory — semantic recall over your own data, isolated per key and encrypted at rest. Server-side by design (it must read to embed). Your agents remember.', tools: 4, url: '/docs/modules/mrag', tag: 'remember' },
+  // ── Channels + embeddable widget ──
+  { name: 'mIRC', desc: 'Persistent channels with Discord/Slack ergonomics — topic-scoped, invite-only, moderated. Also the engine behind the embeddable website chat widget. Your key, not vendor lock-in.', tools: 20, url: '/docs/modules/mirc', tag: 'channels' },
 ];
 
 const threats = [
   {
-    t: 'E2EE in the kernel',
-    d: 'End-to-end encryption with forward secrecy is not configurable — it is on by default for every channel, enforced at the transport layer before any payload leaves the process.',
+    t: 'E2EE on the private DM',
+    d: 'The private 1:1 thread (mDM) is end-to-end encrypted with forward secrecy — X3DH + Double Ratchet, server sees ciphertext only. Rooms, channels and mail are encrypted in transit and at rest, with self-destruct and zero-retention options. We do not claim E2EE where we cannot deliver it.',
   },
   {
-    t: 'Zero-knowledge server',
-    d: 'The server never holds plaintext. Encryption happens client-side; the hosted layer stores only opaque ciphertext and cannot be compelled to produce readable content.',
+    t: 'Your keys, not ours',
+    d: 'BYOK or self-host: bring your own provider keys (LiveKit, Resend, OpenAI, Supabase) or run the whole Apache-2.0 stack yourself. The operator is not a black box you have to trust — the source is auditable.',
   },
   {
     t: 'Threat radar — Iron Dome',
-    d: 'A 166-event detection taxonomy informed by the same Amnesty International / Citizen Lab research that documents mobile spyware — it flags the device-integrity and network anomalies surveillanceware relies on: rooted / tampered devices, sideloaded apps, stalkerware-style abuse and MITM. The same engine shipping in @mosadd/threat-engine.',
+    d: 'A 166-event detection taxonomy informed by the same Amnesty International / Citizen Lab research that documents mobile spyware — it flags device-integrity and network anomalies: rooted / tampered devices, sideloaded apps, stalkerware-style abuse and MITM. Every message is scored. The same engine shipping in @mosadd/threat-engine.',
   },
 ];
 
@@ -71,9 +78,9 @@ export default function HomePage() {
           <div className="bg-background p-6">
             <div className="mb-3 text-xs uppercase tracking-[0.2em] text-primary">One MCP server</div>
             <ul className="space-y-2.5 text-sm leading-relaxed text-muted-foreground">
-              <li>· <span className="text-foreground">End-to-end encrypted and zero-knowledge by default</span> — the operator stores only ciphertext, never the keys.</li>
-              <li>· <span className="text-foreground">A 166-event threat radar in the kernel</span> — not a bolt-on. No competitor ships comms it can&apos;t read.</li>
-              <li>· One install, one config block. Every channel in the same tool namespace.</li>
+              <li>· <span className="text-foreground">The escalation moment, solved</span> — guest-link rooms + voice + a private E2EE DM pull a human into the loop, in one link.</li>
+              <li>· <span className="text-foreground">A 166-event threat radar in the kernel</span> — not a bolt-on. Every message scored before it moves.</li>
+              <li>· One install, one config block. Reach, huddle and memory in the same tool namespace.</li>
               <li>· BYOK or go hosted; Apache-2.0 if you want to self-host and audit the source.</li>
             </ul>
           </div>
@@ -117,8 +124,8 @@ export default function HomePage() {
       <section className="py-16">
         <div className="flex items-end justify-between">
           <div>
-            <SectionTag n="04" label="m* channels" />
-            <h2 className="font-display text-3xl font-semibold tracking-tight">Six channels, live today. One tool namespace.</h2>
+            <SectionTag n="04" label="reach · huddle · remember" />
+            <h2 className="font-display text-3xl font-semibold tracking-tight">Six channels. One job: get a human in the loop.</h2>
           </div>
           <Link href="/docs/rfcs" className="hidden text-sm text-muted-foreground hover:text-foreground md:block">
             RFC 0001 · m* naming →

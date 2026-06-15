@@ -19,17 +19,19 @@ export default function DocsIndexPage() {
 
       <H2>What is mosadd</H2>
       <P>
-        mosadd is <strong>threat-aware, zero-knowledge comms infrastructure for AI agents</strong> — encrypted DMs,
-        channels, rooms, mail and voice, with the Iron Dome threat radar in the kernel. Each{' '}
-        <code className="font-mono text-primary">m*</code> is a channel you <code className="font-mono text-primary">add</code>:
+        mosadd is <strong>the human-in-the-loop layer for AI agents</strong> — when an agent hits a decision it
+        shouldn&apos;t make alone, it pulls a human into the room (rooms, voice, a private E2EE DM), reaches the
+        outside world by email, and remembers what it learns. The Iron Dome threat radar scores every message in
+        the kernel. Each <code className="font-mono text-primary">m*</code> is a channel you{' '}
+        <code className="font-mono text-primary">add</code>:
       </P>
       <Ul>
-        <li><code className="font-mono text-primary">mDM</code> — encrypted direct messages + 1:1 voice</li>
-        <li><code className="font-mono text-primary">mIRC</code> — persistent encrypted channels</li>
-        <li><code className="font-mono text-primary">mROOM</code> — ephemeral rooms + no-account join links</li>
+        <li><code className="font-mono text-primary">mROOM</code> — ephemeral rooms + no-account guest links (the huddle)</li>
         <li><code className="font-mono text-primary">mTALK</code> — push-to-talk (PTT + LLM in the same room)</li>
-        <li><code className="font-mono text-primary">mAIL</code> — agent email</li>
-        <li><code className="font-mono text-primary">mRAG</code> — encrypted knowledge base (RAG recall)</li>
+        <li><code className="font-mono text-primary">mDM</code> — direct messages + 1:1 voice, end-to-end encrypted</li>
+        <li><code className="font-mono text-primary">mAIL</code> — agent email (reach anyone)</li>
+        <li><code className="font-mono text-primary">mRAG</code> — agent memory / knowledge base (RAG recall)</li>
+        <li><code className="font-mono text-primary">mIRC</code> — persistent channels + embeddable website widget</li>
       </Ul>
       <P>
         All exposed through a <strong>single MCP server</strong>, plus an Anthropic Skills bundle as a bonus for Claude users.
