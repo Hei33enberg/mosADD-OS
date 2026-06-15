@@ -4,7 +4,7 @@ import { Prose, H1, Lead } from '../_components/Prose';
 
 export const metadata: Metadata = {
   title: 'Blog',
-  description: 'Engineering notes from building mosADD — encrypted, threat-aware comms for AI agents.',
+  description: 'Engineering notes from building mosADD — the human-in-the-loop layer for AI agents.',
 };
 
 const posts = [
@@ -29,7 +29,7 @@ export default function BlogIndex() {
     <div className="max-w-3xl mx-auto px-6 py-14">
       <Prose>
         <H1>Blog</H1>
-        <Lead>Engineering notes from building mosADD — encrypted, threat-aware comms for AI agents.</Lead>
+        <Lead>Engineering notes from building mosADD — the human-in-the-loop layer for AI agents.</Lead>
       </Prose>
       <div className="mt-10 divide-y divide-border border-y border-border">
         {posts.map((p) => (
