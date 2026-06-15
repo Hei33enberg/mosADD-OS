@@ -76,7 +76,7 @@ export function MobileNav() {
 
       {/* Backdrop */}
       {open ? (
-        <div className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm" aria-hidden="true" />
+        <div className="fixed inset-0 z-40 bg-background/90 backdrop-blur-sm" aria-hidden="true" />
       ) : null}
 
       {/* Right-side panel */}

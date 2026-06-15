@@ -78,11 +78,16 @@
     background: hsl(var(--background));
     color: hsl(var(--foreground));
     color-scheme: dark;
+    /* Kill any horizontal overflow (decorative radar/grids exceed the viewport).
+       `clip` (not `hidden`) so the sticky header keeps working. */
+    overflow-x: clip;
   }
   body {
     background: hsl(var(--background));
     color: hsl(var(--foreground));
     -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+    max-width: 100vw;
   }
   ::selection {
     background: hsl(var(--primary) / 0.3);
