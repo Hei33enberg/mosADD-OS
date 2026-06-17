@@ -19,8 +19,9 @@ Per request:
 ## Local dev
 
 ```bash
-npm install            # links the local ../../packages/mcp via file:
+npm install            # installs the published @mosadd/mcp@alpha
 npm run dev            # http://localhost:3030/mcp
+# To test against unpublished local package changes: npm link ../../packages/mcp
 ```
 
 Smoke it like a real MCP HTTP client:
@@ -41,12 +42,15 @@ mTALK/mAIL/mRAG — mURL/mCALL unregistered), `tools/call mROOM_list` → real b
 
 This is a standalone Vercel project (Root Directory `apps/mcp-http`).
 
-1. **Switch the dependency** from `file:../../packages/mcp` to
-   `@mosadd/mcp@alpha` (the published package — needs ≥ 3.0.0-alpha.6, which
-   exports `runWithSupabaseEnv`). The monorepo `file:` ref is for local dev only.
-2. Deploy to Vercel; add the domain **`mcp.mosadd.com`** (Vercel-managed DNS →
-   CNAME auto). ← owner step.
-3. Update `/mcp` + `/docs` on mosadd.com with the hosted "HTTP" option next to stdio.
+1. ✅ Dependency is already `@mosadd/mcp@^3.0.0-alpha.16` (published — exports
+   `runWithSupabaseEnv`; its `@mosadd/{crypto,protocol,providers}` deps are on npm
+   too, so a plain `npm install` resolves with NO monorepo/workspace resolution).
+   `npm run build` (tsc) is green.
+2. Create the Vercel project: **New Project → import `Hei33enberg/mosadd-os` →
+   Root Directory `apps/mcp-http` → Deploy** (team `hei33enberg`). ← owner (dashboard).
+3. Add the domain **`mcp.mosadd.com`** (Project → Domains; Vercel-managed DNS →
+   CNAME auto). ← owner (dashboard).
+4. Update `/mcp` + `/docs` on mosadd.com with the hosted "HTTP" option next to stdio.
 
 Client config (once live):
 
