@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows the `3.0.0-alpha.N` pre-release line until the hosted
 gateway (Phase 2) ships.
 
+## [3.0.0-alpha.17] — 2026-06-18
+
+### Added
+- **Action Links — screen share.** `comms_action_create` gains a `screen_share` action
+  type, and a new `comms_action_frame_get` tool lets the creating agent read frames of the
+  recipient's shared screen (consent-gated, browser-sandbox only). Turns Action Links into
+  "remote-desktop-lite" — the agent sees what the human chooses to share.
+
+### Changed
+- **Durable `mosadd login`.** The saved session (`~/.mosadd/session.json`) is now refreshed
+  from its refresh token at server boot, so a single `mosadd login` keeps working across
+  restarts — no more re-login when the access token expires.
+- Onboarding README restructured (recommended auth path — `mosadd login` — first; hub API
+  key second; DevTools JWT demoted), and the 61→70 / `mosadd.dev`→`mosadd.com` reconciliation
+  (first shipped on the published package with this release).
+
 ## [3.0.0-alpha.16] — 2026-06-17
 
 ### Fixed
