@@ -19,7 +19,10 @@ import { mircEdgeTools } from "./mirc-edge.js";
 import { mroomTools } from "./mroom.js";
 import { mroomMessagesTools } from "./mroom-messages.js";
 import { mailTools } from "./mail.js";
+import { mailProvenanceTools } from "./mail-provenance.js";
 import { mtalkTools } from "./mtalk.js";
+import { attachmentTools } from "./attachments.js";
+import { pttIngestTools } from "./ptt-ingest.js";
 // import { mcallTools } from "./mcall.js"; // mCALL: carrier-pending — not registered (see header note)
 import { knowledgeTools } from "./knowledge.js";
 // import { murlTools } from "./murl.js"; // mURL: brand/consumer surface, not a dev product — not registered
@@ -36,7 +39,10 @@ const channelTools: MosaddTool[] = [
   ...mroomTools,
   ...mroomMessagesTools,
   ...mailTools,
+  ...mailProvenanceTools,
   ...mtalkTools,
+  ...attachmentTools,
+  ...pttIngestTools,
   ...knowledgeTools,
   // ...murlTools,  // mURL: brand/consumer surface (murl.mosadd.com), not a dev product
   // ...mcallTools,  // mCALL: carrier-pending (no telephony carrier live) — re-register when a carrier is configured

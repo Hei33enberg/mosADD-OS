@@ -1,0 +1,25 @@
+# m0ssad-os — Full System Context
+
+> Extended documentation for AI agents analyzing or building upon the m0ssad-os platform.
+
+## Architecture
+m0ssad-os is structured as a monorepo (pnpm workspace) containing:
+1. `apps/hub`: The main Next.js web application for managing agents, API keys, and telemetry.
+2. `apps/edge`: Cloudflare Workers/Vercel Edge deployments for low-latency MCP request routing.
+3. `packages/core`: The core execution engine, memory management, and sandbox primitives.
+4. `packages/mcp-gateway`: A high-performance multiplexer that aggregates multiple MCP servers into a single interface.
+5. `skills/`: A directory of pre-packaged `SKILL.md` workflows that agents can load dynamically.
+
+## Security Posture
+- **No Egress by Default**: Agents cannot make arbitrary network requests unless the domain is whitelisted in `agent.json`.
+- **Read-only Filesystem**: The execution environment mounts the workspace as read-only, except for explicitly defined `/tmp/scratch` directories.
+- **Human-in-the-loop (HITL)**: Any MCP tool call flagged with `requires_approval: true` will pause the execution and send a notification to the human operator via the Hub UI.
+
+## Integration & Extension
+To build an MCP server compatible with m0ssad-os:
+1. Use standard STDIO or SSE transports.
+2. Implement the `capabilities` endpoint to expose your tools.
+3. Provide a clear `description` and JSON Schema for each tool. m0ssad-os relies heavily on accurate tool descriptions for its autonomous routing engine.
+
+## License
+MIT License. Open for commercial and private use.

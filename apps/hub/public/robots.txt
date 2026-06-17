@@ -1,0 +1,40 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+
+# AEO / AI Crawlers Optimization
+User-agent: CCBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: OmgiliBot
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# Prevent indexing of LLMs metadata from regular search engines to avoid duplicate content flags
+# but allow AI bots to read them directly via direct link
+Disallow: /llms.txt
+Disallow: /llms-full.txt
+
+Sitemap: https://m0ssad.com/sitemap.xml
