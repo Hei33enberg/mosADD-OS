@@ -2,6 +2,7 @@
  * Tool registry. Each m* module contributes a set of tools.
  *
  * Live modules (6): mDM, mIRC, mROOM, mTALK, mAIL, mRAG — 61 tools + comms_capabilities.
+ * Plus action links (Tier 1): comms_action_create — agent → user one-link browser action.
  * mURL is a consumer/brand surface (murl.mosadd.com), NOT a dev product — its tools
  * live in tools/murl.ts but are NOT registered here (founder decision 2026-06-10).
  * mCALL is carrier-pending (no telephony carrier live yet): its tools live in
@@ -25,6 +26,7 @@ import { attachmentTools } from "./attachments.js";
 import { pttIngestTools } from "./ptt-ingest.js";
 // import { mcallTools } from "./mcall.js"; // mCALL: carrier-pending — not registered (see header note)
 import { knowledgeTools } from "./knowledge.js";
+import { actionTools } from "./actions.js";
 // import { murlTools } from "./murl.js"; // mURL: brand/consumer surface, not a dev product — not registered
 import { makeCapabilitiesTool } from "./capabilities.js";
 
@@ -44,6 +46,7 @@ const channelTools: MosaddTool[] = [
   ...attachmentTools,
   ...pttIngestTools,
   ...knowledgeTools,
+  ...actionTools,  // Action links (Tier 1): agent → user one-link browser action via action-create EF
   // ...murlTools,  // mURL: brand/consumer surface (murl.mosadd.com), not a dev product
   // ...mcallTools,  // mCALL: carrier-pending (no telephony carrier live) — re-register when a carrier is configured
   // mirlTools,
