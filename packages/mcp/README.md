@@ -4,17 +4,40 @@ MCP server for [mosadd](https://mosadd.com) — exposes the OS modules (m\*) as 
 
 > **3.0.0-alpha.16** — **70 live tools across 6 live modules** (mDM incl. voice + files, mIRC, mROOM, mAIL incl. provenance, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
 
-## Install
+## Connect your agent
 
-### Claude Code
+Three ways to authenticate, friendliest first — all three end with the same ~70 tools.
+
+### 1. `mosadd login` — recommended (one command, stays logged in)
+
+Sign in once; the session is saved to `~/.mosadd/session.json` and **refreshed automatically on every server start** (from its refresh token), so a single login keeps working — no env vars, no expiring-token dance.
 
 ```bash
+npx -y @mosadd/mcp@alpha login
+# prompts for your Supabase URL + anon key (both public) and your mosadd email + password
+```
+
+Then register the server with **no env block**:
+
+```bash
+# Claude Code
 claude mcp add mosadd -- npx -y @mosadd/mcp@alpha
 ```
 
-### Cursor
+```json
+// Claude Desktop / Cursor / Cline / Windsurf — mcpServers config, no env needed
+{
+  "mcpServers": {
+    "mosadd": { "command": "npx", "args": ["-y", "@mosadd/mcp@alpha"] }
+  }
+}
+```
 
-`~/.cursor/mcp.json`:
+`npx @mosadd/mcp@alpha whoami` shows who you're signed in as; `… logout` clears it.
+
+### 2. `MOSADD_API_KEY` — headless / CI (one long-lived key)
+
+A `mosadd_sk_live_…` hub key does not expire; the server exchanges it for a fresh session on every start. Best for servers, cron, and our own `mosadd-agent`.
 
 ```json
 {
@@ -22,34 +45,23 @@ claude mcp add mosadd -- npx -y @mosadd/mcp@alpha
     "mosadd": {
       "command": "npx",
       "args": ["-y", "@mosadd/mcp@alpha"],
-      "env": {
-        "MOSADD_SUPABASE_URL": "https://<your-project>.supabase.co",
-        "MOSADD_SUPABASE_ANON_KEY": "<anon key>",
-        "MOSADD_USER_JWT": "<your session JWT>"
-      }
+      "env": { "MOSADD_API_KEY": "mosadd_sk_live_…" }
     }
   }
 }
 ```
 
-### Standalone
+Mint a key by POSTing to the `hub-keys` Edge Function with your user JWT (it returns the secret once). A one-click "API keys" screen on mosadd.com is the planned UX.
 
-```bash
-MOSADD_SUPABASE_URL=... MOSADD_SUPABASE_ANON_KEY=... MOSADD_USER_JWT=... npx @mosadd/mcp@alpha
-```
+### 3. BYOK + `MOSADD_USER_JWT` — advanced / debugging
 
-## BYOK — get your env values
-
-While the hosted gateway is in development, the alpha runs in **local BYOK mode** — you supply your own Supabase credentials to talk to your own mosadd backend.
+Bring your own Supabase URL + anon key + a raw session token. **The JWT expires (~1h)** — prefer option 1 or 2 for anything ongoing.
 
 - `MOSADD_SUPABASE_URL` — your Supabase project URL (e.g. `https://abc.supabase.co`)
 - `MOSADD_SUPABASE_ANON_KEY` — the public anon key from project settings
-- `MOSADD_USER_JWT` — a Supabase session token for your mosadd user. Get it from the browser:
-  1. Sign in to mosadd.com
-  2. Open DevTools → Application → Local Storage → `sb-<ref>-auth-token`
-  3. Copy the `access_token` field
+- `MOSADD_USER_JWT` — sign in to mosadd.com → DevTools → Application → Local Storage → `sb-<ref>-auth-token` → copy the `access_token` field
 
-In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling required.
+In Phase 2 the hosted gateway at `mcp.mosadd.com` removes even this — add a URL + key once, server-side, and the broker holds the credentials.
 
 ## Tools shipped in alpha
 
