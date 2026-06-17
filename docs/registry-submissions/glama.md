@@ -11,15 +11,15 @@
 | **Display name** | mosadd — A human OS. Add. |
 | **Package** | `@mosadd/mcp` on npm |
 | **Repository** | https://github.com/Hei33enberg/mosadd-os |
-| **Homepage** | https://mosadd.dev |
+| **Homepage** | https://mosadd.com |
 | **License** | Apache-2.0 |
 | **Language** | TypeScript |
-| **Status** | 3.0.0-alpha.0 |
+| **Status** | 3.0.0-alpha.16 |
 | **Install command** | `npx -y @mosadd/mcp` |
 
 ## Summary
 
-mosadd is an MCP-native operating system for human communications. **65 live tools across 7 live modules** in alpha (mDM, mIRC, mROOM, mAIL, mTALK, mRAG, mURL), plus the embeddable `@mosadd/threat-engine` 166-event radar.
+mosadd is an MCP-native operating system for human communications. **70 live tools across 6 live modules** in alpha (mDM, mIRC, mROOM, mAIL, mTALK, mRAG), plus the embeddable `@mosadd/threat-engine` 166-event radar.
 
 ## Differentiators
 
@@ -32,7 +32,7 @@ mosadd is an MCP-native operating system for human communications. **65 live too
 ## Maturity
 
 - Smoke test pass — stdio MCP responds correctly to `initialize` + `tools/list`
-- 65 tools registered, schemas validated with Zod
+- 70 tools registered, schemas validated with Zod
 - BYOK env-var config (MOSADD_SUPABASE_URL, ANON_KEY, USER_JWT)
 - Builds clean (tsup + DTS gen)
 - Apache-2.0 with NOTICE for third-party attribution

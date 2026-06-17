@@ -36,20 +36,20 @@ startCommand:
 
 **Title:** mosadd — A human OS. Add.
 
-**Tagline:** Operating system for human communications. DMs, rooms with guest links, channels, email, push-to-talk, knowledge recall, per-domain chat — 65 tools today.
+**Tagline:** Operating system for human communications. DMs, rooms with guest links, channels, email, push-to-talk, knowledge recall — 70 tools today.
 
 **Long description:**
 
 mosadd is the OS for human communications: instead of stitching Twilio + LiveKit + Resend + Matrix yourself, you call OS-level semantic primitives — `mROOM.create_with_link` instead of provisioning a LiveKit room + generating a JWT + emailing the URL + signing the alias.
 
-**65 live tools across 7 live modules (3.0.0-alpha):**
-- mDM (12 tools) — Encrypted direct messages + 1:1 voice, multi-thread per contact (USP)
-- mIRC (20 tools) — Discord/Slack-style persistent encrypted channels
-- mROOM (9 tools) — Ephemeral rooms with no-account guest join links (USP)
-- mTALK (5 tools) — Push-to-talk voice with agent-in-room
-- mAIL (11 tools) — Email from `<userId>@mosadd.com`
+**70 live tools across 6 live modules (3.0.0-alpha):**
+- mDM (14 tools) — Encrypted direct messages + 1:1 voice, multi-thread per contact (USP)
+- mIRC (22 tools) — Discord/Slack-style persistent encrypted channels
+- mROOM (11 tools) — Ephemeral rooms with no-account guest join links (USP)
+- mTALK (6 tools) — Push-to-talk voice with agent-in-room
+- mAIL (12 tools) — Email from `<userId>@mosadd.com`
 - mRAG (4 tools) — Encrypted knowledge base, RAG recall
-- mURL (4 tools) — Real-time chat attached to any web domain, agent-native ("IRC for URLs")
+- Action Links (`comms_action_create`) — agent → human one-link browser action
 
 Plus the embeddable `@mosadd/threat-engine` — a 166-event threat radar.
 
