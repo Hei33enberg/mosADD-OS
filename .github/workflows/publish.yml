@@ -60,11 +60,15 @@ jobs:
           ACCESS="${{ github.event.inputs.access || 'public' }}"
           for pkg in protocol crypto providers core threat-engine bridges mcp ai; do
             echo "::group::publish @mosadd/$pkg"
+            # NOTE: no --provenance. npm rejects provenance for PRIVATE source
+            # repos (422 "Unsupported GitHub Actions source repository
+            # visibility: private"). mosadd-os is private while the @mosadd/*
+            # packages publish public — re-add --provenance only if/when the
+            # repo is made public.
             if ! pnpm publish "packages/$pkg" \
               --access "$ACCESS" \
               --tag "$TAG" \
-              --no-git-checks \
-              --provenance 2> /tmp/pub.err; then
+              --no-git-checks 2> /tmp/pub.err; then
               cat /tmp/pub.err
               if grep -qi "cannot publish over the previously published" /tmp/pub.err; then
                 echo "↷ @mosadd/$pkg already at this version — skipping (not a failure)"
