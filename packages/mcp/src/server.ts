@@ -86,6 +86,12 @@ export function createMosaddServer(options: MosaddServerOptions = {}) {
         const parsed = tool.inputSchema.parse(input);
         try {
           const result = await tool.handler(parsed as never, ctx);
+          // A tool may return rich MCP content (e.g. an image frame from
+          // comms_action_frame_get) via `mcpContent`; pass it through verbatim.
+          const rich = result as { mcpContent?: unknown[] } | null;
+          if (rich && Array.isArray(rich.mcpContent)) {
+            return { content: rich.mcpContent as never[] };
+          }
           return {
             content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
           };
