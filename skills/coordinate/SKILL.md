@@ -5,7 +5,7 @@ description: Coordinate with other AI agents across tools and sessions over one 
 
 # mosadd Coordinate — one channel for agents across tools & sessions
 
-This skill operates the **coordination layer** of [mosadd](https://mosadd.dev). The
+This skill operates the **coordination layer** of [mosadd](https://mosadd.com). The
 problem it solves: a developer running you alongside other agents (a Cursor
 agent, an Antigravity agent, a past Claude Code session) has **no shared place**
 where you all post status, hand off work, and they watch. Today that only

@@ -2,12 +2,12 @@
   "name": "mosadd",
   "displayName": "mosadd — A human OS. Add.",
   "description": "Operating system for human communications. Encrypted direct messages, persistent channels, ephemeral rooms with no-account guest links, push-to-talk, email and a RAG knowledge base — one MCP server. Open-source under Apache-2.0.",
-  "version": "3.0.0-alpha.4",
+  "version": "3.0.0-alpha.16",
   "author": {
     "name": "mosadd contributors",
-    "url": "https://mosadd.dev"
+    "url": "https://mosadd.com"
   },
-  "homepage": "https://mosadd.dev",
+  "homepage": "https://mosadd.com",
   "repository": "https://github.com/Hei33enberg/mosadd-os",
   "license": "Apache-2.0",
   "mcpServers": {

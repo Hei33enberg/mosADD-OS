@@ -5,7 +5,7 @@ description: Search and reason over the user's own mosadd messages, emails, call
 
 # mosadd Knowledge Base (mRAG)
 
-This skill operates the **mRAG** OS module of [mosadd](https://mosadd.dev) — semantic recall over the user's own communications, grounded strictly in their indexed mosadd data. Hybrid vector + BM25 retrieval with Cohere reranking and a freshness lane for just-sent items.
+This skill operates the **mRAG** OS module of [mosadd](https://mosadd.com) — semantic recall over the user's own communications, grounded strictly in their indexed mosadd data. Hybrid vector + BM25 retrieval with Cohere reranking and a freshness lane for just-sent items.
 
 ## When to invoke
 

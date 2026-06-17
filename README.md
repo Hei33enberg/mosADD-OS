@@ -11,15 +11,15 @@ Modular primitives — DMs, channels, rooms, push-to-talk, email, knowledge — 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha-orange)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-65%20live-00ff7f)](packages/mcp)
+[![Tools](https://img.shields.io/badge/tools-70%20live-00ff7f)](packages/mcp)
 [![Release](https://img.shields.io/github/v/release/Hei33enberg/mosadd-os?include_prereleases&label=release)](https://github.com/Hei33enberg/mosadd-os/releases)
-[![mosadd.dev](https://img.shields.io/badge/site-mosadd.dev-5af082)](https://mosadd.dev)
+[![mosadd.com](https://img.shields.io/badge/site-mosadd.com-5af082)](https://mosadd.com)
 
 </div>
 
 ---
 
-## What's live today (3.0.0-alpha.4)
+## What's live today (3.0.0-alpha.16)
 
 **Tagline-to-code real:**
 
@@ -27,23 +27,23 @@ Modular primitives — DMs, channels, rooms, push-to-talk, email, knowledge — 
 npx -y @mosadd/mcp
 ```
 
-…starts an MCP server with **61 tools** across 6 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send mail, run a push-to-talk room, recall facts from its own knowledge base, or join the real-time chat attached to any web domain — all through your own mosadd backend (BYOK).
+…starts an MCP server with **70 tools** across 6 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send mail, or run a push-to-talk room — all through your own mosadd backend (BYOK).
 
 | Channel | Tools | Highlight |
 |---|---|---|
-| **mDM** (12) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request` + 4 voice ops | Multi-thread per contact (USP) + X3DH/Double-Ratchet E2EE, text + voice |
-| **mIRC** (20) | 5 channel ops (`mIRC_create/list/get/update/delete`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) + message + admin ops | Discord/Slack-style persistent channels, full RBAC + chat |
-| **mROOM** (9) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_send_message`, `mROOM_list_messages` | **No other registered MCP server exposes single-call guest links** |
-| **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
-| **mAIL** (11) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete`, `mAIL_stats`, `mAIL_events`, `mAIL_metrics`, `mAIL_revoke`, `mAIL_audit_export`, `mAIL_consent`, `mAIL_notify` | Every user gets `<userId>@mosadd.com` for free |
+| **mDM** (14) | core 8 (`mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`) + voice/call 4 (`mDM_call_start/answer/end`, `mDM_voice_note`) + `mDM_send_voice/file` | Multi-thread per contact (USP) + X3DH/Double-Ratchet E2EE, text + voice + files |
+| **mIRC** (22) | 5 channel ops (`mIRC_create/list/get/update/delete`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) + 2 message + 3 edge (`mint_channel_token/send_edge/history_edge`) + `mIRC_send_voice/file` | Discord/Slack-style persistent channels, full RBAC + the agent-coordination edge transport |
+| **mROOM** (11) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_voice_join`, `mROOM_send_message`, `mROOM_list_messages`, `mROOM_send_voice/file` | **No other registered MCP server exposes single-call guest links** |
+| **mAIL** (12) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete`, `mAIL_stats`, `mAIL_events`, `mAIL_metrics`, `mAIL_revoke`, `mAIL_audit_export`, `mAIL_consent`, `mAIL_notify`, `mAIL_send_as_agent` | Every user gets `<userId>@mosadd.com` for free; agent/human provenance |
+| **mTALK** (6) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state`, `mTALK_ingest_ptt` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release; ingest to RAG |
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
-| **mURL** (4) | `mURL_read_channel`, `mURL_post`, `mURL_presence`, `mURL_list_channels` | Real-time chat attached to any web domain — agent-native ("IRC for URLs") |
+| **comms_** (2) | `comms_action_create`, `comms_capabilities` | Agent→user one-link browser action (Tier 1) + one-call capability discovery |
 
-**61 tools across 6 live modules** (12+20+9+5+11+4+4), plus the `comms_capabilities` discovery tool. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
+**70 tools across 6 modules** (14+22+11+12+6+4) + `comms_action_create`, plus the `comms_capabilities` discovery tool (**71 callable**). `mCALL` (telephony, carrier-pending) and `mURL` (brand/consumer surface) ship in the source but are **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
 ## Quickstart (60 seconds)
 
-> **Alpha distribution:** install directly from GitHub for now (`npx github:...`). Once we claim the `mosadd` npm org, `npx @mosadd/mcp@alpha` will Just Work. The tarballs attached to [release v3.0.0-alpha.4](https://github.com/Hei33enberg/mosadd-os/releases/tag/v3.0.0-alpha.4) are identical to what we'll publish.
+> **Alpha distribution:** the package is published to npm — `npx -y @mosadd/mcp@alpha` (or bare `npx -y @mosadd/mcp`, whose `latest` tag tracks the current alpha) Just Works. Installing straight from source also works if you prefer pinning: `npx -y github:Hei33enberg/mosadd-os --package=@mosadd/mcp`.
 
 ### Claude Code
 
@@ -116,7 +116,7 @@ We're an open community. Start with [CONTRIBUTING.md](./CONTRIBUTING.md), [GOVER
 
 Adding a new `m*` module requires an RFC — see [RFC 0001](./docs/rfcs/0001-module-naming.md) for the bar (semantic primitive, ≥2 backend providers, radar hooks, MCP tool surface).
 
-Discord: _coming soon_ · Web: [mosadd.dev](https://mosadd.dev) · Linear: [M5 epic](https://linear.app/ip-ra/issue/LINEAR-2138)
+Discord: _coming soon_ · Web: [mosadd.com](https://mosadd.com) · Linear: [M5 epic](https://linear.app/ip-ra/issue/LINEAR-2138)
 
 ## License
 

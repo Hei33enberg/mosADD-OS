@@ -1,7 +1,7 @@
 /**
  * Tool registry. Each m* module contributes a set of tools.
  *
- * Live modules (6): mDM, mIRC, mROOM, mTALK, mAIL, mRAG — 61 tools + comms_capabilities.
+ * Live modules (6): mDM, mIRC, mROOM, mTALK, mAIL, mRAG — 70 tools + comms_capabilities.
  * Plus action links (Tier 1): comms_action_create — agent → user one-link browser action.
  * mURL is a consumer/brand surface (murl.mosadd.com), NOT a dev product — its tools
  * live in tools/murl.ts but are NOT registered here (founder decision 2026-06-10).

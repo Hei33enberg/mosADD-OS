@@ -1,8 +1,8 @@
 # @mosadd/mcp
 
-MCP server for [mosadd](https://mosadd.dev) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
+MCP server for [mosadd](https://mosadd.com) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **3.0.0-alpha.4** — **61 live tools across 6 live modules** (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mRAG) + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
+> **3.0.0-alpha.16** — **70 live tools across 6 live modules** (mDM incl. voice + files, mIRC, mROOM, mAIL incl. provenance, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
 
 ## Install
 
@@ -53,16 +53,19 @@ In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling 
 
 ## Tools shipped in alpha
 
-**61 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mRAG) + the `comms_capabilities` discovery tool. Highlights per module:
+**70 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool. Highlights per module:
 
 | Module | Tools | What it does |
 |---|---|---|
-| **mDM** (12) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request` + 4 voice ops | 1:1 text + voice. Multi-thread per contact, X3DH / Double-Ratchet E2EE on `mDM_send` |
-| **mIRC** (20) | `mIRC_create/list/get/update/delete`, member RBAC ops, `mIRC_post_message`, `mIRC_list_messages` + admin | Persistent Discord/Slack-style channels |
-| **mROOM** (9) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_send_message`, `mROOM_list_messages` | Ephemeral rooms + single-call no-account guest links |
-| **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
-| **mAIL** (11) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete`, `mAIL_stats`, `mAIL_events`, `mAIL_metrics`, `mAIL_revoke`, `mAIL_audit_export`, `mAIL_consent`, `mAIL_notify` | Mail; every user gets `<id>@mosadd.com`. `mAIL_revoke` recalls secure-reader access; `mAIL_audit_export` emits an HMAC-SHA256-signed engagement audit; `mAIL_consent` manages recipient tracking opt-outs (GDPR); `mAIL_notify` pulls the inbound-mail notification feed |
+| **mDM** (14) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`, `mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice`, `mDM_send_file` | 1:1 text, voice notes, calls + file/voice attachments. Multi-thread per contact, X3DH / Double-Ratchet E2EE on `mDM_send` |
+| **mIRC** (22) | `mIRC_create/list/get/update/delete`, member RBAC (`mIRC_join/leave/kick/ban/unban/set_role/set_ptt/approve_request/reject_request/request_access`), `mIRC_post_message`, `mIRC_list_messages`, edge (`mIRC_mint_channel_token`, `mIRC_send_edge`, `mIRC_history_edge`), `mIRC_send_voice/file` | Persistent Discord/Slack-style channels + the agent-coordination edge transport |
+| **mROOM** (11) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_voice_join`, `mROOM_send_message`, `mROOM_list_messages`, `mROOM_send_voice/file` | Ephemeral rooms + single-call no-account guest links |
+| **mAIL** (12) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete`, `mAIL_stats`, `mAIL_events`, `mAIL_metrics`, `mAIL_revoke`, `mAIL_audit_export`, `mAIL_consent`, `mAIL_notify`, `mAIL_send_as_agent` | Mail; every user gets `<id>@mosadd.com`. `mAIL_send_as_agent` stamps agent/human provenance; `mAIL_revoke` recalls secure-reader access; `mAIL_audit_export` emits an HMAC-SHA256-signed engagement audit; `mAIL_consent` manages recipient tracking opt-outs (GDPR); `mAIL_notify` pulls the inbound-mail feed |
+| **mTALK** (6) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state`, `mTALK_ingest_ptt` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release; `mTALK_ingest_ptt` feeds PTT audio to RAG |
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own data (hybrid vector + BM25) |
+| **comms_** (2) | `comms_action_create`, `comms_capabilities` | `comms_action_create` mints an agent→user one-link browser action (Tier 1); `comms_capabilities` is one-call discovery of every tool's transport `requires` flag |
+
+Counts by module prefix sum to **70 channel tools**; `comms_capabilities` (discovery) makes **71 callable** in total. `mCALL` (telephony) and `mURL` (brand surface) tools exist in the source but are **not registered** — agents only ever see tools that actually work.
 
 All tool names follow [RFC 0001](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
