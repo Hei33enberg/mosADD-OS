@@ -73,7 +73,7 @@ export async function handleMcp(
   const authHeader = req.headers["authorization"];
   const apiKey = (typeof authHeader === "string" ? authHeader : "").replace(/^Bearer\s+/i, "").trim();
   if (!API_KEY_RE.test(apiKey)) {
-    jsonRpcError(res, 401, -32001, "Unauthorized — send Authorization: Bearer mosadd_sk_live_… (get a key at https://mosadd.dev/hub)");
+    jsonRpcError(res, 401, -32001, "Unauthorized — send Authorization: Bearer mosadd_sk_live_… (get a key at https://mosadd.com/keys)");
     return;
   }
 

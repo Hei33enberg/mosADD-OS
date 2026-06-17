@@ -1,6 +1,6 @@
 # @mosadd/mcp-http — hosted MCP gateway (mcp.mosadd.com)
 
-Serves the full `@mosadd/mcp` tool surface (the 7 live modules, 65 tools) over
+Serves the full `@mosadd/mcp` tool surface (the 6 live modules, 70 tools) over
 **Streamable HTTP**, so remote / server-side agents (n8n, your own backend,
 hosted Claude, ChatGPT) can use mosadd without running the stdio binary locally.
 
@@ -34,8 +34,8 @@ curl -s http://localhost:3030/mcp \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 
-Verified locally: `initialize` → 200, `tools/list` → 65 tools (mDM/mIRC/mROOM/
-mTALK/mAIL/mRAG/mURL), `tools/call mROOM_list` → real backend response, bad key → 401.
+Verified locally: `initialize` → 200, `tools/list` → 70 tools (mDM/mIRC/mROOM/
+mTALK/mAIL/mRAG — mURL/mCALL unregistered), `tools/call mROOM_list` → real backend response, bad key → 401.
 
 ## Deploy (mcp.mosadd.com)
 
@@ -46,7 +46,7 @@ This is a standalone Vercel project (Root Directory `apps/mcp-http`).
    exports `runWithSupabaseEnv`). The monorepo `file:` ref is for local dev only.
 2. Deploy to Vercel; add the domain **`mcp.mosadd.com`** (Vercel-managed DNS →
    CNAME auto). ← owner step.
-3. Update `/docs/mcp` on mosadd.dev with the hosted "HTTP" option next to stdio.
+3. Update `/mcp` + `/docs` on mosadd.com with the hosted "HTTP" option next to stdio.
 
 Client config (once live):
 
