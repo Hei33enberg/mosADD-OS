@@ -10,6 +10,7 @@ Quickstart configs for the agent runtimes that consume `@mosadd/mcp`.
 | [`vercel-ai/`](vercel-ai/) | Vercel AI SDK (Node.js) | in-process via `@mosadd/ai/vercel` |
 | [`langchain/`](langchain/) | LangChain (Node.js) | in-process via `@mosadd/ai/langchain` |
 | [`anthropic/`](anthropic/) | Anthropic SDK (Node.js) | in-process via `@mosadd/ai/anthropic` |
+| [`hermes/`](hermes/) | Hermes Agent (long-running gateway / Docker / VPS) | stdio (local) |
 
 ## Other runtimes
 
