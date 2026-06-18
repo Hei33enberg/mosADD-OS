@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows the `3.0.0-alpha.N` pre-release line until the hosted
 gateway (Phase 2) ships.
 
+## [3.0.0-alpha.18] — 2026-06-18
+
+### Added
+- **`comms_embed_create`** — embed a LIVE mosadd channel into an app/site a builder-agent is
+  generating (Lovable / Bolt / Cursor / v0). Mints a publishable embed key (`m_pk_live_…`,
+  origin-scoped, via the `embed-keys` EF) and returns a paste-in widget snippet
+  (`<div>` + `<script src="https://embed.mosadd.com/v1.js" data-key=…>`). The widget exchanges
+  the publishable key for a short-lived channel-scoped JWT at runtime; the hub key never enters
+  the browser. Extends `mROOM_create_guest_link` (link → embeddable widget). CDN override via
+  `MOSADD_EMBED_CDN`. (Widget served from the dedicated `embed.mosadd.com` deploy.)
+
 ## [3.0.0-alpha.17] — 2026-06-18
 
 ### Added
