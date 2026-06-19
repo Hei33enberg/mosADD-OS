@@ -153,8 +153,11 @@ async function mAIL_view(
   received_at: string;
 }> {
   readSupabaseEnv();
-  ctx.log("debug", "mAIL_view invoking mp0st-view", { message_id: input.message_id });
-  return await invokeFunction("mp0st-view", { message_id: input.message_id });
+  // mp0st-get (NOT mp0st-view): mp0st-view is the open-tracking pixel endpoint
+  // keyed on ?t=<trackingId> and always 400s "Missing tracking ID" on a JSON POST.
+  // mp0st-get reads the owner-scoped email by id and returns the full body.
+  ctx.log("debug", "mAIL_view invoking mp0st-get", { message_id: input.message_id });
+  return await invokeFunction("mp0st-get", { message_id: input.message_id });
 }
 
 async function mAIL_list(

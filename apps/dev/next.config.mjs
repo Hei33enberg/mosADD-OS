@@ -19,6 +19,9 @@ const config = {
       // de-listed from the site for now. Send any stale deep links to the modules index.
       { source: '/docs/modules/mcall', destination: '/docs/modules', permanent: false },
       { source: '/docs/modules/mirl', destination: '/docs/modules', permanent: false },
+      // mURL de-listed as a dev/MCP module (parked — consumer product at murl.mosadd.com
+      // stays live). Send the dev-docs module page to the modules index, like mCALL.
+      { source: '/docs/modules/murl', destination: '/docs/modules', permanent: false },
       // mKB was renamed to mRAG (RAG / "ask your own data" engine). Permanently
       // redirect the old module page to preserve inbound links and SEO.
       { source: '/docs/modules/mkb', destination: '/docs/modules/mrag', permanent: true },

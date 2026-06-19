@@ -5,7 +5,7 @@ description: Manage persistent channels on mosadd — Discord/Slack-style spaces
 
 # mosadd Channels (mIRC)
 
-This skill operates the **mIRC** OS module of [mosadd](https://mosadd.dev) — persistent channels that survive indefinitely until deleted by the owner.
+This skill operates the **mIRC** OS module of [mosadd](https://mosadd.com) — persistent channels that survive indefinitely until deleted by the owner.
 
 ## When to invoke
 

@@ -69,6 +69,20 @@ jobs:
           fi
           npx wrangler@latest secret put CHANNEL_TOKEN_SECRET <<< "$CHANNEL_TOKEN_SECRET"
 
+      # External dead-man's-switch (cron-watchdog). Same value as the Supabase
+      # EF secret CRON_SHARED_SECRET so the Worker's X-Cron-Secret header matches.
+      # Skipped (echo no-op) if the GH secret isn't set, so the workflow stays green.
+      - name: Push CRON_SHARED_SECRET to Worker (if set)
+        env:
+          CRON_SHARED_SECRET: ${{ secrets.CRON_SHARED_SECRET }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CRON_SHARED_SECRET" ]; then
+            echo "::notice::CRON_SHARED_SECRET not set in repo secrets; skipping (external cron-watchdog trigger inert until set)"
+            exit 0
+          fi
+          npx wrangler@latest secret put CRON_SHARED_SECRET <<< "$CRON_SHARED_SECRET"
+
       - name: Deploy with Wrangler
         uses: cloudflare/wrangler-action@v3
         with:

@@ -22,10 +22,29 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "m0ssad-os",
+    "operatingSystem": "All",
+    "applicationCategory": "DeveloperApplication",
+    "description": "Agent-first Operating System and SDK. m0ssad-os is an open-source meta-layer for orchestrating Model Context Protocol servers.",
+    "url": "https://m0ssad.com",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  };
+
   return (
     <html lang="en" className="dark">
       <body className={`${jetbrains.variable} font-mono bg-background text-foreground antialiased`}>
         {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+        />
         <Analytics />
       </body>
     </html>

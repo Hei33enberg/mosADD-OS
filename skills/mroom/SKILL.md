@@ -5,7 +5,7 @@ description: Create ephemeral private rooms with no-account guest join links. Us
 
 # mosadd Private Rooms (mROOM)
 
-This skill operates the **mROOM** OS module of [mosadd](https://mosadd.dev) — ephemeral rooms with TTL and no-account guest access.
+This skill operates the **mROOM** OS module of [mosadd](https://mosadd.com) — ephemeral rooms with TTL and no-account guest access.
 
 ## When to invoke
 

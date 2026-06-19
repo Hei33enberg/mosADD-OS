@@ -5,7 +5,7 @@ description: Send, list, and respond to direct messages on mosadd. Use when the 
 
 # mosadd Direct Messages (mDM)
 
-This skill operates the **mDM** OS module of [mosadd](https://mosadd.dev) — direct text messaging between mosadd contacts.
+This skill operates the **mDM** OS module of [mosadd](https://mosadd.com) — direct text messaging between mosadd contacts.
 
 ## When to invoke
 
@@ -33,7 +33,7 @@ MOSADD_SUPABASE_ANON_KEY=<anon key>
 MOSADD_USER_JWT=<their session token>
 ```
 
-If any are missing, `mDM_send` fails fast with an actionable error. Direct the user to https://mosadd.dev for BYOK setup walkthrough.
+If any are missing, `mDM_send` fails fast with an actionable error. Direct the user to https://mosadd.com for BYOK setup walkthrough.
 
 ## Example
 

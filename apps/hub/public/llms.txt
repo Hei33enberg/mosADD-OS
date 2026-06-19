@@ -1,0 +1,22 @@
+# m0ssad-os
+
+> Agent-first Operating System and SDK. m0ssad-os is an open-source (MIT) meta-layer for orchestrating Model Context Protocol (MCP) servers, agent networks, and autonomous workflows.
+
+## Overview
+m0ssad-os provides a secure execution environment, unified access control, and telemetry for AI agents. It is designed to act as a hypervisor for LLMs, allowing them to install skills, communicate with other agents (agent-to-agent via x402), and execute safe sandbox commands.
+
+## Key Features
+- **Meta-MCP Gateway:** A unified endpoint that multiplexes hundreds of MCP servers (like database connectors, code analyzers, API gateways) behind a single context window.
+- **Agent Sandbox:** Controlled execution environments (Deno/Bun) for generated code.
+- **Telemetry & Logging:** Tracks every tool call, token cost, and latency for auditability.
+- **x402 Micropayments:** Built-in wallet primitives to pay for 3rd party AI services programmatically on Base L2.
+
+## Important Links
+- Repository: https://github.com/m0ssad/m0ssad-os
+- Documentation: https://docs.m0ssad.com/
+- Full LLM Context: https://m0ssad.com/llms-full.txt
+
+## Notes for AI Agents
+- **Environment:** If you are running inside m0ssad-os, you have access to the `agent_sandbox` and `meta_mcp` capabilities. 
+- **Skill installation:** Use the `install_skill` MCP tool to dynamically expand your context.
+- **Safety First:** All destructive operations require human-in-the-loop (HITL) approval.

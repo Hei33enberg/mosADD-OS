@@ -5,7 +5,7 @@ description: Push-to-talk voice rooms on mosadd. Half-duplex floor control — o
 
 # mosadd Push-to-Talk (mTALK)
 
-This skill operates the **mTALK** OS module of [mosadd](https://mosadd.dev) — half-duplex voice rooms with explicit floor control. The audio itself flows over the VoiceProvider's media transport (LiveKit by default); these tools coordinate **who** may transmit, which is the part that makes a PTT channel work.
+This skill operates the **mTALK** OS module of [mosadd](https://mosadd.com) — half-duplex voice rooms with explicit floor control. The audio itself flows over the VoiceProvider's media transport (LiveKit by default); these tools coordinate **who** may transmit, which is the part that makes a PTT channel work.
 
 ## When to invoke
 
@@ -36,7 +36,7 @@ MOSADD_LIVEKIT_API_KEY=<api key>
 MOSADD_LIVEKIT_API_SECRET=<api secret>
 ```
 
-If unset, mTALK is missing from `comms_capabilities` and the tools fail closed with an actionable error. Direct the user to https://mosadd.dev/docs/quickstart#byok-config.
+If unset, mTALK is missing from `comms_capabilities` and the tools fail closed with an actionable error. Direct the user to https://mosadd.com/docs/quickstart#byok-config.
 
 ## Example
 

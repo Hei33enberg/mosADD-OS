@@ -5,7 +5,7 @@ description: Send and read email through the mosadd OS module mAIL. Every mosadd
 
 # mosadd Email (mAIL)
 
-This skill operates the **mAIL** OS module of [mosadd](https://mosadd.dev). Every mosadd user gets `<userId>@mosadd.com` as a built-in address — no separate email provider needed.
+This skill operates the **mAIL** OS module of [mosadd](https://mosadd.com). Every mosadd user gets `<userId>@mosadd.com` as a built-in address — no separate email provider needed.
 
 ## When to invoke
 

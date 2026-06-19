@@ -15,9 +15,19 @@ Skills are a Claude-only convenience layer on top of the [`@mosadd/mcp`](../pack
 | [`mtalk/SKILL.md`](mtalk/SKILL.md) | mTALK | Push-to-talk voice rooms (half-duplex floor control) |
 | [`mrag/SKILL.md`](mrag/SKILL.md) | mRAG | RAG recall over the user's own messages/emails/calls |
 
+## Coordination skill (canonical source)
+
+[`coordinate/SKILL.md`](coordinate/SKILL.md) is a cross-tool **workflow** skill (not a single
+module) — it turns several agents working the same repo into one human-visible mIRC channel.
+**This file is the single source of truth for the skill.** Runtime deployments that bundle it
+(e.g. the `mosadd-agent` Hermes fork ships it as `skills/mosadd-coordinate`) must **vendor this
+copy, not fork it** — keep them byte-identical. It is intentionally **not** in the plugin
+marketplace bundle below (that bundle is one-skill-per-module); it is distributed with the agent
+runtime instead.
+
 ## Plugin marketplace entry
 
-The [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) bundles all four skills into a single Claude Code plugin installable with:
+The [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) bundles all six module skills into a single Claude Code plugin installable with:
 
 ```bash
 claude plugin install https://github.com/Hei33enberg/mosadd-os.git
@@ -28,5 +38,3 @@ The plugin pulls the `@mosadd/mcp` server alongside, so users get one install fo
 RFC required to add a new skill; see [docs/rfcs/0001-module-naming.md](../docs/rfcs/0001-module-naming.md) for the bar.
 
 (Top-level `claude plugin install` is the legacy syntax; on current Claude Code use `/plugin marketplace add Hei33enberg/mosadd-os` then `/plugin install mosadd@mosadd-os`.)
-
-RFC required to add a new skill; see [docs/rfcs/0001-module-naming.md](../docs/rfcs/0001-module-naming.md) for the bar.

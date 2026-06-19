@@ -29,7 +29,7 @@ export default function ModulesPage() {
           [<Anchor key="mrag" href="/docs/modules/mrag">mRAG</Anchor>, '4', 'Per-tenant agent memory — semantic recall (RAG) + list/delete indexed sources', 'alpha'],
         ]}
       />
-      <P>61 tools across 6 live modules.</P>
+      <P>70 tools across 6 live modules.</P>
 
       <H2>Security</H2>
       <Table

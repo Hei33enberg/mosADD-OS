@@ -1,20 +1,43 @@
 # @mosadd/mcp
 
-MCP server for [mosadd](https://mosadd.dev) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
+MCP server for [mosadd](https://mosadd.com) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **3.0.0-alpha.4** — **61 live tools across 6 live modules** (mDM incl. voice, mIRC, mROOM, mAIL, mTALK, mRAG) + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
+> **3.0.0-alpha.16** — **70 live tools across 6 live modules** (mDM incl. voice + files, mIRC, mROOM, mAIL incl. provenance, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
 
-## Install
+## Connect your agent
 
-### Claude Code
+Three ways to authenticate, friendliest first — all three end with the same ~70 tools.
+
+### 1. `mosadd login` — recommended (one command, stays logged in)
+
+Sign in once; the session is saved to `~/.mosadd/session.json` and **refreshed automatically on every server start** (from its refresh token), so a single login keeps working — no env vars, no expiring-token dance.
 
 ```bash
+npx -y @mosadd/mcp@alpha login
+# prompts for your Supabase URL + anon key (both public) and your mosadd email + password
+```
+
+Then register the server with **no env block**:
+
+```bash
+# Claude Code
 claude mcp add mosadd -- npx -y @mosadd/mcp@alpha
 ```
 
-### Cursor
+```json
+// Claude Desktop / Cursor / Cline / Windsurf — mcpServers config, no env needed
+{
+  "mcpServers": {
+    "mosadd": { "command": "npx", "args": ["-y", "@mosadd/mcp@alpha"] }
+  }
+}
+```
 
-`~/.cursor/mcp.json`:
+`npx @mosadd/mcp@alpha whoami` shows who you're signed in as; `… logout` clears it.
+
+### 2. `MOSADD_API_KEY` — headless / CI (one long-lived key)
+
+A `mosadd_sk_live_…` hub key does not expire; the server exchanges it for a fresh session on every start. Best for servers, cron, and our own `mosadd-agent`.
 
 ```json
 {
@@ -22,47 +45,39 @@ claude mcp add mosadd -- npx -y @mosadd/mcp@alpha
     "mosadd": {
       "command": "npx",
       "args": ["-y", "@mosadd/mcp@alpha"],
-      "env": {
-        "MOSADD_SUPABASE_URL": "https://<your-project>.supabase.co",
-        "MOSADD_SUPABASE_ANON_KEY": "<anon key>",
-        "MOSADD_USER_JWT": "<your session JWT>"
-      }
+      "env": { "MOSADD_API_KEY": "mosadd_sk_live_…" }
     }
   }
 }
 ```
 
-### Standalone
+Mint a key by POSTing to the `hub-keys` Edge Function with your user JWT (it returns the secret once). A one-click "API keys" screen on mosadd.com is the planned UX.
 
-```bash
-MOSADD_SUPABASE_URL=... MOSADD_SUPABASE_ANON_KEY=... MOSADD_USER_JWT=... npx @mosadd/mcp@alpha
-```
+### 3. BYOK + `MOSADD_USER_JWT` — advanced / debugging
 
-## BYOK — get your env values
-
-While the hosted gateway is in development, the alpha runs in **local BYOK mode** — you supply your own Supabase credentials to talk to your own mosadd backend.
+Bring your own Supabase URL + anon key + a raw session token. **The JWT expires (~1h)** — prefer option 1 or 2 for anything ongoing.
 
 - `MOSADD_SUPABASE_URL` — your Supabase project URL (e.g. `https://abc.supabase.co`)
 - `MOSADD_SUPABASE_ANON_KEY` — the public anon key from project settings
-- `MOSADD_USER_JWT` — a Supabase session token for your mosadd user. Get it from the browser:
-  1. Sign in to mosadd.com
-  2. Open DevTools → Application → Local Storage → `sb-<ref>-auth-token`
-  3. Copy the `access_token` field
+- `MOSADD_USER_JWT` — sign in to mosadd.com → DevTools → Application → Local Storage → `sb-<ref>-auth-token` → copy the `access_token` field
 
-In Phase 2, run `mosadd login` to OAuth into hub.mosadd.com — no JWT-juggling required.
+In Phase 2 the hosted gateway at `mcp.mosadd.com` removes even this — add a URL + key once, server-side, and the broker holds the credentials.
 
 ## Tools shipped in alpha
 
-**61 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mRAG) + the `comms_capabilities` discovery tool. Highlights per module:
+**70 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool. Highlights per module:
 
 | Module | Tools | What it does |
 |---|---|---|
-| **mDM** (12) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request` + 4 voice ops | 1:1 text + voice. Multi-thread per contact, X3DH / Double-Ratchet E2EE on `mDM_send` |
-| **mIRC** (20) | `mIRC_create/list/get/update/delete`, member RBAC ops, `mIRC_post_message`, `mIRC_list_messages` + admin | Persistent Discord/Slack-style channels |
-| **mROOM** (9) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_send_message`, `mROOM_list_messages` | Ephemeral rooms + single-call no-account guest links |
-| **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
-| **mAIL** (11) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete`, `mAIL_stats`, `mAIL_events`, `mAIL_metrics`, `mAIL_revoke`, `mAIL_audit_export`, `mAIL_consent`, `mAIL_notify` | Mail; every user gets `<id>@mosadd.com`. `mAIL_revoke` recalls secure-reader access; `mAIL_audit_export` emits an HMAC-SHA256-signed engagement audit; `mAIL_consent` manages recipient tracking opt-outs (GDPR); `mAIL_notify` pulls the inbound-mail notification feed |
+| **mDM** (14) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`, `mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice`, `mDM_send_file` | 1:1 text, voice notes, calls + file/voice attachments. Multi-thread per contact, X3DH / Double-Ratchet E2EE on `mDM_send` |
+| **mIRC** (22) | `mIRC_create/list/get/update/delete`, member RBAC (`mIRC_join/leave/kick/ban/unban/set_role/set_ptt/approve_request/reject_request/request_access`), `mIRC_post_message`, `mIRC_list_messages`, edge (`mIRC_mint_channel_token`, `mIRC_send_edge`, `mIRC_history_edge`), `mIRC_send_voice/file` | Persistent Discord/Slack-style channels + the agent-coordination edge transport |
+| **mROOM** (11) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_voice_join`, `mROOM_send_message`, `mROOM_list_messages`, `mROOM_send_voice/file` | Ephemeral rooms + single-call no-account guest links |
+| **mAIL** (12) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete`, `mAIL_stats`, `mAIL_events`, `mAIL_metrics`, `mAIL_revoke`, `mAIL_audit_export`, `mAIL_consent`, `mAIL_notify`, `mAIL_send_as_agent` | Mail; every user gets `<id>@mosadd.com`. `mAIL_send_as_agent` stamps agent/human provenance; `mAIL_revoke` recalls secure-reader access; `mAIL_audit_export` emits an HMAC-SHA256-signed engagement audit; `mAIL_consent` manages recipient tracking opt-outs (GDPR); `mAIL_notify` pulls the inbound-mail feed |
+| **mTALK** (6) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state`, `mTALK_ingest_ptt` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release; `mTALK_ingest_ptt` feeds PTT audio to RAG |
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own data (hybrid vector + BM25) |
+| **comms_** (2) | `comms_action_create`, `comms_capabilities` | `comms_action_create` mints an agent→user one-link browser action (Tier 1); `comms_capabilities` is one-call discovery of every tool's transport `requires` flag |
+
+Counts by module prefix sum to **70 channel tools**; `comms_capabilities` (discovery) makes **71 callable** in total. `mCALL` (telephony) and `mURL` (brand surface) tools exist in the source but are **not registered** — agents only ever see tools that actually work.
 
 All tool names follow [RFC 0001](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 

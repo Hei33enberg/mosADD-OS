@@ -27,3 +27,11 @@ SUPABASE_URL = "https://rooffhgbxafyjcwmwpsy.supabase.co"
 [observability]
 enabled = true
 head_sampling_rate = 1.0
+
+# External dead-man's-switch: an INDEPENDENT scheduler (this Worker, not pg_cron)
+# pings the Supabase `cron-watchdog` EF every 30 min. Survives total pg_cron
+# death — the failure that caused 13 days of silent monitoring blindness on
+# 2026-06-04, which an in-band watchdog cannot detect (it dies with the scheduler).
+# Handler: scheduled() in src/index.ts. Self-gating on CRON_SHARED_SECRET.
+[triggers]
+crons = ["*/30 * * * *"]

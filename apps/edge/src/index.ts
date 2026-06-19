@@ -38,6 +38,10 @@ export interface Env {
    *  (LINEAR-2675/E6). Lets the browser hold a SCOPED token instead of a hub key.
    *  Set via `wrangler secret put CHANNEL_TOKEN_SECRET`. */
   CHANNEL_TOKEN_SECRET?: string;
+  /** Shared secret for the external dead-man's-switch: sent as `X-Cron-Secret`
+   *  to the Supabase `cron-watchdog` EF from the scheduled() handler. Same value
+   *  as the EF's CRON_SHARED_SECRET. Set via `wrangler secret put CRON_SHARED_SECRET`. */
+  CRON_SHARED_SECRET?: string;
 }
 
 const HISTORY_LIMIT = 100;
@@ -185,6 +189,22 @@ export default {
     const [, channelId] = m;
     const stub = env.CHANNEL.get(env.CHANNEL.idFromName(channelId));
     return stub.fetch(req);
+  },
+
+  // External dead-man's-switch (wrangler.toml [triggers] crons). Pings the
+  // Supabase cron-watchdog EF from OUTSIDE Supabase so it still fires even if
+  // pg_cron is completely dead. Self-gating: without the secret bound, this is
+  // a no-op (keeps deploys green until CRON_SHARED_SECRET is set on the Worker).
+  async scheduled(_event: unknown, env: Env): Promise<void> {
+    if (!env.CRON_SHARED_SECRET) return;
+    try {
+      await fetch(`${env.SUPABASE_URL}/functions/v1/cron-watchdog`, {
+        method: "POST",
+        headers: { "X-Cron-Secret": env.CRON_SHARED_SECRET },
+      });
+    } catch {
+      // best-effort; the next tick retries in 30 min.
+    }
   },
 };
 

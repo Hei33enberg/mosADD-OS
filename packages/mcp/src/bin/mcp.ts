@@ -10,7 +10,9 @@
  */
 
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { createClient } from "@supabase/supabase-js";
 import { createMosaddServer } from "../server.js";
+import { loadSession, saveSession, isSessionExpired } from "../config.js";
 
 const DEFAULT_EXCHANGE =
   "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-key-exchange";
@@ -51,6 +53,47 @@ async function bootstrapFromApiKey(): Promise<void> {
   }
 }
 
+/**
+ * `mosadd login` path: refresh the saved session at boot so a stored token that
+ * expired since the last launch (Supabase access tokens last ~1h) is renewed
+ * silently from its refresh token — instead of failing the first tool call with
+ * "session expired, run `mosadd login` again". This makes a single `mosadd login`
+ * durable across restarts (the founder's "set once, forget" expectation). No-op
+ * when an explicit env JWT or hub key already resolved a session, when there is no
+ * saved session, or when the saved token is still valid.
+ */
+async function bootstrapFromSavedSession(): Promise<void> {
+  if (process.env.MOSADD_USER_JWT) return;
+  const session = loadSession();
+  if (!session?.refreshToken) return;
+  // Still-valid token → the provider uses it as-is; don't churn the refresh token.
+  if (!isSessionExpired(session)) return;
+  try {
+    const client = createClient(session.url, session.anonKey, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    });
+    const { data, error } = await client.auth.refreshSession({ refresh_token: session.refreshToken });
+    if (error || !data.session) {
+      process.stderr.write(
+        JSON.stringify({ level: "warn", msg: "mosadd session refresh failed — run `mosadd login`", error: error?.message }) + "\n",
+      );
+      return;
+    }
+    saveSession({
+      url: session.url,
+      anonKey: session.anonKey,
+      accessToken: data.session.access_token,
+      refreshToken: data.session.refresh_token ?? session.refreshToken,
+      expiresAt: data.session.expires_at,
+      email: data.user?.email ?? session.email,
+    });
+  } catch (err) {
+    process.stderr.write(
+      JSON.stringify({ level: "warn", msg: "mosadd session refresh error — run `mosadd login`", error: String(err) }) + "\n",
+    );
+  }
+}
+
 async function main(): Promise<void> {
   // Auth subcommands: `mosadd login | logout | whoami`. Everything else starts the server.
   const sub = process.argv[2];
@@ -62,6 +105,8 @@ async function main(): Promise<void> {
 
   // Hosted: trade MOSADD_API_KEY for a live session before the server reads env.
   await bootstrapFromApiKey();
+  // `mosadd login`: renew a saved session whose access token expired since last launch.
+  await bootstrapFromSavedSession();
 
   const server = createMosaddServer({
     apiKey: process.env.MOSADD_API_KEY,
