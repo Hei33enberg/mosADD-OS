@@ -1,5 +1,5 @@
 /**
- * mAIL — Email.
+ * mp0st — Email.
  *
  * Every mosadd user gets `<userId>@mosadd.com` for free — incoming mail lands
  * in their app, outgoing mail flows through the mosadd mp0st pipeline.
@@ -19,9 +19,9 @@ const EmailAddress = z
   .max(254)
   .describe("RFC 5321 email address.");
 
-const MessageId = z.string().min(1).describe("Message id (UUID) from mAIL_send or inbox.");
+const MessageId = z.string().min(1).describe("Message id (UUID) from mp0st_send or inbox.");
 
-const mAIL_send_input = z.object({
+const mp0st_send_input = z.object({
   to: z.union([EmailAddress, z.array(EmailAddress).min(1).max(50)]).describe(
     "Recipient(s). Single address or array of up to 50.",
   ),
@@ -53,15 +53,15 @@ const mAIL_send_input = z.object({
     .describe("Self-destruct timer: the secure-reader link expires after this window."),
 });
 
-const mAIL_view_input = z.object({
+const mp0st_view_input = z.object({
   message_id: MessageId,
 });
 
-const mAIL_delete_input = z.object({
+const mp0st_delete_input = z.object({
   message_id: MessageId,
 });
 
-const mAIL_list_input = z.object({
+const mp0st_list_input = z.object({
   direction: z
     .enum(["inbound", "outbound"])
     .optional()
@@ -73,17 +73,17 @@ const mAIL_list_input = z.object({
     .describe("Pagination cursor: pass the previous response's next_cursor to get the next (older) page."),
 });
 
-const mAIL_stats_input = z.object({
+const mp0st_stats_input = z.object({
   message_id: MessageId,
 });
 
-const mAIL_events_input = z.object({
+const mp0st_events_input = z.object({
   message_id: MessageId,
 });
 
-const mAIL_metrics_input = z.object({});
+const mp0st_metrics_input = z.object({});
 
-const mAIL_revoke_input = z.object({
+const mp0st_revoke_input = z.object({
   message_id: MessageId,
   restore: z
     .boolean()
@@ -91,18 +91,18 @@ const mAIL_revoke_input = z.object({
     .describe("Set true to UN-revoke (restore access). Default false = revoke."),
 });
 
-const mAIL_audit_export_input = z.object({
+const mp0st_audit_export_input = z.object({
   message_id: MessageId,
 });
 
-const mAIL_consent_input = z.object({
+const mp0st_consent_input = z.object({
   action: z
     .enum(["list", "check", "optin"])
     .describe("'list' = recipients who opted out of your tracking; 'check' = is one recipient opted out; 'optin' = re-enable tracking for a recipient."),
   recipient: EmailAddress.optional().describe("Required for 'check' and 'optin'."),
 });
 
-const mAIL_notify_input = z.object({
+const mp0st_notify_input = z.object({
   since: z
     .string()
     .optional()
@@ -124,15 +124,15 @@ interface MailListItem {
 
 // ---- Handlers ----
 
-async function mAIL_send(
-  input: z.infer<typeof mAIL_send_input>,
+async function mp0st_send(
+  input: z.infer<typeof mp0st_send_input>,
   ctx: MosaddToolContext,
 ): Promise<{ message_id: string; status: string; is_internal: boolean }> {
   readSupabaseEnv();
   if (!input.body_text && !input.body_html) {
-    throw new Error("mAIL_send requires at least one of body_text or body_html.");
+    throw new Error("mp0st_send requires at least one of body_text or body_html.");
   }
-  ctx.log("debug", "mAIL_send invoking mp0st-send", { to: input.to });
+  ctx.log("debug", "mp0st_send invoking mp0st-send", { to: input.to });
   // mp0st-send returns { ok, email_id, status, is_internal } — remap email_id to the
   // tool's message_id contract (email_id IS the message id). Surface backend errors.
   const res = await invokeFunction<{ ok?: boolean; email_id?: string; status?: string; is_internal?: boolean; error?: string }>("mp0st-send", input);
@@ -140,8 +140,8 @@ async function mAIL_send(
   return { message_id: res.email_id ?? "", status: res.status ?? "sent", is_internal: res.is_internal ?? false };
 }
 
-async function mAIL_view(
-  input: z.infer<typeof mAIL_view_input>,
+async function mp0st_view(
+  input: z.infer<typeof mp0st_view_input>,
   ctx: MosaddToolContext,
 ): Promise<{
   message_id: string;
@@ -156,16 +156,16 @@ async function mAIL_view(
   // mp0st-get (NOT mp0st-view): mp0st-view is the open-tracking pixel endpoint
   // keyed on ?t=<trackingId> and always 400s "Missing tracking ID" on a JSON POST.
   // mp0st-get reads the owner-scoped email by id and returns the full body.
-  ctx.log("debug", "mAIL_view invoking mp0st-get", { message_id: input.message_id });
+  ctx.log("debug", "mp0st_view invoking mp0st-get", { message_id: input.message_id });
   return await invokeFunction("mp0st-get", { message_id: input.message_id });
 }
 
-async function mAIL_list(
-  input: z.infer<typeof mAIL_list_input>,
+async function mp0st_list(
+  input: z.infer<typeof mp0st_list_input>,
   ctx: MosaddToolContext,
 ): Promise<{ emails: MailListItem[]; next_cursor: string | null }> {
   readSupabaseEnv();
-  ctx.log("debug", "mAIL_list invoking mp0st-list", { direction: input.direction });
+  ctx.log("debug", "mp0st_list invoking mp0st-list", { direction: input.direction });
   return await invokeFunction<{ emails: MailListItem[]; next_cursor: string | null }>("mp0st-list", {
     direction: input.direction ?? null,
     limit: input.limit ?? 50,
@@ -173,12 +173,12 @@ async function mAIL_list(
   });
 }
 
-async function mAIL_delete(
-  input: z.infer<typeof mAIL_delete_input>,
+async function mp0st_delete(
+  input: z.infer<typeof mp0st_delete_input>,
   ctx: MosaddToolContext,
 ): Promise<{ ok: true; message_id: string; deleted: true }> {
   readSupabaseEnv();
-  ctx.log("debug", "mAIL_delete invoking mp0st-delete", { message_id: input.message_id });
+  ctx.log("debug", "mp0st_delete invoking mp0st-delete", { message_id: input.message_id });
   return await invokeFunction<{ ok: true; message_id: string; deleted: true }>("mp0st-delete", {
     message_id: input.message_id,
   });
@@ -201,31 +201,31 @@ interface MailEngagement {
   total_events: number;
 }
 
-async function mAIL_stats(
-  input: z.infer<typeof mAIL_stats_input>,
+async function mp0st_stats(
+  input: z.infer<typeof mp0st_stats_input>,
   ctx: MosaddToolContext,
 ): Promise<{ summary: MailEngagement }> {
   readSupabaseEnv();
-  ctx.log("debug", "mAIL_stats invoking mp0st-stats", { message_id: input.message_id });
+  ctx.log("debug", "mp0st_stats invoking mp0st-stats", { message_id: input.message_id });
   return await invokeFunction<{ summary: MailEngagement }>("mp0st-stats", {
     message_id: input.message_id,
   });
 }
 
-async function mAIL_events(
-  input: z.infer<typeof mAIL_events_input>,
+async function mp0st_events(
+  input: z.infer<typeof mp0st_events_input>,
   ctx: MosaddToolContext,
 ): Promise<{
   summary: MailEngagement;
   events: Array<{ event_type: string; at: string; device: string | null; ip_hash: string | null; link_url: string | null }>;
 }> {
   readSupabaseEnv();
-  ctx.log("debug", "mAIL_events invoking mp0st-stats", { message_id: input.message_id });
+  ctx.log("debug", "mp0st_events invoking mp0st-stats", { message_id: input.message_id });
   return await invokeFunction("mp0st-stats", { message_id: input.message_id, events: true });
 }
 
-async function mAIL_metrics(
-  _input: z.infer<typeof mAIL_metrics_input>,
+async function mp0st_metrics(
+  _input: z.infer<typeof mp0st_metrics_input>,
   ctx: MosaddToolContext,
 ): Promise<{
   mailbox: {
@@ -238,42 +238,42 @@ async function mAIL_metrics(
   };
 }> {
   readSupabaseEnv();
-  ctx.log("debug", "mAIL_metrics invoking mp0st-stats");
+  ctx.log("debug", "mp0st_metrics invoking mp0st-stats");
   return await invokeFunction("mp0st-stats", {});
 }
 
-async function mAIL_revoke(
-  input: z.infer<typeof mAIL_revoke_input>,
+async function mp0st_revoke(
+  input: z.infer<typeof mp0st_revoke_input>,
   ctx: MosaddToolContext,
 ): Promise<{ ok: true; message_id: string; revoked: boolean; expires_at: string | null }> {
   readSupabaseEnv();
-  ctx.log("debug", "mAIL_revoke invoking mp0st-revoke", { message_id: input.message_id, restore: !!input.restore });
+  ctx.log("debug", "mp0st_revoke invoking mp0st-revoke", { message_id: input.message_id, restore: !!input.restore });
   return await invokeFunction("mp0st-revoke", {
     message_id: input.message_id,
     restore: input.restore ?? false,
   });
 }
 
-async function mAIL_audit_export(
-  input: z.infer<typeof mAIL_audit_export_input>,
+async function mp0st_audit_export(
+  input: z.infer<typeof mp0st_audit_export_input>,
   ctx: MosaddToolContext,
 ): Promise<{ audit: Record<string, unknown>; signature: string; algo: string; note: string }> {
   readSupabaseEnv();
-  ctx.log("debug", "mAIL_audit_export invoking mp0st-audit", { message_id: input.message_id });
+  ctx.log("debug", "mp0st_audit_export invoking mp0st-audit", { message_id: input.message_id });
   return await invokeFunction("mp0st-audit", { message_id: input.message_id });
 }
 
-async function mAIL_consent(
-  input: z.infer<typeof mAIL_consent_input>,
+async function mp0st_consent(
+  input: z.infer<typeof mp0st_consent_input>,
   ctx: MosaddToolContext,
 ): Promise<Record<string, unknown>> {
   readSupabaseEnv();
-  ctx.log("debug", "mAIL_consent invoking mp0st-consent", { action: input.action });
+  ctx.log("debug", "mp0st_consent invoking mp0st-consent", { action: input.action });
   return await invokeFunction("mp0st-consent", { action: input.action, recipient: input.recipient ?? null });
 }
 
-async function mAIL_notify(
-  input: z.infer<typeof mAIL_notify_input>,
+async function mp0st_notify(
+  input: z.infer<typeof mp0st_notify_input>,
   ctx: MosaddToolContext,
 ): Promise<{
   events: Array<{ message_id: string; subject: string | null; to: string | null; event_type: string; device: string | null; link_url: string | null; at: string }>;
@@ -281,7 +281,7 @@ async function mAIL_notify(
   count: number;
 }> {
   readSupabaseEnv();
-  ctx.log("debug", "mAIL_notify invoking mp0st-notify", { since: input.since });
+  ctx.log("debug", "mp0st_notify invoking mp0st-notify", { since: input.since });
   return await invokeFunction("mp0st-notify", { action: "feed", since: input.since ?? null, limit: input.limit ?? 50 });
 }
 
@@ -289,90 +289,90 @@ async function mAIL_notify(
 
 export const mailTools: MosaddTool[] = [
   {
-    name: "mAIL_list",
+    name: "mp0st_list",
     requires: "network",
     description:
-      "List the user's mailbox (their <userId>@mosadd.com inbox/outbox) newest-first, with sender, subject, status and a short snippet. Filter by direction ('inbound' = received, 'outbound' = sent). Use the returned next_cursor with `before` to page through older mail. Call mAIL_view to read a full message body.",
-    inputSchema: mAIL_list_input,
-    handler: mAIL_list as MosaddTool["handler"],
+      "List the user's mailbox (their <userId>@mosadd.com inbox/outbox) newest-first, with sender, subject, status and a short snippet. Filter by direction ('inbound' = received, 'outbound' = sent). Use the returned next_cursor with `before` to page through older mail. Call mp0st_view to read a full message body.",
+    inputSchema: mp0st_list_input,
+    handler: mp0st_list as MosaddTool["handler"],
   },
   {
-    name: "mAIL_send",
+    name: "mp0st_send",
     requires: "network",
     description:
       "Send an email from the user's mosadd address (<userId>@mosadd.com). Pass body_text or body_html (or both). Supports cc, bcc, reply_to. Monitoring/legal options: tracking (open+click, default on; set false for no tracking), force_reader (stub email → recipient opens in mosadd's secure reader, unlocking print/copy/time-on-read tracking + revoke), watermark (recipient watermark visible in screenshots/prints), disclose_tracking (GDPR footer), auto_destruct ('1h'|'24h'|'7d').",
-    inputSchema: mAIL_send_input,
-    handler: mAIL_send as MosaddTool["handler"],
+    inputSchema: mp0st_send_input,
+    handler: mp0st_send as MosaddTool["handler"],
   },
   {
-    name: "mAIL_view",
+    name: "mp0st_view",
     requires: "network",
     description: "Read the full body and metadata of an email by message_id.",
-    inputSchema: mAIL_view_input,
-    handler: mAIL_view as MosaddTool["handler"],
+    inputSchema: mp0st_view_input,
+    handler: mp0st_view as MosaddTool["handler"],
   },
   {
-    name: "mAIL_delete",
+    name: "mp0st_delete",
     requires: "network",
     description:
-      "Delete one of the user's emails by message_id (from mAIL_list). Soft-delete — it stops showing in mAIL_list. Owner-scoped: only your own mail.",
-    inputSchema: mAIL_delete_input,
-    handler: mAIL_delete as MosaddTool["handler"],
+      "Delete one of the user's emails by message_id (from mp0st_list). Soft-delete — it stops showing in mp0st_list. Owner-scoped: only your own mail.",
+    inputSchema: mp0st_delete_input,
+    handler: mp0st_delete as MosaddTool["handler"],
   },
   {
-    name: "mAIL_stats",
+    name: "mp0st_stats",
     requires: "network",
     description:
       "Engagement summary for one sent email (by message_id): open_count, unique_opens, click_count, whether it was likely forwarded, first/last opened time, and a breakdown of tracked event types. Opens/clicks are real (tracking pixel + link-wrap); forward detection is best-effort (IP-subnet diversity). Owner-scoped.",
-    inputSchema: mAIL_stats_input,
-    handler: mAIL_stats as MosaddTool["handler"],
+    inputSchema: mp0st_stats_input,
+    handler: mp0st_stats as MosaddTool["handler"],
   },
   {
-    name: "mAIL_events",
+    name: "mp0st_events",
     requires: "network",
     description:
-      "Raw engagement timeline for one email (by message_id): every tracked event (pixel_open, link_click, forwarded, page_view, copy/print/focus signals) with timestamp, device type and link URL. Use mAIL_stats for the rollup; use this for the per-event detail. Owner-scoped.",
-    inputSchema: mAIL_events_input,
-    handler: mAIL_events as MosaddTool["handler"],
+      "Raw engagement timeline for one email (by message_id): every tracked event (pixel_open, link_click, forwarded, page_view, copy/print/focus signals) with timestamp, device type and link URL. Use mp0st_stats for the rollup; use this for the per-event detail. Owner-scoped.",
+    inputSchema: mp0st_events_input,
+    handler: mp0st_events as MosaddTool["handler"],
   },
   {
-    name: "mAIL_metrics",
+    name: "mp0st_metrics",
     requires: "network",
     description:
       "Mailbox-wide engagement aggregate across the user's sent mail: total_sent, opened_emails, open_rate_pct, total_opens, total_clicks, forwarded_emails. Owner-scoped.",
-    inputSchema: mAIL_metrics_input,
-    handler: mAIL_metrics as MosaddTool["handler"],
+    inputSchema: mp0st_metrics_input,
+    handler: mp0st_metrics as MosaddTool["handler"],
   },
   {
-    name: "mAIL_revoke",
+    name: "mp0st_revoke",
     requires: "network",
     description:
       "Revoke (recall) a sent email's secure-reader access by message_id — the recipient can no longer open the full message via the mosadd reader link (Virtru-style recall, immediate). Pass restore:true to re-enable. HONEST LIMIT: cannot un-send or claw back content the recipient already read, copied, or screenshotted — only disables future reader access. Owner-scoped.",
-    inputSchema: mAIL_revoke_input,
-    handler: mAIL_revoke as MosaddTool["handler"],
+    inputSchema: mp0st_revoke_input,
+    handler: mp0st_revoke as MosaddTool["handler"],
   },
   {
-    name: "mAIL_audit_export",
+    name: "mp0st_audit_export",
     requires: "network",
     description:
       "Export a tamper-evident engagement audit report for one sent email (RMail-style): full event trail (opens, clicks, reader print/copy/forward signals) + totals, plus an HMAC-SHA256 signature over the canonical JSON so the report can be proven unaltered. For legal/compliance use. HONEST LIMIT: proves what mosadd observed; it is not a qualified delivery receipt (ERDS). Owner-scoped.",
-    inputSchema: mAIL_audit_export_input,
-    handler: mAIL_audit_export as MosaddTool["handler"],
+    inputSchema: mp0st_audit_export_input,
+    handler: mp0st_audit_export as MosaddTool["handler"],
   },
   {
-    name: "mAIL_consent",
+    name: "mp0st_consent",
     requires: "network",
     description:
-      "Manage recipient tracking opt-outs (GDPR/ePrivacy). action 'list' = recipients who opted out of your tracking; 'check' {recipient} = whether one opted out; 'optin' {recipient} = re-enable. Recipients self-opt-out via the footer link in your tracked emails; mAIL_send then automatically sends them with NO pixel/link-wrap. Owner-scoped.",
-    inputSchema: mAIL_consent_input,
-    handler: mAIL_consent as MosaddTool["handler"],
+      "Manage recipient tracking opt-outs (GDPR/ePrivacy). action 'list' = recipients who opted out of your tracking; 'check' {recipient} = whether one opted out; 'optin' {recipient} = re-enable. Recipients self-opt-out via the footer link in your tracked emails; mp0st_send then automatically sends them with NO pixel/link-wrap. Owner-scoped.",
+    inputSchema: mp0st_consent_input,
+    handler: mp0st_consent as MosaddTool["handler"],
   },
   {
-    name: "mAIL_notify",
+    name: "mp0st_notify",
     requires: "network",
     description:
       "Recent engagement feed across ALL your sent mail — the 'who just opened/clicked my mail' notifications stream (opens, clicks, forwards, reader print/copy signals), newest first, each with the email subject + recipient. Poll: pass the returned `cursor` back as `since` to get only new activity. Owner-scoped.",
-    inputSchema: mAIL_notify_input,
-    handler: mAIL_notify as MosaddTool["handler"],
+    inputSchema: mp0st_notify_input,
+    handler: mp0st_notify as MosaddTool["handler"],
   },
 ];

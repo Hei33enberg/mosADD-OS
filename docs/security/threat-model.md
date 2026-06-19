@@ -108,7 +108,7 @@ Ordered by composite risk (D+R+E+A+D / 5):
 | 3 | BYOK LiveKit key compromise → unauthorized media/recording access | 8 | 6 | 5 | 8 | 7 | **6.8** |
 | 4 | Identity recovery passphrase phishing via crafted email link | 9 | 7 | 6 | 8 | 6 | **7.2** |
 | 5 | Deepfake voice in mTALK room (impersonation) | 8 | 7 | 7 | 6 | 7 | **7.0** |
-| 6 | mAIL outbound abused for spam/phishing from `<id>@mosadd.com` | 7 | 8 | 7 | 6 | 7 | **7.0** |
+| 6 | mp0st outbound abused for spam/phishing from `<id>@mosadd.com` | 7 | 8 | 7 | 6 | 7 | **7.0** |
 | 7 | mROOM no-account-join abused for spam outreach | 5 | 9 | 9 | 6 | 7 | **7.2** |
 | 8 | Tool poisoning — malicious MCP tool installed alongside mosadd | 8 | 6 | 7 | 6 | 6 | **6.6** |
 | 9 | Replay attack on Stripe webhook (double-charge or skipped) | 6 | 5 | 5 | 7 | 7 | **6.0** |

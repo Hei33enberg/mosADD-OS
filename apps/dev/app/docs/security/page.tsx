@@ -51,7 +51,7 @@ export default function SecurityPage() {
       <Ul>
         <li>MCP server (stdio + hosted) — prompt injection, tool poisoning, BYOK exfiltration</li>
         <li>Edge functions — auth bypass, replay, IDOR on tenant scoping</li>
-        <li>mAIL (inbound mp0st) — sender spoofing, spam/phishing payloads, soft-delete abuse</li>
+        <li>mp0st (inbound mp0st) — sender spoofing, spam/phishing payloads, soft-delete abuse</li>
         <li>Voice (mTALK) — deepfake injection, prompt-injection-via-TTS, floor-control abuse</li>
         <li>Identity recovery — passphrase phishing, seed-phrase social engineering</li>
       </Ul>

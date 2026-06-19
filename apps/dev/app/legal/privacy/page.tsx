@@ -39,7 +39,7 @@ export default function PrivacyPage() {
           rows={[
             ['Supabase', 'Database, auth, edge functions', 'EU (eu-central)'],
             ['Stripe', 'Payments & billing', 'EU / US'],
-            ['Resend', 'Transactional & mAIL email', 'EU / US'],
+            ['Resend', 'Transactional & mp0st email', 'EU / US'],
             ['Vercel', 'Web hosting & analytics', 'EU / US'],
             ['Cloudflare', 'Edge, CDN, real-time transport', 'Global'],
             ['PostHog', 'Product analytics', 'EU'],

@@ -59,7 +59,7 @@ jobs:
           OUTPUT=$(echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}
           {"jsonrpc":"2.0","id":2,"method":"tools/list"}' | timeout 10 node packages/mcp/dist/bin/mcp.js)
           echo "$OUTPUT"
-          for tool in mDM_send mDM_list_contacts mIRC_create mROOM_create_guest_link mAIL_send; do
+          for tool in mDM_send mDM_list_contacts mIRC_create mROOM_create_guest_link mp0st_send; do
             if ! echo "$OUTPUT" | grep -q "\"name\":\"$tool\""; then
               echo "::error::Expected tool $tool missing from tools/list"
               exit 1

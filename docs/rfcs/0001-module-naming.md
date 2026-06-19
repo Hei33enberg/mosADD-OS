@@ -35,7 +35,7 @@ This naming choice has cascading effects on:
 - `mIRC` — Persistent encrypted channels
 - `mROOM` — Ephemeral rooms + no-account join links
 - `mTALK` — Push-to-talk voice
-- `mAIL` — Email
+- `mp0st` — Email
 - `mRAG` — Knowledge base (RAG recall)
 
 New modules require an accepted RFC (semantic primitive, ≥2 backend providers, radar hooks, MCP tool surface).

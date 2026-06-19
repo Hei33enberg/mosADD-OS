@@ -53,11 +53,11 @@ Claude calls `mROOM_create` then `mROOM_create_guest_link` → you get a URL to 
 
 > Send Bob an email with subject "Quote" and body "Attached is the quote."
 
-Claude calls `mAIL_send`.
+Claude calls `mp0st_send`.
 
 ## All tools available
 
-See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (65 live tools across 7 live modules: mDM incl. voice / mIRC / mROOM / mAIL / mTALK / mRAG / mURL).
+See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (65 live tools across 7 live modules: mDM incl. voice / mIRC / mROOM / mp0st / mTALK / mRAG / mURL).
 
 ## Troubleshooting
 

@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows the `3.0.0-alpha.N` pre-release line until the hosted
 gateway (Phase 2) ships.
 
+## [Unreleased]
+
+### Changed
+- **BREAKING — mail tool rename:** the 12 email MCP tools are renamed
+  `mAIL_*` → `mp0st_*` (`mp0st_list`, `mp0st_send`, `mp0st_view`, `mp0st_delete`,
+  `mp0st_stats`, `mp0st_events`, `mp0st_metrics`, `mp0st_revoke`,
+  `mp0st_audit_export`, `mp0st_consent`, `mp0st_notify`, `mp0st_send_as_agent`).
+  No aliases — the old `mAIL_*` names no longer resolve. Backend Edge Functions
+  (`mp0st-*`) are unchanged.
+
 ## [3.0.0-alpha.18] — 2026-06-18
 
 ### Added

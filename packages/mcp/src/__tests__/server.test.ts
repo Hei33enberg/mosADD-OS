@@ -18,16 +18,19 @@ describe("@mosadd/mcp", () => {
       // mROOM (6 tools, including the USP guest-link)
       expect(names).toContain("mROOM_create");
       expect(names).toContain("mROOM_create_guest_link");
-      // mAIL (2 tools)
-      expect(names).toContain("mAIL_send");
-      expect(names).toContain("mAIL_view");
+      // mp0st (2 tools)
+      expect(names).toContain("mp0st_send");
+      expect(names).toContain("mp0st_view");
     });
 
     it("follows RFC 0001 naming — channel tools m<MODULE>_<operation>, meta tools comms_<op>", () => {
       const channelName = /^m[A-Z][A-Z0-9_]*_[a-z][a-z0-9_]*$/;
+      const mailName = /^mp0st_[a-z][a-z0-9_]*$/; // mail module codename (LINEAR-3464)
       const metaName = /^comms_[a-z][a-z0-9_]*$/; // discovery/meta namespace
       for (const tool of allTools) {
-        expect(tool.name).toMatch(new RegExp(`${channelName.source}|${metaName.source}`));
+        expect(tool.name).toMatch(
+          new RegExp(`${channelName.source}|${mailName.source}|${metaName.source}`),
+        );
       }
     });
 

@@ -14,4 +14,4 @@ Index of architecture documents.
 
 ## OS framing (one-paragraph)
 
-mosadd treats human communication as an OS would treat IPC: as a set of orthogonal primitives (`mDM`, `mIRC`, `mROOM`, `mTALK`, `mAIL`, `mRAG`) accessible through a uniform syscall layer (MCP tools). Each primitive is implementable by multiple providers (Supabase / LiveKit / nwaku / ...). The OS kernel is the radar — it sees every syscall, scores it, and may block. Shells (apps, agents) attach above the OS; backends (forks of OSS infra) attach below.
+mosadd treats human communication as an OS would treat IPC: as a set of orthogonal primitives (`mDM`, `mIRC`, `mROOM`, `mTALK`, `mp0st`, `mRAG`) accessible through a uniform syscall layer (MCP tools). Each primitive is implementable by multiple providers (Supabase / LiveKit / nwaku / ...). The OS kernel is the radar — it sees every syscall, scores it, and may block. Shells (apps, agents) attach above the OS; backends (forks of OSS infra) attach below.

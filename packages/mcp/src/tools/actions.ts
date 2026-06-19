@@ -4,7 +4,7 @@
  * Mint a single-use, expiring link (`https://mosadd.com/do/<token>`) that asks a
  * human to DO something in their browser — confirm, pick a file, fill a form, or
  * open a vetted URL — with explicit consent. Send the returned `link` to the
- * person via any channel (mDM/mIRC/mAIL). They open it, see what's asked, consent,
+ * person via any channel (mDM/mIRC/mp0st). They open it, see what's asked, consent,
  * and the browser performs the action IN ITS SANDBOX, then the result is recorded
  * against the action. No install, no OS access, nothing runs without a user gesture.
  *
@@ -147,7 +147,7 @@ export const actionTools: MosaddTool[] = [
     name: "comms_action_create",
     requires: "network",
     description:
-      "Mint a single-use, expiring action link (https://mosadd.com/do/<token>) that asks a human to DO something in their browser, with explicit consent. action_type: 'confirm' (yes/no) | 'file_request' (recipient picks a file from their computer) | 'form' (recipient fills fields you define) | 'open_url' (recipient opens a vetted https URL). Returns { action_id, token, link, expires_at }. Send the `link` to the person via mDM/mIRC/mAIL; they open it, consent, and the browser performs the action in its sandbox (no install, no OS access). The action is owned by you (the calling user). HONEST LIMITS: this is browser-sandbox only — it cannot click other apps, run programs, or read files the user didn't pick; and file_request payloads are not yet end-to-end encrypted (don't request sensitive files until Tier 1.1).",
+      "Mint a single-use, expiring action link (https://mosadd.com/do/<token>) that asks a human to DO something in their browser, with explicit consent. action_type: 'confirm' (yes/no) | 'file_request' (recipient picks a file from their computer) | 'form' (recipient fills fields you define) | 'open_url' (recipient opens a vetted https URL). Returns { action_id, token, link, expires_at }. Send the `link` to the person via mDM/mIRC/mp0st; they open it, consent, and the browser performs the action in its sandbox (no install, no OS access). The action is owned by you (the calling user). HONEST LIMITS: this is browser-sandbox only — it cannot click other apps, run programs, or read files the user didn't pick; and file_request payloads are not yet end-to-end encrypted (don't request sensitive files until Tier 1.1).",
     inputSchema: action_create_input,
     handler: action_create as MosaddTool["handler"],
   },

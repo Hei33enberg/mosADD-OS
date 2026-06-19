@@ -26,7 +26,7 @@ const nav: { section: string; items: { href: string; label: string }[] }[] = [
       { href: '/docs/modules/mirc', label: 'mIRC · Channels' },
       { href: '/docs/modules/mroom', label: 'mROOM · Rooms' },
       { href: '/docs/modules/mtalk', label: 'mTALK · PTT' },
-      { href: '/docs/modules/mail', label: 'mAIL · Email' },
+      { href: '/docs/modules/mail', label: 'mp0st · Email' },
       { href: '/docs/modules/mrag', label: 'mRAG · Knowledge' },
     ],
   },

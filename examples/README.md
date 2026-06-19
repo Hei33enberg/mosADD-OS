@@ -28,7 +28,7 @@ Quickstart configs for the agent runtimes that consume `@mosadd/mcp`.
 - **mIRC** (20): create, list, get, update, delete, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops
 - **mROOM** (9): create, create_guest_link ★, join, leave, close, list, send_message, list_messages + admin
 - **mTALK** (5): open, join, press, release, state — half-duplex push-to-talk
-- **mAIL** (11): send, view, list, delete, stats, events, metrics, revoke, audit_export, consent, notify
+- **mp0st** (12): send, view, list, delete, stats, events, metrics, revoke, audit_export, consent, notify, send_as_agent
 - **mRAG** (4): ingest, search, list_sources, delete — RAG recall over your own data
 - **mURL** (4): read_channel, post, presence, list_channels — real-time chat attached to any web domain, agent-native
 

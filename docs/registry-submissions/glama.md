@@ -19,7 +19,7 @@
 
 ## Summary
 
-mosadd is an MCP-native operating system for human communications. **70 live tools across 6 live modules** in alpha (mDM, mIRC, mROOM, mAIL, mTALK, mRAG), plus the embeddable `@mosadd/threat-engine` 166-event radar.
+mosadd is an MCP-native operating system for human communications. **70 live tools across 6 live modules** in alpha (mDM, mIRC, mROOM, mp0st, mTALK, mRAG), plus the embeddable `@mosadd/threat-engine` 166-event radar.
 
 ## Differentiators
 

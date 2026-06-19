@@ -29,7 +29,7 @@ export default function DocsIndexPage() {
         <li><code className="font-mono text-primary">mROOM</code> — ephemeral rooms + no-account guest links (the huddle)</li>
         <li><code className="font-mono text-primary">mTALK</code> — push-to-talk (PTT + LLM in the same room)</li>
         <li><code className="font-mono text-primary">mDM</code> — direct messages + 1:1 voice, end-to-end encrypted</li>
-        <li><code className="font-mono text-primary">mAIL</code> — agent email (reach anyone)</li>
+        <li><code className="font-mono text-primary">mp0st</code> — agent email (reach anyone)</li>
         <li><code className="font-mono text-primary">mRAG</code> — agent memory / knowledge base (RAG recall)</li>
         <li><code className="font-mono text-primary">mIRC</code> — persistent channels + embeddable website widget</li>
       </Ul>
@@ -48,7 +48,7 @@ export default function DocsIndexPage() {
 
       <H2>Status</H2>
       <P>
-        <strong>alpha — toolkit live.</strong> The MCP server ships 70 tools across 6 live modules today. Track progress on{' '}
+        <strong>alpha — toolkit live.</strong> The MCP server ships 71 tools across 6 live modules today. Track progress on{' '}
         <Anchor href="https://linear.app/ip-ra/project/mosadd-deaa4bef6de8">Linear</Anchor>.
       </P>
       <P>

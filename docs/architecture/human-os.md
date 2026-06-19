@@ -12,7 +12,7 @@ Like a real OS gives you `open()`, `read()`, `write()`, `socket()`, `fork()`, mo
 - `mIRC` — persistent encrypted channels
 - `mROOM` — ephemeral group rooms + no-account join links
 - `mTALK` — push-to-talk voice
-- `mAIL` — email
+- `mp0st` — email
 - `mRAG` — encrypted knowledge base (RAG recall)
 
 Each `m*` is a **module** you `add` to your system.

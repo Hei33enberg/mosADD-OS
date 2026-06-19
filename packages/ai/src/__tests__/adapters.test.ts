@@ -48,8 +48,8 @@ describe("framework adapters", () => {
 
   describe("@mosadd/ai/anthropic", () => {
     it("returns Messages-API-shaped tool definitions", () => {
-      const tools = mosaddAnthropic({ modules: ["mAIL"] });
-      expect(tools.length).toBe(11); // mAIL: send/list/view/delete/stats/events/metrics/revoke/audit_export/consent/notify
+      const tools = mosaddAnthropic({ modules: ["mp0st"] });
+      expect(tools.length).toBe(12); // mp0st: send/list/view/delete/stats/events/metrics/revoke/audit_export/consent/notify/send_as_agent
       for (const t of tools) {
         expect(typeof t.name).toBe("string");
         expect(typeof t.description).toBe("string");
