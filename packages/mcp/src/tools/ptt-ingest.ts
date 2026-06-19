@@ -32,8 +32,9 @@ const mTALK_ingest_ptt_input = z.object({
   mime: z.string().min(1).max(120).default("audio/ogg"),
   duration_ms: z.number().int().positive().optional(),
   // Routing: exactly one of room_id / channel_id identifies where the over lands.
-  channel_id: z.string().optional().describe("mIRC channel id — route the queued PTT into a persistent channel's PTT log."),
-  room_id: z.string().optional().describe("mROOM/mTALK room id — route into an ephemeral room's PTT log."),
+  channel_id: z.string().optional().describe("mIRC channel id — route the queued PTT into the channel's PTT log."),
+  // room_id retained for the rare mTALK-only PTT room (no mIRC channel backing). mROOM is gone — do NOT pass an mROOM id (will 404). Prefer channel_id.
+  room_id: z.string().optional().describe("Optional mTALK-only PTT room id (no mIRC channel backing). For mIRC channels use channel_id."),
   transcribe: z
     .boolean()
     .optional()
@@ -84,7 +85,7 @@ export const pttIngestTools: MosaddTool[] = [
     name: "mTALK_ingest_ptt",
     requires: "network",
     description:
-      "Capture a finished PTT transmission (an 'over') as a durable, QUEUED PTT message in a channel (mIRC) or room (mROOM), and — if the user has opted in to RAG — transcribe it into searchable knowledge. Pass the clip as base64 + a route (channel_id OR room_id). Complements mTALK_press/release (which only manage the live floor). SCAFFOLD: depends on the not-yet-deployed `ptt-ingest` Edge Function.",
+      "Capture a finished PTT transmission (an 'over') as a durable, QUEUED PTT message in an mIRC channel, and — if the user has opted in to RAG — transcribe it into searchable knowledge. Pass the clip as base64 + a route (channel_id; or room_id for an mTALK-only PTT room without a channel backing). Complements mTALK_press/release (which only manage the live floor).",
     inputSchema: mTALK_ingest_ptt_input,
     handler: mTALK_ingest_ptt as MosaddTool["handler"],
   },

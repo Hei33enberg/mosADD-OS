@@ -165,8 +165,8 @@ export default function Channel0Page() {
             What runs <span className="text-primary">underneath</span>
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            mURL is not a separate stack. It rides the same backbone that mosadd uses for mIRC and
-            mROOM — proving it at internet scale, for free, on every domain a user opens.
+            mURL is not a separate stack. It rides the same backbone that mosadd uses for mIRC —
+            proving it at internet scale, for free, on every domain a user opens.
           </p>
         </div>
         <div className="grid gap-px bg-border">

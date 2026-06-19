@@ -1,15 +1,11 @@
 /**
- * mIRC text mode — post + list messages inside a persistent channel.
+ * mIRC text mode — post + list messages inside a channel.
  *
  * Channel messages route through the same the mosadd backend's `message-send` / `message-list`
- * Edge Functions as DMs and rooms, but with `thread_id: 'chat:<channelId>'` so the
+ * Edge Functions as DMs, but with `thread_id: 'chat:<channelId>'` so the
  * RLS / access checks apply channel-membership rules. Each channel is linked to a
  * backing space (`metadata.linked_space_id`); message-send needs that space id, so
  * these tools resolve it from the channel automatically (or accept an override).
- *
- * Until now mIRC exposed only channel *management* (create/join/moderate) — there
- * was no way to actually post or read a channel's messages from MCP. These two
- * tools close that gap (the mROOM channels had it; mIRC did not).
  */
 
 import { z } from "zod";

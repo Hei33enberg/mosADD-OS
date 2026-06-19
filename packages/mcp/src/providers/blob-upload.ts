@@ -7,7 +7,7 @@
  * message row only references them by `{ bucket, path }`.
  *
  * This module centralises that upload so every channel's voice/file/ptt tool
- * (mDM, mROOM, mIRC) produces an identical attachment descriptor.
+ * (mDM, mIRC) produces an identical attachment descriptor.
  *
  * STATUS: scaffold. The Storage upload path below is real (supabase-js
  * `storage.from(bucket).upload`), but two things are TODO and gated on the

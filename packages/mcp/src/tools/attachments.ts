@@ -5,8 +5,8 @@
  * way a human does — including sending VOICE notes and FILES, not just text.
  * Today only mDM has a half-measure (`mDM_voice_note`, which takes a pre-uploaded
  * URL and posts a control envelope, NOT a first-class `voice` message via the
- * `message-send` attachments contract). mROOM and mIRC have no voice/file send
- * at all from the toolkit.
+ * `message-send` attachments contract). mIRC has no voice/file send at all
+ * from the toolkit.
  *
  * These tools accept the blob as base64 (MCP is JSON-only), upload it to Storage
  * via the shared `uploadBlob` helper, then call `message-send` with

@@ -15,7 +15,7 @@ act on messaging platforms (Telegram, Discord, Slack, …) and on a schedule.
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 ```
 
-## 2. Add the mosadd MCP server (70 tools)
+## 2. Add the mosadd MCP server (64 tools)
 
 ```bash
 hermes mcp add mosadd --command "npx -y @mosadd/mcp@alpha"

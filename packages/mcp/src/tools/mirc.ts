@@ -2,7 +2,9 @@
  * mIRC — Persistent Channels.
  *
  * IRC-style persistent channels (Discord/Slack semantics). Channels live forever
- * until deleted, members come and go. Distinct from mROOM (ephemeral, no-account).
+ * until deleted, members come and go. Ephemeral / no-account / single-action
+ * channels are PRESETS of mIRC (planned: LINEAR-3523 — TTL `expires_at` +
+ * guest-link + voice), not a separate module. The killed mROOM is absorbed here.
  *
  * Phase 1 alpha: wired to the mosadd backend's `channel-manage` Edge Function (strangler-fig).
  * The single edge fn dispatches on `action` — we expose each action as its own
