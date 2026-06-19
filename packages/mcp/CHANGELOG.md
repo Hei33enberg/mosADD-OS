@@ -8,6 +8,22 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+### Removed
+- **BREAKING — mROOM module killed (LINEAR-3414):** the 11 `mROOM_*` tools
+  (`mROOM_create`, `mROOM_create_guest_link`, `mROOM_join`, `mROOM_leave`,
+  `mROOM_close`, `mROOM_list`, `mROOM_voice_join`, `mROOM_send_message`,
+  `mROOM_list_messages`, `mROOM_send_voice`, `mROOM_send_file`) are no longer
+  registered. Ephemeral private rooms are re-cut into private mIRC channels.
+  The source stays in `tools/mroom*.ts` (unregistered, like mURL/mCALL).
+
+### Added
+- **Defensive threat engine as MCP tools (LINEAR-3498):** `threat_catalog`
+  (list the canonical 160+ threat-event taxonomy) and `threat_classify`
+  (pure `evaluateEvent` decision → action/severity/reason). Wraps
+  `@mosadd/threat-engine`; deterministic, offline, `requires: "any"`.
+
+Net: 70 → **64 callable tools** across 5 live modules + comms + threat.
+
 ### Changed
 - **BREAKING — mail tool rename:** the 12 email MCP tools are renamed
   `mAIL_*` → `mp0st_*` (`mp0st_list`, `mp0st_send`, `mp0st_view`, `mp0st_delete`,

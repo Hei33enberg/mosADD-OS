@@ -96,7 +96,7 @@ export function Calculator() {
   return (
     <div className="grid gap-6 border border-border p-5 md:grid-cols-2">
       <div className="space-y-5">
-        <Field label="Messages / mo" value={msg} onChange={setMsg} max={200_000} step={1_000} hint="mDM · mIRC · mROOM · mp0st outbound" />
+        <Field label="Messages / mo" value={msg} onChange={setMsg} max={200_000} step={1_000} hint="mDM · mIRC · mp0st outbound" />
         <Field label="Push-to-talk min / mo" value={ptt} onChange={setPtt} max={12_000} step={100} hint="mTALK voice minutes" />
         <label className="flex items-center gap-2 text-sm text-foreground">
           <input type="checkbox" checked={byok} onChange={(e) => setByok(e.target.checked)} className="accent-primary" />

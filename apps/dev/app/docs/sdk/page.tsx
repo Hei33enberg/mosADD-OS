@@ -21,7 +21,7 @@ export default function SdkPage() {
       <Pre lang="ts">{`import { mosadd } from '@mosadd/ai/vercel';
 
 const tools = mosadd({
-  modules: ['mDM', 'mROOM'],
+  modules: ['mDM', 'mIRC'],
 });
 
 await streamText({ model, tools });`}</Pre>
@@ -42,7 +42,7 @@ const agent = new Agent({
       <H2>Anthropic Agents</H2>
       <Pre lang="ts">{`import { mosadd } from '@mosadd/ai/anthropic';
 
-const tools = mosadd({ modules: ['mDM', 'mROOM', 'mRAG'] });`}</Pre>
+const tools = mosadd({ modules: ['mDM', 'mIRC', 'mRAG'] });`}</Pre>
 
       <H2>Bring your own framework</H2>
       <P>

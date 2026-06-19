@@ -23,10 +23,10 @@ describe("framework adapters", () => {
 
   describe("@mosadd/ai/langchain", () => {
     it("returns an array of { name, description, schema, func }", () => {
-      const tools = mosaddLangchain({ modules: ["mROOM"] });
+      const tools = mosaddLangchain({ modules: ["mTALK"] });
       expect(Array.isArray(tools)).toBe(true);
-      expect(tools.length).toBe(11); // mROOM = 11 (room + message + file/voice ops)
-      const create = tools.find((t) => t.name === "mROOM_create_guest_link");
+      expect(tools.length).toBe(6); // mTALK = 6 (PTT floor + ingest ops)
+      const create = tools.find((t) => t.name === "mTALK_open");
       expect(create).toBeDefined();
       expect(typeof create?.func).toBe("function");
     });

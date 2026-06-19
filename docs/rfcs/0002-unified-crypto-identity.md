@@ -14,7 +14,7 @@ mosadd ships **two incompatible end-to-end encryption systems** over one backend
 a user on the **mosadd.com app** and an agent on the **mosadd.dev toolkit** (`@mosadd/mcp`)
 cannot decrypt each other's messages. This RFC proposes converging on **one prekey
 directory** and **one pair of session schemes** — X3DH + Double Ratchet for 1:1 (mDM)
-and a per-channel **group key** for channels/rooms — published and consumed identically
+and a per-channel **group key** for channels — published and consumed identically
 by both surfaces. See `docs/security/e2ee-posture.md` for the current (honest) state.
 
 ## Motivation
@@ -23,7 +23,7 @@ Today (confirmed by audit, 2026-06):
 
 | Surface | Session scheme | Prekey / key material |
 |---|---|---|
-| **App channels / rooms** | Group key (`@mosadd/crypto`, `useChannelCrypto`) | `channel_keys`; X25519 derived from the vault master key; identity prekeys in `identities.signed_prekey_pub` + `one_time_prekeys` |
+| **App channels** | Group key (`@mosadd/crypto`, `useChannelCrypto`) | `channel_keys`; X25519 derived from the vault master key; identity prekeys in `identities.signed_prekey_pub` + `one_time_prekeys` |
 | **Toolkit mDM** (`mDM_send`) | X3DH + Double Ratchet | `mosadd_prekey_bundles` (opaque bundle); `mosadd.e2ee.v1` envelope |
 
 Consequences:
@@ -32,7 +32,7 @@ Consequences:
    tables, different formats → `mDM_send` to an app user fails or silently falls back
    to `mDM_send_unencrypted` (plaintext).
 2. **No cross-surface channels.** App channel messages are group-key ciphertext; the
-   toolkit's `mIRC_post_message` / `mROOM_send_message` post base64 **plaintext**.
+   toolkit's `mIRC_post_message` posts base64 **plaintext**.
    Neither side can read the other.
 3. **Two code paths to audit, two ways to get E2EE wrong.**
 
@@ -78,9 +78,9 @@ call the same `@mosadd/crypto` X3DH/ratchet primitives instead of the group-key 
 
 ### 3. One group scheme — per-channel group key, shared format
 
-Keep the app's per-channel group key (`channel_keys`) as the channel/room scheme, but
-expose it through `@mosadd/crypto` so the toolkit's `mIRC_post_message` /
-`mROOM_send_message` encrypt with the **same** group key and envelope instead of posting
+Keep the app's per-channel group key (`channel_keys`) as the channel scheme, but
+expose it through `@mosadd/crypto` so the toolkit's `mIRC_post_message`
+encrypts with the **same** group key and envelope instead of posting
 plaintext base64. Group-key distribution itself rides the unified prekey directory
 (sender-keys style: the group key is delivered to each member encrypted to their X3DH
 session). Target envelope: `mosadd.group.v1`.
@@ -89,9 +89,9 @@ session). Target envelope: `mosadd.group.v1`.
 
 - Phase 1: ship the unified prekey directory + backfill; both surfaces publish there.
 - Phase 2: app DM path → X3DH/ratchet; verify app↔toolkit mDM in a 2-account harness.
-- Phase 3: toolkit channel/room tools encrypt with the group key; drop the plaintext
-  `packPlaintextPayload` path; update `mIRC_post_message` / `mROOM_send_message` tool
-  descriptions (remove the "plaintext/alpha" caveat once true).
+- Phase 3: toolkit channel tools encrypt with the group key; drop the plaintext
+  `packPlaintextPayload` path; update the `mIRC_post_message` tool
+  description (remove the "plaintext/alpha" caveat once true).
 - Phase 4: drop the legacy `identities.signed_prekey_pub` / `one_time_prekeys` columns
   and `mDM_send_unencrypted`.
 

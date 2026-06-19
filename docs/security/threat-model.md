@@ -87,7 +87,7 @@ Boundaries:
 | I | Passphrase exposed in client memory | Memory-zero after KDF; never logged; never sent to backend in plaintext |
 | D | Lockout via wrong-passphrase brute force | Server-side throttle 5 attempts/hour, exponential backoff |
 
-### LiveKit fork (mTALK / mROOM voice)
+### LiveKit fork (mTALK voice)
 
 | Threat | Vector | Mitigation |
 |---|---|---|
@@ -109,10 +109,9 @@ Ordered by composite risk (D+R+E+A+D / 5):
 | 4 | Identity recovery passphrase phishing via crafted email link | 9 | 7 | 6 | 8 | 6 | **7.2** |
 | 5 | Deepfake voice in mTALK room (impersonation) | 8 | 7 | 7 | 6 | 7 | **7.0** |
 | 6 | mp0st outbound abused for spam/phishing from `<id>@mosadd.com` | 7 | 8 | 7 | 6 | 7 | **7.0** |
-| 7 | mROOM no-account-join abused for spam outreach | 5 | 9 | 9 | 6 | 7 | **7.2** |
-| 8 | Tool poisoning — malicious MCP tool installed alongside mosadd | 8 | 6 | 7 | 6 | 6 | **6.6** |
-| 9 | Replay attack on Stripe webhook (double-charge or skipped) | 6 | 5 | 5 | 7 | 7 | **6.0** |
-| 10 | Supabase RLS misconfiguration exposes cross-tenant rows | 8 | 5 | 4 | 7 | 6 | **6.0** |
+| 7 | Tool poisoning — malicious MCP tool installed alongside mosadd | 8 | 6 | 7 | 6 | 6 | **6.6** |
+| 8 | Replay attack on Stripe webhook (double-charge or skipped) | 6 | 5 | 5 | 7 | 7 | **6.0** |
+| 9 | Supabase RLS misconfiguration exposes cross-tenant rows | 8 | 5 | 4 | 7 | 6 | **6.0** |
 
 Mitigation tracking:
 
@@ -122,10 +121,9 @@ Mitigation tracking:
 - #4 → recovery flow UX research (LINEAR-2170, Phase 1)
 - #5 → voice fingerprint cross-check (Phase 2 radar)
 - #6 → per-identity send rate limit + SPF/DKIM + radar BEHAVIORAL.mass_mail (Phase 1/2)
-- #7 → PoW signup + radar score gating (LINEAR-2171, Phase 1)
-- #8 → audit existing MCP servers in registry submission flow (Phase 1)
-- #9 → idempotency keys + raw event reconciliation cron (Phase 2)
-- #10 → RLS policy tests in CI + least-privilege keys (Phase 1)
+- #7 → audit existing MCP servers in registry submission flow (Phase 1)
+- #8 → idempotency keys + raw event reconciliation cron (Phase 2)
+- #9 → RLS policy tests in CI + least-privilege keys (Phase 1)
 
 ## Updates
 

@@ -23,7 +23,7 @@ import { mosadd } from "@mosadd/ai/langchain";
 async function main() {
   const llm = new ChatOpenAI({ model: "gpt-4o", temperature: 0 });
 
-  const tools = mosadd({ modules: ["mDM", "mROOM"] }).map(
+  const tools = mosadd({ modules: ["mDM", "mIRC"] }).map(
     (t) =>
       new DynamicStructuredTool({
         name: t.name,

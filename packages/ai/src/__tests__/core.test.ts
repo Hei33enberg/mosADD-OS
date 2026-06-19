@@ -15,10 +15,10 @@ describe("@mosadd/ai/core", () => {
     });
 
     it("supports multiple modules", () => {
-      const both = filterTools({ modules: ["mDM", "mROOM"] });
-      expect(both.length).toBe(14 + 11); // mDM=14, mROOM=11
+      const both = filterTools({ modules: ["mDM", "mTALK"] });
+      expect(both.length).toBe(14 + 6); // mDM=14, mTALK=6
       expect(
-        both.every((t) => t.name.startsWith("mDM_") || t.name.startsWith("mROOM_")),
+        both.every((t) => t.name.startsWith("mDM_") || t.name.startsWith("mTALK_")),
       ).toBe(true);
     });
 

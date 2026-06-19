@@ -15,9 +15,9 @@ describe("@mosadd/mcp", () => {
       // mIRC (5 tools)
       expect(names).toContain("mIRC_create");
       expect(names).toContain("mIRC_delete");
-      // mROOM (6 tools, including the USP guest-link)
-      expect(names).toContain("mROOM_create");
-      expect(names).toContain("mROOM_create_guest_link");
+      // threat engine (LINEAR-3498) — mROOM killed (LINEAR-3414)
+      expect(names).toContain("threat_catalog");
+      expect(names).toContain("threat_classify");
       // mp0st (2 tools)
       expect(names).toContain("mp0st_send");
       expect(names).toContain("mp0st_view");
@@ -27,9 +27,10 @@ describe("@mosadd/mcp", () => {
       const channelName = /^m[A-Z][A-Z0-9_]*_[a-z][a-z0-9_]*$/;
       const mailName = /^mp0st_[a-z][a-z0-9_]*$/; // mail module codename (LINEAR-3464)
       const metaName = /^comms_[a-z][a-z0-9_]*$/; // discovery/meta namespace
+      const threatName = /^threat_[a-z][a-z0-9_]*$/; // defensive threat engine (LINEAR-3498)
       for (const tool of allTools) {
         expect(tool.name).toMatch(
-          new RegExp(`${channelName.source}|${mailName.source}|${metaName.source}`),
+          new RegExp(`${channelName.source}|${mailName.source}|${metaName.source}|${threatName.source}`),
         );
       }
     });

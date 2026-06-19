@@ -8,8 +8,7 @@ Skills are a Claude-only convenience layer on top of the [`@mosadd/mcp`](../pack
 
 | Skill | Channel | What it does |
 |---|---|---|
-| [`mdm/SKILL.md`](mdm/SKILL.md) | mDM | Direct messages, multi-thread per contact |
-| [`mroom/SKILL.md`](mroom/SKILL.md) | mROOM | Ephemeral rooms + no-account guest links (USP) |
+| [`mdm/SKILL.md`](mdm/SKILL.md) | mDM | Direct messages with E2EE + sealed sender, multi-thread per contact |
 | [`mirc/SKILL.md`](mirc/SKILL.md) | mIRC | Persistent Discord/Slack-style channels |
 | [`mail/SKILL.md`](mail/SKILL.md) | mp0st | Email from `<userId>@mosadd.com` |
 | [`mtalk/SKILL.md`](mtalk/SKILL.md) | mTALK | Push-to-talk voice rooms (half-duplex floor control) |
@@ -27,7 +26,7 @@ runtime instead.
 
 ## Plugin marketplace entry
 
-The [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) bundles all six module skills into a single Claude Code plugin installable with:
+The [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) bundles all five module skills into a single Claude Code plugin installable with:
 
 ```bash
 claude plugin install https://github.com/Hei33enberg/mosadd-os.git

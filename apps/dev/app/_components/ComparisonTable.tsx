@@ -29,18 +29,18 @@ const ROWS: Array<{ label: string; cells: Cell[] }> = [
     ],
   },
   {
-    label: 'Channels: rooms · voice · DM · mail · channels',
+    label: 'Channels: DM · voice · mail · channels · memory',
     cells: [
-      { v: 'yes', note: '6 live modules' },
+      { v: 'yes', note: '5 live modules' },
       { v: 'partial', note: 'voice · SMS · WA' },
       { v: 'no', note: 'tools, not comms' },
       { v: 'partial', note: 'voice/video' },
     ],
   },
   {
-    label: 'Agent ↔ human huddle (guest link + voice)',
+    label: 'Agent ↔ human huddle (E2EE DM + voice)',
     cells: [
-      { v: 'yes', note: 'no-signup room' },
+      { v: 'yes', note: 'agent is the contact' },
       { v: 'no' },
       { v: 'no' },
       { v: 'partial', note: 'voice only' },

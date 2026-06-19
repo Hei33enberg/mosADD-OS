@@ -20,7 +20,7 @@ pnpm start
 Expected output (when env vars are set):
 
 ```
-Available tools: mDM_list_contacts, mDM_send, mDM_list, mDM_respond_request, mROOM_create, mROOM_create_guest_link, ...
+Available tools: mDM_list_contacts, mDM_send, mDM_list, mDM_respond_request, mIRC_create, mIRC_post_message, ...
 
 --- model said ---
 I checked your contacts. You have 3 accepted contacts: Alice, Bob, and Carol.
@@ -35,7 +35,7 @@ I checked your contacts. You have 3 accepted contacts: Alice, Bob, and Carol.
 import { mosadd } from "@mosadd/ai/vercel";
 import { generateText } from "ai";
 
-const tools = mosadd({ modules: ["mDM", "mROOM"] });
+const tools = mosadd({ modules: ["mDM", "mIRC"] });
 
 await generateText({
   model: openai("gpt-4o"),
@@ -44,7 +44,7 @@ await generateText({
 });
 ```
 
-Three lines after the imports. That's the API contract. The model gets 21 tools (12 mDM + 9 mROOM), picks the right one, AI SDK calls `execute()` which routes back through the mosadd handlers via your BYOK Supabase backend.
+Three lines after the imports. That's the API contract. The model gets 36 tools (14 mDM + 22 mIRC), picks the right one, AI SDK calls `execute()` which routes back through the mosadd handlers via your BYOK Supabase backend.
 
 ## Swap to other models
 
@@ -63,9 +63,9 @@ await generateText({ model: anthropic("claude-opus-4-7"), tools, prompt });
 ## Add more channels
 
 ```ts
-mosadd({ modules: ["mDM", "mROOM", "mIRC", "mp0st"] })
+mosadd({ modules: ["mDM", "mIRC", "mp0st", "mTALK"] })
 // or all
 mosadd({})
 ```
 
-Today: 65 live tools across 7 live modules (mDM incl. voice / mIRC / mROOM / mp0st / mTALK / mRAG / mURL).
+Today: 64 live tools across 5 live channel modules (mDM incl. voice / mIRC / mp0st / mTALK / mRAG) plus comms and the defensive threat engine.

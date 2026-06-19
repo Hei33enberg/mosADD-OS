@@ -21,7 +21,7 @@ export default function SecurityPage() {
         <li><strong>Zero-knowledge storage.</strong> The hosted layer stores opaque ciphertext for encrypted surfaces; it can&apos;t be compelled to produce plaintext it never holds.</li>
         <li><strong>RLS on every table.</strong> Row-level security is enforced per-tenant across the whole schema, with coverage verified in CI.</li>
         <li><strong>Cryptographic identity.</strong> Ed25519, not email/phone — no PII at the identity layer.</li>
-        <li><strong>Threat radar (DECK).</strong> A 166-event detection taxonomy — informed by Amnesty International / Citizen Lab spyware research — ships as <code className="font-mono text-primary">@mosadd/threat-engine</code>. It flags the device-integrity and network anomalies surveillanceware needs (rooted / tampered devices, sideloads, stalkerware-style abuse, MITM). Note: real-time on-device detection of zero-click, in-memory spyware like Pegasus is not possible at the app layer — credible Pegasus detection is <em>forensic, off-device, post-hoc</em>. Embed the engine as a kernel primitive in your own app. See <Anchor href="/docs/modules/threat-engine">threat-engine</Anchor>.</li>
+        <li><strong>Defensive threat engine.</strong> A pure defensive threat-event classification engine ships as <code className="font-mono text-primary">@mosadd/threat-engine</code> — <code className="font-mono">threat_catalog</code> enumerates the detection taxonomy and <code className="font-mono">threat_classify</code> scores an event against it. It flags device-integrity and network anomalies (rooted / tampered devices, sideloads, MITM) so your agent can react. It is classification you embed and run yourself — not surveillance, not traffic interception, and not a Pegasus detector (credible spyware detection is <em>forensic, off-device, post-hoc</em>). Embed it as a kernel primitive in your own app. See <Anchor href="/docs/modules/threat-engine">threat-engine</Anchor>.</li>
         <li><strong>Hardened supply chain.</strong> SBOM (SPDX 2.3) per package, CodeQL, gitleaks and license-check on every PR. Apache-2.0 — audit the source yourself.</li>
       </Ul>
 
@@ -35,7 +35,7 @@ export default function SecurityPage() {
       </P>
       <Ul>
         <li><strong>mDM (1:1) — end-to-end encrypted.</strong> X3DH + Double Ratchet. Requires the recipient to have published prekeys (<code className="font-mono">mDM_publish_keys</code>); otherwise <code className="font-mono">mDM_send_unencrypted</code> is a clearly-labelled plaintext fallback.</li>
-        <li><strong>mIRC / mROOM — transport-encrypted, group-key E2EE in progress.</strong> Messages travel over TLS/WSS; the toolkit currently persists a server-readable payload (the tool descriptions say so). Per-channel group-key encryption (parity with the mosadd.com app) is the next crypto milestone.</li>
+        <li><strong>mIRC — transport-encrypted, group-key E2EE in progress.</strong> Channel messages travel over TLS/WSS; the toolkit currently persists a server-readable payload (the tool descriptions say so). Per-channel group-key encryption (parity with the mosadd.com app) is the next crypto milestone.</li>
         <li><strong>mRAG / RAG — plaintext server-side by design.</strong> Vector search must read content to index it; anything searchable is, by construction, outside the zero-knowledge guarantee. Opt-in, off by default.</li>
         <li><strong>Independent audit — not yet.</strong> mosADD is in active alpha and has not completed a third-party cryptographic audit. We&apos;d rather say so than imply otherwise — responsible disclosure welcome.</li>
       </Ul>
@@ -92,7 +92,7 @@ export MOSADD_MODE=self-host`}</Pre>
 
       <Callout type="info">
         <strong>Status:</strong> mosADD is in active alpha — encryption surfaces are still hardening (per-channel
-        group-key E2EE for mIRC/mROOM is the next crypto milestone). Run it, audit it, break it, tell us. That&apos;s
+        group-key E2EE for mIRC is the next crypto milestone). Run it, audit it, break it, tell us. That&apos;s
         the point of open source.
       </Callout>
     </Prose>

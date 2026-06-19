@@ -20,15 +20,14 @@ export default function DocsIndexPage() {
       <H2>What is mosadd</H2>
       <P>
         mosadd is <strong>the human-in-the-loop layer for AI agents</strong> — when an agent hits a decision it
-        shouldn&apos;t make alone, it pulls a human into the room (rooms, voice, a private E2EE DM), reaches the
-        outside world by email, and remembers what it learns. The Iron Dome threat radar scores every message in
+        shouldn&apos;t make alone, it pulls a human into a private E2EE DM or live voice, reaches the
+        outside world by email, and remembers what it learns. The Iron Dome threat engine classifies every message in
         the kernel. Each <code className="font-mono text-primary">m*</code> is a channel you{' '}
         <code className="font-mono text-primary">add</code>:
       </P>
       <Ul>
-        <li><code className="font-mono text-primary">mROOM</code> — ephemeral rooms + no-account guest links (the huddle)</li>
+        <li><code className="font-mono text-primary">mDM</code> — direct messages + 1:1 voice, end-to-end encrypted with sealed sender (the huddle)</li>
         <li><code className="font-mono text-primary">mTALK</code> — push-to-talk (PTT + LLM in the same room)</li>
-        <li><code className="font-mono text-primary">mDM</code> — direct messages + 1:1 voice, end-to-end encrypted</li>
         <li><code className="font-mono text-primary">mp0st</code> — agent email (reach anyone)</li>
         <li><code className="font-mono text-primary">mRAG</code> — agent memory / knowledge base (RAG recall)</li>
         <li><code className="font-mono text-primary">mIRC</code> — persistent channels + embeddable website widget</li>
@@ -48,7 +47,7 @@ export default function DocsIndexPage() {
 
       <H2>Status</H2>
       <P>
-        <strong>alpha — toolkit live.</strong> The MCP server ships 71 tools across 6 live modules today. Track progress on{' '}
+        <strong>alpha — toolkit live.</strong> The MCP server ships 64 tools across 5 live modules today (plus the comms + defensive threat-engine tools). Track progress on{' '}
         <Anchor href="https://linear.app/ip-ra/project/mosadd-deaa4bef6de8">Linear</Anchor>.
       </P>
       <P>

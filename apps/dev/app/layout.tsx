@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: '%s · mosadd.dev',
   },
   description:
-    'The human-in-the-loop layer for AI agents. One MCP server: guest-link rooms, push-to-talk voice and a private E2EE DM to pull a human into the loop — plus a real inbox and a 166-event threat radar. BYOK or self-host. Apache-2.0.',
+    'The human-in-the-loop layer for AI agents. One MCP server: a private E2EE DM with sealed sender and push-to-talk voice to pull a human into the loop — plus a real inbox and a defensive threat engine. BYOK or self-host. Apache-2.0.',
   applicationName: 'mosadd.dev',
   openGraph: {
     title: 'mosADD MCP — when your AI agent needs a human',

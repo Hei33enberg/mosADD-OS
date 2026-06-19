@@ -23,7 +23,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { mosaddTools, executeMosaddToolCall } from "@mosadd/ai/anthropic";
 
 const client = new Anthropic();
-const tools = mosaddTools({ modules: ["mDM", "mROOM"] });
+const tools = mosaddTools({ modules: ["mDM", "mIRC"] });
 
 let response = await client.messages.create({
   model: "claude-opus-4-7",

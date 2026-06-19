@@ -53,7 +53,7 @@ export default function Post() {
         <H2>Why an extension proves the kernel</H2>
         <P>
           The mosadd toolkit ships a Cloudflare Worker plus a Durable Object per channel as the real-time
-          backbone for mIRC, mROOM, and friends. We had load tests, we had a prototype client, we had paying dev
+          backbone for mIRC and friends. We had load tests, we had a prototype client, we had paying dev
           accounts. What we did not have was internet-scale read traffic. Servers and synthetic load tests do not
           fight the same fights as 50k real users on a strike day.
         </P>

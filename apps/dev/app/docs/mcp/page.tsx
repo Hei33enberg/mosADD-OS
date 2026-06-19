@@ -29,10 +29,9 @@ export default function McpPage() {
           [<code key="1" className="font-mono text-primary">mDM_send</code>, 'Send an end-to-end-encrypted direct message'],
           [<code key="2" className="font-mono text-primary">mDM_list</code>, 'List messages in a thread'],
           [<code key="3" className="font-mono text-primary">mDM_respond_request</code>, 'Accept / reject a contact request'],
-          [<code key="4" className="font-mono text-primary">mROOM_create_guest_link</code>, 'Create ephemeral room with no-account join link'],
-          [<code key="5" className="font-mono text-primary">mROOM_join</code>, 'Join a room by link'],
-          [<code key="6" className="font-mono text-primary">mIRC_create</code>, 'Create a persistent channel'],
-          [<code key="7" className="font-mono text-primary">mp0st_send</code>, 'Send email'],
+          [<code key="4" className="font-mono text-primary">mIRC_create</code>, 'Create a persistent channel'],
+          [<code key="5" className="font-mono text-primary">mIRC_post_message</code>, 'Post a message to a channel'],
+          [<code key="6" className="font-mono text-primary">mp0st_send</code>, 'Send email'],
           [<code key="8" className="font-mono text-primary">mTALK_press</code>, 'Press push-to-talk: request the floor (half-duplex)'],
           [<code key="9" className="font-mono text-primary">mTALK_join</code>, 'Get LiveKit credentials to join a PTT room'],
           [<code key="10" className="font-mono text-primary">mRAG_search</code>, "Search/answer over the user's own data (RAG)"],
@@ -41,7 +40,7 @@ export default function McpPage() {
       />
 
       <P>
-        Total surface today: <strong>71 tools across 6 live modules</strong> — mDM ×14 (incl. voice + file/voice), mIRC ×22, mROOM ×11, mp0st ×12, mTALK ×6, mRAG ×4 — plus <code className="font-mono text-primary">comms_action_create</code> (action links) and the <code className="font-mono text-primary">comms_capabilities</code> discovery tool.
+        Total surface today: <strong>64 tools across 5 live modules</strong> — mDM ×14 (incl. voice + file/voice), mIRC ×22, mp0st ×12, mTALK ×6, mRAG ×4 — plus the comms tools (<code className="font-mono text-primary">comms_action_create</code>, <code className="font-mono text-primary">comms_action_frame_get</code>, <code className="font-mono text-primary">comms_capabilities</code>, <code className="font-mono text-primary">comms_embed_create</code>) and the defensive threat engine (<code className="font-mono text-primary">threat_catalog</code>, <code className="font-mono text-primary">threat_classify</code>).
       </P>
 
       <H2>Transports</H2>

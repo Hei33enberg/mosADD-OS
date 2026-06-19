@@ -16,7 +16,6 @@ const ROUTES: Array<{ path: string; priority: number; freq: MetadataRoute.Sitema
   { path: '/docs/modules', priority: 0.7, freq: 'monthly' },
   { path: '/docs/modules/mdm', priority: 0.6, freq: 'monthly' },
   { path: '/docs/modules/mirc', priority: 0.6, freq: 'monthly' },
-  { path: '/docs/modules/mroom', priority: 0.6, freq: 'monthly' },
   { path: '/docs/modules/mail', priority: 0.6, freq: 'monthly' },
   { path: '/docs/modules/mtalk', priority: 0.5, freq: 'monthly' },
   { path: '/docs/modules/mrag', priority: 0.6, freq: 'monthly' },
@@ -35,8 +34,6 @@ const ROUTES: Array<{ path: string; priority: number; freq: MetadataRoute.Sitema
   { path: '/embed', priority: 0.9, freq: 'weekly' },
   { path: '/embed/install', priority: 0.85, freq: 'weekly' },
   { path: '/embed/wordpress', priority: 0.9, freq: 'weekly' },
-  // /murl/* and /c/* are 308 redirects to murl.mosadd.com (see next.config.mjs)
-  // and are sitemapped on that canonical origin instead.
   { path: '/domains', priority: 0.85, freq: 'weekly' },
   { path: '/status', priority: 0.3, freq: 'monthly' },
 ];

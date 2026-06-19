@@ -10,7 +10,6 @@ Like a real OS gives you `open()`, `read()`, `write()`, `socket()`, `fork()`, mo
 
 - `mDM` — direct messages + 1:1 voice
 - `mIRC` — persistent encrypted channels
-- `mROOM` — ephemeral group rooms + no-account join links
 - `mTALK` — push-to-talk voice
 - `mp0st` — email
 - `mRAG` — encrypted knowledge base (RAG recall)
@@ -45,7 +44,7 @@ These are not separate products. They are **shells over the same OS**. Just as L
 
 The `m` prefix is **not** "messenger". It's "module". Every `m*` is a self-contained OS module that:
 
-1. Implements a channel interface (`DmProvider`, `RoomProvider`, ...)
+1. Implements a channel interface (`DmProvider`, `ChannelProvider`, ...)
 2. Exposes MCP tools (`mDM_send`, `mDM_list`, ...)
 3. Ships an Anthropic SKILL.md
 4. Has a provider in `packages/providers/<name>/`

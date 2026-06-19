@@ -1,7 +1,7 @@
 {
   "name": "mosadd",
   "displayName": "mosadd — A human OS. Add.",
-  "description": "Operating system for human communications. Encrypted direct messages, persistent channels, ephemeral rooms with no-account guest links, push-to-talk, email and a RAG knowledge base — one MCP server. Open-source under Apache-2.0.",
+  "description": "Operating system for human communications. Encrypted direct messages with sealed sender, persistent channels, push-to-talk, email, a RAG knowledge base and a defensive threat-event classification engine — one MCP server. Open-source under Apache-2.0.",
   "version": "3.0.0-alpha.16",
   "author": {
     "name": "mosadd contributors",
@@ -25,10 +25,6 @@
     {
       "name": "mosadd-mdm",
       "path": "../mdm/SKILL.md"
-    },
-    {
-      "name": "mosadd-mroom",
-      "path": "../mroom/SKILL.md"
     },
     {
       "name": "mosadd-mirc",

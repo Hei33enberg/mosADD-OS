@@ -1,7 +1,10 @@
 /**
  * Tool registry. Each m* module contributes a set of tools.
  *
- * Live modules (6): mDM, mIRC, mROOM, mTALK, mp0st, mRAG — 70 tools + comms_capabilities.
+ * Live modules (5): mDM, mIRC, mTALK, mp0st, mRAG (58 channel tools) + comms (4)
+ * + threat_catalog/threat_classify (pure defensive engine, LINEAR-3498) = 64 callable.
+ * mROOM was KILLED (LINEAR-3414, channel re-cut → ephemeral private mIRC): its tools
+ * live in tools/mroom.ts + mroom-messages.ts but are NOT registered here.
  * Plus action links: comms_action_create (agent → user one-link browser action,
  * incl. screen_share) + comms_action_frame_get (see the recipient's shared screen).
  * mURL is a consumer/brand surface (murl.mosadd.com), NOT a dev product — its tools
@@ -18,8 +21,8 @@ import { mircTools } from "./mirc.js";
 import { mircMembersTools } from "./mirc-members.js";
 import { mircMessagesTools } from "./mirc-messages.js";
 import { mircEdgeTools } from "./mirc-edge.js";
-import { mroomTools } from "./mroom.js";
-import { mroomMessagesTools } from "./mroom-messages.js";
+// import { mroomTools } from "./mroom.js"; // mROOM: killed (LINEAR-3414) — not registered
+// import { mroomMessagesTools } from "./mroom-messages.js"; // mROOM: killed (LINEAR-3414) — not registered
 import { mailTools } from "./mail.js";
 import { mailProvenanceTools } from "./mail-provenance.js";
 import { mtalkTools } from "./mtalk.js";
@@ -29,6 +32,7 @@ import { pttIngestTools } from "./ptt-ingest.js";
 import { knowledgeTools } from "./knowledge.js";
 import { actionTools } from "./actions.js";
 import { embedTools } from "./embed.js";
+import { threatTools } from "./threat.js";
 // import { murlTools } from "./murl.js"; // mURL: brand/consumer surface, not a dev product — not registered
 import { makeCapabilitiesTool } from "./capabilities.js";
 
@@ -40,8 +44,8 @@ const channelTools: MosaddTool[] = [
   ...mircMembersTools,
   ...mircMessagesTools,
   ...mircEdgeTools,
-  ...mroomTools,
-  ...mroomMessagesTools,
+  // ...mroomTools,  // mROOM: killed (LINEAR-3414) — channel re-cut into ephemeral private mIRC
+  // ...mroomMessagesTools,  // mROOM: killed (LINEAR-3414)
   ...mailTools,
   ...mailProvenanceTools,
   ...mtalkTools,
@@ -50,6 +54,7 @@ const channelTools: MosaddTool[] = [
   ...knowledgeTools,
   ...actionTools,  // Action links (Tier 1): agent → user one-link browser action via action-create EF
   ...embedTools,   // comms_embed_create: agent embeds a live channel into the app it builds (embed-keys EF + embed.mosadd.com widget)
+  ...threatTools,  // threat_catalog + threat_classify: pure defensive threat-event engine (@mosadd/threat-engine, LINEAR-3498)
   // ...murlTools,  // mURL: brand/consumer surface (murl.mosadd.com), not a dev product
   // ...mcallTools,  // mCALL: carrier-pending (no telephony carrier live) — re-register when a carrier is configured
   // mirlTools,

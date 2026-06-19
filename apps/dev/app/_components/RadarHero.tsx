@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { RadarField } from './RadarField';
 
 const stats = [
-  { v: '61', l: 'live MCP tools' },
-  { v: '6', l: 'live m* channels' },
+  { v: '64', l: 'live MCP tools' },
+  { v: '5', l: 'live m* channels' },
   { v: '4', l: 'SDK adapters' },
   { v: 'Apache-2.0', l: 'license' },
 ];
@@ -51,9 +51,9 @@ export function RadarHero() {
           mosADD drops a human into the room with your agent — <span className="text-foreground">live voice, full context, end-to-end encrypted</span>. The human-in-the-loop layer for AI agents.
         </p>
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          One MCP server for the whole escalation: no-signup guest-link rooms, push-to-talk voice, and a
-          private DM that&apos;s end-to-end encrypted (X3DH + Double Ratchet). Plus a real inbox to reach anyone
-          by email, and a 166-event threat radar in the kernel. Your keys or self-host.
+          One MCP server for the whole escalation: a private DM that&apos;s end-to-end encrypted with sealed
+          sender (X3DH + Double Ratchet) and push-to-talk voice — your agent is the contact. Plus a real inbox
+          to reach anyone by email, and a defensive threat engine in the kernel. Your keys or self-host.
         </p>
 
         <div className="mt-9 flex flex-wrap gap-3">

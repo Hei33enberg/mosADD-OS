@@ -47,9 +47,9 @@ In Claude Code, with the MCP server connected:
 
 Claude calls `mDM_list_contacts` and shows your contact list.
 
-> Create a room and give me a guest link for "Alice".
+> Create a channel called "ops" and post a kickoff message.
 
-Claude calls `mROOM_create` then `mROOM_create_guest_link` → you get a URL to share.
+Claude calls `mIRC_create` then `mIRC_post_message` → your channel is live with the first message posted.
 
 > Send Bob an email with subject "Quote" and body "Attached is the quote."
 
@@ -57,7 +57,7 @@ Claude calls `mp0st_send`.
 
 ## All tools available
 
-See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (65 live tools across 7 live modules: mDM incl. voice / mIRC / mROOM / mp0st / mTALK / mRAG / mURL).
+See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (64 live tools across 5 live channel modules: mDM incl. voice / mIRC / mp0st / mTALK / mRAG — plus comms and the defensive threat engine).
 
 ## Troubleshooting
 

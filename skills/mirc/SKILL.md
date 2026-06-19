@@ -1,6 +1,6 @@
 ---
 name: mosadd-mirc
-description: Manage persistent channels on mosadd — Discord/Slack-style spaces with members, roles, and capabilities (text, push-to-talk, live streams). Use when the user wants to create, list, get details on, update, or delete a long-lived channel (not an ephemeral room — use mROOM for that).
+description: Manage persistent channels on mosadd — Discord/Slack-style spaces with members, roles, and capabilities (text, push-to-talk, live streams). Use when the user wants to create, list, get details on, update, or delete a long-lived channel.
 ---
 
 # mosadd Channels (mIRC)
@@ -15,17 +15,6 @@ Trigger on these user intents:
 - "Tell me about <#channel>" — `mIRC_get`
 - "Make this channel private" / "Change the topic" — `mIRC_update`
 - "Delete <#channel>" — `mIRC_delete` (owner only)
-
-## mIRC vs mROOM — pick the right one
-
-| | mIRC | mROOM |
-|---|---|---|
-| Lifetime | Forever (until deleted) | TTL (default 24 h, max 30 d) |
-| Membership | Roster of accounts | Anyone with the link |
-| No-account guests | ❌ | ✅ |
-| Use case | Team workspace, community | Drop-in support call, tipline |
-
-If the user wants a Slack channel or Discord server — that's mIRC. If they want a Whereby/Calendly-style "join link" room — that's mROOM.
 
 ## Capabilities
 

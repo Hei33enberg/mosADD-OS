@@ -44,7 +44,7 @@ operation → @mosadd/threat-engine → radar event → severity scoring
 
 Open-source `@mosadd/threat-engine` ships the 166-event taxonomy and scoring primitives. The hub adds:
 
-- Real-time correlation across channels (a single actor spamming mDM + mIRC + mROOM looks innocent on each channel; correlated, it's abuse)
+- Real-time correlation across channels (a single actor spamming mDM + mIRC + mp0st looks innocent on each channel; correlated, it's abuse)
 - Cross-tenant threat intel feeds (private — paid threat intel partners, MISP feeds, our own observations)
 - ML scoring on voice (deepfake detection on PTT / mDM voice)
 - ML scoring on text (prompt-injection detection — model: distilled adversarial classifier)

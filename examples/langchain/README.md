@@ -23,7 +23,7 @@ import { mosadd } from "@mosadd/ai/langchain";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 
-const tools = mosadd({ modules: ["mDM", "mROOM"] }).map(
+const tools = mosadd({ modules: ["mDM", "mIRC"] }).map(
   (t) => new DynamicStructuredTool(t),
 );
 

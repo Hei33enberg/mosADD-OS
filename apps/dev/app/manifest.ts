@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'mosadd.dev — the human-in-the-loop layer for AI agents · MCP',
     short_name: 'mosadd.dev',
     description:
-      'One MCP server to pull a human into the loop with your agent: guest-link rooms, push-to-talk voice and a private E2EE DM — plus a real inbox and a 166-event threat radar. BYOK or self-host. Apache-2.0.',
+      'One MCP server to pull a human into the loop with your agent: a private E2EE DM with sealed sender and push-to-talk voice — plus a real inbox and a defensive threat engine. BYOK or self-host. Apache-2.0.',
     start_url: '/',
     display: 'standalone',
     background_color: '#000000',

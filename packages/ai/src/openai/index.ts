@@ -8,7 +8,7 @@
  *   const agent = new Agent({
  *     name: "mosadd-helper",
  *     instructions: "You can manage the user's mosadd communications.",
- *     tools: mosadd({ modules: ["mDM", "mROOM"] }),
+ *     tools: mosadd({ modules: ["mDM", "mIRC"] }),
  *   });
  *
  * Each mosadd tool becomes a `FunctionTool`-shaped entry. The user supplies

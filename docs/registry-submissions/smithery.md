@@ -36,23 +36,22 @@ startCommand:
 
 **Title:** mosadd — A human OS. Add.
 
-**Tagline:** Operating system for human communications. DMs, rooms with guest links, channels, email, push-to-talk, knowledge recall — 70 tools today.
+**Tagline:** Operating system for human communications. E2EE DMs with sealed sender, channels, email, push-to-talk, knowledge recall — 64 tools today.
 
 **Long description:**
 
-mosadd is the OS for human communications: instead of stitching Twilio + LiveKit + Resend + Matrix yourself, you call OS-level semantic primitives — `mROOM.create_with_link` instead of provisioning a LiveKit room + generating a JWT + emailing the URL + signing the alias.
+mosadd is the OS for human communications: instead of stitching Twilio + LiveKit + Resend + Matrix yourself, you call OS-level semantic primitives — `mIRC_create` then `mIRC_post_message` instead of provisioning channel infra + auth + delivery yourself, or `mDM_send` for an end-to-end-encrypted direct message with sealed sender.
 
-**70 live tools across 6 live modules (3.0.0-alpha):**
-- mDM (14 tools) — Encrypted direct messages + 1:1 voice, multi-thread per contact (USP)
+**64 live tools across 5 live modules (3.0.0-alpha):**
+- mDM (14 tools) — End-to-end-encrypted direct messages with sealed sender + 1:1 voice, multi-thread per contact (USP)
 - mIRC (22 tools) — Discord/Slack-style persistent encrypted channels
-- mROOM (11 tools) — Ephemeral rooms with no-account guest join links (USP)
 - mTALK (6 tools) — Push-to-talk voice with agent-in-room
 - mp0st (12 tools) — Email from `<userId>@mosadd.com`
 - mRAG (4 tools) — Encrypted knowledge base, RAG recall
 - Action Links (`comms_action_create`) — agent → human one-link browser action
 
-Plus the embeddable `@mosadd/threat-engine` — a 166-event threat radar.
+Plus a pure defensive threat-event classification engine (`threat_catalog` / `threat_classify`) — classify communication-threat events without any surveillance.
 
 **License:** Apache-2.0. **Repo:** https://github.com/Hei33enberg/mosadd-os
 
-**Tags:** messaging, voice, email, agents, communication, claude, cursor, anthropic, mcp, open-source
+**Tags:** messaging, voice, email, agents, communication, claude, cursor, anthropic, mcp, open-source, threat-classification

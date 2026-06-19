@@ -22,14 +22,14 @@ Quickstart configs for the agent runtimes that consume `@mosadd/mcp`.
 
 ## What you get
 
-**65 live MCP tools across 7 modules** (+ the `comms_capabilities` discovery tool):
+**64 live MCP tools across 5 live channel modules** (+ comms + the defensive threat engine):
 
-- **mDM** (12): list_contacts, publish_keys, send, send_unencrypted, edit, delete, list, respond_request + 4 voice ops
-- **mIRC** (20): create, list, get, update, delete, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops
-- **mROOM** (9): create, create_guest_link ★, join, leave, close, list, send_message, list_messages + admin
-- **mTALK** (5): open, join, press, release, state — half-duplex push-to-talk
+- **mDM** (14): list_contacts, publish_keys, send, send_unencrypted, edit, delete, list, respond_request + voice ops — E2EE DMs with sealed sender
+- **mIRC** (22): create, list, get, update, delete, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops
 - **mp0st** (12): send, view, list, delete, stats, events, metrics, revoke, audit_export, consent, notify, send_as_agent
+- **mTALK** (6): open, join, press, release, state — half-duplex push-to-talk
 - **mRAG** (4): ingest, search, list_sources, delete — RAG recall over your own data
-- **mURL** (4): read_channel, post, presence, list_channels — real-time chat attached to any web domain, agent-native
+- **comms** (4): comms_action_create, comms_action_frame_get, comms_capabilities, comms_embed_create
+- **threat** (2): threat_catalog, threat_classify — pure defensive threat-event classification engine
 
 All names follow [RFC 0001](../docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>`. Full reference: [packages/mcp/README.md](../packages/mcp/README.md).

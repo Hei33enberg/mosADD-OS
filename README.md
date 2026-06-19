@@ -5,13 +5,13 @@
 **A human OS. Add.**
 
 `m·os·add` — operating system for human communications.
-Modular primitives — DMs, channels, rooms, push-to-talk, email, knowledge — and you `add` what you need.
+Modular primitives — DMs, channels, push-to-talk, email, knowledge — and you `add` what you need.
 
 [![CI](https://github.com/Hei33enberg/mosadd-os/actions/workflows/ci.yml/badge.svg)](https://github.com/Hei33enberg/mosadd-os/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha-orange)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-71%20live-00ff7f)](packages/mcp)
+[![Tools](https://img.shields.io/badge/tools-64%20live-00ff7f)](packages/mcp)
 [![Release](https://img.shields.io/github/v/release/Hei33enberg/mosadd-os?include_prereleases&label=release)](https://github.com/Hei33enberg/mosadd-os/releases)
 [![mosadd.com](https://img.shields.io/badge/site-mosadd.com-5af082)](https://mosadd.com)
 
@@ -27,19 +27,19 @@ Modular primitives — DMs, channels, rooms, push-to-talk, email, knowledge — 
 npx -y @mosadd/mcp
 ```
 
-…starts an MCP server with **71 tools** across 6 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send a DM, spin up an ephemeral room with a no-signup join link, manage a persistent channel, send mail, or run a push-to-talk room — all through your own mosadd backend (BYOK).
+…starts an MCP server with **64 tools** across 5 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send an E2EE DM, manage a persistent channel, send mail, run a push-to-talk room, or recall from a personal knowledge base — all through your own mosadd backend (BYOK).
 
 | Channel | Tools | Highlight |
 |---|---|---|
-| **mDM** (14) | core 8 (`mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`) + voice/call 4 (`mDM_call_start/answer/end`, `mDM_voice_note`) + `mDM_send_voice/file` | Multi-thread per contact (USP) + X3DH/Double-Ratchet E2EE, text + voice + files |
+| **mDM** (14) | core 8 (`mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`) + voice/call 4 (`mDM_call_start/answer/end`, `mDM_voice_note`) + `mDM_send_voice/file` | Multi-thread per contact + X3DH/Double-Ratchet E2EE with sealed sender (USP), text + voice + files |
 | **mIRC** (22) | 5 channel ops (`mIRC_create/list/get/update/delete`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) + 2 message + 3 edge (`mint_channel_token/send_edge/history_edge`) + `mIRC_send_voice/file` | Discord/Slack-style persistent channels, full RBAC + the agent-coordination edge transport |
-| **mROOM** (11) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_voice_join`, `mROOM_send_message`, `mROOM_list_messages`, `mROOM_send_voice/file` | **No other registered MCP server exposes single-call guest links** |
 | **mp0st** (12) | `mp0st_send`, `mp0st_view`, `mp0st_list`, `mp0st_delete`, `mp0st_stats`, `mp0st_events`, `mp0st_metrics`, `mp0st_revoke`, `mp0st_audit_export`, `mp0st_consent`, `mp0st_notify`, `mp0st_send_as_agent` | Every user gets `<userId>@mosadd.com` for free; agent/human provenance |
 | **mTALK** (6) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state`, `mTALK_ingest_ptt` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release; ingest to RAG |
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
-| **comms_** (2) | `comms_action_create`, `comms_capabilities` | Agent→user one-link browser action (Tier 1) + one-call capability discovery |
+| **comms_** (4) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities`, `comms_embed_create` | Agent→user one-link browser action (Tier 1) + one-call capability discovery |
+| **threat_** (2) | `threat_catalog`, `threat_classify` | Pure defensive threat-event classification engine |
 
-**71 tools across 6 modules** (14+22+11+12+6+4) + `comms_action_create`, plus the `comms_capabilities` discovery tool (**71 callable**). `mCALL` (telephony, carrier-pending) and `mURL` (brand/consumer surface) ship in the source but are **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
+**64 tools across 5 live modules** — mDM (14) + mIRC (22) + mp0st (12) + mTALK (6) + mRAG (4) = 58 channel tools, plus the 4 `comms_*` tools and the 2 `threat_*` tools (**64 callable**). `mCALL` (telephony, carrier-pending) ships in the source but is **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
 ## Quickstart (60 seconds)
 
@@ -68,9 +68,9 @@ This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.
 
 ### Try it
 
-> **You:** "Create a room and give me a guest link for Bob, valid 1 hour."
+> **You:** "Spin up a #launch channel and post the kickoff note."
 >
-> **Claude:** calls `mROOM_create` → `mROOM_create_guest_link({ display_name: "Bob", ttl_seconds: 3600 })` → returns the share URL. Bob opens it in any browser. No signup. Done.
+> **Claude:** calls `mIRC_create({ name: "launch" })` → `mIRC_post_message({ channel, text: "Kickoff is live 🚀" })` → the message lands in your persistent channel, full RBAC. Done.
 
 ## OS modules (`m*`)
 
@@ -83,9 +83,8 @@ This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.
 | `mp0st` | Email, every user gets `<id>@mosadd.com` | **alpha (shipped)** |
 | `mIRC` | Persistent channels (Discord/Slack semantics) | **alpha (shipped)** |
 | `mRAG` | Knowledge base — RAG recall (hybrid vector+BM25) | **alpha (shipped)** |
-| `mROOM` | Ephemeral rooms + no-account join links | **alpha (shipped)** |
 
-Plus [`@mosadd/threat-engine`](./packages/threat-engine) — the embeddable 166-event threat radar that scores every operation.
+Plus [`@mosadd/threat-engine`](./packages/threat-engine) — the embeddable 166-event threat radar that scores every operation, surfaced to agents through the `threat_catalog` / `threat_classify` tools (a pure defensive threat-event classification engine).
 
 ## Architecture
 
@@ -105,7 +104,7 @@ Plus [`@mosadd/threat-engine`](./packages/threat-engine) — the embeddable 166-
 
 ## Why we're different
 
-Built for the **agent era** (Claude Code, Cursor, Lovable, Manus, ChatGPT Apps) — first-class MCP support, **semantic OS primitives instead of vendor-shaped tool wrappers**. Vendor-agnostic: bring your own keys or self-host the whole stack. Managed threat radar watching every message and call — the moat nobody else ships.
+Built for the **agent era** (Claude Code, Cursor, Lovable, Manus, ChatGPT Apps) — first-class MCP support, **semantic OS primitives instead of vendor-shaped tool wrappers**. Lead differentiator: **mDM E2EE with sealed sender + agent-as-contact** — your agent is a first-class participant, not a webhook. Vendor-agnostic: bring your own keys or self-host the whole stack. Managed threat radar watching every message and call — the moat nobody else ships.
 
 Read [docs/roadmap.md](./docs/roadmap.md) for the full plan or jump to the [M5 milestone](https://linear.app/ip-ra/project/mosadd-deaa4bef6de8) for live status.
 

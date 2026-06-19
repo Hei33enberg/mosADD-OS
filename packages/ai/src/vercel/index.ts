@@ -5,11 +5,11 @@
  *   import { mosadd } from "@mosadd/ai/vercel";
  *   import { streamText } from "ai";
  *
- *   const tools = mosadd({ modules: ["mDM", "mROOM"] });
+ *   const tools = mosadd({ modules: ["mDM", "mIRC"] });
  *   await streamText({ model, tools, messages });
  *
  * Each mosadd tool becomes a Vercel AI SDK `Tool` keyed by its name
- * (`mDM_send`, `mROOM_create_with_link`, etc.). The handler binds to your
+ * (`mDM_send`, `mIRC_post_message`, etc.). The handler binds to your
  * mosadd backend via BYOK env vars or the `supabase` option.
  */
 
@@ -28,7 +28,7 @@ export interface VercelTool {
  * Build a tools object for Vercel AI SDK's `streamText` / `generateText`.
  *
  * Returns `Record<string, VercelTool>` where keys are mosadd tool names
- * (`mDM_send`, `mROOM_create`, ...) and values are Vercel-shaped tools with
+ * (`mDM_send`, `mIRC_create`, ...) and values are Vercel-shaped tools with
  * `description`, `parameters` (Zod schema), and `execute` handler.
  */
 export function mosadd(options: MosaddOptions = {}): Record<string, VercelTool> {

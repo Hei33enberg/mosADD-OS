@@ -9,7 +9,7 @@
  *   pnpm start
  *
  * What happens:
- *   1. mosadd() returns a tools object keyed by mDM_* / mROOM_* tool names.
+ *   1. mosadd() returns a tools object keyed by mDM_* / mIRC_* tool names.
  *   2. generateText() asks the model what to do; the model picks a tool;
  *      AI SDK calls execute(); we print the model's final answer.
  *   3. Without MOSADD_* env vars set the tool throws MissingSupabaseEnvError —
@@ -22,7 +22,7 @@ import { generateText } from "ai";
 
 async function main() {
   const tools = mosadd({
-    modules: ["mDM", "mROOM"], // only expose DMs + rooms to the model
+    modules: ["mDM", "mIRC"], // only expose DMs + channels to the model
   });
 
   console.log("Available tools:", Object.keys(tools).join(", "));
@@ -32,7 +32,7 @@ async function main() {
     tools,
     maxSteps: 5,
     system:
-      "You operate the user's mosadd communications. When asked to send a message or create a room, use the tools.",
+      "You operate the user's mosadd communications. When asked to send a message or create a channel, use the tools.",
     prompt:
       "List my mosadd contacts. Don't actually send anything — just check who I can reach.",
   });

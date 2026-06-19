@@ -24,7 +24,7 @@ app/
 ├── global.css               # brand tokens + motifs
 ├── _components/             # Logo, SiteHeader, SiteFooter, Prose, Terminal
 ├── docs/{mcp,quickstart,sdk,rfcs,security}/page.tsx
-├── docs/modules/{,mdm,mirc,mroom,mail,mtalk,mrag,threat-engine}/page.tsx
+├── docs/modules/{,mdm,mirc,mail,mtalk,mrag,threat-engine}/page.tsx
 ├── {download,examples,community,changelog,pricing,status}/page.tsx
 └── opengraph-image.tsx / twitter-image.tsx
 ```

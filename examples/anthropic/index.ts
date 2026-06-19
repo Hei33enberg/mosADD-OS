@@ -26,7 +26,7 @@ async function main() {
   const client = new Anthropic();
 
   const tools: AnthropicToolDefinition[] = mosaddTools({
-    modules: ["mDM", "mROOM"],
+    modules: ["mDM", "mIRC"],
   });
 
   console.log(`Loaded ${tools.length} tools:`);

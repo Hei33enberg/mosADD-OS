@@ -1,6 +1,6 @@
 # mosadd edge — Cloudflare Worker + Durable Object per channel
 # Target architecture from plan file "SCALE ARCHITECTURE" + LINEAR-2675.
-# Each mIRC/mROOM channel = one DO instance globally, holding WS connections +
+# Each mIRC channel = one DO instance globally, holding WS connections +
 # recent message ring. Auto-scales literally per channel; no central DB on hot path.
 name = "mosadd-edge"
 main = "src/index.ts"

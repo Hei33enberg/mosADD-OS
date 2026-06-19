@@ -134,10 +134,10 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
     const result = resp.result as { tools?: Array<{ name: string }> };
     const names = result.tools?.map((t) => t.name) ?? [];
 
-    // All 4 channels surface their tools
+    // All live channels surface their tools
     expect(names).toContain("mDM_send");
     expect(names).toContain("mIRC_create");
-    expect(names).toContain("mROOM_create_guest_link");
+    expect(names).toContain("threat_classify"); // threat engine exposed (LINEAR-3498); mROOM killed (LINEAR-3414)
     expect(names).toContain("mp0st_send");
     expect(names).toContain("mTALK_press"); // mTALK PTT now shipped
     expect(names).toContain("mRAG_search"); // mRAG RAG-for-devs now shipped

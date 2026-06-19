@@ -547,9 +547,8 @@ export default function HubPage() {
           <div className="border border-border p-5">
             <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">Products</div>
             <div className="space-y-2 text-sm">
-              <QuickLink href="/docs/mcp" label="MCP toolkit" desc="71 tools, one server" />
+              <QuickLink href="/docs/mcp" label="MCP toolkit" desc="64 tools, one server" />
               <QuickLink href="/embed" label="mIRC embed" desc="Chat widget for any site" />
-              <QuickLink href="https://murl.mosadd.com" label="mURL" desc="Domain chat rooms" external />
             </div>
           </div>
         </div>

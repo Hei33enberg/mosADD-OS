@@ -177,6 +177,9 @@ importers:
       '@mosadd/providers':
         specifier: workspace:*
         version: link:../providers
+      '@mosadd/threat-engine':
+        specifier: workspace:*
+        version: link:../threat-engine
       '@supabase/supabase-js':
         specifier: ^2.48.0
         version: 2.106.2

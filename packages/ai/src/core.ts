@@ -20,10 +20,10 @@ import {
 export interface MosaddOptions {
   /**
    * Which OS modules to expose. Each module name is the m\* prefix without
-   * the underscore — `'mDM'`, `'mROOM'`, etc. Omit to expose ALL shipped
-   * tools (55 today, more in follow-ups).
+   * the underscore — `'mDM'`, `'mIRC'`, etc. Omit to expose ALL shipped
+   * tools (64 today, more in follow-ups).
    *
-   * Example: `modules: ['mDM', 'mROOM']` exposes only DM + room tools.
+   * Example: `modules: ['mDM', 'mIRC']` exposes only DM + channel tools.
    */
   modules?: string[];
 
@@ -48,7 +48,7 @@ export interface MosaddOptions {
  *
  *   filterTools({})                          // → all shipped tools
  *   filterTools({ modules: ['mDM'] })        // → only mDM_* tools
- *   filterTools({ modules: ['mDM', 'mROOM'] }) // → mDM_* + mROOM_* tools
+ *   filterTools({ modules: ['mDM', 'mIRC'] }) // → mDM_* + mIRC_* tools
  */
 export function filterTools(options: MosaddOptions = {}): MosaddTool[] {
   if (!options.modules || options.modules.length === 0) {

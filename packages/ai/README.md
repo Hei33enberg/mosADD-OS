@@ -1,6 +1,6 @@
 # @mosadd/ai
 
-Framework adapters for [mosadd](https://mosadd.dev) — use the 65 mosadd OS tools directly from your favorite agent framework without spinning up the MCP server.
+Framework adapters for [mosadd](https://mosadd.dev) — use the 64 mosadd OS tools directly from your favorite agent framework without spinning up the MCP server.
 
 **One package, four entrypoints, atomic releases** — pattern stolen from [Stripe Agent Toolkit](https://github.com/stripe/agent-toolkit).
 
@@ -18,7 +18,7 @@ import { mosadd } from "@mosadd/ai/vercel";
 import { streamText } from "ai";
 
 const tools = mosadd({
-  modules: ["mDM", "mROOM"],
+  modules: ["mDM", "mIRC"],
   supabase: {
     url: process.env.MOSADD_SUPABASE_URL!,
     anonKey: process.env.MOSADD_SUPABASE_ANON_KEY!,
@@ -52,7 +52,7 @@ import { Agent, run } from "@openai/agents";
 const agent = new Agent({
   name: "mosadd-helper",
   instructions: "Manage the user's mosadd communications when asked.",
-  tools: mosadd({ modules: ["mDM", "mROOM", "mp0st"] }),
+  tools: mosadd({ modules: ["mDM", "mIRC", "mp0st"] }),
 });
 
 await run(agent, "Send Alice a message saying I'll be late.");
@@ -65,13 +65,13 @@ import Anthropic from "@anthropic-ai/sdk";
 import { mosaddTools, executeMosaddToolCall } from "@mosadd/ai/anthropic";
 
 const client = new Anthropic();
-const tools = mosaddTools({ modules: ["mDM", "mROOM"] });
+const tools = mosaddTools({ modules: ["mDM", "mIRC"] });
 
 let response = await client.messages.create({
   model: "claude-opus-4-7",
   max_tokens: 1024,
   tools,
-  messages: [{ role: "user", content: "Send Bob a guest room link valid 1h." }],
+  messages: [{ role: "user", content: "Post 'standup in 5' to the #team channel." }],
 });
 
 while (response.stop_reason === "tool_use") {

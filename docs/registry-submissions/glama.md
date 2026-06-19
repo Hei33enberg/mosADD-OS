@@ -19,20 +19,20 @@
 
 ## Summary
 
-mosadd is an MCP-native operating system for human communications. **70 live tools across 6 live modules** in alpha (mDM, mIRC, mROOM, mp0st, mTALK, mRAG), plus the embeddable `@mosadd/threat-engine` 166-event radar.
+mosadd is an MCP-native operating system for human communications. **64 live tools across 5 live modules** in alpha (mDM, mIRC, mp0st, mTALK, mRAG), plus a pure defensive threat-event classification engine (`threat_catalog` / `threat_classify`).
 
 ## Differentiators
 
-1. **Semantic OS primitives** vs vendor-wrappers. `mROOM_create_guest_link` is one MCP call; competitors require composing 4-5 SDKs.
-2. **No-account join links** — generate a short-lived URL that lets a guest enter a room without signing up for mosadd. No other registered MCP server exposes this.
+1. **End-to-end encryption with sealed sender** — `mDM_send` delivers a fully E2EE direct message where the relay never learns who sent it. One MCP call; no other registered server exposes sealed-sender DMs.
+2. **Agent-as-contact** — an AI agent is a first-class contact in the address book, reachable over the same primitives (`mDM_send`, `mTALK`) a human uses. No bolt-on bot API.
 3. **Multi-thread per contact** — DMs can have multiple named threads with the same contact, unlike WhatsApp/Telegram's flat chat model.
-4. **166-event threat radar** middleware — every operation emits events; Phase 2 hub scores them and can block abuse, deepfakes, prompt-injection cross-platform.
+4. **Defensive threat-event engine** — `threat_classify` is a pure, surveillance-free classifier over communication-threat events (`threat_catalog` enumerates the taxonomy). It scores events you feed it; it does not monitor anyone.
 5. **Vendor-agnostic by design** — same primitives over Supabase (today), with a forked LiveKit + nwaku P2P backbone in follow-ups. Your keys or self-host.
 
 ## Maturity
 
 - Smoke test pass — stdio MCP responds correctly to `initialize` + `tools/list`
-- 70 tools registered, schemas validated with Zod
+- 64 tools registered, schemas validated with Zod
 - BYOK env-var config (MOSADD_SUPABASE_URL, ANON_KEY, USER_JWT)
 - Builds clean (tsup + DTS gen)
 - Apache-2.0 with NOTICE for third-party attribution
@@ -41,4 +41,4 @@ mosadd is an MCP-native operating system for human communications. **70 live too
 
 ## Tags
 
-messaging, voice, email, rooms, channels, agents, communication, claude, cursor, anthropic, mcp, open-source, apache-2
+messaging, voice, email, channels, agents, communication, claude, cursor, anthropic, mcp, open-source, apache-2, threat-classification

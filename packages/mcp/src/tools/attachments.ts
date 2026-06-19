@@ -1,5 +1,5 @@
 /**
- * Symmetric voice + file attachments across channels (mDM, mROOM, mIRC).
+ * Symmetric voice + file attachments across channels (mDM, mIRC).
  *
  * GOAL (Lane C): an AGENT must be able to participate in every channel the same
  * way a human does — including sending VOICE notes and FILES, not just text.
@@ -195,52 +195,6 @@ async function mDM_send_file(input: z.infer<typeof mDM_send_file_input>, ctx: Mo
 }
 
 // ====================================================================
-// mROOM voice/file
-// ====================================================================
-
-const mROOM_send_voice_input = z.object({
-  room_id: RoomId,
-  audio_base64: Base64Body,
-  mime: Mime.default("audio/ogg"),
-  duration_ms: DurationMs,
-  caption: z.string().max(2_000).optional(),
-  reply_to_id: ReplyTo,
-});
-
-const mROOM_send_file_input = z.object({
-  room_id: RoomId,
-  file_base64: Base64Body,
-  filename: Filename,
-  mime: Mime,
-  caption: z.string().max(2_000).optional(),
-  reply_to_id: ReplyTo,
-});
-
-async function mROOM_send_voice(input: z.infer<typeof mROOM_send_voice_input>, ctx: MosaddToolContext) {
-  const thread_id = `privroom:${input.room_id}`;
-  const attachment = await uploadBlob({
-    kind: "voice",
-    bytes: decodeBase64Body(input.audio_base64),
-    mime: input.mime,
-    prefix: thread_id,
-    duration_ms: input.duration_ms,
-  });
-  return sendAttachmentMessage(ctx, { space_id: "rooms", thread_id, message_type: "voice", attachment, caption: input.caption, reply_to_id: input.reply_to_id });
-}
-
-async function mROOM_send_file(input: z.infer<typeof mROOM_send_file_input>, ctx: MosaddToolContext) {
-  const thread_id = `privroom:${input.room_id}`;
-  const attachment = await uploadBlob({
-    kind: "file",
-    bytes: decodeBase64Body(input.file_base64),
-    mime: input.mime,
-    prefix: thread_id,
-    filename: input.filename,
-  });
-  return sendAttachmentMessage(ctx, { space_id: "rooms", thread_id, message_type: "file", attachment, caption: input.caption, reply_to_id: input.reply_to_id });
-}
-
-// ====================================================================
 // mIRC voice/file
 // ====================================================================
 
@@ -296,20 +250,6 @@ export const attachmentTools: MosaddTool[] = [
       "Send a FILE to a contact as a first-class mDM `file` message. Base64 bytes → Storage → message-send file attachment. SCAFFOLD: mDM E2EE seal is TODO (Lane A).",
     inputSchema: mDM_send_file_input,
     handler: mDM_send_file as MosaddTool["handler"],
-  },
-  {
-    name: "mROOM_send_voice",
-    requires: "network",
-    description: "Send a VOICE note into a room as a first-class `voice` message. Base64 audio → Storage → message-send. Be a room member first (mROOM_join).",
-    inputSchema: mROOM_send_voice_input,
-    handler: mROOM_send_voice as MosaddTool["handler"],
-  },
-  {
-    name: "mROOM_send_file",
-    requires: "network",
-    description: "Send a FILE into a room as a first-class `file` message. Base64 bytes → Storage → message-send.",
-    inputSchema: mROOM_send_file_input,
-    handler: mROOM_send_file as MosaddTool["handler"],
   },
   {
     name: "mIRC_send_voice",

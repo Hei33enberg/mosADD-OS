@@ -1,12 +1,13 @@
 # `@mosadd/edge` — Cloudflare Worker + Durable Object per channel
 
-The scale backbone for mIRC/mROOM (text channels). One `ChannelDO` instance per channel name, globally scheduled by Cloudflare. WebSocket fan-out, recent-message ring in DO storage. See plan file "SCALE ARCHITECTURE" + `LINEAR-2675`.
+The scale backbone for mIRC (persistent text channels). One `ChannelDO` instance per channel name, globally scheduled by Cloudflare. WebSocket fan-out, recent-message ring in DO storage. See plan file "SCALE ARCHITECTURE" + `LINEAR-2675`.
 
 ## Phases
 - **E1 (DONE, LIVE):** raw WS + broadcast + history endpoint. `LINEAR-2677`.
 - **E2 (DONE, LIVE):** hub-key auth + per-key rate limit + DO-local key cache. `LINEAR-2678`.
 - **E3 (DONE, code; needs CF_INGEST_SECRET to activate flush):** async flush DO→Supabase `message-ingest-batch` via DO alarm() — Supabase = system-of-record. `LINEAR-2679`.
 - **E4:** client cut-over (`apps/web`, `@mosadd/mcp`, StrajkPolski relay) per-channel flag. ← `LINEAR-2680`
+<!-- mROOM killed (LINEAR-3414); mIRC is the sole text-channel consumer of the edge DO. -->
 - **E5:** DNS `chat.mosadd.com` via Vercel CNAME, monitoring. ← `LINEAR-2681`
 - **E6 (DONE, this build):** per-channel scoped JWT auth via `Sec-WebSocket-Protocol: mosadd.v1, bearer.<jwt>`. Server-side `hub-mint-channel-token` (Supabase Edge Function) exchanges a hub key for a 5-min, channel-scoped HS256 JWT. Browsers hold only the JWT — the hub key never leaves the server. Closes Strajk HANDOFF-14 (no `?k=hub_key` in URLs leaking to CDN logs). `LINEAR-2675`.
 

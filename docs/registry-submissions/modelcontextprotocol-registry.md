@@ -10,9 +10,9 @@ name: "@mosadd/mcp"
 displayName: "mosadd — A human OS. Add."
 description: |
   Operating system for human communications. Exposes mosadd OS modules
-  (mDM, mIRC, mROOM, mp0st, mTALK, mRAG) as MCP tools — 70 live tools across 6
-  modules. RFC 0001 naming convention m<MODULE>_<operation>. Apache-2.0,
-  vendor-agnostic by design.
+  (mDM, mIRC, mp0st, mTALK, mRAG) as MCP tools — 64 live tools across 5
+  modules, plus a defensive threat-event classification engine. RFC 0001
+  naming convention m<MODULE>_<operation>. Apache-2.0, vendor-agnostic by design.
 homepage: "https://mosadd.com"
 repository: "https://github.com/Hei33enberg/mosadd-os"
 license: "Apache-2.0"
@@ -53,24 +53,16 @@ tools:
     description: "Update channel metadata (owner only)"
   - name: "mIRC_delete"
     description: "Delete a channel (owner only)"
-  # mROOM — Ephemeral private rooms
-  - name: "mROOM_create"
-    description: "Create an ephemeral private room with TTL"
-  - name: "mROOM_create_guest_link"
-    description: "USP: short-lived no-signup join URL for non-mosadd users"
-  - name: "mROOM_join"
-    description: "Join an existing private room"
-  - name: "mROOM_leave"
-    description: "Leave a private room"
-  - name: "mROOM_close"
-    description: "Close a private room (founder only)"
-  - name: "mROOM_list"
-    description: "List rooms the user belongs to"
   # mp0st — Email
   - name: "mp0st_send"
     description: "Send email from <userId>@mosadd.com"
   - name: "mp0st_view"
     description: "Read an email by message_id"
+  # threat — defensive threat-event classification engine
+  - name: "threat_catalog"
+    description: "Enumerate the defensive threat-event taxonomy"
+  - name: "threat_classify"
+    description: "Classify a communication-threat event (pure defensive, no surveillance)"
 tags:
   - messaging
   - voice
@@ -85,7 +77,7 @@ tags:
 
 > ## Add mosadd MCP server (`@mosadd/mcp`)
 >
-> mosadd is an operating system for human communications, distributed as an MCP server that exposes semantic primitives — `mDM` for direct messages, `mROOM` for ephemeral rooms with guest links, `mIRC` for persistent channels, `mp0st` for email, `mTALK` for push-to-talk, `mRAG` for knowledge recall — through 70 tools today (more channels coming).
+> mosadd is an operating system for human communications, distributed as an MCP server that exposes semantic primitives — `mDM` for end-to-end-encrypted direct messages with sealed sender, `mIRC` for persistent channels, `mp0st` for email, `mTALK` for push-to-talk, `mRAG` for knowledge recall — through 64 tools today (more channels coming).
 >
 > **Repo:** https://github.com/Hei33enberg/mosadd-os
 > **License:** Apache-2.0
@@ -93,8 +85,8 @@ tags:
 >
 > Differentiators:
 > - **OS-level semantic primitives**, not vendor wrappers. RFC 0001 formalizes the `m<MODULE>_<operation>` naming convention.
-> - **mROOM_create_guest_link** — single MCP call generates a short-lived no-signup join URL. To my knowledge no other registered server exposes this.
+> - **mDM_send** — single MCP call delivers an end-to-end-encrypted direct message with sealed sender, so the relay never learns who sent it. To my knowledge no other registered server exposes sealed-sender DMs.
 > - **Vendor-agnostic provider abstraction** — same primitives work over Supabase today, with a forked LiveKit + nwaku (p2p) backbone in follow-ups. Bring your own keys or self-host.
-> - **Threat-radar middleware** hooks (166-event taxonomy) — emitted from every operation, scored server-side by the commercial hub (Phase 2).
+> - **Defensive threat-event engine** — `threat_classify` is a pure, surveillance-free classifier over a communication-threat taxonomy (`threat_catalog`). It scores events you pass it; it does not monitor anyone.
 >
 > Happy to address any review comments. Maintainer contact: see CODEOWNERS in the repo.

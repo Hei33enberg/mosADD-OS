@@ -14,10 +14,10 @@ Every communication module in mosadd-os is named `m<NAME>` where `m` stands for 
 mosadd positions itself as the **operating system for human communications**, not as another SDK. To make the OS framing real and not just marketing, every public surface must reflect the modular OS metaphor:
 
 - Linux exposes `socket()`, `pipe()`, `mkdir()` — semantic primitives, not "Microsoft IPC" or "Cisco network"
-- mosadd exposes `mDM`, `mTALK`, `mROOM` — semantic primitives, not "Twilio chat" or "LiveKit room"
+- mosadd exposes `mDM`, `mTALK`, `mIRC` — semantic primitives, not "Twilio chat" or "LiveKit room"
 
 This naming choice has cascading effects on:
-- MCP tool names (`mDM_send`, `mROOM_create_with_link`)
+- MCP tool names (`mDM_send`, `mIRC_create`)
 - Package paths (`@mosadd/core/modules/mDM`)
 - LP / marketing copy
 - RFC titles for future modules
@@ -25,15 +25,14 @@ This naming choice has cascading effects on:
 ## Naming rules
 
 1. **Prefix `m`** — lowercase, no separator. Always.
-2. **Module name** — UPPERCASE 2-8 letters, alphanumeric only. Examples: `mDM`, `mTALK`, `mIRC`, `mROOM`, `mRAG`.
-3. **MCP tools** — `m<NAME>_<operation>` snake_case for operation. Examples: `mDM_send`, `mROOM_create_guest_link`, `mTALK_open`.
+2. **Module name** — UPPERCASE 2-8 letters, alphanumeric only. Examples: `mDM`, `mTALK`, `mIRC`, `mRAG`.
+3. **MCP tools** — `m<NAME>_<operation>` snake_case for operation. Examples: `mDM_send`, `mIRC_create`, `mTALK_open`.
 4. **No version suffix in name** — versioning via package version, not `mDM2` etc.
 
 ## Live modules (3.0.0-alpha)
 
 - `mDM` — Direct messages + 1:1 voice
 - `mIRC` — Persistent encrypted channels
-- `mROOM` — Ephemeral rooms + no-account join links
 - `mTALK` — Push-to-talk voice
 - `mp0st` — Email
 - `mRAG` — Knowledge base (RAG recall)

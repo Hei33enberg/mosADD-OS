@@ -16,7 +16,7 @@ How to get the values:
   3. Find key `sb-<projectref>-auth-token`
   4. Copy the `access_token` field from the JSON value
 
-Restart Cursor. The agent now has 65 live mosadd tools across 7 modules (mDM, mIRC, mROOM, mp0st, mTALK, mRAG, mURL).
+Restart Cursor. The agent now has 64 live mosadd tools across 5 live channel modules (mDM, mIRC, mp0st, mTALK, mRAG) plus comms and the defensive threat engine.
 
 ## Try it
 

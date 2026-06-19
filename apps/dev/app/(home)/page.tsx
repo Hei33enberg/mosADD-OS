@@ -9,15 +9,14 @@ import { RadarHero } from '../_components/RadarHero';
 // REMEMBER (agent memory) support it.
 const modules = [
   // ── HUDDLE: agent ↔ human, live ──
-  { name: 'mROOM', desc: 'Your agent spins an ephemeral room and drops a no-signup guest link to a human. They huddle, decide, the room tears down to zero residual state. The human-in-the-loop moment.', tools: 9, url: '/docs/modules/mroom', tag: 'huddle' },
-  { name: 'mTALK', desc: 'Live push-to-talk voice with half-duplex floor control — your agent and a human in the same call, in real time. Anomaly detection on the media path.', tools: 5, url: '/docs/modules/mtalk', tag: 'huddle' },
-  { name: 'mDM', desc: 'Private 1:1 thread your agent owns — text + voice, end-to-end encrypted (X3DH + Double Ratchet) with forward secrecy. The server sees ciphertext only.', tools: 12, url: '/docs/modules/mdm', tag: 'huddle' },
+  { name: 'mDM', desc: 'Private 1:1 thread your agent owns — text + voice, end-to-end encrypted (X3DH + Double Ratchet) with forward secrecy and sealed sender. The server sees ciphertext only. Your agent is the contact.', tools: 14, url: '/docs/modules/mdm', tag: 'huddle' },
+  { name: 'mTALK', desc: 'Live push-to-talk voice with half-duplex floor control — your agent and a human in the same call, in real time. Anomaly detection on the media path.', tools: 6, url: '/docs/modules/mtalk', tag: 'huddle' },
   // ── REACH: agent ↔ the outside world ──
   { name: 'mp0st', desc: 'A real inbox your agent can be reached at — <id>@mosadd.com or your own domain. Send, receive and parse email from anyone; open / click tracking. Standard mail transport (not E2EE).', tools: 12, url: '/docs/modules/mail', tag: 'reach' },
   // ── REMEMBER: agent memory ──
   { name: 'mRAG', desc: 'Per-tenant agent memory — semantic recall over your own data, isolated per key and encrypted at rest. Server-side by design (it must read to embed). Your agents remember.', tools: 4, url: '/docs/modules/mrag', tag: 'remember' },
   // ── Channels + embeddable widget ──
-  { name: 'mIRC', desc: 'Persistent channels with Discord/Slack ergonomics — topic-scoped, invite-only, moderated. Also the engine behind the embeddable website chat widget. Your key, not vendor lock-in.', tools: 20, url: '/docs/modules/mirc', tag: 'channels' },
+  { name: 'mIRC', desc: 'Persistent channels with Discord/Slack ergonomics — topic-scoped, invite-only, moderated. Also the engine behind the embeddable website chat widget. Your key, not vendor lock-in.', tools: 22, url: '/docs/modules/mirc', tag: 'channels' },
 ];
 
 const threats = [
@@ -30,15 +29,15 @@ const threats = [
     d: 'BYOK or self-host: bring your own provider keys (LiveKit, Resend, OpenAI, Supabase) or run the whole Apache-2.0 stack yourself. The operator is not a black box you have to trust — the source is auditable.',
   },
   {
-    t: 'Threat radar — Iron Dome',
-    d: 'A 166-event detection taxonomy informed by the same Amnesty International / Citizen Lab research that documents mobile spyware — it flags device-integrity and network anomalies: rooted / tampered devices, sideloaded apps, stalkerware-style abuse and MITM. Every message is scored. The same engine shipping in @mosadd/threat-engine.',
+    t: 'Defensive threat engine',
+    d: 'A pure defensive threat-event classification engine — threat_catalog enumerates the detection taxonomy, threat_classify scores an event against it. It flags device-integrity and network anomalies (rooted / tampered devices, sideloaded apps, MITM) so your agent can react. No surveillance, no traffic interception — classification you embed and run yourself. Shipping in @mosadd/threat-engine.',
   },
 ];
 
 const steps = [
   { n: '1', t: 'Install the MCP server', d: "Add the mosADD MCP server to your agent's tool config. One command — npm pulls everything it needs, nothing else to wire up.", c: 'claude mcp add mosadd -- npx -y @mosadd/mcp@alpha' },
   { n: '2', t: 'Add your keys — or go hosted', d: 'Supply your own keys and self-host the relay, or point at the hosted endpoint. Switch modes without changing tool signatures.', c: 'mosadd login' },
-  { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mROOM_create_guest_link, mp0st_send — any of the 71 tools. Encryption, routing and threat monitoring happen below the call.', c: 'mDM_send  ·  mROOM_create_guest_link' },
+  { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mIRC_post_message, mp0st_send — any of the 64 tools. Encryption, routing and threat monitoring happen below the call.', c: 'mDM_send  ·  mIRC_post_message' },
 ];
 
 /** Tiny monospace section index, e.g. §01. */
@@ -78,8 +77,8 @@ export default function HomePage() {
           <div className="bg-background p-6">
             <div className="mb-3 text-xs uppercase tracking-[0.2em] text-primary">One MCP server</div>
             <ul className="space-y-2.5 text-sm leading-relaxed text-muted-foreground">
-              <li>· <span className="text-foreground">The escalation moment, solved</span> — guest-link rooms + voice + a private E2EE DM pull a human into the loop, in one link.</li>
-              <li>· <span className="text-foreground">A 166-event threat radar in the kernel</span> — not a bolt-on. Every message scored before it moves.</li>
+              <li>· <span className="text-foreground">The escalation moment, solved</span> — a private E2EE DM (sealed sender) + live voice pull a human into the loop. Your agent <em>is</em> the contact.</li>
+              <li>· <span className="text-foreground">A defensive threat engine in the kernel</span> — not a bolt-on. Every message classified before it moves.</li>
               <li>· One install, one config block. Reach, huddle and memory in the same tool namespace.</li>
               <li>· BYOK or go hosted; Apache-2.0 if you want to self-host and audit the source.</li>
             </ul>
@@ -107,8 +106,9 @@ export default function HomePage() {
         <SectionTag n="03" label="Iron Dome" />
         <h2 className="font-display text-3xl font-semibold tracking-tight">Iron Dome is not a feature. It is the kernel.</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          mosadd ships the same 166-event threat engine (<code className="font-mono text-primary">@mosadd/threat-engine</code>) that powers
-          mosadd.com as a package you embed in your own app — the radar is a primitive you get, not a hosted service watching your traffic.
+          mosadd ships the same defensive threat engine (<code className="font-mono text-primary">@mosadd/threat-engine</code>) that powers
+          mosadd.com as a package you embed in your own app — <code className="font-mono text-primary">threat_catalog</code> and{' '}
+          <code className="font-mono text-primary">threat_classify</code> are primitives you get, not a hosted service watching your traffic.
         </p>
         <div className="mt-8 grid gap-px overflow-hidden border border-border bg-border md:grid-cols-3">
           {threats.map((c) => (
@@ -125,7 +125,7 @@ export default function HomePage() {
         <div className="flex items-end justify-between">
           <div>
             <SectionTag n="04" label="reach · huddle · remember" />
-            <h2 className="font-display text-3xl font-semibold tracking-tight">Six channels. One job: get a human in the loop.</h2>
+            <h2 className="font-display text-3xl font-semibold tracking-tight">Five channels. One job: get a human in the loop.</h2>
           </div>
           <Link href="/docs/rfcs" className="hidden text-sm text-muted-foreground hover:text-foreground md:block">
             RFC 0001 · m* naming →

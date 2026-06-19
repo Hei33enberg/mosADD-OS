@@ -10,7 +10,7 @@ export default function ModulesPage() {
   return (
     <Prose>
       <H1>Modules</H1>
-      <Lead>The live m* modules in the mosadd OS — six comms channels + the threat engine. Private 1:1 (mDM) is end-to-end encrypted; the rest are encrypted in transit and at rest.</Lead>
+      <Lead>The live m* modules in the mosadd OS — five comms channels + the defensive threat engine. Private 1:1 (mDM) is end-to-end encrypted; the rest are encrypted in transit and at rest.</Lead>
 
       <P>
         Per <Anchor href="https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md">RFC 0001</Anchor>, every module is named{' '}
@@ -21,21 +21,20 @@ export default function ModulesPage() {
       <Table
         headers={['Module', 'Tools', 'Description', 'Status']}
         rows={[
-          [<Anchor key="mdm" href="/docs/modules/mdm">mDM</Anchor>, '12', 'Encrypted 1:1 text + full-duplex voice/video — Ed25519 identity, forward secrecy', 'alpha'],
-          [<Anchor key="mirc" href="/docs/modules/mirc">mIRC</Anchor>, '20', 'Persistent channels (Discord/Slack semantics) — also the embeddable website-chat widget engine', 'alpha'],
-          [<Anchor key="mroom" href="/docs/modules/mroom">mROOM</Anchor>, '9', 'Ephemeral rooms + group voice + no-account guest links', 'alpha'],
+          [<Anchor key="mdm" href="/docs/modules/mdm">mDM</Anchor>, '14', 'Encrypted 1:1 text + full-duplex voice/video — Ed25519 identity, forward secrecy, sealed sender', 'alpha'],
+          [<Anchor key="mirc" href="/docs/modules/mirc">mIRC</Anchor>, '22', 'Persistent channels (Discord/Slack semantics) — also the embeddable website-chat widget engine', 'alpha'],
           [<Anchor key="mail" href="/docs/modules/mail">mp0st</Anchor>, '12', 'Mail — every user gets <userId>@mosadd.com; send/view/list/delete + open/click/forward tracking + inbound-mail notify', 'alpha'],
-          [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, '5', 'Push-to-talk with LLM-in-room support', 'alpha'],
+          [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, '6', 'Push-to-talk with LLM-in-room support', 'alpha'],
           [<Anchor key="mrag" href="/docs/modules/mrag">mRAG</Anchor>, '4', 'Per-tenant agent memory — semantic recall (RAG) + list/delete indexed sources', 'alpha'],
         ]}
       />
-      <P>71 tools across 6 live modules.</P>
+      <P>64 tools across 5 live modules (plus the comms tools and the defensive threat engine).</P>
 
       <H2>Security</H2>
       <Table
         headers={['Module', 'Tools', 'Description', 'Status']}
         rows={[
-          [<Anchor key="threat-engine" href="/docs/modules/threat-engine">threat-engine</Anchor>, '—', '166-event threat taxonomy + scoring (embeddable radar engine)', 'alpha'],
+          [<Anchor key="threat-engine" href="/docs/modules/threat-engine">threat-engine</Anchor>, '2', 'Defensive threat-event classification — threat_catalog (taxonomy) + threat_classify (scoring), embeddable', 'alpha'],
         ]}
       />
 

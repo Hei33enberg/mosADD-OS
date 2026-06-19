@@ -2,7 +2,7 @@
   "name": "@mosadd/edge",
   "private": true,
   "version": "0.1.0",
-  "description": "Cloudflare Worker + Durable Object per channel — the scale backbone for mIRC/mROOM (LINEAR-2675).",
+  "description": "Cloudflare Worker + Durable Object per channel — the scale backbone for mIRC (LINEAR-2675).",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",

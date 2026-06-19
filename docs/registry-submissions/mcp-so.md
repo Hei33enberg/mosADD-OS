@@ -21,21 +21,20 @@ Install:        npx -y @mosadd/mcp
 
 ## Short description (≤200 chars)
 
-Operating system for human communications. 70 live MCP tools across direct messages, ephemeral rooms with no-account guest links, channels, email, push-to-talk, and knowledge recall. Apache-2.0, vendor-agnostic.
+Operating system for human communications. 64 live MCP tools across end-to-end-encrypted direct messages with sealed sender, channels, email, push-to-talk, and knowledge recall. Apache-2.0, vendor-agnostic.
 
 ## Long description
 
-mosadd treats human communication as an OS treats IPC: orthogonal primitives accessible through a uniform syscall layer. Instead of integrating Twilio + LiveKit + Resend + Matrix yourself, your agent calls `mROOM_create_with_link` once and gets a working room + a short-lived no-signup URL to share.
+mosadd treats human communication as an OS treats IPC: orthogonal primitives accessible through a uniform syscall layer. Instead of integrating Twilio + LiveKit + Resend + Matrix yourself, your agent calls `mIRC_create` then `mIRC_post_message` once and gets a working persistent channel — or `mDM_send` for an end-to-end-encrypted direct message where the relay never learns the sender (sealed sender).
 
-**Shipped in 3.0.0-alpha (6 live modules):**
-- **mDM** — Direct messages + voice with multi-thread per contact (USP — unlike WhatsApp/Telegram)
+**Shipped in 3.0.0-alpha (5 live modules):**
+- **mDM** — End-to-end-encrypted direct messages with sealed sender + voice, multi-thread per contact (USP — unlike WhatsApp/Telegram)
 - **mIRC** — Persistent channels (Discord/Slack semantics)
-- **mROOM** — Ephemeral rooms + no-signup guest links (USP — no other registered server exposes this)
 - **mp0st** — Email from `<userId>@mosadd.com`
 - **mTALK** — Push-to-talk + LLM-in-room
 - **mRAG** — Knowledge base RAG recall
 
-Plus the embeddable `@mosadd/threat-engine` — a 166-event threat radar that scores every operation.
+Plus a pure defensive threat-event classification engine (`threat_catalog` / `threat_classify`) — classifies communication-threat events you feed it, with no surveillance.
 
 ## Categories
 
