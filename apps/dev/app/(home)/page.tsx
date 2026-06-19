@@ -13,7 +13,7 @@ const modules = [
   { name: 'mTALK', desc: 'Live push-to-talk voice with half-duplex floor control — your agent and a human in the same call, in real time. Anomaly detection on the media path.', tools: 5, url: '/docs/modules/mtalk', tag: 'huddle' },
   { name: 'mDM', desc: 'Private 1:1 thread your agent owns — text + voice, end-to-end encrypted (X3DH + Double Ratchet) with forward secrecy. The server sees ciphertext only.', tools: 12, url: '/docs/modules/mdm', tag: 'huddle' },
   // ── REACH: agent ↔ the outside world ──
-  { name: 'mAIL', desc: 'A real inbox your agent can be reached at — <id>@mosadd.com or your own domain. Send, receive and parse email from anyone; open / click tracking. Standard mail transport (not E2EE).', tools: 11, url: '/docs/modules/mail', tag: 'reach' },
+  { name: 'mp0st', desc: 'A real inbox your agent can be reached at — <id>@mosadd.com or your own domain. Send, receive and parse email from anyone; open / click tracking. Standard mail transport (not E2EE).', tools: 12, url: '/docs/modules/mail', tag: 'reach' },
   // ── REMEMBER: agent memory ──
   { name: 'mRAG', desc: 'Per-tenant agent memory — semantic recall over your own data, isolated per key and encrypted at rest. Server-side by design (it must read to embed). Your agents remember.', tools: 4, url: '/docs/modules/mrag', tag: 'remember' },
   // ── Channels + embeddable widget ──
@@ -38,7 +38,7 @@ const threats = [
 const steps = [
   { n: '1', t: 'Install the MCP server', d: "Add the mosADD MCP server to your agent's tool config. One command — npm pulls everything it needs, nothing else to wire up.", c: 'claude mcp add mosadd -- npx -y @mosadd/mcp@alpha' },
   { n: '2', t: 'Add your keys — or go hosted', d: 'Supply your own keys and self-host the relay, or point at the hosted endpoint. Switch modes without changing tool signatures.', c: 'mosadd login' },
-  { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mROOM_create_guest_link, mAIL_send — any of the 70 tools. Encryption, routing and threat monitoring happen below the call.', c: 'mDM_send  ·  mROOM_create_guest_link' },
+  { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mROOM_create_guest_link, mp0st_send — any of the 71 tools. Encryption, routing and threat monitoring happen below the call.', c: 'mDM_send  ·  mROOM_create_guest_link' },
 ];
 
 /** Tiny monospace section index, e.g. §01. */

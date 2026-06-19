@@ -1,7 +1,7 @@
 /**
- * mAIL provenance — agent-attributed email send.
+ * mp0st provenance — agent-attributed email send.
  *
- * The plain `mAIL_send` (mail.ts) sends as the USER. When an AGENT sends mail on
+ * The plain `mp0st_send` (mail.ts) sends as the USER. When an AGENT sends mail on
  * the user's behalf, the recipient (and the audit trail) should be able to tell
  * it was agent-originated. Per the Lane A contract, `mp0st-send`, when called
  * with a HUB-CLAIM JWT, stamps the row with:
@@ -9,9 +9,9 @@
  *
  * This tool mints/forwards that hub-claim JWT and sets the provenance fields.
  *
- * AUTH MODEL (differs from the rest of mAIL):
- *   - mAIL_send uses the user's Supabase session JWT (via invokeFunction).
- *   - mAIL_send_as_agent presents a HUB-CLAIM JWT (hub key → claim exchange) so
+ * AUTH MODEL (differs from the rest of mp0st):
+ *   - mp0st_send uses the user's Supabase session JWT (via invokeFunction).
+ *   - mp0st_send_as_agent presents a HUB-CLAIM JWT (hub key → claim exchange) so
  *     mp0st-send can attribute the send to the agent/task.
  *
  * STATUS: scaffold. The hub-claim exchange endpoint is assumed (TODO Lane A —
@@ -39,7 +39,7 @@ function hubKey(): string | null {
 
 const EmailAddress = z.string().email().max(254);
 
-const mAIL_send_as_agent_input = z.object({
+const mp0st_send_as_agent_input = z.object({
   to: z.union([EmailAddress, z.array(EmailAddress).min(1).max(50)]),
   subject: z.string().min(1).max(998),
   body_text: z.string().max(1_048_576).optional(),
@@ -69,7 +69,7 @@ const mAIL_send_as_agent_input = z.object({
 async function mintHubClaim(agentId: string, taskId?: string): Promise<string> {
   const key = hubKey();
   if (!key) {
-    throw new Error("mAIL_send_as_agent needs MOSADD_API_KEY (hub key) to mint a provenance claim.");
+    throw new Error("mp0st_send_as_agent needs MOSADD_API_KEY (hub key) to mint a provenance claim.");
   }
   const r = await fetch(`${supabaseUrl()}/functions/v1/hub-claim-mint`, {
     method: "POST",
@@ -85,19 +85,19 @@ async function mintHubClaim(agentId: string, taskId?: string): Promise<string> {
   return data.token;
 }
 
-async function mAIL_send_as_agent(
-  input: z.infer<typeof mAIL_send_as_agent_input>,
+async function mp0st_send_as_agent(
+  input: z.infer<typeof mp0st_send_as_agent_input>,
   ctx: MosaddToolContext,
 ): Promise<{ message_id: string; status: string; is_internal: boolean; sent_by: "agent" }> {
   if (!input.body_text && !input.body_html) {
-    throw new Error("mAIL_send_as_agent requires at least one of body_text or body_html.");
+    throw new Error("mp0st_send_as_agent requires at least one of body_text or body_html.");
   }
 
   // Present the hub-claim JWT directly to mp0st-send (NOT the user session client)
   // so the EF attributes the row to the agent. TODO(Lane A): confirm mp0st-send
   // accepts a Bearer hub-claim and reads sent_by_agent_id / sent_by_task_id.
   const claim = await mintHubClaim(input.agent_id, input.task_id);
-  ctx.log("debug", "mAIL_send_as_agent invoking mp0st-send with hub-claim", { agent_id: input.agent_id });
+  ctx.log("debug", "mp0st_send_as_agent invoking mp0st-send with hub-claim", { agent_id: input.agent_id });
 
   const { agent_id, task_id, ...mailFields } = input;
   const r = await fetch(`${supabaseUrl()}/functions/v1/mp0st-send`, {
@@ -127,11 +127,11 @@ async function mAIL_send_as_agent(
 
 export const mailProvenanceTools: MosaddTool[] = [
   {
-    name: "mAIL_send_as_agent",
+    name: "mp0st_send_as_agent",
     requires: "network",
     description:
-      "Send an email ATTRIBUTED TO THE AGENT (provenance-stamped). Unlike mAIL_send (sends as the user), this stamps sent_by='agent' plus your agent_id and optional task_id onto the email record and audit trail — so recipients and compliance can see the mail was agent-originated. Auth: presents a hub-claim JWT (needs MOSADD_API_KEY). SCAFFOLD: depends on mp0st-send honoring the hub-claim + provenance fields (TODO Lane A).",
-    inputSchema: mAIL_send_as_agent_input,
-    handler: mAIL_send_as_agent as MosaddTool["handler"],
+      "Send an email ATTRIBUTED TO THE AGENT (provenance-stamped). Unlike mp0st_send (sends as the user), this stamps sent_by='agent' plus your agent_id and optional task_id onto the email record and audit trail — so recipients and compliance can see the mail was agent-originated. Auth: presents a hub-claim JWT (needs MOSADD_API_KEY). SCAFFOLD: depends on mp0st-send honoring the hub-claim + provenance fields (TODO Lane A).",
+    inputSchema: mp0st_send_as_agent_input,
+    handler: mp0st_send_as_agent as MosaddTool["handler"],
   },
 ];

@@ -11,12 +11,12 @@ describe("@mosadd/ai/core", () => {
     it("filters to a single module prefix", () => {
       const mDMOnly = filterTools({ modules: ["mDM"] });
       expect(mDMOnly.every((t) => t.name.startsWith("mDM_"))).toBe(true);
-      expect(mDMOnly.length).toBe(12); // 8 text ops + 4 voice (mDM_call_start/answer/end, mDM_voice_note)
+      expect(mDMOnly.length).toBe(14); // mDM = 14 (text + voice/call + file-send ops)
     });
 
     it("supports multiple modules", () => {
       const both = filterTools({ modules: ["mDM", "mROOM"] });
-      expect(both.length).toBe(12 + 9); // mDM=12, mROOM=9 (7 room + 2 message)
+      expect(both.length).toBe(14 + 11); // mDM=14, mROOM=11
       expect(
         both.every((t) => t.name.startsWith("mDM_") || t.name.startsWith("mROOM_")),
       ).toBe(true);

@@ -138,7 +138,7 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
     expect(names).toContain("mDM_send");
     expect(names).toContain("mIRC_create");
     expect(names).toContain("mROOM_create_guest_link");
-    expect(names).toContain("mAIL_send");
+    expect(names).toContain("mp0st_send");
     expect(names).toContain("mTALK_press"); // mTALK PTT now shipped
     expect(names).toContain("mRAG_search"); // mRAG RAG-for-devs now shipped
     expect(names).toContain("mIRC_post_message"); // channel messaging now shipped

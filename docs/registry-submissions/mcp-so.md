@@ -31,7 +31,7 @@ mosadd treats human communication as an OS treats IPC: orthogonal primitives acc
 - **mDM** — Direct messages + voice with multi-thread per contact (USP — unlike WhatsApp/Telegram)
 - **mIRC** — Persistent channels (Discord/Slack semantics)
 - **mROOM** — Ephemeral rooms + no-signup guest links (USP — no other registered server exposes this)
-- **mAIL** — Email from `<userId>@mosadd.com`
+- **mp0st** — Email from `<userId>@mosadd.com`
 - **mTALK** — Push-to-talk + LLM-in-room
 - **mRAG** — Knowledge base RAG recall
 

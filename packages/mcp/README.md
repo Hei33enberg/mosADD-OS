@@ -2,11 +2,11 @@
 
 MCP server for [mosadd](https://mosadd.com) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **3.0.0-alpha.16** — **70 live tools across 6 live modules** (mDM incl. voice + files, mIRC, mROOM, mAIL incl. provenance, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
+> **3.0.0-alpha.16** — **71 live tools across 6 live modules** (mDM incl. voice + files, mIRC, mROOM, mp0st incl. provenance, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
 
 ## Connect your agent
 
-Three ways to authenticate, friendliest first — all three end with the same ~70 tools.
+Three ways to authenticate, friendliest first — all three end with the same ~71 tools.
 
 ### 1. `mosadd login` — recommended (one command, stays logged in)
 
@@ -65,14 +65,14 @@ In Phase 2 the hosted gateway at `mcp.mosadd.com` removes even this — add a UR
 
 ## Tools shipped in alpha
 
-**70 live tools across 6 live modules** (mDM, mIRC, mROOM, mAIL, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool. Highlights per module:
+**71 live tools across 6 live modules** (mDM, mIRC, mROOM, mp0st, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool. Highlights per module:
 
 | Module | Tools | What it does |
 |---|---|---|
 | **mDM** (14) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`, `mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice`, `mDM_send_file` | 1:1 text, voice notes, calls + file/voice attachments. Multi-thread per contact, X3DH / Double-Ratchet E2EE on `mDM_send` |
 | **mIRC** (22) | `mIRC_create/list/get/update/delete`, member RBAC (`mIRC_join/leave/kick/ban/unban/set_role/set_ptt/approve_request/reject_request/request_access`), `mIRC_post_message`, `mIRC_list_messages`, edge (`mIRC_mint_channel_token`, `mIRC_send_edge`, `mIRC_history_edge`), `mIRC_send_voice/file` | Persistent Discord/Slack-style channels + the agent-coordination edge transport |
 | **mROOM** (11) | `mROOM_create`, **`mROOM_create_guest_link`**, `mROOM_join/leave/close/list`, `mROOM_voice_join`, `mROOM_send_message`, `mROOM_list_messages`, `mROOM_send_voice/file` | Ephemeral rooms + single-call no-account guest links |
-| **mAIL** (12) | `mAIL_send`, `mAIL_view`, `mAIL_list`, `mAIL_delete`, `mAIL_stats`, `mAIL_events`, `mAIL_metrics`, `mAIL_revoke`, `mAIL_audit_export`, `mAIL_consent`, `mAIL_notify`, `mAIL_send_as_agent` | Mail; every user gets `<id>@mosadd.com`. `mAIL_send_as_agent` stamps agent/human provenance; `mAIL_revoke` recalls secure-reader access; `mAIL_audit_export` emits an HMAC-SHA256-signed engagement audit; `mAIL_consent` manages recipient tracking opt-outs (GDPR); `mAIL_notify` pulls the inbound-mail feed |
+| **mp0st** (12) | `mp0st_send`, `mp0st_view`, `mp0st_list`, `mp0st_delete`, `mp0st_stats`, `mp0st_events`, `mp0st_metrics`, `mp0st_revoke`, `mp0st_audit_export`, `mp0st_consent`, `mp0st_notify`, `mp0st_send_as_agent` | Mail; every user gets `<id>@mosadd.com`. `mp0st_send_as_agent` stamps agent/human provenance; `mp0st_revoke` recalls secure-reader access; `mp0st_audit_export` emits an HMAC-SHA256-signed engagement audit; `mp0st_consent` manages recipient tracking opt-outs (GDPR); `mp0st_notify` pulls the inbound-mail feed |
 | **mTALK** (6) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state`, `mTALK_ingest_ptt` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release; `mTALK_ingest_ptt` feeds PTT audio to RAG |
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own data (hybrid vector + BM25) |
 | **comms_** (2) | `comms_action_create`, `comms_capabilities` | `comms_action_create` mints an agent→user one-link browser action (Tier 1); `comms_capabilities` is one-call discovery of every tool's transport `requires` flag |
@@ -125,7 +125,7 @@ For PTT / CALL / ROOM (real-time media), the architecture separates **control pl
 | `MOSADD_SUPABASE_URL` | Supabase project URL — DM / IRC / ROOM / KB backend | yes (BYOK) |
 | `MOSADD_SUPABASE_ANON_KEY` | Supabase anon key | yes (BYOK) |
 | `MOSADD_USER_JWT` | User session token | yes (for tools that touch user data) |
-| `MOSADD_RESEND_API_KEY` | Resend API key — enables `mAIL` outbound | no (mAIL disabled if unset) |
+| `MOSADD_RESEND_API_KEY` | Resend API key — enables `mp0st` outbound | no (mp0st disabled if unset) |
 | `MOSADD_LIVEKIT_URL` | LiveKit `wss://…` URL — enables `mTALK` / `mROOM` voice | no (voice disabled if unset) |
 | `MOSADD_LIVEKIT_API_KEY` | LiveKit API key | no (with `…_URL` / `…_API_SECRET`) |
 | `MOSADD_LIVEKIT_API_SECRET` | LiveKit API secret | no |

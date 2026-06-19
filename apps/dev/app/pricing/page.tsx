@@ -28,7 +28,7 @@ const tiers: Tier[] = [
     price: '$0',
     features: [
       '@mosadd/mcp + all SDK adapters',
-      'All 70 tools across 6 live modules',
+      'All 71 tools across 6 live modules',
       'Bring your own keys (LiveKit, Resend, OpenAI, Supabase)',
       'Unlimited MAT, msg, search — you pay your own infra',
       'Community support · GitHub Discussions',
@@ -255,7 +255,7 @@ export default function PricingPage() {
       <Prose className="mt-16">
         <H2>FAQ</H2>
         <P><strong>What is a MAT?</strong> <em>Monthly Active Talker</em> — a unique visitor that <em>sends at least one message</em> to one of your embeds in a calendar month. Viewers, reconnects, lurkers — all free. Repeat senders in the same month count once. We dedupe in Postgres, idempotent.</P>
-        <P><strong>What counts as a message?</strong> Every <code className="font-mono text-primary">mDM_send</code>, <code className="font-mono text-primary">mIRC_post</code>, <code className="font-mono text-primary">mROOM_post</code>, or <code className="font-mono text-primary">mAIL_send</code> outbound from the MCP toolkit. Inbound is free.</P>
+        <P><strong>What counts as a message?</strong> Every <code className="font-mono text-primary">mDM_send</code>, <code className="font-mono text-primary">mIRC_post</code>, <code className="font-mono text-primary">mROOM_post</code>, or <code className="font-mono text-primary">mp0st_send</code> outbound from the MCP toolkit. Inbound is free.</P>
         <P><strong>Why one unified plan instead of separate prices?</strong> Most users want both: a creator wants the embed for visitors AND the MCP toolkit for their own bots. Charging once is simpler. Pro $9 unlocks 10k MAT + 10k msg + 1k RAG — pick whichever fits and the others come along.</P>
         <P><strong>Is there a spend cap?</strong> Yes — hard cap = 2× your plan price. When you hit it, the mint endpoint refuses new joiners with a "queue / upgrade" UI. No silent overage bills, ever.</P>
         <P><strong>Can I move from self-host to hosted later?</strong> Yes — your data, your keys. The Apache-2.0 self-host has the same data model; just point your Stripe-paid account at the hosted hub.</P>

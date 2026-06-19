@@ -15,7 +15,7 @@ Existing consumer app (mosadd.com), Vite + React + Capacitor wraps for mobile. A
 - **CALL footer (right)** — retro phone icon (already shipped) → PSTN dialer
 - **Contact panel** — opens inline on click, fullscreen on mobile, draggable window on desktop
 - **Multi-thread per contact** (USP) — same data shape MCP uses, finally visible in UI
-- **Long-press / right-click** — Talk/Call/DM/mAIL/Archive/Hide/Block/Delete
+- **Long-press / right-click** — Talk/Call/DM/mp0st/Archive/Hide/Block/Delete
 
 Tracking in [LINEAR-2164](https://linear.app/ip-ra/issue/LINEAR-2164).
 

@@ -52,7 +52,7 @@ import { Agent, run } from "@openai/agents";
 const agent = new Agent({
   name: "mosadd-helper",
   instructions: "Manage the user's mosadd communications when asked.",
-  tools: mosadd({ modules: ["mDM", "mROOM", "mAIL"] }),
+  tools: mosadd({ modules: ["mDM", "mROOM", "mp0st"] }),
 });
 
 await run(agent, "Send Alice a message saying I'll be late.");

@@ -11,7 +11,7 @@ Skills are a Claude-only convenience layer on top of the [`@mosadd/mcp`](../pack
 | [`mdm/SKILL.md`](mdm/SKILL.md) | mDM | Direct messages, multi-thread per contact |
 | [`mroom/SKILL.md`](mroom/SKILL.md) | mROOM | Ephemeral rooms + no-account guest links (USP) |
 | [`mirc/SKILL.md`](mirc/SKILL.md) | mIRC | Persistent Discord/Slack-style channels |
-| [`mail/SKILL.md`](mail/SKILL.md) | mAIL | Email from `<userId>@mosadd.com` |
+| [`mail/SKILL.md`](mail/SKILL.md) | mp0st | Email from `<userId>@mosadd.com` |
 | [`mtalk/SKILL.md`](mtalk/SKILL.md) | mTALK | Push-to-talk voice rooms (half-duplex floor control) |
 | [`mrag/SKILL.md`](mrag/SKILL.md) | mRAG | RAG recall over the user's own messages/emails/calls |
 

@@ -36,7 +36,7 @@ curl -s http://localhost:3030/mcp \
 ```
 
 Verified locally: `initialize` → 200, `tools/list` → 70 tools (mDM/mIRC/mROOM/
-mTALK/mAIL/mRAG — mURL/mCALL unregistered), `tools/call mROOM_list` → real backend response, bad key → 401.
+mTALK/mp0st/mRAG — mURL/mCALL unregistered), `tools/call mROOM_list` → real backend response, bad key → 401.
 
 ## Deploy (mcp.mosadd.com)
 

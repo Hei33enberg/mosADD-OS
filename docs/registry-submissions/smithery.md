@@ -47,7 +47,7 @@ mosadd is the OS for human communications: instead of stitching Twilio + LiveKit
 - mIRC (22 tools) — Discord/Slack-style persistent encrypted channels
 - mROOM (11 tools) — Ephemeral rooms with no-account guest join links (USP)
 - mTALK (6 tools) — Push-to-talk voice with agent-in-room
-- mAIL (12 tools) — Email from `<userId>@mosadd.com`
+- mp0st (12 tools) — Email from `<userId>@mosadd.com`
 - mRAG (4 tools) — Encrypted knowledge base, RAG recall
 - Action Links (`comms_action_create`) — agent → human one-link browser action
 

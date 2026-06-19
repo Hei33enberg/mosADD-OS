@@ -63,9 +63,9 @@ await generateText({ model: anthropic("claude-opus-4-7"), tools, prompt });
 ## Add more channels
 
 ```ts
-mosadd({ modules: ["mDM", "mROOM", "mIRC", "mAIL"] })
+mosadd({ modules: ["mDM", "mROOM", "mIRC", "mp0st"] })
 // or all
 mosadd({})
 ```
 
-Today: 65 live tools across 7 live modules (mDM incl. voice / mIRC / mROOM / mAIL / mTALK / mRAG / mURL).
+Today: 65 live tools across 7 live modules (mDM incl. voice / mIRC / mROOM / mp0st / mTALK / mRAG / mURL).

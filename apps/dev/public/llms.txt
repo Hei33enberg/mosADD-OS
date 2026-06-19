@@ -6,7 +6,7 @@
 
 mosadd.dev is the developer portal for the mosadd OS toolkit. The toolkit ships
 as `@mosadd/*` packages on npm; the headline artifact is `@mosadd/mcp` — a single
-MCP server exposing 70 tools across 6 live modules that any agent (Claude Code, Cursor, ChatGPT Apps,
+MCP server exposing 71 tools across 6 live modules that any agent (Claude Code, Cursor, ChatGPT Apps,
 Vercel AI SDK, LangChain, …) can call.
 
 Install: `npx -y @mosadd/mcp@alpha`
@@ -14,8 +14,8 @@ Install: `npx -y @mosadd/mcp@alpha`
 ## Docs
 - [Quickstart](https://mosadd.dev/docs/quickstart): install for Claude Code, Cursor, Vercel AI SDK
 - [Credentials](https://mosadd.dev/docs/auth): `mosadd login`, MOSADD_* env vars
-- [MCP reference](https://mosadd.dev/docs/mcp): all 70 live tools (discover + invoke)
-- [Modules](https://mosadd.dev/docs/modules): mDM, mIRC, mROOM, mAIL, mTALK, mRAG (alpha); threat-engine (alpha)
+- [MCP reference](https://mosadd.dev/docs/mcp): all 71 live tools (discover + invoke)
+- [Modules](https://mosadd.dev/docs/modules): mDM, mIRC, mROOM, mp0st, mTALK, mRAG (alpha); threat-engine (alpha)
 - [SDK adapters](https://mosadd.dev/docs/sdk): Vercel AI, LangChain, OpenAI, Anthropic
 - [Security](https://mosadd.dev/docs/security): threat model + hardening
 - [RFCs](https://mosadd.dev/docs/rfcs): protocol RFC index
@@ -24,7 +24,7 @@ Install: `npx -y @mosadd/mcp@alpha`
 - mDM — direct messages, end-to-end encrypted, text + voice (12 tools)
 - mIRC — persistent channels (20 tools)
 - mROOM — ephemeral rooms + no-account join links (9 tools)
-- mAIL — email, every user gets <id>@mosadd.com (11 tools)
+- mp0st — email, every user gets <id>@mosadd.com (12 tools)
 - mTALK — push-to-talk, half-duplex floor control (5 tools)
 - mRAG — knowledge base, RAG recall over your own data (4 tools)
 
