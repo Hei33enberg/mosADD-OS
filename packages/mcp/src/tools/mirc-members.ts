@@ -47,7 +47,10 @@ const mIRC_leave_input = z.object({
 
 const mIRC_approve_request_input = z.object({
   channel_id: ChannelId,
-  request_id: z.string().min(1).describe("Pending request id."),
+  // EF channel-members-manage reads `target_identity_id` (normalizer below maps
+  // identity_id → target_identity_id). The old `request_id` field was ignored →
+  // 400 "target_identity_id required" on every approve/reject.
+  identity_id: z.string().min(1).describe("Identity id of the requester to approve/reject (state=requested; from mIRC_list members). NOTE: approving an E2EE channel also needs a wrapped group key — LINEAR-3523."),
 });
 
 const mIRC_reject_request_input = mIRC_approve_request_input;

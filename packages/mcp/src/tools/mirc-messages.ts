@@ -116,13 +116,16 @@ async function mIRC_list_messages(
 
   type MessageListResponse = {
     messages?: Array<{ id: string; sender_identity_id: string; encrypted_payload: string; created_at: string }>;
-    next_cursor?: string | null;
+    next_before?: string | null;
+    cursor?: string | null;
   };
+  // message-list reads `before` (history) / `since` (incremental) — NOT `cursor`.
+  // Sending `cursor` left `before` unset → every call returned the newest page.
   const data = await invokeFunction<MessageListResponse>("message-list", {
     space_id,
     thread_id,
     limit: input.limit ?? 50,
-    cursor: input.cursor,
+    before: input.cursor,
   });
 
   return {
@@ -132,7 +135,7 @@ async function mIRC_list_messages(
       text: unpackPayload(m.encrypted_payload).text,
       timestamp: m.created_at,
     })),
-    next_cursor: data?.next_cursor ?? null,
+    next_cursor: data?.next_before ?? data?.cursor ?? null,
   };
 }
 

@@ -97,6 +97,7 @@ export class SupabaseDmProvider implements DmProvider {
       }>;
       cursor?: string | null;
       has_more?: boolean;
+      next_before?: string | null;
     };
     // message-list paginates history via `before` (a created_at marker) and returns
     // the next marker as `cursor` — NOT `cursor` in / `next_cursor` out.
@@ -114,7 +115,8 @@ export class SupabaseDmProvider implements DmProvider {
         timestamp: m.created_at,
         threadId: m.thread_id,
       })),
-      nextCursor: data?.has_more ? (data?.cursor ?? null) : null,
+      // history mode (`before`) returns `next_before`; incremental (`since`) returns `cursor`+`has_more`.
+      nextCursor: data?.next_before ?? (data?.has_more ? (data?.cursor ?? null) : null),
     };
   }
 }

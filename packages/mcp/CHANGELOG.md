@@ -8,6 +8,18 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+### Fixed
+- **mIRC `reject_request` / `approve_request` field (LINEAR-3522):** the tools sent
+  `request_id` but `channel-members-manage` reads `target_identity_id` → 400 every
+  call. Renamed to `identity_id` (normalized to `target_identity_id`). `reject` now
+  works; `approve` of an E2EE channel still needs a wrapped group key (LINEAR-3523).
+- **mDM / mIRC message pagination (LINEAR-3524):** `mDM_list` read `cursor`/`has_more`
+  but `message-list` history mode returns `next_before`, and `mIRC_list_messages`
+  sent `cursor` (ignored; EF reads `before`) and read `next_cursor` (never returned)
+  → neither paged past page 1. Send `before`, read `next_before`.
+
+## [3.0.0-alpha.19] — 2026-06-19
+
 ### Removed
 - **BREAKING — mROOM module killed (LINEAR-3414):** the 11 `mROOM_*` tools
   (`mROOM_create`, `mROOM_create_guest_link`, `mROOM_join`, `mROOM_leave`,
