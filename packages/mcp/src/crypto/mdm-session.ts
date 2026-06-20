@@ -36,14 +36,22 @@ import {
   verifyEd25519,
   toBase64,
   fromBase64,
+  initRatchetInitiator,
+  initRatchetResponder,
+  ratchetEncrypt,
+  ratchetDecrypt,
   type EncryptedPayload,
   type RatchetState,
+  type DhRatchetState,
   type SessionRole,
 } from "@mosadd/crypto";
 import type { DmProvider } from "@mosadd/providers";
 
 export const PREKEY_BUNDLE_VERSION = "mosadd.prekeys.v1" as const;
+/** Legacy symmetric-ratchet envelope (no PCS). Still DECODED for back-compat. */
 export const E2EE_ENVELOPE_VERSION = "mosadd.e2ee.v1" as const;
+/** Double-Ratchet-with-DH envelope — post-compromise security (LINEAR-3409). New sends use this. */
+export const E2EE_ENVELOPE_VERSION_V2 = "mosadd.e2ee.v2" as const;
 
 const DEFAULT_ONE_TIME_PREKEYS = 8;
 
@@ -79,9 +87,14 @@ export interface PublicPrekeyBundle {
   signature: Uint8Array;
 }
 
-/** Persisted per-peer ratchet session. Plain data → trivially serializable. */
+/**
+ * Persisted per-peer ratchet session. Plain data → trivially serializable.
+ * A session is either v1 (`ratchet`, symmetric) or v2 (`ratchet2`, DH ratchet /
+ * PCS). New sessions are v2; an existing v1 session keeps running v1.
+ */
 export interface MdmSessionRecord {
-  ratchet: RatchetState;
+  ratchet?: RatchetState;       // v1 (legacy symmetric)
+  ratchet2?: DhRatchetState;    // v2 (DH ratchet, PCS — LINEAR-3409)
   role: SessionRole;
   /** Handshake header still owed to the peer (initiator only, until first send). */
   pendingHandshake?: { ik: Uint8Array; ek: Uint8Array; opkId?: number };
@@ -246,17 +259,39 @@ interface E2eeEnvelope {
   ct: EncryptedPayload;
 }
 
-/** Quick check whether on-wire bytes are an mDM E2EE envelope (vs legacy plaintext). */
+/** v2 envelope: carries the DH ratchet header (dh/pn/n) instead of a flat index. */
+interface E2eeEnvelopeV2 {
+  v: typeof E2EE_ENVELOPE_VERSION_V2;
+  hdr?: { ik: string; ek: string; opk?: number };
+  dh: string;   // base64 ratchet public key
+  pn: number;
+  n: number;
+  ct: EncryptedPayload;
+}
+
+/** Quick check whether on-wire bytes are an mDM E2EE envelope (v1 or v2). */
 export function isE2eeEnvelope(bytes: Uint8Array): boolean {
   try {
     const obj = JSON.parse(Buffer.from(bytes).toString("utf8"));
-    return obj?.v === E2EE_ENVELOPE_VERSION && typeof obj?.i === "number" && !!obj?.ct;
+    if (!obj?.ct) return false;
+    if (obj.v === E2EE_ENVELOPE_VERSION) return typeof obj.i === "number";
+    if (obj.v === E2EE_ENVELOPE_VERSION_V2) return typeof obj.dh === "string" && typeof obj.n === "number";
+    return false;
   } catch {
     return false;
   }
 }
 
-function serializeEnvelope(env: E2eeEnvelope): Uint8Array {
+/** Read the envelope version without validating the rest. */
+function peekEnvelopeVersion(bytes: Uint8Array): string | undefined {
+  try {
+    return JSON.parse(Buffer.from(bytes).toString("utf8"))?.v;
+  } catch {
+    return undefined;
+  }
+}
+
+function serializeEnvelope(env: E2eeEnvelope | E2eeEnvelopeV2): Uint8Array {
   return new Uint8Array(Buffer.from(JSON.stringify(env), "utf8"));
 }
 
@@ -264,6 +299,12 @@ function parseEnvelope(bytes: Uint8Array): E2eeEnvelope {
   const obj = JSON.parse(Buffer.from(bytes).toString("utf8"));
   if (obj?.v !== E2EE_ENVELOPE_VERSION) throw new Error(`Unsupported mDM envelope version: ${obj?.v}`);
   return obj as E2eeEnvelope;
+}
+
+function parseEnvelopeV2(bytes: Uint8Array): E2eeEnvelopeV2 {
+  const obj = JSON.parse(Buffer.from(bytes).toString("utf8"));
+  if (obj?.v !== E2EE_ENVELOPE_VERSION_V2) throw new Error(`Unsupported mDM envelope version: ${obj?.v}`);
+  return obj as E2eeEnvelopeV2;
 }
 
 // ---- Publish ----
@@ -319,18 +360,42 @@ export async function encryptForPeer(
       signedPreKeyPublicKey: peer.signedPrekey.publicKey,
       oneTimePreKeyPublicKey: opk?.publicKey,
     });
-    const ratchet = await initializeRatchet(rootKey, "initiator");
+    // New sessions use the DH ratchet (v2 / PCS). The initial remote ratchet key
+    // is the peer's signed prekey (the X3DH→DR handoff). LINEAR-3409.
+    const ratchet2 = await initRatchetInitiator(rootKey, peer.signedPrekey.publicKey);
     session = {
-      ratchet,
+      ratchet2,
       role: "initiator",
       pendingHandshake: { ik: own.identity.publicKey, ek: ephemeral.publicKey, opkId: opk?.id },
     };
   }
 
-  const step = await ratchetSend(session.ratchet);
+  // v2 (DH ratchet) path for new + v2 sessions.
+  if (session.ratchet2) {
+    const { header, ct } = await ratchetEncrypt(session.ratchet2, plaintext);
+    const env: E2eeEnvelopeV2 = {
+      v: E2EE_ENVELOPE_VERSION_V2,
+      dh: toBase64(header.dh),
+      pn: header.pn,
+      n: header.n,
+      ct,
+    };
+    if (session.pendingHandshake) {
+      env.hdr = {
+        ik: toBase64(session.pendingHandshake.ik),
+        ek: toBase64(session.pendingHandshake.ek),
+        opk: session.pendingHandshake.opkId,
+      };
+      session.pendingHandshake = undefined;
+    }
+    await keystore.putSession(peerId, session);
+    return serializeEnvelope(env);
+  }
+
+  // v1 (legacy symmetric) path — only for a session already established as v1.
+  const step = await ratchetSend(session.ratchet!);
   const ct = await encryptBytes(step.messageKey, plaintext);
   const env: E2eeEnvelope = { v: E2EE_ENVELOPE_VERSION, i: step.messageIndex, ct };
-
   if (session.pendingHandshake && step.messageIndex === 0) {
     env.hdr = {
       ik: toBase64(session.pendingHandshake.ik),
@@ -338,7 +403,6 @@ export async function encryptForPeer(
       opk: session.pendingHandshake.opkId,
     };
   }
-  // Header owed only on the first message; clear it after.
   session.pendingHandshake = undefined;
   await keystore.putSession(peerId, session);
   return serializeEnvelope(env);
@@ -350,46 +414,81 @@ export async function encryptForPeer(
  * Open an envelope from `peerId`, running X3DH (responder) on the first message
  * to derive the shared root key. Returns the inner plaintext bytes.
  */
+/** Run X3DH (responder side) from a first-contact handshake header → shared root key. */
+async function responderRootKey(
+  keystore: MdmKeyStore,
+  hdr: { ik: string; ek: string; opk?: number },
+): Promise<Uint8Array> {
+  const own = await keystore.getOwnMaterial();
+  let oneTimePreKeyPrivateKey: Uint8Array | undefined;
+  if (hdr.opk !== undefined) {
+    oneTimePreKeyPrivateKey = await keystore.takeOneTimePrekey(hdr.opk);
+    if (!oneTimePreKeyPrivateKey) {
+      throw new Error(`Handshake references one-time prekey ${hdr.opk} which is unknown or already consumed.`);
+    }
+  }
+  const { rootKey } = await performX3dhResponder(
+    {
+      identityPrivateKey: own.identity.privateKey,
+      signedPreKeyPrivateKey: own.signedPrekey.pair.privateKey,
+      oneTimePreKeyPrivateKey,
+    },
+    {
+      initiatorIdentityPublicKey: fromBase64(hdr.ik),
+      initiatorEphemeralPublicKey: fromBase64(hdr.ek),
+      usedOneTimePreKeyId: hdr.opk,
+    },
+  );
+  return rootKey;
+}
+
 export async function decryptFromPeer(
   keystore: MdmKeyStore,
   peerId: string,
   envelopeBytes: Uint8Array,
 ): Promise<Uint8Array> {
+  // v2 (DH ratchet / PCS) — LINEAR-3409.
+  if (peekEnvelopeVersion(envelopeBytes) === E2EE_ENVELOPE_VERSION_V2) {
+    const env = parseEnvelopeV2(envelopeBytes);
+    let session = await keystore.getSession(peerId);
+    if (!session) {
+      if (!env.hdr) {
+        throw new Error(`No session with "${peerId}" and the message carries no handshake header — cannot decrypt.`);
+      }
+      const rootKey = await responderRootKey(keystore, env.hdr);
+      const own = await keystore.getOwnMaterial();
+      const ratchet2 = await initRatchetResponder(rootKey, {
+        publicKey: own.signedPrekey.pair.publicKey,
+        privateKey: own.signedPrekey.pair.privateKey,
+      });
+      session = { ratchet2, role: "responder" };
+    }
+    if (!session.ratchet2) {
+      throw new Error(`Received a v2 mDM envelope but the session with "${peerId}" is v1 — refusing to mix ratchets.`);
+    }
+    const plaintext = await ratchetDecrypt(
+      session.ratchet2,
+      { dh: fromBase64(env.dh), pn: env.pn, n: env.n },
+      env.ct,
+    );
+    await keystore.putSession(peerId, session);
+    return plaintext;
+  }
+
+  // v1 (legacy symmetric) — back-compat decode.
   const env = parseEnvelope(envelopeBytes);
   let session = await keystore.getSession(peerId);
-
   if (!session) {
     if (!env.hdr) {
-      throw new Error(
-        `No session with "${peerId}" and the message carries no handshake header — cannot decrypt.`,
-      );
+      throw new Error(`No session with "${peerId}" and the message carries no handshake header — cannot decrypt.`);
     }
-    const own = await keystore.getOwnMaterial();
-    let oneTimePreKeyPrivateKey: Uint8Array | undefined;
-    if (env.hdr.opk !== undefined) {
-      oneTimePreKeyPrivateKey = await keystore.takeOneTimePrekey(env.hdr.opk);
-      if (!oneTimePreKeyPrivateKey) {
-        throw new Error(
-          `Handshake references one-time prekey ${env.hdr.opk} which is unknown or already consumed.`,
-        );
-      }
-    }
-    const { rootKey } = await performX3dhResponder(
-      {
-        identityPrivateKey: own.identity.privateKey,
-        signedPreKeyPrivateKey: own.signedPrekey.pair.privateKey,
-        oneTimePreKeyPrivateKey,
-      },
-      {
-        initiatorIdentityPublicKey: fromBase64(env.hdr.ik),
-        initiatorEphemeralPublicKey: fromBase64(env.hdr.ek),
-        usedOneTimePreKeyId: env.hdr.opk,
-      },
-    );
+    const rootKey = await responderRootKey(keystore, env.hdr);
     const ratchet = await initializeRatchet(rootKey, "responder");
     session = { ratchet, role: "responder" };
   }
-
+  if (!session.ratchet) {
+    throw new Error(`Received a v1 mDM envelope but the session with "${peerId}" is v2 — refusing to mix ratchets.`);
+  }
   const step = await ratchetReceive(session.ratchet);
   if (step.messageIndex !== env.i) {
     throw new Error(

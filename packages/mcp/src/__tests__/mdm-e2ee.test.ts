@@ -105,7 +105,7 @@ describe("mDM E2EE golden path — X3DH handshake + ratchet, both directions", (
     const wire = backend.messages[0]!.payload;
     const wireStr = Buffer.from(wire).toString("utf8");
     expect(wireStr).not.toContain("first contact");
-    expect(wireStr).toContain("mosadd.e2ee.v1"); // it IS our sealed envelope
+    expect(wireStr).toContain("mosadd.e2ee.v2"); // DH-ratchet sealed envelope (PCS — LINEAR-3409)
 
     // 4. Bob lists the thread and decrypts Alice's message.
     const bobView = (await tool("mDM_list")({ contact_id: "alice" }, bob)) as {

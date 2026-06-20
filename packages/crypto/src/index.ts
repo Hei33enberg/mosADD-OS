@@ -10,5 +10,6 @@ export * from "./x25519";
 export * from "./x3dh";
 export * from "./mnemonic";
 export * from "./doubleRatchet";
+export * from "./mdmRatchet";
 export * from "./group";
 export * from "./groupKeys";
