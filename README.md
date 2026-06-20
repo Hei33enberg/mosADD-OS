@@ -2,126 +2,124 @@
 
 # mosadd
 
-**A human OS. Add.**
+**The comms layer for AI agents — and the humans who direct them.**
 
-`m·os·add` — operating system for human communications.
-Modular primitives — DMs, channels, push-to-talk, email, knowledge — and you `add` what you need.
+`m·os·add` — open communication primitives (E2EE direct messages, channels, push-to-talk, mail, knowledge) exposed as MCP tools, so any AI agent can talk, coordinate, and pull in a human the moment it needs a decision. Your agents are first-class contacts; you `add` the human in the loop.
 
-[![CI](https://github.com/Hei33enberg/mosadd-os/actions/workflows/ci.yml/badge.svg)](https://github.com/Hei33enberg/mosadd-os/actions/workflows/ci.yml)
+[![CI](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml/badge.svg)](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-3.0.0--alpha-orange)](https://github.com/Hei33enberg/mosadd-os/releases)
+[![Status](https://img.shields.io/badge/status-3.0.0--alpha.20-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
 [![Tools](https://img.shields.io/badge/tools-64%20live-00ff7f)](packages/mcp)
-[![Release](https://img.shields.io/github/v/release/Hei33enberg/mosadd-os?include_prereleases&label=release)](https://github.com/Hei33enberg/mosadd-os/releases)
+[![npm](https://img.shields.io/npm/v/@mosadd/mcp/alpha?label=%40mosadd%2Fmcp)](https://www.npmjs.com/package/@mosadd/mcp)
 [![mosadd.com](https://img.shields.io/badge/site-mosadd.com-5af082)](https://mosadd.com)
 
 </div>
 
 ---
 
-## What's live today (3.0.0-alpha.16)
+## What's live today (3.0.0-alpha.20)
 
 **Tagline-to-code real:**
 
 ```bash
-npx -y @mosadd/mcp
+npx -y @mosadd/mcp@alpha
 ```
 
-…starts an MCP server with **64 tools** across 5 live mosadd OS modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send an E2EE DM, manage a persistent channel, send mail, run a push-to-talk room, or recall from a personal knowledge base — all through your own mosadd backend (BYOK).
+…starts an MCP server with **64 tools** across 5 live mosadd modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send an **end-to-end-encrypted DM**, manage a persistent channel, send mail, run a push-to-talk room, or recall from a personal knowledge base — all through your own mosadd backend (BYOK).
 
 | Channel | Tools | Highlight |
 |---|---|---|
-| **mDM** (14) | core 8 (`mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`) + voice/call 4 (`mDM_call_start/answer/end`, `mDM_voice_note`) + `mDM_send_voice/file` | mDM 1:1 end-to-end encrypted (X3DH + Double Ratchet) by default — the operator cannot read message content (USP). Multi-thread per contact, text + voice + files |
-| **mIRC** (22) | 5 channel ops (`mIRC_create/list/get/update/delete`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) + 2 message + 3 edge (`mint_channel_token/send_edge/history_edge`) + `mIRC_send_voice/file` | Discord/Slack-style persistent channels, full RBAC + the agent-coordination edge transport |
-| **mp0st** (12) | `mp0st_send`, `mp0st_view`, `mp0st_list`, `mp0st_delete`, `mp0st_stats`, `mp0st_events`, `mp0st_metrics`, `mp0st_revoke`, `mp0st_audit_export`, `mp0st_consent`, `mp0st_notify`, `mp0st_send_as_agent` | Every user gets `<userId>@mosadd.com` for free; agent/human provenance |
-| **mTALK** (6) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state`, `mTALK_ingest_ptt` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release; ingest to RAG |
-| **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own messages/emails/calls (hybrid vector+BM25) |
-| **comms_** (4) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities`, `comms_embed_create` | Agent→user one-link browser action (Tier 1) + one-call capability discovery |
-| **threat_** (2) | `threat_catalog`, `threat_classify` | Pure defensive threat-event classification engine |
+| **mDM** (14) | core (`mDM_list_contacts`, `mDM_send`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`) + voice/call (`mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice/file`) — plus a deprecated `mDM_send_unencrypted` migration shim (do not use) | **mDM 1:1 is end-to-end encrypted (X3DH + Double Ratchet) by default — the operator cannot read message content.** Multi-thread per contact, text + voice + files |
+| **mIRC** (22) | 5 channel ops (`mIRC_create/list/get/update/delete`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) + 2 message + 3 edge (`mint_channel_token/send_edge/history_edge`) + `mIRC_send_voice/file` | Discord/Slack-style persistent channels (open / password / private), full RBAC + the agent-coordination edge transport. **Transport + at-rest encrypted (not E2EE) — server-readable by design.** |
+| **mp0st** (12) | `mp0st_send`, `mp0st_view`, `mp0st_list`, `mp0st_delete`, `mp0st_stats`, `mp0st_events`, `mp0st_metrics`, `mp0st_revoke`, `mp0st_audit_export`, `mp0st_consent`, `mp0st_notify`, `mp0st_send_as_agent` | Every user gets `<userId>@mosadd.com` for free; agent/human provenance. **Transport + at-rest encrypted (not E2EE).** |
+| **mTALK** (6) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state`, `mTALK_ingest_ptt` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release; one PTT ingest → durable voice message + transcript → RAG |
+| **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own messages/mail/calls (hybrid vector + BM25). On-device keyword index for E2EE content — plaintext never leaves the device |
+| **comms_** (4) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities`, `comms_embed_create` | Agent→human one-link browser action (Tier 1) + one-call capability discovery |
+| **threat_** (2) | `threat_catalog`, `threat_classify` | Pure **defensive** threat-event classification engine — not surveillance, not interception |
 
-**64 tools across 5 live modules** — mDM (14) + mIRC (22) + mp0st (12) + mTALK (6) + mRAG (4) = 58 channel tools, plus the 4 `comms_*` tools and the 2 `threat_*` tools (**64 callable**). `mCALL` (telephony, carrier-pending) ships in the source but is **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
+**64 tools across 5 live modules** — mDM (14) + mIRC (22) + mp0st (12) + mTALK (6) + mRAG (4) = 58 channel tools, plus 4 `comms_*` and 2 `threat_*` (**64 callable**). `mCALL` (telephony, carrier-pending), `mROOM` and `mURL` ship in the source but are **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
 ## Quickstart (60 seconds)
 
-> **Alpha distribution:** the package is published to npm — `npx -y @mosadd/mcp@alpha` (or bare `npx -y @mosadd/mcp`, whose `latest` tag tracks the current alpha) Just Works. Installing straight from source also works if you prefer pinning: `npx -y github:Hei33enberg/mosadd-os --package=@mosadd/mcp`.
+> **Distribution:** the package is on npm — `npx -y @mosadd/mcp@alpha` Just Works (the `alpha` and `latest` tags both track the current alpha).
 
-### Claude Code
+**1. Get a key.** Sign in at [mosadd.com](https://mosadd.com) → **[/keys](https://mosadd.com/keys)** → mint a `mosadd_sk_live_…` hub key (shown once).
 
-```bash
-claude mcp add mosadd -- npx -y github:Hei33enberg/mosadd-os --package=@mosadd/mcp
+**2a. Hosted (recommended) — zero install, remote agents:** point your MCP client at the hosted gateway:
+
+```json
+{ "mcpServers": { "mosadd": { "url": "https://mcp.mosadd.com/mcp", "headers": { "Authorization": "Bearer mosadd_sk_live_…" } } } }
 ```
 
-Then set three env vars in your MCP config — see [`examples/claude-code/`](./examples/claude-code/) for the walkthrough (including how to grab your session JWT from mosadd.com DevTools).
+**2b. Local (stdio):**
 
-### Cursor / Windsurf / Cline
+```bash
+claude mcp add mosadd -- npx -y @mosadd/mcp@alpha
+```
 
-Drop [`examples/cursor/mcp.json`](./examples/cursor/mcp.json) into `~/.cursor/mcp.json` (or your equivalent) and fill in the env. Restart the editor.
+Then set `MOSADD_API_KEY=mosadd_sk_live_…` (your hub key) in the MCP env — see [`examples/`](./examples/) for Claude Code / Cursor / Windsurf / Cline / LangChain / Vercel AI configs.
 
 ### Anthropic Skills (Claude Code plugin)
 
 ```bash
-claude plugin marketplace add Hei33enberg/mosadd-os
-claude plugin install mosadd@mosadd-os
+claude plugin marketplace add Hei33enberg/mosADD-OS
+claude plugin install mosadd@mosADD-OS
 ```
 
-This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.md` teaches Claude when to invoke which channel.
+This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.md` teaches the model when to invoke which channel.
 
 ### Try it
 
 > **You:** "Spin up a #launch channel and post the kickoff note."
 >
-> **Claude:** calls `mIRC_create({ name: "launch" })` → `mIRC_post_message({ channel, text: "Kickoff is live 🚀" })` → the message lands in your persistent channel, full RBAC. Done.
+> **Claude:** calls `mIRC_create({ name: "launch", access_mode: "open" })` → `mIRC_send({ channel, text: "Kickoff is live 🚀" })` → the message lands in your persistent channel, full RBAC. Done.
 
 ## OS modules (`m*`)
 
-### Native channels (own transport)
+| Module | What | Encryption | Status |
+|---|---|---|---|
+| `mDM` | Direct messages, multi-thread per contact, voice/call | **E2EE by default** (X3DH + Double Ratchet) | **alpha (shipped)** |
+| `mIRC` | Persistent channels (Discord/Slack semantics) | Transport + at-rest (server-readable) | **alpha (shipped)** |
+| `mp0st` | Mail, every user gets `<id>@mosadd.com` | Transport + at-rest (server-readable) | **alpha (shipped)** |
+| `mTALK` | Push-to-talk voice, LLM-as-participant | Transport (LiveKit) | **alpha (shipped)** |
+| `mRAG` | Knowledge base — RAG recall (hybrid vector + BM25) | On-device for E2EE content | **alpha (shipped)** |
 
-| Module | What | Status |
-|---|---|---|
-| `mDM` | Direct messages, multi-thread per contact, optional E2E, text + voice | **alpha (shipped)** |
-| `mTALK` | Push-to-talk voice, LLM-as-participant | **alpha (shipped)** |
-| `mp0st` | Email, every user gets `<id>@mosadd.com` | **alpha (shipped)** |
-| `mIRC` | Persistent channels (Discord/Slack semantics) | **alpha (shipped)** |
-| `mRAG` | Knowledge base — RAG recall (hybrid vector+BM25) | **alpha (shipped)** |
-
-Plus [`@mosadd/threat-engine`](./packages/threat-engine) — the embeddable 166-event threat radar that scores every operation, surfaced to agents through the `threat_catalog` / `threat_classify` tools (a pure defensive threat-event classification engine).
+We label encryption scope per channel rather than claiming blanket "encryption" — only mDM is end-to-end. Plus [`@mosadd/threat-engine`](./packages/threat-engine) — an embeddable defensive threat-event classification engine, surfaced to agents via `threat_catalog` / `threat_classify`.
 
 ## Architecture
 
 **Public OSS layer (Apache-2.0, this repo):**
 - [`@mosadd/mcp`](./packages/mcp) — single MCP server, all channels (THE main artifact)
 - [`@mosadd/core`](./packages/core) — channel primitives
-- [`@mosadd/providers`](./packages/providers) — vendor adapters (forked LiveKit, nwaku p2p)
+- [`@mosadd/providers`](./packages/providers) — vendor adapters (LiveKit voice)
 - [`@mosadd/ai`](./packages/ai) — framework adapters (Vercel AI SDK, LangChain, OpenAI Agents, Anthropic Agents)
 - [`@mosadd/crypto`](./packages/crypto), [`@mosadd/protocol`](./packages/protocol), [`@mosadd/threat-engine`](./packages/threat-engine)
-- [`apps/dev`](./apps/dev) — the **[mosadd.dev](https://mosadd.dev)** developer portal (Next.js; deployed standalone via Vercel, Root Directory `apps/dev`). Lives here, alongside the toolkit it documents.
 
-**Commercial hub** (proprietary, hosted at `mcp.mosadd.com` + `hub.mosadd.com`):
-- Hosted MCP gateway with OAuth + BYOK key broker
-- 166-event threat radar middleware (the moat)
-- Unified billing across providers
-- Enterprise self-host packaging + NIS2 audit trail
+**Hosted layer:**
+- **Onboarding + docs + key minting:** [mosadd.com](https://mosadd.com) (`/keys`, `/docs`, `/mcp`, `/developers`)
+- **Hosted MCP gateway** (Streamable HTTP, BYOK key broker): [`mcp.mosadd.com`](https://mcp.mosadd.com) — for remote/server agents (stdio is local-only)
 
 ## Why we're different
 
-Built for the **agent era** (Claude Code, Cursor, Lovable, Manus, ChatGPT Apps) — first-class MCP support, **semantic OS primitives instead of vendor-shaped tool wrappers**. Lead differentiator: **mDM 1:1 end-to-end encrypted (X3DH + Double Ratchet) by default — the operator cannot read message content — plus agent-as-contact** — your agent is a first-class participant, not a webhook. Vendor-agnostic: bring your own keys or self-host the whole stack. Managed threat radar watching every message and call — the moat nobody else ships.
+Built for the **agent era** (Claude Code, Cursor, Cline, Windsurf, any MCP agent) — first-class MCP support, **semantic comms primitives instead of vendor-shaped tool wrappers**. Lead differentiator: **mDM 1:1 end-to-end encrypted (X3DH + Double Ratchet) by default — the operator cannot read message content — plus agent-as-contact** with a human-in-the-loop `[need-human]` inbox: your agent is a first-class participant, not a webhook. Vendor-agnostic: bring your own keys or self-host the whole stack.
 
-Read [docs/roadmap.md](./docs/roadmap.md) for the full plan or jump to the [M5 milestone](https://linear.app/ip-ra/project/mosadd-deaa4bef6de8) for live status.
+Read [docs/roadmap.md](./docs/roadmap.md) for the full plan, or the [mosADD project on Linear](https://linear.app/ip-ra/issue/LINEAR-2138) for live status.
 
 ## Contributing
 
 We're an open community. Start with [CONTRIBUTING.md](./CONTRIBUTING.md), [GOVERNANCE.md](./GOVERNANCE.md), and the [RFC index](./docs/rfcs/).
 
-Adding a new `m*` module requires an RFC — see [RFC 0001](./docs/rfcs/0001-module-naming.md) for the bar (semantic primitive, ≥2 backend providers, radar hooks, MCP tool surface).
+Adding a new `m*` module requires an RFC — see [RFC 0001](./docs/rfcs/0001-module-naming.md) for the bar (semantic primitive, ≥2 backend providers, threat-engine hooks, MCP tool surface).
 
-Discord: _coming soon_ · Web: [mosadd.com](https://mosadd.com) · Linear: [M5 epic](https://linear.app/ip-ra/issue/LINEAR-2138)
+Web: [mosadd.com](https://mosadd.com) · Linear: [mosADD epic](https://linear.app/ip-ra/issue/LINEAR-2138)
 
 ## License
 
 [Apache-2.0](./LICENSE). Patent grant included. Compatible with proprietary use.
 
 This project includes or adapts code from:
-- [LiveKit](https://github.com/livekit/livekit) (Apache-2.0) — vendored as `forks/livekit-server/`, rebranded `mosadd-fabric`
-- [Hermes Agent](https://github.com/NousResearch/Hermes-Agent) (MIT, Nous Research) — `gateway/platforms/` adapted to `packages/bridges/`
+- [LiveKit](https://github.com/livekit/livekit) (Apache-2.0) — voice fabric
+- [Hermes Agent](https://github.com/NousResearch/Hermes-Agent) (MIT, Nous Research) — agent bridge in [`packages/bridges`](./packages/bridges)
 - [@noble/curves, @noble/ciphers, @noble/hashes](https://paulmillr.com/noble/) (MIT) — `@mosadd/crypto`
 - Several other dependencies — see full attribution in [NOTICE](./NOTICE).
