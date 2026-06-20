@@ -24,7 +24,7 @@ Quickstart configs for the agent runtimes that consume `@mosadd/mcp`.
 
 **64 live MCP tools across 5 live channel modules** (+ comms + the defensive threat engine):
 
-- **mDM** (14): list_contacts, publish_keys, send, send_unencrypted, edit, delete, list, respond_request + voice ops — E2EE DMs with sealed sender
+- **mDM** (14): list_contacts, publish_keys, send, send_unencrypted, edit, delete, list, respond_request + voice ops — 1:1 DMs end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content)
 - **mIRC** (22): create, list, get, update, delete, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops
 - **mp0st** (12): send, view, list, delete, stats, events, metrics, revoke, audit_export, consent, notify, send_as_agent
 - **mTALK** (6): open, join, press, release, state — half-duplex push-to-talk

@@ -8,7 +8,7 @@ Skills are a Claude-only convenience layer on top of the [`@mosadd/mcp`](../pack
 
 | Skill | Channel | What it does |
 |---|---|---|
-| [`mdm/SKILL.md`](mdm/SKILL.md) | mDM | Direct messages with E2EE + sealed sender, multi-thread per contact |
+| [`mdm/SKILL.md`](mdm/SKILL.md) | mDM | 1:1 direct messages, end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content), multi-thread per contact |
 | [`mirc/SKILL.md`](mirc/SKILL.md) | mIRC | Persistent Discord/Slack-style channels |
 | [`mail/SKILL.md`](mail/SKILL.md) | mp0st | Email from `<userId>@mosadd.com` |
 | [`mtalk/SKILL.md`](mtalk/SKILL.md) | mTALK | Push-to-talk voice rooms (half-duplex floor control) |

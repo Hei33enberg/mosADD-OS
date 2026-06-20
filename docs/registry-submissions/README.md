@@ -31,4 +31,4 @@ Most registries want the same fields. Keep these consistent:
 - **Homepage**: `https://mosadd.com`
 - **Install**: `npx -y @mosadd/mcp`
 - **Tags**: `messaging`, `voice`, `email`, `agents`, `apache-2`, `open-source`
-- **OS modules listed**: mDM (alpha — E2EE DMs + sealed sender USP), mIRC (alpha), mp0st (alpha), mTALK (alpha — PTT), mRAG (alpha — RAG); plus a defensive threat-event engine (`threat_catalog` / `threat_classify`)
+- **OS modules listed**: mDM (alpha — 1:1 DMs end-to-end encrypted by default, X3DH + Double Ratchet, operator cannot read content; USP), mIRC (alpha), mp0st (alpha), mTALK (alpha — PTT), mRAG (alpha — RAG); plus a defensive threat-event engine (`threat_catalog` / `threat_classify`)

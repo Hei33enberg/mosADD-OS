@@ -32,17 +32,21 @@ Default: text-only. If the user says "voice channel", enable ptt. If they say "w
 
 ## Access modes
 
-- `public` — anyone in the user's mosadd graph can list + join
-- `private` — listed but joining requires the password
-- `invite_only` — only listed to members; joining requires direct invite
+The `access_mode` enum is `open | password | private` (default `open`):
+
+- `open` — anyone in the user's mosadd graph can list + join
+- `password` — join with a shared password (pass `password` on create; min 6 chars)
+- `private` — invite-only; joining requires a direct invite (no password)
 
 ## Example
 
-> **User:** "Create a private voice channel called 'war-room' with password kompot123."
+> **User:** "Create a password-protected voice channel called 'war-room' with password kompot123."
 >
 > **You:**
-> 1. `mIRC_create({ name: "war-room", access_mode: "private", password: "kompot123", capabilities: { txt: true, ptt: true, live: false } })` → `{ channel: { id, name, ... } }`
-> 2. Reply: "Created `war-room` (private, text + PTT). Members need the password to join."
+> 1. `mIRC_create({ name: "war-room", access_mode: "password", password: "kompot123", capabilities: { txt: true, ptt: true, live: false } })` → `{ channel: { id, name, ... } }`
+> 2. Reply: "Created `war-room` (password-gated, text + PTT). Members need the password to join."
+>
+> (For an invite-only room with no password, use `access_mode: "private"` and omit `password`.)
 
 ## Don't
 

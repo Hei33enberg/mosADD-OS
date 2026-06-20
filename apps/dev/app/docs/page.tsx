@@ -26,7 +26,7 @@ export default function DocsIndexPage() {
         <code className="font-mono text-primary">add</code>:
       </P>
       <Ul>
-        <li><code className="font-mono text-primary">mDM</code> — direct messages + 1:1 voice, end-to-end encrypted with sealed sender (the huddle)</li>
+        <li><code className="font-mono text-primary">mDM</code> — direct messages + 1:1 voice, end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content) (the huddle)</li>
         <li><code className="font-mono text-primary">mTALK</code> — push-to-talk (PTT + LLM in the same room)</li>
         <li><code className="font-mono text-primary">mp0st</code> — agent email (reach anyone)</li>
         <li><code className="font-mono text-primary">mRAG</code> — agent memory / knowledge base (RAG recall)</li>

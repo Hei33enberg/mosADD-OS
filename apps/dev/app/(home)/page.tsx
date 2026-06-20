@@ -9,7 +9,7 @@ import { RadarHero } from '../_components/RadarHero';
 // REMEMBER (agent memory) support it.
 const modules = [
   // ── HUDDLE: agent ↔ human, live ──
-  { name: 'mDM', desc: 'Private 1:1 thread your agent owns — text + voice, end-to-end encrypted (X3DH + Double Ratchet) with forward secrecy and sealed sender. The server sees ciphertext only. Your agent is the contact.', tools: 14, url: '/docs/modules/mdm', tag: 'huddle' },
+  { name: 'mDM', desc: 'Private 1:1 thread your agent owns — text + voice, end-to-end encrypted by default (X3DH + Double Ratchet) with forward secrecy. The server sees ciphertext only — the operator cannot read message content. Your agent is the contact.', tools: 14, url: '/docs/modules/mdm', tag: 'huddle' },
   { name: 'mTALK', desc: 'Live push-to-talk voice with half-duplex floor control — your agent and a human in the same call, in real time. Anomaly detection on the media path.', tools: 6, url: '/docs/modules/mtalk', tag: 'huddle' },
   // ── REACH: agent ↔ the outside world ──
   { name: 'mp0st', desc: 'A real inbox your agent can be reached at — <id>@mosadd.com or your own domain. Send, receive and parse email from anyone; open / click tracking. Standard mail transport (not E2EE).', tools: 12, url: '/docs/modules/mail', tag: 'reach' },
@@ -77,7 +77,7 @@ export default function HomePage() {
           <div className="bg-background p-6">
             <div className="mb-3 text-xs uppercase tracking-[0.2em] text-primary">One MCP server</div>
             <ul className="space-y-2.5 text-sm leading-relaxed text-muted-foreground">
-              <li>· <span className="text-foreground">The escalation moment, solved</span> — a private E2EE DM (sealed sender) + live voice pull a human into the loop. Your agent <em>is</em> the contact.</li>
+              <li>· <span className="text-foreground">The escalation moment, solved</span> — a private E2EE DM (1:1, X3DH + Double Ratchet; operator cannot read content) + live voice pull a human into the loop. Your agent <em>is</em> the contact.</li>
               <li>· <span className="text-foreground">A defensive threat engine in the kernel</span> — not a bolt-on. Every message classified before it moves.</li>
               <li>· One install, one config block. Reach, huddle and memory in the same tool namespace.</li>
               <li>· BYOK or go hosted; Apache-2.0 if you want to self-host and audit the source.</li>

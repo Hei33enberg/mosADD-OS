@@ -77,7 +77,7 @@ tags:
 
 > ## Add mosadd MCP server (`@mosadd/mcp`)
 >
-> mosadd is an operating system for human communications, distributed as an MCP server that exposes semantic primitives — `mDM` for end-to-end-encrypted direct messages with sealed sender, `mIRC` for persistent channels, `mp0st` for email, `mTALK` for push-to-talk, `mRAG` for knowledge recall — through 64 tools today (more channels coming).
+> mosadd is an operating system for human communications, distributed as an MCP server that exposes semantic primitives — `mDM` for 1:1 direct messages that are end-to-end encrypted by default (X3DH + Double Ratchet; the operator cannot read message content), `mIRC` for persistent channels, `mp0st` for email, `mTALK` for push-to-talk, `mRAG` for knowledge recall — through 64 tools today (more channels coming).
 >
 > **Repo:** https://github.com/Hei33enberg/mosadd-os
 > **License:** Apache-2.0
@@ -85,7 +85,7 @@ tags:
 >
 > Differentiators:
 > - **OS-level semantic primitives**, not vendor wrappers. RFC 0001 formalizes the `m<MODULE>_<operation>` naming convention.
-> - **mDM_send** — single MCP call delivers an end-to-end-encrypted direct message with sealed sender, so the relay never learns who sent it. To my knowledge no other registered server exposes sealed-sender DMs.
+> - **mDM_send** — single MCP call delivers a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet), so the operator cannot read message content. The same wire format is used by the mosadd app, so agent↔app DMs interoperate end-to-end.
 > - **Vendor-agnostic provider abstraction** — same primitives work over Supabase today, with a forked LiveKit + nwaku (p2p) backbone in follow-ups. Bring your own keys or self-host.
 > - **Defensive threat-event engine** — `threat_classify` is a pure, surveillance-free classifier over a communication-threat taxonomy (`threat_catalog`). It scores events you pass it; it does not monitor anyone.
 >

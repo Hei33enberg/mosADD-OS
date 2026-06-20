@@ -1,7 +1,8 @@
 # mosadd
 
 > A human OS. Add. — mosadd is an operating system for human communications.
-> One MCP server gives any AI agent native DM (E2EE + sealed sender), persistent
+> One MCP server gives any AI agent native DM (1:1 end-to-end encrypted by default,
+> X3DH + Double Ratchet — the operator cannot read content), persistent
 > channels, push-to-talk voice and email across the m* channel family. Open source, Apache-2.0.
 
 mosadd.dev is the developer portal for the mosadd OS toolkit. The toolkit ships
@@ -21,7 +22,7 @@ Install: `npx -y @mosadd/mcp@alpha`
 - [RFCs](https://mosadd.dev/docs/rfcs): protocol RFC index
 
 ## Channels (m*)
-- mDM — direct messages, end-to-end encrypted + sealed sender, text + voice (14 tools)
+- mDM — 1:1 direct messages, end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content), text + voice (14 tools)
 - mIRC — persistent channels (22 tools)
 - mp0st — email, every user gets <id>@mosadd.com (12 tools)
 - mTALK — push-to-talk, half-duplex floor control (6 tools)

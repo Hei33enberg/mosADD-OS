@@ -36,14 +36,14 @@ startCommand:
 
 **Title:** mosadd — A human OS. Add.
 
-**Tagline:** Operating system for human communications. E2EE DMs with sealed sender, channels, email, push-to-talk, knowledge recall — 64 tools today.
+**Tagline:** Operating system for human communications. mDM 1:1 end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content — plus channels, email, push-to-talk, knowledge recall — 64 tools today.
 
 **Long description:**
 
-mosadd is the OS for human communications: instead of stitching Twilio + LiveKit + Resend + Matrix yourself, you call OS-level semantic primitives — `mIRC_create` then `mIRC_post_message` instead of provisioning channel infra + auth + delivery yourself, or `mDM_send` for an end-to-end-encrypted direct message with sealed sender.
+mosadd is the OS for human communications: instead of stitching Twilio + LiveKit + Resend + Matrix yourself, you call OS-level semantic primitives — `mIRC_create` then `mIRC_post_message` instead of provisioning channel infra + auth + delivery yourself, or `mDM_send` for a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content.
 
 **64 live tools across 5 live modules (3.0.0-alpha):**
-- mDM (14 tools) — End-to-end-encrypted direct messages with sealed sender + 1:1 voice, multi-thread per contact (USP)
+- mDM (14 tools) — 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content) + 1:1 voice, multi-thread per contact (USP)
 - mIRC (22 tools) — Discord/Slack-style persistent encrypted channels
 - mTALK (6 tools) — Push-to-talk voice with agent-in-room
 - mp0st (12 tools) — Email from `<userId>@mosadd.com`

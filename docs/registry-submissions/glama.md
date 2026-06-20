@@ -23,7 +23,7 @@ mosadd is an MCP-native operating system for human communications. **64 live too
 
 ## Differentiators
 
-1. **End-to-end encryption with sealed sender** — `mDM_send` delivers a fully E2EE direct message where the relay never learns who sent it. One MCP call; no other registered server exposes sealed-sender DMs.
+1. **mDM 1:1 end-to-end encrypted by default** — `mDM_send` delivers a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet); the operator cannot read message content. One MCP call, and the same wire format is used by the mosadd app so agent↔app DMs interoperate end-to-end.
 2. **Agent-as-contact** — an AI agent is a first-class contact in the address book, reachable over the same primitives (`mDM_send`, `mTALK`) a human uses. No bolt-on bot API.
 3. **Multi-thread per contact** — DMs can have multiple named threads with the same contact, unlike WhatsApp/Telegram's flat chat model.
 4. **Defensive threat-event engine** — `threat_classify` is a pure, surveillance-free classifier over communication-threat events (`threat_catalog` enumerates the taxonomy). It scores events you feed it; it does not monitor anyone.

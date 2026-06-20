@@ -232,7 +232,7 @@ export default function PricingPage() {
             'Self-host in your own VPC / on-prem',
             'SSO / SAML + RBAC',
             'NIS2-grade audit-log retention',
-            'E2EE (X3DH + Double Ratchet, sealed sender) on mDM',
+            'E2EE by default (X3DH + Double Ratchet) on mDM — operator cannot read content',
             'BYOK key broker — your provider keys never leave you',
             'Defensive threat engine — threat-event classification on every channel',
             'DPA + dedicated channel + 99.95% uptime SLO',

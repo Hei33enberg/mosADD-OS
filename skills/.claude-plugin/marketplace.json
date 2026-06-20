@@ -1,7 +1,7 @@
 {
   "name": "mosadd",
   "displayName": "mosadd — A human OS. Add.",
-  "description": "Operating system for human communications. Encrypted direct messages with sealed sender, persistent channels, push-to-talk, email, a RAG knowledge base and a defensive threat-event classification engine — one MCP server. Open-source under Apache-2.0.",
+  "description": "Operating system for human communications. mDM 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content), persistent channels, push-to-talk, email, a RAG knowledge base and a defensive threat-event classification engine — one MCP server. Open-source under Apache-2.0.",
   "version": "3.0.0-alpha.16",
   "author": {
     "name": "mosadd contributors",

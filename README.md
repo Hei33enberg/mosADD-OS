@@ -31,7 +31,7 @@ npx -y @mosadd/mcp
 
 | Channel | Tools | Highlight |
 |---|---|---|
-| **mDM** (14) | core 8 (`mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`) + voice/call 4 (`mDM_call_start/answer/end`, `mDM_voice_note`) + `mDM_send_voice/file` | Multi-thread per contact + X3DH/Double-Ratchet E2EE with sealed sender (USP), text + voice + files |
+| **mDM** (14) | core 8 (`mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`) + voice/call 4 (`mDM_call_start/answer/end`, `mDM_voice_note`) + `mDM_send_voice/file` | mDM 1:1 end-to-end encrypted (X3DH + Double Ratchet) by default — the operator cannot read message content (USP). Multi-thread per contact, text + voice + files |
 | **mIRC** (22) | 5 channel ops (`mIRC_create/list/get/update/delete`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) + 2 message + 3 edge (`mint_channel_token/send_edge/history_edge`) + `mIRC_send_voice/file` | Discord/Slack-style persistent channels, full RBAC + the agent-coordination edge transport |
 | **mp0st** (12) | `mp0st_send`, `mp0st_view`, `mp0st_list`, `mp0st_delete`, `mp0st_stats`, `mp0st_events`, `mp0st_metrics`, `mp0st_revoke`, `mp0st_audit_export`, `mp0st_consent`, `mp0st_notify`, `mp0st_send_as_agent` | Every user gets `<userId>@mosadd.com` for free; agent/human provenance |
 | **mTALK** (6) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state`, `mTALK_ingest_ptt` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release; ingest to RAG |
@@ -104,7 +104,7 @@ Plus [`@mosadd/threat-engine`](./packages/threat-engine) — the embeddable 166-
 
 ## Why we're different
 
-Built for the **agent era** (Claude Code, Cursor, Lovable, Manus, ChatGPT Apps) — first-class MCP support, **semantic OS primitives instead of vendor-shaped tool wrappers**. Lead differentiator: **mDM E2EE with sealed sender + agent-as-contact** — your agent is a first-class participant, not a webhook. Vendor-agnostic: bring your own keys or self-host the whole stack. Managed threat radar watching every message and call — the moat nobody else ships.
+Built for the **agent era** (Claude Code, Cursor, Lovable, Manus, ChatGPT Apps) — first-class MCP support, **semantic OS primitives instead of vendor-shaped tool wrappers**. Lead differentiator: **mDM 1:1 end-to-end encrypted (X3DH + Double Ratchet) by default — the operator cannot read message content — plus agent-as-contact** — your agent is a first-class participant, not a webhook. Vendor-agnostic: bring your own keys or self-host the whole stack. Managed threat radar watching every message and call — the moat nobody else ships.
 
 Read [docs/roadmap.md](./docs/roadmap.md) for the full plan or jump to the [M5 milestone](https://linear.app/ip-ra/project/mosadd-deaa4bef6de8) for live status.
 

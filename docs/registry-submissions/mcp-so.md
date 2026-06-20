@@ -21,14 +21,14 @@ Install:        npx -y @mosadd/mcp
 
 ## Short description (≤200 chars)
 
-Operating system for human communications. 64 live MCP tools across end-to-end-encrypted direct messages with sealed sender, channels, email, push-to-talk, and knowledge recall. Apache-2.0, vendor-agnostic.
+Operating system for human communications. 64 live MCP tools — mDM 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content), plus channels, email, push-to-talk, and knowledge recall. Apache-2.0, vendor-agnostic.
 
 ## Long description
 
-mosadd treats human communication as an OS treats IPC: orthogonal primitives accessible through a uniform syscall layer. Instead of integrating Twilio + LiveKit + Resend + Matrix yourself, your agent calls `mIRC_create` then `mIRC_post_message` once and gets a working persistent channel — or `mDM_send` for an end-to-end-encrypted direct message where the relay never learns the sender (sealed sender).
+mosadd treats human communication as an OS treats IPC: orthogonal primitives accessible through a uniform syscall layer. Instead of integrating Twilio + LiveKit + Resend + Matrix yourself, your agent calls `mIRC_create` then `mIRC_post_message` once and gets a working persistent channel — or `mDM_send` for a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet), where the operator cannot read message content.
 
 **Shipped in 3.0.0-alpha (5 live modules):**
-- **mDM** — End-to-end-encrypted direct messages with sealed sender + voice, multi-thread per contact (USP — unlike WhatsApp/Telegram)
+- **mDM** — 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content) + voice, multi-thread per contact (USP — unlike WhatsApp/Telegram)
 - **mIRC** — Persistent channels (Discord/Slack semantics)
 - **mp0st** — Email from `<userId>@mosadd.com`
 - **mTALK** — Push-to-talk + LLM-in-room

@@ -21,7 +21,7 @@ Trigger on these user intents:
 
 2. **Threads.** mosadd's USP is **multiple threads per contact**. If the user says "tell Alice in the work thread", pass `thread_label: "work"`. If they don't specify, omit thread_label — defaults to the contact's main thread.
 
-3. **Encryption notice.** Alpha payload is plaintext base64-wrapped. If the user asks for "encrypted", clarify that v0.2 will add Double Ratchet E2E — for now privacy comes from the user controlling their own Supabase backend (BYOK).
+3. **Encryption.** mDM 1:1 messages are **end-to-end encrypted by default** (X3DH + Double Ratchet, `mosadd.e2ee.v2` envelope). The mosadd server/operator **cannot read message content**. Prekeys auto-publish, so `mDM_send` encrypts transparently — you don't need to run `mDM_publish_keys` first in the normal path (it's there for re-keying). The same wire format is used by the mosadd app, so messages sent from the toolkit interoperate end-to-end with app users. Note: E2EE protects *content*, not metadata — the relay still sees who messaged whom (mosadd does NOT do "sealed sender"). The deprecated `mDM_send_unencrypted` sends server-readable plaintext; only use it if a peer explicitly cannot do E2EE.
 
 ## Configuration
 
@@ -48,4 +48,5 @@ If any are missing, `mDM_send` fails fast with an actionable error. Direct the u
 
 - Don't ask the user for the recipient's UUID if `mDM_list_contacts` can resolve it.
 - Don't fabricate thread_labels — only use what the user explicitly said.
-- Don't claim messages are E2E-encrypted in alpha — they're not yet.
+- Don't claim "sealed sender" — mDM hides message *content* end-to-end, but the relay still sees sender and recipient identity.
+- Don't tell the user mDM is plaintext — `mDM_send` is end-to-end encrypted by default.

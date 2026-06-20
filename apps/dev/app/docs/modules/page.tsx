@@ -21,7 +21,7 @@ export default function ModulesPage() {
       <Table
         headers={['Module', 'Tools', 'Description', 'Status']}
         rows={[
-          [<Anchor key="mdm" href="/docs/modules/mdm">mDM</Anchor>, '14', 'Encrypted 1:1 text + full-duplex voice/video — Ed25519 identity, forward secrecy, sealed sender', 'alpha'],
+          [<Anchor key="mdm" href="/docs/modules/mdm">mDM</Anchor>, '14', 'E2EE-by-default 1:1 text + full-duplex voice/video — X3DH + Double Ratchet, Ed25519 identity, forward secrecy; operator cannot read content', 'alpha'],
           [<Anchor key="mirc" href="/docs/modules/mirc">mIRC</Anchor>, '22', 'Persistent channels (Discord/Slack semantics) — also the embeddable website-chat widget engine', 'alpha'],
           [<Anchor key="mail" href="/docs/modules/mail">mp0st</Anchor>, '12', 'Mail — every user gets <userId>@mosadd.com; send/view/list/delete + open/click/forward tracking + inbound-mail notify', 'alpha'],
           [<Anchor key="mtalk" href="/docs/modules/mtalk">mTALK</Anchor>, '6', 'Push-to-talk with LLM-in-room support', 'alpha'],
