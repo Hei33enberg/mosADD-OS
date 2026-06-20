@@ -12,8 +12,10 @@
  * It is ADDITIVE: `doubleRatchet.ts` (used by SecureSession → LiveKit calls +
  * mobile) is untouched. This drives the mDM `mosadd.e2ee.v2` envelope only.
  *
- * Scope: strict in-order WITHIN a chain — a gap throws (skipped-message-key
- * caching for lossy/out-of-order transports is LINEAR-2478). Byte-identical in
+ * Out-of-order / gapped delivery is supported via a bounded skipped-message-key
+ * cache (Signal's skipped-keys — LINEAR-2478): message keys for indices not yet
+ * consumed in order are derived and stored (bounded by MAX_SKIP / MAX_SKIP_KEYS, a
+ * DoS guard) so a later or delayed message still opens. Byte-identical in
  * @m0ssad/crypto (app) and @mosadd/crypto (toolkit) so app↔toolkit DMs interop.
  */
 
@@ -22,6 +24,13 @@ import { deriveSharedSecret, generateX25519KeyPair } from "./x25519";
 import { encryptBytes, decryptBytes, type EncryptedPayload } from "./aes";
 
 const _enc = new TextEncoder();
+
+// Out-of-order delivery bounds (DoS guards): MAX_SKIP caps how many message keys a
+// single message may force us to derive (a large n/pn jump); MAX_SKIP_KEYS caps the
+// total cached across chains (FIFO-evicted oldest-first). Load-bearing for interop —
+// keep identical in @m0ssad/crypto and @mosadd/crypto.
+const MAX_SKIP = 1000;
+const MAX_SKIP_KEYS = 2000;
 
 /** Serializable per-peer Double Ratchet state (all key material is raw bytes). */
 export interface DhRatchetState {
@@ -34,6 +43,14 @@ export interface DhRatchetState {
   ns: number;            // messages sent in the current sending chain
   nr: number;            // messages received in the current receiving chain
   pn: number;            // messages in the previous sending chain
+  skipped?: SkippedMessageKey[]; // keys cached for out-of-order / gapped delivery (LINEAR-2478)
+}
+
+/** A one-time message key cached for an index not yet consumed in order. */
+export interface SkippedMessageKey {
+  dh: Uint8Array;        // ratchet public key identifying the chain the key belongs to
+  n: number;             // message number within that chain
+  mk: Uint8Array;        // the derived one-time message key
 }
 
 /** Per-message ratchet header carried on the wire (alongside the ciphertext). */
@@ -156,36 +173,75 @@ async function dhRatchet(state: DhRatchetState, header: DhRatchetHeader): Promis
   state.cks = send.ck;
 }
 
+// Consume a cached skipped key matching (header.dh, header.n), if present. Returns the
+// plaintext on success and only THEN drops the key; a tampered ct throws from decryptBytes
+// and the key is retained. Returns null when nothing matches.
+async function tryDecryptSkipped(
+  state: DhRatchetState,
+  header: DhRatchetHeader,
+  ct: EncryptedPayload,
+): Promise<Uint8Array | null> {
+  if (!state.skipped) return null;
+  for (let i = 0; i < state.skipped.length; i += 1) {
+    const s = state.skipped[i]!;
+    if (s.n === header.n && sameKey(s.dh, header.dh)) {
+      const plaintext = await decryptBytes(s.mk, ct); // tag check; throws (key kept) if tampered
+      state.skipped.splice(i, 1);
+      return plaintext;
+    }
+  }
+  return null;
+}
+
+// Advance the current receiving chain from state.nr up to (exclusive) `until`, caching
+// each derived message key under `dh` so a later/delayed message opens. Bounded: a jump
+// beyond MAX_SKIP is refused (DoS), and the cache is FIFO-capped at MAX_SKIP_KEYS.
+async function skipReceivingKeys(state: DhRatchetState, dh: Uint8Array, until: number): Promise<void> {
+  if (!state.ckr) return; // no receiving chain yet → nothing to skip
+  if (until - state.nr > MAX_SKIP) {
+    throw new Error(
+      `mDM ratchet: too many skipped messages (${until - state.nr} > ${MAX_SKIP}); refusing (DoS guard).`,
+    );
+  }
+  if (!state.skipped) state.skipped = [];
+  while (state.nr < until) {
+    const { ck, mk } = await kdfCk(state.ckr);
+    state.skipped.push({ dh, n: state.nr, mk });
+    state.ckr = ck;
+    state.nr += 1;
+  }
+  while (state.skipped.length > MAX_SKIP_KEYS) state.skipped.shift(); // bound total cache
+}
+
 /**
- * Open one message; performs a DH ratchet turn when the header carries a new
- * ratchet key. Strict in-order: a gap throws (skipped keys = LINEAR-2478).
- * Mutates `state`.
+ * Open one message. Handles out-of-order / gapped delivery (LINEAR-2478): a message
+ * already passed in order is served from the skipped-key cache; a gap within a chain or
+ * before a DH ratchet turn is bridged by caching the intervening keys. Performs a DH
+ * ratchet turn when the header carries a new ratchet key. Mutates `state`.
  */
 export async function ratchetDecrypt(
   state: DhRatchetState,
   header: DhRatchetHeader,
   ct: EncryptedPayload,
 ): Promise<Uint8Array> {
+  // 1. A message we already skipped past (delivered late / out of order)?
+  const fromSkipped = await tryDecryptSkipped(state, header, ct);
+  if (fromSkipped) return fromSkipped;
+
+  // 2. New ratchet key → cache the tail of the prior receiving chain (up to header.pn),
+  //    then turn. (On a responder's first receive there is no prior chain — a no-op.)
   if (!sameKey(state.dhrPub, header.dh)) {
-    // The previous receiving chain must be fully consumed before the turn.
-    if (header.pn !== state.nr) {
-      throw new Error(
-        `mDM ratchet: message skipped before a ratchet turn (expected ${state.nr} in the prior chain, header says ${header.pn}); skipped-key handling is LINEAR-2478.`,
-      );
-    }
+    if (state.dhrPub) await skipReceivingKeys(state, state.dhrPub, header.pn);
     await dhRatchet(state, header);
   }
-  if (header.n !== state.nr) {
-    throw new Error(
-      `mDM ratchet: out-of-order message (expected ${state.nr}, got ${header.n}); skipped-key handling is LINEAR-2478.`,
-    );
-  }
+
+  // 3. Bridge any gap before header.n within the current chain by caching those keys.
+  await skipReceivingKeys(state, header.dh, header.n);
+
+  // 4. header.n === state.nr now. Decrypt (AEAD tag) BEFORE advancing the receiving chain,
+  //    so a corrupt or tampered message is rejected WITHOUT desyncing the ratchet.
   if (!state.ckr) throw new Error("mDM ratchet: no receiving chain.");
   const { ck, mk } = await kdfCk(state.ckr);
-  // Decrypt (AEAD tag check) BEFORE advancing the receiving chain, so a corrupt or
-  // tampered message is rejected WITHOUT desyncing the ratchet — the next valid
-  // message still opens. (Atomicity across a DH-ratchet turn is out of scope here;
-  // strict in-order recovery / skipped keys = LINEAR-2478.)
   const plaintext = await decryptBytes(mk, ct);
   state.ckr = ck;
   state.nr += 1;

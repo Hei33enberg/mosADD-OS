@@ -80,11 +80,33 @@ describe("mDM Double Ratchet (DH step / PCS — LINEAR-3409)", () => {
     await expect(ratchetDecrypt(bob, m0.header, m1.ct)).rejects.toBeTruthy();
   });
 
-  it("rejects an out-of-order gap (strict in-order; skipped keys deferred to 2478)", async () => {
+  it("out-of-order WITHIN a chain: msgs sent 0,1,2 delivered 2,0,1 all decrypt (LINEAR-2478)", async () => {
     const { alice, bob } = await pair();
     const m0 = await ratchetEncrypt(alice, enc("m0"));
     const m1 = await ratchetEncrypt(alice, enc("m1"));
-    void m0;
-    await expect(ratchetDecrypt(bob, m1.header, m1.ct)).rejects.toThrow();
+    const m2 = await ratchetEncrypt(alice, enc("m2"));
+    expect(dec(await ratchetDecrypt(bob, m2.header, m2.ct))).toBe("m2");
+    expect(dec(await ratchetDecrypt(bob, m0.header, m0.ct))).toBe("m0");
+    expect(dec(await ratchetDecrypt(bob, m1.header, m1.ct))).toBe("m1");
+  });
+
+  it("out-of-order ACROSS a ratchet turn: a delayed message from the previous chain still opens", async () => {
+    const { alice, bob } = await pair();
+    const m0 = await ratchetEncrypt(alice, enc("m0"));
+    const m1 = await ratchetEncrypt(alice, enc("m1")); // chain-1, will arrive LATE
+    expect(dec(await ratchetDecrypt(bob, m0.header, m0.ct))).toBe("m0");
+    const b0 = await ratchetEncrypt(bob, enc("b0"));
+    await ratchetDecrypt(alice, b0.header, b0.ct);
+    const a2 = await ratchetEncrypt(alice, enc("a2"));
+    expect(dec(await ratchetDecrypt(bob, a2.header, a2.ct))).toBe("a2");
+    expect(dec(await ratchetDecrypt(bob, m1.header, m1.ct))).toBe("m1");
+  });
+
+  it("bounded skip cache: a gap beyond MAX_SKIP is refused (DoS guard)", async () => {
+    const { alice, bob } = await pair();
+    const m0 = await ratchetEncrypt(alice, enc("m0"));
+    await ratchetDecrypt(bob, m0.header, m0.ct);
+    const evilHeader = { dh: m0.header.dh, pn: m0.header.pn, n: 5000 };
+    await expect(ratchetDecrypt(bob, evilHeader, m0.ct)).rejects.toThrow(/too many skipped/);
   });
 });
