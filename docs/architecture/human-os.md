@@ -1,126 +1,114 @@
-# Architecture: mosadd as a Human OS
+# mosadd Architecture
 
-## The framing
+mosadd is the **comms layer for AI agents — and the humans who direct them**. The
+toolkit ships as `@mosadd/*` packages on npm; the headline artifact is `@mosadd/mcp`,
+a single MCP server exposing **64 tools across 5 live modules** that any agent
+(Claude Code, Cursor, ChatGPT Apps, Vercel AI SDK, LangChain, …) can call.
 
-`m·os·add` reads as **"man OS add"** — *Human Operating System. Add.*
+This document describes how the pieces fit together: the public OSS layer, the
+five channels and their encryption scope, the hosted gateway, and BYOK.
 
-mosadd is not an SDK. It is not a wrapper. It is not a chat app. It is an **operating system for human communications**, with **modular primitives** that you add as needed.
+## The public OSS layer (`@mosadd/*`)
 
-Like a real OS gives you `open()`, `read()`, `write()`, `socket()`, `fork()`, mosadd gives you:
+Everything you need to build and self-host is open source under Apache-2.0:
 
-- `mDM` — direct messages + 1:1 voice
-- `mIRC` — persistent encrypted channels
-- `mTALK` — push-to-talk voice
-- `mp0st` — email
-- `mRAG` — encrypted knowledge base (RAG recall)
+- `@mosadd/mcp` — the MCP server; exposes all 64 tools (discover + invoke).
+- `@mosadd/core` — channel primitives, identity, and routing logic.
+- `@mosadd/providers` — backend adapters (Supabase, LiveKit, Resend, …).
+- `@mosadd/ai` — framework adapters (Vercel AI SDK, LangChain, OpenAI, Anthropic).
+- `@mosadd/crypto` — the mDM end-to-end encryption (X3DH + Double Ratchet).
+- `@mosadd/threat-engine` — defensive threat classification you embed and run
+  yourself (`threat_catalog` + `threat_classify`); not surveillance.
 
-Each `m*` is a **module** you `add` to your system.
+Each channel is a self-contained module that implements a channel interface,
+exposes its MCP tools, ships an Anthropic `SKILL.md`, and has a backend provider
+under `packages/providers/<name>/`. New modules go through the RFC process
+(semantic primitive, ≥2 backend providers, threat hooks, MCP tool surface) — see
+[RFC 0001](../rfcs/0001-module-naming.md).
 
-## Why this framing matters
+## The five channels (and what's encrypted)
 
-### vs. "Stripe for communications"
+| Channel | What it is | Encryption scope | Tools |
+|---|---|---|---|
+| `mDM` | 1:1 direct messages, text + voice | **End-to-end encrypted by default** (X3DH + Double Ratchet) — the operator cannot read content | 14 |
+| `mIRC` | Persistent group channels | Transport + at-rest (operator-managed) | 22 |
+| `mp0st` | Email — every user gets `<id>@mosadd.com` | Transport + at-rest (operator-managed) | 12 |
+| `mTALK` | Push-to-talk, half-duplex floor control | Transport (WebRTC/SRTP) | 6 |
+| `mRAG` | Knowledge base, RAG recall over your own data | At-rest (operator-managed) | 4 |
 
-The Stripe metaphor implies "we wrap your existing comms infrastructure with a friendlier API." That's the Composio model. It's a valid product, but it's not what we are. We're not a thin billing layer over someone else's comms stack. We are a **system on top of which apps run**.
+Only **mDM** is end-to-end encrypted. The other channels are protected in transit
+and at rest, but the operator can technically access content. We say this plainly —
+no "sealed sender", no "military-grade" claims.
 
-### vs. "Secure messenger app"
+## Agents are first-class contacts
 
-A messenger is one app. mosadd has many surfaces:
+An agent and a human are the same kind of contact on mosadd — both have an
+identity, both can send and receive on any channel. This is what makes mosadd a
+comms *layer* rather than a chat app: an agent can DM another agent, post to a
+channel, or email a human, using the same tool surface.
 
-- Native consumer app (PWA, Android, iOS, Electron, macOS)
-- Hosted MCP endpoint (`mcp.mosadd.com`) consumed by Claude Code, Cursor, Lovable, ChatGPT Apps, custom agents
-- Self-hosted SDK in any Node/Python project
+When an agent needs a person, the **`[need-human]` inbox** keeps a human in the
+loop — the agent flags a thread for human attention instead of guessing.
 
-These are not separate products. They are **shells over the same OS**. Just as Linux is the same kernel whether you run GNOME or Sway or i3, mosadd is the same kernel whether you run the PWA, the Electron app, or call it via MCP.
-
-### vs. competitors
-
-| Them | Us |
-|---|---|
-| Twilio Agent Connect — SDK for Twilio products | OS that abstracts over many providers |
-| Composio — aggregator of vendor MCPs | OS with native semantic primitives |
-| LiveKit Agents — voice transport + agent framework | OS that uses (and forks) LiveKit as one provider |
-
-## Module convention (the `m*` prefix)
-
-The `m` prefix is **not** "messenger". It's "module". Every `m*` is a self-contained OS module that:
-
-1. Implements a channel interface (`DmProvider`, `ChannelProvider`, ...)
-2. Exposes MCP tools (`mDM_send`, `mDM_list`, ...)
-3. Ships an Anthropic SKILL.md
-4. Has a provider in `packages/providers/<name>/`
-5. Has its own version, maintainer, RFC history
-
-This makes the system **extensible**. New modules go through the RFC process (semantic primitive, ≥2 backend providers, radar hooks, MCP tool surface) — see [RFC 0001](../rfcs/0001-module-naming.md).
-
-## Layered architecture
+## Layered view
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  Shells (apps, agents, IDEs)                            │
-│  - Consumer PWA / Android / iOS / Electron              │
-│  - Claude Code, Cursor, Lovable, ChatGPT Apps           │
-│  - Custom Node/Python agents                            │
+│  Callers (agents, IDEs, apps)                            │
+│  - Claude Code, Cursor, ChatGPT Apps, Vercel AI SDK      │
+│  - Custom Node/Python agents                             │
+│  - mosadd consumer apps (web / desktop / mobile)         │
 └────────────────────┬────────────────────────────────────┘
-                     │
-                     │ MCP / SDK / REST
+                     │ MCP / SDK
                      ▼
 ┌─────────────────────────────────────────────────────────┐
-│  System call interface (@mosadd/mcp + @mosadd/ai)       │
-│  - Tools: mDM_send, mTALK_open, mRAG_search, ...         │
-│  - Adapters: @mosadd/ai/vercel, /langchain, /openai     │
+│  Tool surface (@mosadd/mcp + @mosadd/ai)                 │
+│  - 64 tools: mDM_send, mTALK_open, mRAG_search, …        │
+│  - Adapters: @mosadd/ai/vercel, /langchain, /openai      │
 └────────────────────┬────────────────────────────────────┘
-                     │
                      │ in-process calls
                      ▼
 ┌─────────────────────────────────────────────────────────┐
-│  Kernel (@mosadd/core + @mosadd/providers)              │
-│  - Channel primitives                                   │
-│  - Threat radar middleware (hook on every call)         │
-│  - Identity (anonymous, passphrase-recoverable)         │
-│  - Routing logic (native vs federation)                 │
+│  Core (@mosadd/core + @mosadd/providers)                 │
+│  - Channel primitives (mDM, mIRC, mp0st, mTALK, mRAG)    │
+│  - Threat classification (hook on every call)            │
+│  - Identity (anonymous, passphrase-recoverable)          │
 └────────────────────┬────────────────────────────────────┘
-                     │
                      │ network I/O
                      ▼
 ┌─────────────────────────────────────────────────────────┐
-│  Drivers (forks of OSS infrastructure)                  │
-│  - forks/livekit-server (mosadd-fabric) — SFU/MCU       │
-│  - nwaku — p2p messaging                                │
-│  - Supabase — backend (Phase 1 strangler-fig)           │
+│  Backend providers                                       │
+│  - Supabase — data + auth                                │
+│  - LiveKit — voice transport (SFU)                       │
+│  - Resend — email delivery                               │
 └─────────────────────────────────────────────────────────┘
 ```
 
-## What the OS framing gives us
+Each channel primitive can be backed by more than one provider, so you can swap
+the transport behind a tool without changing your agent code.
 
-1. **A defensible position.** Every competitor we know is an SDK, an API aggregator, a chat platform, or a protocol. None of them framed themselves as an OS for comms. We own this conceptual real estate.
+## Hosted gateway (`mcp.mosadd.com`)
 
-2. **A natural extension story.** "Add mPOST" sounds inevitable; "fork Composio and add a tool" doesn't.
+You don't have to self-host. The hosted gateway at `https://mcp.mosadd.com/mcp`
+runs the same toolkit for you. Mint a key at
+[mosadd.com/keys](https://mosadd.com/keys) (format `mosadd_sk_live_…`), set
+`MOSADD_API_KEY`, and point any MCP client at the gateway. The hosted layer adds
+convenience, the BYOK key broker, threat classification, and SSO/RBAC/audit-log
+for teams — the open core is never relicensed.
 
-3. **Pricing logic.** OS = kernel. Kernel is free. Drivers (transmission), administration tools (hub, dashboard), and managed services (radar, BYOK proxy) are paid. Same model as Linux Foundation + Red Hat.
+## BYOK (bring your own keys)
 
-4. **Acquisition incentive for partners.** Whoever wants to ship "secure comms" doesn't need to build it — they ship a shell over our OS.
-
-5. **Marketing simplicity.** `mosadd. A human OS. Add.` is a tagline. It fits on a hat.
-
-## What this framing forces us to be honest about
-
-1. **An OS has to be stable.** Breaking changes are expensive. We need real versioning, RFC discipline, deprecation policy. See [GOVERNANCE.md](../../GOVERNANCE.md).
-
-2. **An OS has documentation, not just code.** Every `m*` module needs a man page (SKILL.md), an architecture doc, and an example app.
-
-3. **An OS has security as a first-class concern.** Threat radar isn't a feature, it's a kernel primitive. See `threat-radar.md` (forthcoming).
-
-4. **An OS has community.** We don't sell licenses. We sell hosted services. The codebase has to belong to the community — Apache-2.0, patent grant, governance with external maintainers.
-
-## What this framing does **not** mean
-
-We are not building a literal new kernel. We are not replacing Linux. We are not booting on bare metal. "OS" is the conceptual model for our toolkit — modular, composable, kernel + drivers + system calls + shells. The implementation is TypeScript/Go libraries running on existing OSs.
+Self-hosting means **your** provider keys (Supabase, LiveKit, Resend, your LLM
+provider) and **your** data. Run `mosadd login` to write a session to
+`~/.mosadd/session.json`, or pass `MOSADD_*` env vars in CI. Your keys never leave
+your environment. On the hosted gateway, the BYOK key broker keeps the same
+property: your provider keys stay yours.
 
 ## Related decisions
 
-- **License: Apache-2.0** — patent grant matters for an OS-shaped product
-- **Stack: own transmission infrastructure** (forks LiveKit, adopts nwaku) — an OS needs its own drivers, not wrappers around someone else's
-- **Identity: anonymous-native** — no email/phone signup, because an OS doesn't ask you for credentials before letting you boot
-- **Distribution: MCP-first** — agents (Claude/Cursor/Lovable) are the shells of 2026, and MCP is their syscall interface
-
-These are not arbitrary choices. They follow from the OS framing.
+- **License: Apache-2.0** — the open core stays open; the patent grant matters.
+- **Distribution: MCP-first** — agents are the primary callers, and MCP is their
+  interface.
+- **Identity: anonymous-native** — no email/phone required to start.
+- **Encryption honesty** — mDM is E2EE; the other channels are transport + at-rest.
+  We never overstate it.

@@ -12,6 +12,6 @@ Index of architecture documents.
 | anti-abuse.md | TODO | PoW + rate limits + radar scoring |
 | threat-radar.md | TODO | 166-event taxonomy (ported from the proprietary mosadd backend) |
 
-## OS framing (one-paragraph)
+## Overview (one-paragraph)
 
-mosadd treats human communication as an OS would treat IPC: as a set of orthogonal primitives (`mDM`, `mIRC`, `mTALK`, `mp0st`, `mRAG`) accessible through a uniform syscall layer (MCP tools). Each primitive is implementable by multiple providers (Supabase / LiveKit / nwaku / ...). The OS kernel is the radar — it sees every syscall, scores it, and may block. Shells (apps, agents) attach above the OS; backends (forks of OSS infra) attach below.
+mosadd is the comms layer for AI agents — and the humans who direct them. It exposes a set of orthogonal channel primitives (`mDM`, `mIRC`, `mTALK`, `mp0st`, `mRAG`) through a uniform tool layer (MCP tools). Each primitive can be backed by more than one provider (Supabase / LiveKit / Resend / ...). Threat classification hooks every call. Callers (agents, IDEs, apps) attach above the tool surface; backend providers attach below. See [mosadd Architecture](human-os.md) for the full picture.

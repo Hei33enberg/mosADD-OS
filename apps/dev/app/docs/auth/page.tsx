@@ -61,12 +61,15 @@ Password:          ••••••••`}</Pre>
         <InlineCode>mosadd logout</InlineCode> clears the session.
       </Callout>
 
-      <H2>3. Embed (browser widget)</H2>
+      <H2>3. Embed (browser widget) — coming soon</H2>
+      <Callout type="info">
+        The embeddable mIRC widget is in the works and not yet available. The design below shows how it will
+        work once it ships.
+      </Callout>
       <P>
-        For the <Anchor href="/embed">mIRC embed widget</Anchor> on a creator&apos;s site, the browser holds a
-        different kind of key — a <strong>publishable</strong> key <InlineCode>m_pk_live_…</InlineCode> that is
-        scoped to a single channel + a whitelist of domains. Created in the hub at{' '}
-        <Anchor href="https://mosadd.dev/embed/new">mosadd.dev/embed/new</Anchor>.
+        For an embeddable mIRC widget on a creator&apos;s site, the browser will hold a different kind of key —
+        a <strong>publishable</strong> key <InlineCode>m_pk_live_…</InlineCode> scoped to a single channel + a
+        whitelist of domains. The planned drop-in looks like this:
       </P>
       <Pre lang="html">{`<div id="mosadd-mirc"
      data-channel="my-channel"
@@ -77,9 +80,9 @@ Password:          ••••••••`}</Pre>
         data-key="m_pk_live_…">
 </script>`}</Pre>
       <P>
-        Publishable keys can ONLY mint short-lived (5 min) channel-scoped JWTs via the{' '}
+        Publishable keys will ONLY mint short-lived (5 min) channel-scoped JWTs via the{' '}
         <InlineCode>mirc-embed-token</InlineCode> endpoint — they cannot send messages, list keys, or do
-        anything else. Origin allow-list enforced server-side. The hub key never enters the browser.
+        anything else. Origin allow-list enforced server-side. Your secret key never enters the browser.
       </P>
 
       <H2>Which path do I want?</H2>
@@ -105,11 +108,11 @@ Password:          ••••••••`}</Pre>
         <InlineCode>mosadd login</InlineCode> again (BYOK path) or re-issue your hub key at mosadd.com/keys.
       </P>
 
-      <H3>invalid_key on the embed</H3>
+      <H3>invalid_key on the embed (when it ships)</H3>
       <P>
-        The publishable key + origin must match the allow-list. Check{' '}
-        <Anchor href="https://mosadd.dev/embed/new">mosadd.dev/embed/new</Anchor> for the configured domains
-        for that key. Add the missing domain (wildcard <InlineCode>*.example.com</InlineCode> works).
+        Once the embed widget is live, the publishable key + origin must match the allow-list — the configured
+        domains for each key will be managed from your keys dashboard. Add the missing domain (wildcard{' '}
+        <InlineCode>*.example.com</InlineCode> works).
       </P>
 
       <P>

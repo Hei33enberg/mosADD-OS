@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getSupabase, SUPABASE_CONFIGURED } from '../../hub/supabaseClient';
 
-// Creator console, served on mosadd.dev (apps/dev) instead of the undeployed
-// hub.mosadd.com. Same browser Supabase client as /hub. One self-contained page:
+// Creator console, served on mosadd.dev (apps/dev). Same browser Supabase
+// client as /hub. One self-contained page:
 // login -> create key + list/revoke existing keys (embed-keys edge function).
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';

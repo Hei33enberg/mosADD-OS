@@ -265,12 +265,12 @@ export default function HubPage() {
     setTimeout(() => setCopied(null), 2000);
   }
 
-  // Anchor the magic-link + OAuth redirect to the canonical hub URL (A4 /
+  // Anchor the magic-link + OAuth redirect to the canonical keys URL (A4 /
   // LINEAR-3140). Using `window.location.origin` previously meant a user who
-  // followed a stale hub.mosadd.com link or a preview deployment could end up
-  // back on the wrong host after auth. Override with NEXT_PUBLIC_HUB_URL when
-  // testing in non-prod (defaults to https://mosadd.dev/hub).
-  const HUB_URL = process.env.NEXT_PUBLIC_HUB_URL ?? 'https://mosadd.dev/hub';
+  // followed a stale link or a preview deployment could end up back on the
+  // wrong host after auth. Override with NEXT_PUBLIC_HUB_URL when testing in
+  // non-prod (defaults to https://mosadd.com/keys).
+  const HUB_URL = process.env.NEXT_PUBLIC_HUB_URL ?? 'https://mosadd.com/keys';
 
   async function magicLink(e: React.FormEvent) {
     e.preventDefault();

@@ -3,7 +3,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 /**
- * Browser Supabase client for the hosted-hub signup/dashboard (mosadd.dev/hub).
+ * Browser Supabase client for the hosted keys signup/dashboard (mosadd.com/keys).
  * Uses the public URL + anon/publishable key — both safe in client code.
  * Env: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY (set in Vercel).
  */

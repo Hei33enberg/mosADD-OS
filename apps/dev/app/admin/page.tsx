@@ -206,7 +206,7 @@ export default function AdminPage() {
   }, [token, load, loadOps]);
 
   // Anchor admin auth callback to the canonical URL (A4 / LINEAR-3140) so a
-  // user signing in from hub.mosadd.com / preview / staging always lands back
+  // user signing in from a preview / staging deployment always lands back
   // on mosadd.dev/admin.
   const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'https://mosadd.dev/admin';
 
