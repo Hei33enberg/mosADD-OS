@@ -23,8 +23,8 @@ Once `@mosadd/mcp` is on npm (currently dry-run-ready, waiting on the publish to
 Most registries want the same fields. Keep these consistent:
 
 - **Name**: `@mosadd/mcp`
-- **Display name**: `mosadd — A human OS. Add.`
-- **One-liner**: `Operating system for human communications. mDM · mIRC · mp0st · mTALK · mRAG — 64 live tools across 5 modules, one MCP server.`
+- **Display name**: `mosadd — the comms layer for AI agents`
+- **One-liner**: `The comms layer for AI agents — and the humans who direct them. mDM · mIRC · mp0st · mTALK · mRAG — 64 live tools across 5 modules, one MCP server.`
 - **Repo**: `https://github.com/Hei33enberg/mosadd-os`
 - **License**: `Apache-2.0`
 - **Author**: `mosadd contributors`

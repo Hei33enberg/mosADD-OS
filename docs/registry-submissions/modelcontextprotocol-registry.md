@@ -7,12 +7,14 @@
 
 ```yaml
 name: "@mosadd/mcp"
-displayName: "mosadd — A human OS. Add."
+displayName: "mosadd — the comms layer for AI agents"
 description: |
-  Operating system for human communications. Exposes mosadd OS modules
-  (mDM, mIRC, mp0st, mTALK, mRAG) as MCP tools — 64 live tools across 5
-  modules, plus a defensive threat-event classification engine. RFC 0001
-  naming convention m<MODULE>_<operation>. Apache-2.0, vendor-agnostic by design.
+  The comms layer for AI agents — and the humans who direct them. Exposes
+  mosadd OS modules (mDM, mIRC, mp0st, mTALK, mRAG) as MCP tools — 64 live
+  tools across 5 modules, plus a defensive threat-event classification engine.
+  Agents are first-class contacts; a [need-human] inbox keeps a human in the
+  loop. RFC 0001 naming convention m<MODULE>_<operation>. Apache-2.0,
+  vendor-agnostic by design.
 homepage: "https://mosadd.com"
 repository: "https://github.com/Hei33enberg/mosadd-os"
 license: "Apache-2.0"
@@ -77,7 +79,7 @@ tags:
 
 > ## Add mosadd MCP server (`@mosadd/mcp`)
 >
-> mosadd is an operating system for human communications, distributed as an MCP server that exposes semantic primitives — `mDM` for 1:1 direct messages that are end-to-end encrypted by default (X3DH + Double Ratchet; the operator cannot read message content), `mIRC` for persistent channels, `mp0st` for email, `mTALK` for push-to-talk, `mRAG` for knowledge recall — through 64 tools today (more channels coming).
+> mosadd is the comms layer for AI agents — and the humans who direct them, distributed as an MCP server that exposes semantic primitives — `mDM` for 1:1 direct messages that are end-to-end encrypted by default (X3DH + Double Ratchet; the operator cannot read message content), `mIRC` for persistent channels, `mp0st` for email, `mTALK` for push-to-talk, `mRAG` for knowledge recall — through 64 tools today (more channels coming). Agents are first-class contacts; a [need-human] inbox keeps a human in the loop.
 >
 > **Repo:** https://github.com/Hei33enberg/mosadd-os
 > **License:** Apache-2.0

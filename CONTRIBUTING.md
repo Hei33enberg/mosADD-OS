@@ -1,6 +1,6 @@
 # Contributing to mosadd
 
-We're building **a human OS for communications**. We welcome contributions of any size — bug reports, feature ideas, code, docs, RFCs, providers, skills, examples.
+We're building **the comms layer for AI agents — and the humans who direct them**. We welcome contributions of any size — bug reports, feature ideas, code, docs, RFCs, providers, skills, examples.
 
 ## Code of Conduct
 

@@ -24,7 +24,7 @@ startCommand:
       MOSADD_USER_JWT:
         type: string
         title: "User session JWT"
-        description: "Your mosadd session token (Phase 2 replaces with OAuth via hub.mosadd.com)"
+        description: "Your mosadd session token (Phase 2 replaces this with a hub key minted at mosadd.com/keys)"
         format: password
     required:
       - MOSADD_SUPABASE_URL
@@ -34,13 +34,13 @@ startCommand:
 
 ## Listing copy
 
-**Title:** mosadd — A human OS. Add.
+**Title:** mosadd — the comms layer for AI agents
 
-**Tagline:** Operating system for human communications. mDM 1:1 end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content — plus channels, email, push-to-talk, knowledge recall — 64 tools today.
+**Tagline:** The comms layer for AI agents — and the humans who direct them. mDM 1:1 end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content — plus channels, email, push-to-talk, knowledge recall — 64 tools today.
 
 **Long description:**
 
-mosadd is the OS for human communications: instead of stitching Twilio + LiveKit + Resend + Matrix yourself, you call OS-level semantic primitives — `mIRC_create` then `mIRC_post_message` instead of provisioning channel infra + auth + delivery yourself, or `mDM_send` for a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content.
+mosadd is the comms layer for AI agents — and the humans who direct them. Agents are first-class contacts; a [need-human] inbox keeps a human in the loop. Instead of stitching Twilio + LiveKit + Resend + Matrix yourself, you call OS-level semantic primitives — `mIRC_create` then `mIRC_post_message` instead of provisioning channel infra + auth + delivery yourself, or `mDM_send` for a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content.
 
 **64 live tools across 5 live modules (3.0.0-alpha):**
 - mDM (14 tools) — 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content) + 1:1 voice, multi-thread per contact (USP)

@@ -19,7 +19,7 @@ export default function AuthPage() {
 
       <H2>1. Hosted (recommended)</H2>
       <P>
-        Sign up at <Anchor href="https://mosadd.dev/hub">mosadd.dev/hub</Anchor>, click <em>Create key</em>.
+        Sign up at <Anchor href="https://mosadd.com/keys">mosadd.com/keys</Anchor>, click <em>Create key</em>.
         You get a <InlineCode>mosadd_sk_live_…</InlineCode> hub key. Set it as{' '}
         <InlineCode>MOSADD_API_KEY</InlineCode> and the MCP server picks it up — <strong>no Supabase, no
         passwords, no DevTools tokens.</strong>
@@ -102,7 +102,7 @@ Password:          ••••••••`}</Pre>
       <H3>Session expired / Unable to resolve current user</H3>
       <P>
         Access tokens are short-lived. If a tool returns this error, run{' '}
-        <InlineCode>mosadd login</InlineCode> again (BYOK path) or re-issue your hub key at mosadd.dev/hub.
+        <InlineCode>mosadd login</InlineCode> again (BYOK path) or re-issue your hub key at mosadd.com/keys.
       </P>
 
       <H3>invalid_key on the embed</H3>

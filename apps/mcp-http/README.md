@@ -42,7 +42,7 @@ mp0st/mRAG + comms_* + threat_* — mCALL unregistered), `tools/call mIRC_list` 
 
 This is a standalone Vercel project (Root Directory `apps/mcp-http`).
 
-1. ✅ Dependency is already `@mosadd/mcp@^3.0.0-alpha.16` (published — exports
+1. ✅ Dependency is already `@mosadd/mcp@^3.0.0-alpha.20` (published — exports
    `runWithSupabaseEnv`; its `@mosadd/{crypto,protocol,providers}` deps are on npm
    too, so a plain `npm install` resolves with NO monorepo/workspace resolution).
    `npm run build` (tsc) is green.

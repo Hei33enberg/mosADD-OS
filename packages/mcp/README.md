@@ -2,7 +2,7 @@
 
 MCP server for [mosadd](https://mosadd.com) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **3.0.0-alpha.16** — **64 live tools across 5 live modules** (mDM incl. voice + files, mIRC, mp0st incl. provenance, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool + the defensive `threat_*` engine, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
+> **3.0.0-alpha.20** — **64 live tools across 5 live modules** (mDM incl. voice + files, mIRC, mp0st incl. provenance, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool + the defensive `threat_*` engine, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
 
 ## Connect your agent
 
@@ -51,7 +51,7 @@ A `mosadd_sk_live_…` hub key does not expire; the server exchanges it for a fr
 }
 ```
 
-Mint a key by POSTing to the `hub-keys` Edge Function with your user JWT (it returns the secret once). A one-click "API keys" screen on mosadd.com is the planned UX.
+Mint a key at **[mosadd.com/keys](https://mosadd.com/keys)** — the hub shows it once, in the `mosadd_sk_live_…` format above. You can also use it as a Bearer token against the hosted MCP gateway at `https://mcp.mosadd.com/mcp`.
 
 ### 3. BYOK + `MOSADD_USER_JWT` — advanced / debugging
 

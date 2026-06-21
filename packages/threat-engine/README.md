@@ -2,7 +2,7 @@
 
 Threat-event taxonomy + scoring + pure defensive-decision engine. The kernel-level security primitive that becomes the radar moat in the Phase 2 commercial hub.
 
-> **A module of [mosadd](https://github.com/Hei33enberg/mosadd-os) — a human OS for communications.**
+> **A module of [mosadd](https://github.com/Hei33enberg/mosadd-os) — the comms layer for AI agents, and the humans who direct them.**
 
 ## What's in the box
 

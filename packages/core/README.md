@@ -2,7 +2,7 @@
 
 Kernel layer for mosadd: channel primitives, routing, threat radar hook injection, identity model.
 
-> **A module of [mosadd](https://github.com/Hei33enberg/mosadd-os) — a human OS for communications.**
+> **A module of [mosadd](https://github.com/Hei33enberg/mosadd-os) — the comms layer for AI agents, and the humans who direct them.**
 
 ## Status
 

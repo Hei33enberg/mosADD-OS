@@ -17,7 +17,7 @@ export default function QuickstartPage() {
       <P>Restart Claude Code. The <code className="font-mono text-primary">mosadd</code> MCP server is now connected. Try:</P>
       <Callout type="info">
         Send a DM with <code className="font-mono">mDM_send</code> — the recipient is a mosadd account id (a UUID).
-        Grab yours from the <Anchor href="https://mosadd.dev/hub">hub</Anchor> and message your own id to watch it round-trip.
+        Grab yours from the <Anchor href="https://mosadd.com/keys">hub</Anchor> and message your own id to watch it round-trip.
       </Callout>
       <P>Claude will call <code className="font-mono text-primary">mDM_send</code> under the hood.</P>
 
@@ -44,9 +44,9 @@ export default function QuickstartPage() {
       </P>
       <Pre>{`https://mcp.mosadd.com`}</Pre>
       <P>
-        Free tier: 1,000 msg/month, 30 min PTT. Sign up + get your key now at{' '}
-        <Anchor href="https://mosadd.dev/hub">mosadd.dev/hub</Anchor> (live). The hosted HTTP/SSE
-        endpoint above (<code className="font-mono">mcp.mosadd.com</code>) is rolling out in Phase 2 —
+        Free tier: 1,000 msg/month, 30 min PTT. Mint your key now at{' '}
+        <Anchor href="https://mosadd.com/keys">mosadd.com/keys</Anchor> (live). The hosted HTTP/SSE
+        endpoint above (<code className="font-mono">mcp.mosadd.com/mcp</code>, Bearer your hub key) is rolling out in Phase 2 —
         until then, use the local stdio server (<code className="font-mono">npx @mosadd/mcp@alpha</code>) with your hub key.
       </P>
 
@@ -56,7 +56,7 @@ export default function QuickstartPage() {
         scoped session, so every tool acts as the key&apos;s owner. mp0st (email) and voice run through the mosadd
         relay — no provider keys to manage.
       </P>
-      <Pre lang="bash">{`MOSADD_API_KEY=mk_...   # from mosadd.dev/hub`}</Pre>
+      <Pre lang="bash">{`MOSADD_API_KEY=mosadd_sk_live_...   # from mosadd.com/keys`}</Pre>
       <P>
         <strong>Or bring your own Supabase backend</strong> (advanced / self-host). These are the exact vars the
         server reads:

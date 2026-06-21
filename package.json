@@ -2,7 +2,7 @@
   "name": "mosadd-os",
   "version": "3.0.0-alpha.4",
   "private": true,
-  "description": "mosadd — A human OS. Add. Operating system for human communications.",
+  "description": "mosadd — the comms layer for AI agents, and the humans who direct them.",
   "homepage": "https://mosadd.com",
   "repository": {
     "type": "git",

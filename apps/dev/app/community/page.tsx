@@ -67,8 +67,8 @@ export default function CommunityPage() {
 
         <H2>Why contribute</H2>
         <P>
-          mosadd is the OSS-first alternative to Twilio Agent Connect, Composio, and LiveKit. We're not a vendor SDK — we're an{' '}
-          <strong>operating system</strong> for human communications, and every contributor who lands an m* module is shaping the kernel layer of the next decade of agent comms.
+          mosadd is the OSS-first alternative to Twilio Agent Connect, Composio, and LiveKit. We're not a vendor SDK — we're the{' '}
+          <strong>comms layer for AI agents</strong> (and the humans who direct them), and every contributor who lands an m* module is shaping the kernel layer of the next decade of agent comms.
         </P>
         <P>
           The commercial hub (Phase 2) stays proprietary. The OS layer stays Apache-2.0 forever.{' '}

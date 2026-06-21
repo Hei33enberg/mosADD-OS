@@ -117,7 +117,7 @@ claude mcp add mosadd -- npx -y @mosadd/mcp@alpha`}</Pre>
 
         <H2>Manual install from tarball</H2>
         <Pre lang="bash">{`# Download a tarball from the release above, then install it locally
-npm install ./mosadd-mcp-3.0.0-alpha.4.tgz
+npm install ./mosadd-mcp-3.0.0-alpha.20.tgz
 
 # Or install the current alpha straight from npm
 npm install @mosadd/mcp@alpha`}</Pre>
@@ -134,7 +134,7 @@ npm install @mosadd/mcp@alpha`}</Pre>
           For now, verify by hash against the GitHub release page:
         </P>
         <Pre lang="bash">{`# Compute SHA-256 of the downloaded asset
-shasum -a 256 mosadd-mcp-3.0.0-alpha.4.tgz
+shasum -a 256 mosadd-mcp-3.0.0-alpha.20.tgz
 
 # Compare to the value shown on the release page`}</Pre>
 

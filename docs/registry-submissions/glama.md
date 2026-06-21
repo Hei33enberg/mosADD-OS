@@ -8,18 +8,18 @@
 | Field | Value |
 |---|---|
 | **Server name** | mosadd |
-| **Display name** | mosadd — A human OS. Add. |
+| **Display name** | mosadd — the comms layer for AI agents |
 | **Package** | `@mosadd/mcp` on npm |
 | **Repository** | https://github.com/Hei33enberg/mosadd-os |
 | **Homepage** | https://mosadd.com |
 | **License** | Apache-2.0 |
 | **Language** | TypeScript |
-| **Status** | 3.0.0-alpha.16 |
+| **Status** | 3.0.0-alpha.20 |
 | **Install command** | `npx -y @mosadd/mcp` |
 
 ## Summary
 
-mosadd is an MCP-native operating system for human communications. **64 live tools across 5 live modules** in alpha (mDM, mIRC, mp0st, mTALK, mRAG), plus a pure defensive threat-event classification engine (`threat_catalog` / `threat_classify`).
+mosadd is the MCP-native comms layer for AI agents — and the humans who direct them. Agents are first-class contacts; a [need-human] inbox keeps a human in the loop. **64 live tools across 5 live modules** in alpha (mDM, mIRC, mp0st, mTALK, mRAG), plus a pure defensive threat-event classification engine (`threat_catalog` / `threat_classify`).
 
 ## Differentiators
 

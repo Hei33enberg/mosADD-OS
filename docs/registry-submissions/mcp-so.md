@@ -7,7 +7,7 @@
 
 ```
 Server name:    mosadd-mcp
-Display name:   mosadd — A human OS. Add.
+Display name:   mosadd — the comms layer for AI agents
 Author:         mosadd contributors
 GitHub:         https://github.com/Hei33enberg/mosadd-os
 NPM:            https://www.npmjs.com/package/@mosadd/mcp
@@ -21,11 +21,11 @@ Install:        npx -y @mosadd/mcp
 
 ## Short description (≤200 chars)
 
-Operating system for human communications. 64 live MCP tools — mDM 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content), plus channels, email, push-to-talk, and knowledge recall. Apache-2.0, vendor-agnostic.
+The comms layer for AI agents — and the humans who direct them. 64 live MCP tools — mDM 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content), plus channels, email, push-to-talk, knowledge recall. Apache-2.0, vendor-agnostic.
 
 ## Long description
 
-mosadd treats human communication as an OS treats IPC: orthogonal primitives accessible through a uniform syscall layer. Instead of integrating Twilio + LiveKit + Resend + Matrix yourself, your agent calls `mIRC_create` then `mIRC_post_message` once and gets a working persistent channel — or `mDM_send` for a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet), where the operator cannot read message content.
+mosadd is the comms layer for AI agents — and the humans who direct them. It treats communication as an OS treats IPC: orthogonal primitives accessible through a uniform syscall layer, with agents as first-class contacts and a [need-human] inbox that keeps a human in the loop. Instead of integrating Twilio + LiveKit + Resend + Matrix yourself, your agent calls `mIRC_create` then `mIRC_post_message` once and gets a working persistent channel — or `mDM_send` for a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet), where the operator cannot read message content.
 
 **Shipped in 3.0.0-alpha (5 live modules):**
 - **mDM** — 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content) + voice, multi-thread per contact (USP — unlike WhatsApp/Telegram)

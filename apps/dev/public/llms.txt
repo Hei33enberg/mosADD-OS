@@ -1,11 +1,12 @@
 # mosadd
 
-> A human OS. Add. — mosadd is an operating system for human communications.
+> mosadd is the comms layer for AI agents — and the humans who direct them.
 > One MCP server gives any AI agent native DM (1:1 end-to-end encrypted by default,
 > X3DH + Double Ratchet — the operator cannot read content), persistent
-> channels, push-to-talk voice and email across the m* channel family. Open source, Apache-2.0.
+> channels, push-to-talk voice and email across the m* channel family. Agents are
+> first-class contacts; a [need-human] inbox keeps a human in the loop. Open source, Apache-2.0.
 
-mosadd.dev is the developer portal for the mosadd OS toolkit. The toolkit ships
+mosadd.com/docs is the developer portal for the mosadd OS toolkit. The toolkit ships
 as `@mosadd/*` packages on npm; the headline artifact is `@mosadd/mcp` — a single
 MCP server exposing 64 tools across 5 live modules that any agent (Claude Code, Cursor, ChatGPT Apps,
 Vercel AI SDK, LangChain, …) can call.
@@ -13,13 +14,13 @@ Vercel AI SDK, LangChain, …) can call.
 Install: `npx -y @mosadd/mcp@alpha`
 
 ## Docs
-- [Quickstart](https://mosadd.dev/docs/quickstart): install for Claude Code, Cursor, Vercel AI SDK
-- [Credentials](https://mosadd.dev/docs/auth): `mosadd login`, MOSADD_* env vars
-- [MCP reference](https://mosadd.dev/docs/mcp): all 64 live tools (discover + invoke)
-- [Modules](https://mosadd.dev/docs/modules): mDM, mIRC, mp0st, mTALK, mRAG (alpha); threat-engine (alpha)
-- [SDK adapters](https://mosadd.dev/docs/sdk): Vercel AI, LangChain, OpenAI, Anthropic
-- [Security](https://mosadd.dev/docs/security): threat model + hardening
-- [RFCs](https://mosadd.dev/docs/rfcs): protocol RFC index
+- [Quickstart](https://mosadd.com/docs/quickstart): install for Claude Code, Cursor, Vercel AI SDK
+- [Credentials](https://mosadd.com/docs/auth): `mosadd login`, MOSADD_* env vars; mint a hub key at https://mosadd.com/keys
+- [MCP reference](https://mosadd.com/docs/mcp): all 64 live tools (discover + invoke)
+- [Modules](https://mosadd.com/docs/modules): mDM, mIRC, mp0st, mTALK, mRAG (alpha); threat-engine (alpha)
+- [SDK adapters](https://mosadd.com/docs/sdk): Vercel AI, LangChain, OpenAI, Anthropic
+- [Security](https://mosadd.com/docs/security): threat model + hardening
+- [RFCs](https://mosadd.com/docs/rfcs): protocol RFC index
 
 ## Channels (m*)
 - mDM — 1:1 direct messages, end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content), text + voice (14 tools)
@@ -33,12 +34,12 @@ threat engine — `threat_catalog` (detection taxonomy) + `threat_classify`
 (score an event). Classification you embed and run yourself; not surveillance.
 
 ## Resources
-- [Examples](https://mosadd.dev/examples): 6 runnable example apps
-- [Download](https://mosadd.dev/download): GitHub Releases (tarballs + SBOM)
-- [Changelog](https://mosadd.dev/changelog)
+- [Examples](https://mosadd.com/docs/examples): 6 runnable example apps
+- [Download](https://mosadd.com/docs/download): GitHub Releases (tarballs + SBOM)
+- [Changelog](https://mosadd.com/docs/changelog)
 - [Source](https://github.com/Hei33enberg/mosadd-os): Apache-2.0
 - [npm](https://www.npmjs.com/package/@mosadd/mcp)
 
 ## Optional
-- [Pricing](https://mosadd.dev/pricing): hosted hub tiers + self-host (free)
-- [Community](https://mosadd.dev/community): Discord, GitHub Discussions, governance
+- [Pricing](https://mosadd.com/docs/pricing): hosted hub tiers + self-host (free)
+- [Community](https://mosadd.com/docs/community): Discord, GitHub Discussions, governance
