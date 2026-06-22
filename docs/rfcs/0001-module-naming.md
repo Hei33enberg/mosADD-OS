@@ -7,11 +7,11 @@
 
 ## Summary
 
-Every communication module in mosadd-os is named `m<NAME>` where `m` stands for **mosadd module** (and rhymes with the project name `m·os·add` = "man OS add"). Each module is an OS-level semantic primitive, not a vendor wrapper.
+Every communication module in mosadd-os is named `m<NAME>` where `m` stands for **mosADD module** (and rhymes with the project name `mosADD` = "agent comms toolkit"). Each module is an OS-level semantic primitive, not a vendor wrapper.
 
 ## Motivation
 
-mosadd positions itself as the **operating system for human communications**, not as another SDK. To make the OS framing real and not just marketing, every public surface must reflect the modular OS metaphor:
+mosadd positions itself as the **comms layer for AI agents**, not as another SDK. To make the OS framing real and not just marketing, every public surface must reflect the modular OS metaphor:
 
 - Linux exposes `socket()`, `pipe()`, `mkdir()` — semantic primitives, not "Microsoft IPC" or "Cisco network"
 - mosadd exposes `mDM`, `mTALK`, `mIRC` — semantic primitives, not "Twilio chat" or "LiveKit room"

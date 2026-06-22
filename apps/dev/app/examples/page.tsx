@@ -16,7 +16,7 @@ const examples: {
   {
     slug: 'claude-code',
     title: 'Claude Code · mDM_send hello world',
-    blurb: '60-second install: register the mosadd MCP server in Claude Code, then ask Claude to send a DM. Returns message_id.',
+    blurb: '60-second install: register the mosADD MCP server in Claude Code, then ask Claude to send a DM. Returns message_id.',
     framework: 'Claude Code',
     url: 'https://github.com/Hei33enberg/mosadd-os/tree/main/examples/claude-code',
   },
@@ -30,7 +30,7 @@ const examples: {
   {
     slug: 'chatgpt-apps',
     title: 'ChatGPT Apps · hosted MCP',
-    blurb: 'Connect ChatGPT Apps to the hosted mosadd MCP via HTTP/SSE. Ships once mcp.mosadd.com is live (Phase 2).',
+    blurb: 'Connect ChatGPT Apps to the hosted mosADD MCP via HTTP/SSE. Ships once mcp.mosadd.com is live (Phase 2).',
     framework: 'ChatGPT Apps',
     url: 'https://github.com/Hei33enberg/mosadd-os/tree/main/examples/chatgpt-apps',
   },

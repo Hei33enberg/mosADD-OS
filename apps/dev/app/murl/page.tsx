@@ -5,7 +5,7 @@ import { Terminal } from '../_components/Terminal';
 export const metadata: Metadata = {
   title: 'mURL — anonymous live chat on every domain | mosadd',
   description:
-    'A browser extension that drops you into a live, anonymous chat for the domain you are on. Open it on zalando.pl and talk to every other shopper there right now. Powered by the same Cloudflare + Supabase backbone that runs the mosadd toolkit.',
+    'A browser extension that drops you into a live, anonymous chat for the domain you are on. Open it on zalando.pl and talk to every other shopper there right now. Powered by the same Cloudflare + Supabase backbone that runs the mosADD toolkit.',
   openGraph: {
     title: 'mURL — anonymous IRC for every URL · mosadd',
     description: 'Anonymous live chat scoped to the domain you are on. Every site on the web becomes a room.',

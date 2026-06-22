@@ -1,6 +1,6 @@
 # @mosadd/ai
 
-Framework adapters for [mosadd](https://mosadd.com) — use the 64 mosadd OS tools directly from your favorite agent framework without spinning up the MCP server.
+Framework adapters for [mosADD](https://mosadd.com) — use the 64 mosADD toolkit tools directly from your favorite agent framework without spinning up the MCP server.
 
 **One package, four entrypoints, atomic releases** — pattern stolen from [Stripe Agent Toolkit](https://github.com/stripe/agent-toolkit).
 
@@ -51,7 +51,7 @@ import { Agent, run } from "@openai/agents";
 
 const agent = new Agent({
   name: "mosadd-helper",
-  instructions: "Manage the user's mosadd communications when asked.",
+  instructions: "Manage the user's mosADD communications when asked.",
   tools: mosadd({ modules: ["mDM", "mIRC", "mp0st"] }),
 });
 
@@ -108,7 +108,7 @@ If `supabase` is omitted, the adapters read from env:
 This adapter pack stays minimal on purpose:
 
 - **No peer deps** on `ai`, `@langchain/*`, `@openai/agents`, or `@anthropic-ai/sdk`. We return shapes those packages happen to accept. The consumer brings the framework.
-- **No HTTP transport.** Adapters call the mosadd handlers directly in-process. For HTTP/SSE use the MCP server — see [`packages/mcp`](../mcp).
+- **No HTTP transport.** Adapters call the mosADD handlers directly in-process. For HTTP/SSE use the MCP server — see [`packages/mcp`](../mcp).
 - **Strict JSON Schema** for OpenAI/Anthropic is approximate today (`strict: false`). v3.0.0-alpha.1 brings exact mode via `zod-to-json-schema`.
 
 ## License

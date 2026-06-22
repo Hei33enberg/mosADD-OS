@@ -1,9 +1,9 @@
 # @mosadd/providers
 
-Vendor adapters. Pluggable. Choose your transport per channel, or let mosadd auto-route.
+Vendor adapters. Pluggable. Choose your transport per channel, or let mosADD auto-route.
 
 Planned adapters:
-- `supabase` — Phase 1 strangler-fig adapter pointing at the mosadd backend
+- `supabase` — Phase 1 strangler-fig adapter pointing at the mosADD backend
 - `livekit-fork` — voice/PTT/rooms (our `mosadd-fabric` fork)
 - `routr` — SIP control plane for PSTN
 - `telnyx`, `twilio` — PSTN dumb pipes

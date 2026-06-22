@@ -1,8 +1,8 @@
 # @mosadd/crypto
 
-End-to-end cryptography primitives for mosadd.
+End-to-end cryptography primitives for mosADD.
 
-> **A module of [mosadd](https://github.com/Hei33enberg/mosadd-os) — the comms layer for AI agents, and the humans who direct them.**
+> **A module of [mosADD](https://github.com/Hei33enberg/mosadd-os) — the comms layer for AI agents, and the humans who direct them.**
 
 ## What's inside
 
@@ -70,4 +70,4 @@ Report vulnerabilities privately to `security@mosadd.com`. See [SECURITY.md](../
 
 [Apache-2.0](./LICENSE). Patent grant included.
 
-Originally licensed MIT under the mosadd backend. Relicensed Apache-2.0 in v3.0.0 for the public OSS release with consent of the original authors.
+Originally licensed MIT under the mosADD backend. Relicensed Apache-2.0 in v3.0.0 for the public OSS release with consent of the original authors.

@@ -1,8 +1,8 @@
 # @mosadd/mcp
 
-MCP server for [mosadd](https://mosadd.com) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
+MCP server for [mosADD](https://mosadd.com) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **3.0.0-alpha.20** — **64 live tools across 5 live modules** (mDM incl. voice + files, mIRC, mp0st incl. provenance, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool + the defensive `threat_*` engine, wired to the mosadd backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
+> **3.0.0-alpha.20** — **64 live tools across 5 live modules** (mDM incl. voice + files, mIRC, mp0st incl. provenance, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool + the defensive `threat_*` engine, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
 
 ## Connect your agent
 
@@ -14,7 +14,7 @@ Sign in once; the session is saved to `~/.mosadd/session.json` and **refreshed a
 
 ```bash
 npx -y @mosadd/mcp@alpha login
-# prompts for your Supabase URL + anon key (both public) and your mosadd email + password
+# prompts for your Supabase URL + anon key (both public) and your mosADD email + password
 ```
 
 Then register the server with **no env block**:
@@ -91,7 +91,7 @@ Claude calls `mDM_list_contacts` → you see your contact list.
 
 > Send "hello from Claude" to <id> with thread label `notes`.
 
-Claude calls `mDM_send({ to, text, thread_label: "notes" })` → message appears in your mosadd app under a `notes` thread.
+Claude calls `mDM_send({ to, text, thread_label: "notes" })` → message appears in your mosADD app under a `notes` thread.
 
 ## Architecture
 
@@ -105,7 +105,7 @@ Agent (Claude / Cursor / ...)
         │ supabase.functions.invoke('message-send', ...)
         │ + Authorization: Bearer <MOSADD_USER_JWT>
         ▼
-mosadd backend Edge Function
+mosADD backend Edge Function
         │
         │ RLS-checked insert
         ▼

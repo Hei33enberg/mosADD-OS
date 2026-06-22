@@ -10,7 +10,7 @@ Index of architecture documents.
 | fork-strategy.md | TODO | LiveKit fork + divergence discipline |
 | identity-recovery.md | TODO | Anonymous identity + passphrase/seed recovery |
 | anti-abuse.md | TODO | PoW + rate limits + radar scoring |
-| threat-radar.md | TODO | 166-event taxonomy (ported from the proprietary mosadd backend) |
+| threat-radar.md | TODO | 166-event taxonomy (ported from the proprietary mosADD backend) |
 
 ## Overview (one-paragraph)
 

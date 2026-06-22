@@ -3,7 +3,7 @@ import { Prose, H1, Lead, H2, H3, P, Ul, Pre, Anchor, Table } from '../_componen
 
 export const metadata: Metadata = {
   title: 'Download',
-  description: 'GitHub Release tarballs, SBOMs and install snippets for mosadd OSS.',
+  description: 'GitHub Release tarballs, SBOMs and install snippets for mosADD OSS.',
 };
 
 // Revalidate every 5 minutes — pulls from GitHub Releases API at build/ISR.

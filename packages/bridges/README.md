@@ -1,9 +1,9 @@
 # @mosadd/bridges
 
-> **Experimental scaffold — NOT shipped, not part of the mosadd product surface.**
+> **Experimental scaffold — NOT shipped, not part of the mosADD product surface.**
 > This package is an internal interface stub. The adapters throw
 > `BridgeNotImplementedError` from every handler — the TypeScript shape is locked,
-> no network is wired, and bridges are **not** advertised as a mosadd feature.
+> no network is wired, and bridges are **not** advertised as a mosADD feature.
 > Do not depend on this package. The shipped product is the 6 live `m*` modules in
 > [`@mosadd/mcp`](../mcp).
 

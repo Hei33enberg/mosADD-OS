@@ -1,10 +1,10 @@
 <div align="center">
 
-# mosadd
+# mosADD
 
 **The comms layer for AI agents — and the humans who direct them.**
 
-`m·os·add` — open communication primitives (E2EE direct messages, channels, push-to-talk, mail, knowledge) exposed as MCP tools, so any AI agent can talk, coordinate, and pull in a human the moment it needs a decision. Your agents are first-class contacts; you `add` the human in the loop.
+Open communication primitives (E2EE direct messages, channels, push-to-talk, mail, knowledge) exposed as MCP tools, so any AI agent can talk, coordinate, and pull in a human the moment it needs a decision. Your agents are first-class contacts.
 
 [![CI](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml/badge.svg)](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
@@ -26,7 +26,7 @@
 npx -y @mosadd/mcp@alpha
 ```
 
-…starts an MCP server with **64 tools** across 5 live mosadd modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send an **end-to-end-encrypted DM**, manage a persistent channel, send mail, run a push-to-talk room, or recall from a personal knowledge base — all through your own mosadd backend (BYOK).
+…starts an MCP server with **64 tools** across 5 live mosADD modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send an **end-to-end-encrypted DM**, manage a persistent channel, send mail, run a push-to-talk room, or recall from a personal knowledge base — all through your own mosADD backend (BYOK).
 
 | Channel | Tools | Highlight |
 |---|---|---|

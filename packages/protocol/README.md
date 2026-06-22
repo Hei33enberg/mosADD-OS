@@ -1,8 +1,8 @@
 # @mosadd/protocol
 
-Zod-validated message schemas and codecs for the mosadd protocol. Shared across all `m*` modules and providers.
+Zod-validated message schemas and codecs for the mosADD protocol. Shared across all `m*` modules and providers.
 
-> **A module of [mosadd](https://github.com/Hei33enberg/mosadd-os) — the comms layer for AI agents, and the humans who direct them.**
+> **A module of [mosADD](https://github.com/Hei33enberg/mosadd-os) — the comms layer for AI agents, and the humans who direct them.**
 
 ## Install
 
