@@ -1,94 +1,90 @@
-# modelcontextprotocol/registry — submission draft
+# Official MCP Registry — publish flow (current, 2026-06-22)
 
-**Target repo:** https://github.com/modelcontextprotocol/registry
-**Submission path:** `servers/community/mosadd-mcp.yaml` (or whatever the current schema expects — check repo README at submission time)
+**Target:** https://registry.modelcontextprotocol.io
+**Status:** preview, API v0.1 frozen since 2025-10-24 (stable for integrators).
 
-## Payload (YAML, draft)
+⚠️ **THE OLD PR-TO-`servers/` MODEL IS GONE.** The official registry is now an
+**API service** at `registry.modelcontextprotocol.io`, published to via the
+`mcp-publisher` CLI tool with GitHub-based ownership verification.
 
-```yaml
-name: "@mosadd/mcp"
-displayName: "mosadd — the comms layer for AI agents"
-description: |
-  The comms layer for AI agents — and the humans who direct them. Exposes
-  mosadd OS modules (mDM, mIRC, mp0st, mTALK, mRAG) as MCP tools — 64 live
-  tools across 5 modules, plus a defensive threat-event classification engine.
-  Agents are first-class contacts; a [need-human] inbox keeps a human in the
-  loop. RFC 0001 naming convention m<MODULE>_<operation>. Apache-2.0,
-  vendor-agnostic by design.
-homepage: "https://mosadd.com"
-repository: "https://github.com/Hei33enberg/mosADD-OS"
-license: "Apache-2.0"
-author:
-  name: "mosadd contributors"
-  url: "https://mosadd.com"
-runtime:
-  command: "npx"
-  args: ["-y", "@mosadd/mcp"]
-  env:
-    MOSADD_SUPABASE_URL:
-      description: "Supabase project URL (BYOK mode)"
-      required: true
-    MOSADD_SUPABASE_ANON_KEY:
-      description: "Supabase anon key (BYOK mode)"
-      required: true
-    MOSADD_USER_JWT:
-      description: "User session JWT (BYOK mode — Phase 2 replaces with OAuth)"
-      required: true
-tools:
-  # mDM — Direct Messages
-  - name: "mDM_list_contacts"
-    description: "List the user's mosadd contacts"
-  - name: "mDM_send"
-    description: "Send a direct message (supports multi-thread per contact USP)"
-  - name: "mDM_list"
-    description: "Read DM thread history"
-  - name: "mDM_respond_request"
-    description: "Accept or reject an incoming DM request"
-  # mIRC — Persistent channels
-  - name: "mIRC_create"
-    description: "Create a persistent Discord/Slack-style channel"
-  - name: "mIRC_list"
-    description: "List available channels"
-  - name: "mIRC_get"
-    description: "Get details of a single channel"
-  - name: "mIRC_update"
-    description: "Update channel metadata (owner only)"
-  - name: "mIRC_delete"
-    description: "Delete a channel (owner only)"
-  # mp0st — Email
-  - name: "mp0st_send"
-    description: "Send email from <userId>@mosadd.com"
-  - name: "mp0st_view"
-    description: "Read an email by message_id"
-  # threat — defensive threat-event classification engine
-  - name: "threat_catalog"
-    description: "Enumerate the defensive threat-event taxonomy"
-  - name: "threat_classify"
-    description: "Classify a communication-threat event (pure defensive, no surveillance)"
-tags:
-  - messaging
-  - voice
-  - email
-  - agents
-  - communication
-  - open-source
-  - apache-2
+## What's already prepared in the repo (autonomous, 2026-06-22)
+
+- `packages/mcp/package.json` has `"mcpName": "io.github.hei33enberg/mosadd-mcp"`
+  (this is the registry server name; it MUST start with `io.github.<github-username>/`
+  because we'll auth via GitHub).
+- `packages/mcp/server.json` — the registry manifest, schema 2025-12-11, points at
+  npm `@mosadd/mcp@alpha.20`, stdio transport, requires env `MOSADD_API_KEY`.
+- GitHub repo `Hei33enberg/mosADD-OS` description + 13 topics added 2026-06-22
+  (helps Glama / Smithery auto-index even before this submission lands).
+
+## OWNER STEPS (one-time, ~10 min) — needs GitHub OAuth + npm creds
+
+### 1. Republish to npm so the registry can verify ownership
+
+The registry's verifier reads `mcpName` from the **published** package's npmjs.com
+metadata, not from the repo. alpha.20 was built before we added `mcpName` → republish.
+
+```bash
+cd C:\mosadd-os\packages\mcp
+npm version 3.0.0-alpha.21
+# also bump server.json: "version" and packages[0].version to 3.0.0-alpha.21
+npm run build
+npm publish --access public --tag alpha
 ```
 
-## PR description
+### 2. Install `mcp-publisher` CLI
 
-> ## Add mosadd MCP server (`@mosadd/mcp`)
->
-> mosadd is the comms layer for AI agents — and the humans who direct them, distributed as an MCP server that exposes semantic primitives — `mDM` for 1:1 direct messages that are end-to-end encrypted by default (X3DH + Double Ratchet; the operator cannot read message content), `mIRC` for persistent channels, `mp0st` for email, `mTALK` for push-to-talk, `mRAG` for knowledge recall — through 64 tools today (more channels coming). Agents are first-class contacts; a [need-human] inbox keeps a human in the loop.
->
-> **Repo:** https://github.com/Hei33enberg/mosADD-OS
-> **License:** Apache-2.0
-> **Install:** `npx -y @mosadd/mcp`
->
-> Differentiators:
-> - **OS-level semantic primitives**, not vendor wrappers. RFC 0001 formalizes the `m<MODULE>_<operation>` naming convention.
-> - **mDM_send** — single MCP call delivers a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet), so the operator cannot read message content. The same wire format is used by the mosadd app, so agent↔app DMs interoperate end-to-end.
-> - **Vendor-agnostic provider abstraction** — same primitives work over Supabase today, with a forked LiveKit + nwaku (p2p) backbone in follow-ups. Bring your own keys or self-host.
-> - **Defensive threat-event engine** — `threat_classify` is a pure, surveillance-free classifier over a communication-threat taxonomy (`threat_catalog`). It scores events you pass it; it does not monitor anyone.
->
-> Happy to address any review comments. Maintainer contact: see CODEOWNERS in the repo.
+```powershell
+$arch = if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq "Arm64") { "arm64" } else { "amd64" }
+Invoke-WebRequest -Uri "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_windows_$arch.tar.gz" -OutFile "mcp-publisher.tar.gz"
+tar xf mcp-publisher.tar.gz mcp-publisher.exe
+rm mcp-publisher.tar.gz
+# move mcp-publisher.exe to somewhere on PATH
+```
+
+### 3. Authenticate as Hei33enberg
+
+```bash
+mcp-publisher login github
+# follow the device-code link, authorize as Hei33enberg
+```
+
+### 4. Publish
+
+```bash
+cd C:\mosadd-os\packages\mcp
+mcp-publisher publish
+```
+
+Expected:
+
+```
+Publishing to https://registry.modelcontextprotocol.io...
+✓ Successfully published
+✓ Server io.github.hei33enberg/mosadd-mcp version 3.0.0-alpha.21
+```
+
+### 5. Verify
+
+```bash
+curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=mosadd-mcp"
+```
+
+Once it appears, Glama / mcp.so / Smithery / mcpservers.org pick it up
+automatically over the next few hours (they all auto-index from the official
+registry + GitHub).
+
+## Troubleshooting
+
+| Error | Fix |
+|---|---|
+| `Registry validation failed for package` | `mcpName` not yet in the **published** package — re-run Step 1. |
+| `Invalid or expired Registry JWT token` | `mcp-publisher login github` again. |
+| `You do not have permission to publish this server` | `mcpName` must start `io.github.hei33enberg/` (matches GitHub auth). |
+
+## Follow-up (after Step 5 lands)
+
+- Check Glama / mcp.so / Smithery / mcpservers.org ~24 h later; if missing, fall
+  back to their manual submission forms (per-registry drafts in this folder).
+- Add `mcp-publisher publish` to a GitHub Actions workflow so future alpha bumps
+  auto-publish — see `docs/modelcontextprotocol-io/github-actions.md` upstream.
