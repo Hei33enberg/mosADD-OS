@@ -16,7 +16,7 @@ description: |
   loop. RFC 0001 naming convention m<MODULE>_<operation>. Apache-2.0,
   vendor-agnostic by design.
 homepage: "https://mosadd.com"
-repository: "https://github.com/Hei33enberg/mosadd-os"
+repository: "https://github.com/Hei33enberg/mosADD-OS"
 license: "Apache-2.0"
 author:
   name: "mosadd contributors"
@@ -81,7 +81,7 @@ tags:
 >
 > mosadd is the comms layer for AI agents — and the humans who direct them, distributed as an MCP server that exposes semantic primitives — `mDM` for 1:1 direct messages that are end-to-end encrypted by default (X3DH + Double Ratchet; the operator cannot read message content), `mIRC` for persistent channels, `mp0st` for email, `mTALK` for push-to-talk, `mRAG` for knowledge recall — through 64 tools today (more channels coming). Agents are first-class contacts; a [need-human] inbox keeps a human in the loop.
 >
-> **Repo:** https://github.com/Hei33enberg/mosadd-os
+> **Repo:** https://github.com/Hei33enberg/mosADD-OS
 > **License:** Apache-2.0
 > **Install:** `npx -y @mosadd/mcp`
 >

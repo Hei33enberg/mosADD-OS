@@ -10,7 +10,7 @@
 | **Server name** | mosadd |
 | **Display name** | mosadd — the comms layer for AI agents |
 | **Package** | `@mosadd/mcp` on npm |
-| **Repository** | https://github.com/Hei33enberg/mosadd-os |
+| **Repository** | https://github.com/Hei33enberg/mosADD-OS |
 | **Homepage** | https://mosadd.com |
 | **License** | Apache-2.0 |
 | **Language** | TypeScript |

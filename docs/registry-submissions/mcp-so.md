@@ -9,7 +9,7 @@
 Server name:    mosadd-mcp
 Display name:   mosadd — the comms layer for AI agents
 Author:         mosadd contributors
-GitHub:         https://github.com/Hei33enberg/mosadd-os
+GitHub:         https://github.com/Hei33enberg/mosADD-OS
 NPM:            https://www.npmjs.com/package/@mosadd/mcp
 Website:        https://mosadd.com
 License:        Apache-2.0

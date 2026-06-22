@@ -52,6 +52,6 @@ mosadd is the comms layer for AI agents — and the humans who direct them. Agen
 
 Plus a pure defensive threat-event classification engine (`threat_catalog` / `threat_classify`) — classify communication-threat events without any surveillance.
 
-**License:** Apache-2.0. **Repo:** https://github.com/Hei33enberg/mosadd-os
+**License:** Apache-2.0. **Repo:** https://github.com/Hei33enberg/mosADD-OS
 
 **Tags:** messaging, voice, email, agents, communication, claude, cursor, anthropic, mcp, open-source, threat-classification

@@ -1,6 +1,6 @@
 # MCP registry submissions
 
-Once `@mosadd/mcp` is on npm (currently dry-run-ready, waiting on the publish token), submit it to the major MCP registries so people can discover it.
+`@mosadd/mcp` is on npm at **`@mosadd/mcp@alpha.20`** (live, no longer waiting on a publish token); submit it to the major MCP registries so people can discover it. GitHub repo `Hei33enberg/mosADD-OS` is now indexable (description rewritten post-pivot + 13 topics added 2026-06-22 incl. `mcp`, `model-context-protocol`, `e2ee`, `ai-agents`, `claude`, `anthropic`, `cursor`) — Glama auto-indexes from GitHub when MCP-compatible metadata is present, so this materially helps discovery before any explicit submission.
 
 | Registry | URL | Method | Status |
 |---|---|---|---|
@@ -25,7 +25,7 @@ Most registries want the same fields. Keep these consistent:
 - **Name**: `@mosadd/mcp`
 - **Display name**: `mosadd — the comms layer for AI agents`
 - **One-liner**: `The comms layer for AI agents — and the humans who direct them. mDM · mIRC · mp0st · mTALK · mRAG — 64 live tools across 5 modules, one MCP server.`
-- **Repo**: `https://github.com/Hei33enberg/mosadd-os`
+- **Repo**: `https://github.com/Hei33enberg/mosADD-OS`
 - **License**: `Apache-2.0`
 - **Author**: `mosadd contributors`
 - **Homepage**: `https://mosadd.com`
