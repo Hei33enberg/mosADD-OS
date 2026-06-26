@@ -10,13 +10,19 @@ describe("@mosadd/ai/core", () => {
 
     it("filters to a single module prefix", () => {
       const mDMOnly = filterTools({ modules: ["mDM"] });
+      expect(mDMOnly.length).toBeGreaterThan(0);
       expect(mDMOnly.every((t) => t.name.startsWith("mDM_"))).toBe(true);
-      expect(mDMOnly.length).toBe(14); // mDM = 14 (text + voice/call + file-send ops)
+      // Anchor on a known-shipped tool rather than a hard count, so intended
+      // surface changes (un/registering tools) don't red the build.
+      expect(mDMOnly.some((t) => t.name === "mDM_send")).toBe(true);
     });
 
-    it("supports multiple modules", () => {
+    it("supports multiple modules (count is additive across prefixes)", () => {
+      const dm = filterTools({ modules: ["mDM"] });
+      const talk = filterTools({ modules: ["mTALK"] });
       const both = filterTools({ modules: ["mDM", "mTALK"] });
-      expect(both.length).toBe(14 + 6); // mDM=14, mTALK=6
+      // Derive the expectation from the registry itself — robust to count drift.
+      expect(both.length).toBe(dm.length + talk.length);
       expect(
         both.every((t) => t.name.startsWith("mDM_") || t.name.startsWith("mTALK_")),
       ).toBe(true);

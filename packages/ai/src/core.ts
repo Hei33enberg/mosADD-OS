@@ -21,7 +21,7 @@ export interface MosaddOptions {
   /**
    * Which OS modules to expose. Each module name is the m\* prefix without
    * the underscore — `'mDM'`, `'mIRC'`, etc. Omit to expose ALL shipped
-   * tools (64 today, more in follow-ups).
+   * tools (the full registered surface; count tracks @mosadd/mcp).
    *
    * Example: `modules: ['mDM', 'mIRC']` exposes only DM + channel tools.
    */

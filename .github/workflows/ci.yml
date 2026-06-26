@@ -32,15 +32,18 @@ jobs:
 
       - name: Lockfile drift check (fails fast if package.json ↔ pnpm-lock.yaml desynced)
         run: |
-          # Mirrors the frozen install but flagged clearly. Catches the class of bug
-          # where a merged PR rewrites the lockfile without preserving root `pnpm.overrides`.
-          set +e
-          pnpm install --frozen-lockfile --dry-run 2>&1 | tee /tmp/lockcheck.log
-          if grep -q "ERR_PNPM_LOCKFILE" /tmp/lockcheck.log; then
+          # Catches the class of bug where a merged PR rewrites the lockfile without
+          # preserving root `pnpm.overrides`. Re-resolve the lockfile from the
+          # package.json manifests and fail if it would change. (The previous
+          # implementation used `--dry-run`, which pnpm does not support — it errored
+          # before checking anything, so the gate never actually fired.)
+          pnpm install --lockfile-only
+          if ! git diff --exit-code --quiet pnpm-lock.yaml; then
             echo "::error::Lockfile is out of sync with package.json. Run \`pnpm install --lockfile-only\` locally and commit pnpm-lock.yaml."
+            git --no-pager diff --stat pnpm-lock.yaml
+            git checkout -- pnpm-lock.yaml
             exit 1
           fi
-          set -e
 
       - name: Install
         run: pnpm install --frozen-lockfile
@@ -83,10 +86,12 @@ jobs:
             cd ../..
           done
 
-  # Standalone Next.js apps live outside the pnpm workspace (own package-lock, npm),
-  # so the package job above never builds them. Build them here so a TS error or a
-  # broken import in the public site/hub can't merge undetected. (murl-www and
-  # channel0-ext are a separate agent's lane and deploy independently.)
+  # Standalone apps live outside the pnpm workspace (own package-lock, npm), so the
+  # package job above never builds them. Build them here so a TS error, a broken
+  # import, or a stale lockfile in the public site/hub/gateway can't merge undetected
+  # (mcp-http = the mcp.mosadd.com gateway; a stale lock there silently kept an old
+  # deploy live). murl-www, embed, and channel0-ext are separate lanes / parked and
+  # deploy independently.
   apps:
     name: apps · typecheck + build
     runs-on: ubuntu-latest
@@ -94,7 +99,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [dev, hub]
+        app: [dev, hub, mcp-http]
     steps:
       - uses: actions/checkout@v5
       # The root package.json declares packageManager=pnpm, so setup-node looks for

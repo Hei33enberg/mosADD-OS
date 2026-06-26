@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { filterTools } from "../core.js";
 import { mosadd as mosaddVercel } from "../vercel/index.js";
 import { mosadd as mosaddLangchain } from "../langchain/index.js";
 import { mosadd as mosaddOpenAI } from "../openai/index.js";
@@ -25,7 +26,8 @@ describe("framework adapters", () => {
     it("returns an array of { name, description, schema, func }", () => {
       const tools = mosaddLangchain({ modules: ["mTALK"] });
       expect(Array.isArray(tools)).toBe(true);
-      expect(tools.length).toBe(6); // mTALK = 6 (PTT floor + ingest ops)
+      // Adapter must expose exactly the filtered registry tools (no drops/dupes).
+      expect(tools.length).toBe(filterTools({ modules: ["mTALK"] }).length);
       const create = tools.find((t) => t.name === "mTALK_open");
       expect(create).toBeDefined();
       expect(typeof create?.func).toBe("function");
@@ -35,7 +37,7 @@ describe("framework adapters", () => {
   describe("@mosadd/ai/openai", () => {
     it("returns FunctionTool-shaped descriptors", () => {
       const tools = mosaddOpenAI({ modules: ["mIRC"] });
-      expect(tools.length).toBe(22); // mIRC = 22 (channel + member + message + edge + file/voice ops)
+      expect(tools.length).toBe(filterTools({ modules: ["mIRC"] }).length);
       for (const t of tools) {
         expect(t.type).toBe("function");
         expect(typeof t.name).toBe("string");
@@ -49,7 +51,7 @@ describe("framework adapters", () => {
   describe("@mosadd/ai/anthropic", () => {
     it("returns Messages-API-shaped tool definitions", () => {
       const tools = mosaddAnthropic({ modules: ["mp0st"] });
-      expect(tools.length).toBe(12); // mp0st: send/list/view/delete/stats/events/metrics/revoke/audit_export/consent/notify/send_as_agent
+      expect(tools.length).toBe(filterTools({ modules: ["mp0st"] }).length);
       for (const t of tools) {
         expect(typeof t.name).toBe("string");
         expect(typeof t.description).toBe("string");
