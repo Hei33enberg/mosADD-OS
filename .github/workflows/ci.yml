@@ -108,6 +108,12 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: '20'
+          # Cache npm (what these apps actually install with), keyed on the app's own
+          # lockfile. Without an explicit cache target, setup-node auto-detects the
+          # root packageManager=pnpm and its post-step tries to save a pnpm store that
+          # was never populated (apps use npm) -> "Path Validation Error" fails the job.
+          cache: 'npm'
+          cache-dependency-path: apps/${{ matrix.app }}/package-lock.json
       - name: Install (apps/${{ matrix.app }})
         working-directory: apps/${{ matrix.app }}
         run: npm ci || npm install
