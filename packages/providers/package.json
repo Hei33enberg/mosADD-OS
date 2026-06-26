@@ -1,6 +1,6 @@
 {
   "name": "@mosadd/providers",
-  "version": "3.0.0-alpha.4",
+  "version": "3.0.0-alpha.22",
   "description": "Vendor adapters for mosadd: forked LiveKit, nwaku p2p, Resend, ElevenLabs, Supabase. Pluggable.",
   "homepage": "https://github.com/Hei33enberg/mosadd-os/tree/main/packages/providers",
   "repository": {

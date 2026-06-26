@@ -8,7 +8,18 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
-## [3.0.0-alpha.21] — 2026-06-26
+## [3.0.0-alpha.22] — 2026-06-26
+
+### Fixed
+- **alpha.21 was broken on a fresh install** — it crashed on startup with
+  `SyntaxError: The requested module '@mosadd/crypto' does not provide an export named
+  'initRatchetInitiator'`. The workspace dependency packages (`@mosadd/crypto`, `protocol`,
+  `providers`, `threat-engine`) had drifted: their *source* gained new exports (the mDM
+  Double-Ratchet work) but their version was never bumped, so npm still served the stale
+  alpha.4/alpha.5 builds while `@mosadd/mcp` was built against the newer API. Bumped the whole
+  alpha-line in lockstep to alpha.22 and republished so every published package matches current
+  source and `workspace:*` cross-deps resolve. Verified: a clean `npm i @mosadd/mcp@alpha`
+  now boots and lists 62 tools. (The previous alpha.20 was broken-on-install the same way.)
 
 ### Changed
 - **Unregistered 2 scaffold tools that failed on every call.** `mp0st_send_as_agent`
