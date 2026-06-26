@@ -24,10 +24,10 @@ import { mircEdgeTools } from "./mirc-edge.js";
 // import { mroomTools } from "./mroom.js"; // mROOM: killed (LINEAR-3414) — not registered
 // import { mroomMessagesTools } from "./mroom-messages.js"; // mROOM: killed (LINEAR-3414) — not registered
 import { mailTools } from "./mail.js";
-import { mailProvenanceTools } from "./mail-provenance.js";
+// import { mailProvenanceTools } from "./mail-provenance.js"; // scaffold (mp0st_send_as_agent) — not registered, see below
 import { mtalkTools } from "./mtalk.js";
 import { attachmentTools } from "./attachments.js";
-import { pttIngestTools } from "./ptt-ingest.js";
+// import { pttIngestTools } from "./ptt-ingest.js"; // scaffold (mTALK_ingest_ptt) — not registered, see below
 // import { mcallTools } from "./mcall.js"; // mCALL: carrier-pending — not registered (see header note)
 import { knowledgeTools } from "./knowledge.js";
 import { actionTools } from "./actions.js";
@@ -47,10 +47,14 @@ const channelTools: MosaddTool[] = [
   // ...mroomTools,  // mROOM: killed (LINEAR-3414) — channel re-cut into ephemeral private mIRC
   // ...mroomMessagesTools,  // mROOM: killed (LINEAR-3414)
   ...mailTools,
-  ...mailProvenanceTools,
+  // ...mailProvenanceTools,  // mp0st_send_as_agent: SCAFFOLD — calls a non-existent hub-claim-mint
+  //   endpoint (404s every call) + sends provenance body fields the EF never reads. Unregister until
+  //   rewired onto hub-key-exchange (agent_id/task_id + mosadd_hub JWT claim). See consistency ticket.
   ...mtalkTools,
   ...attachmentTools,
-  ...pttIngestTools,
+  // ...pttIngestTools,  // mTALK_ingest_ptt: SCAFFOLD — request body doesn't match the deployed
+  //   ptt-ingest EF (needs {direction, audio_base64, mime_type, message_id|thread_id} → 400s every
+  //   call) and the PTT→RAG path needs rework. Unregister until both are fixed. See consistency ticket.
   ...knowledgeTools,
   ...actionTools,  // Action links (Tier 1): agent → user one-link browser action via action-create EF
   ...embedTools,   // comms_embed_create: agent embeds a live channel into the app it builds (embed-keys EF + embed.mosadd.com widget)
