@@ -8,6 +8,43 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+## [3.0.0-alpha.23] — 2026-06-26
+
+Toolkit hardening pass: every registered tool's request/response contract was
+adversarially verified against the deployed edge functions. Two tools were broken on
+every call; the rest had silent field drops, wrong results, or a confidentiality/access gap.
+
+### Fixed
+- **Edge-function errors are now legible.** `invokeFunction` only ever surfaced the fixed
+  string "Edge Function returned a non-2xx status code"; the real reason lives in
+  `error.context`. It now reads that body (and the HTTP status), so every EF-backed tool
+  returns an actionable error the agent can act on — the single highest-impact fix.
+- **mDM_edit no longer strips E2EE.** It used to store a server-readable plaintext body even
+  on an E2EE thread (and the forward-only ratchet means an edit can't be re-sealed). It now
+  refuses to edit E2EE messages (use delete + re-send) and only edits legacy plaintext.
+- **mp0st_send cc/bcc/reply_to are actually delivered** — the backend dropped them silently;
+  now forwarded to the mail provider (edge-function fix, deployed).
+- **mDM call rooms are access-gated (security)** — call-room tokens were mintable by any
+  authenticated user who learned the room name; the backend now restricts them to the two
+  participants, and the room name is per-pair so the gate is robust (edge-function fix, deployed).
+- **mDM_call_end / mDM_voice_note** now return the real message id (was always undefined).
+- **mp0st_view** no longer advertises a `received_at` field the backend doesn't return (it's `sent_at`).
+
+### Changed
+- **Unregistered `comms_embed_create`** — its `embed-keys` edge function isn't deployed (404
+  on every call) and the embed surface is parked. Tool count **62 → 61**. Re-register when the
+  backend + widget ship.
+- **mIRC tools stop advertising fields the backend ignores.** Removed: `mIRC_kick` `reason`,
+  `mIRC_request_access` `message`, `mIRC_ban` `reason`+`until` (the latter silently made a
+  "temporary" ban permanent), and `access_mode` on `mIRC_update`/`mIRC_list` (no-ops). Added
+  `wrapped_group_key` to `mIRC_create`/`mIRC_approve_request` so E2EE (password/private)
+  channels are honestly callable. Descriptions corrected to match.
+- **mp0st_consent** now fails fast client-side when `check`/`optin` is missing a recipient.
+
+### Verified (no changes needed)
+- Install/boot, full build + typecheck across all packages, dependency-export resolution, and
+  the mDM X3DH + Double-Ratchet crypto round-trip all pass.
+
 ## [3.0.0-alpha.22] — 2026-06-26
 
 ### Fixed

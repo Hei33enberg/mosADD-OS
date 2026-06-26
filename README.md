@@ -8,9 +8,9 @@ Open communication primitives (E2EE direct messages, channels, push-to-talk, mai
 
 [![CI](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml/badge.svg)](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-3.0.0--alpha.20-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
+[![Status](https://img.shields.io/badge/status-3.0.0--alpha.23-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-62%20live-00ff7f)](packages/mcp)
+[![Tools](https://img.shields.io/badge/tools-61%20live-00ff7f)](packages/mcp)
 [![npm](https://img.shields.io/npm/v/@mosadd/mcp/alpha?label=%40mosadd%2Fmcp)](https://www.npmjs.com/package/@mosadd/mcp)
 [![mosadd.com](https://img.shields.io/badge/site-mosadd.com-5af082)](https://mosadd.com)
 
@@ -18,7 +18,7 @@ Open communication primitives (E2EE direct messages, channels, push-to-talk, mai
 
 ---
 
-## What's live today (3.0.0-alpha.20)
+## What's live today (3.0.0-alpha.23)
 
 **Tagline-to-code real:**
 
@@ -26,7 +26,7 @@ Open communication primitives (E2EE direct messages, channels, push-to-talk, mai
 npx -y @mosadd/mcp@alpha
 ```
 
-…starts an MCP server with **62 tools** across 5 live mosADD modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send an **end-to-end-encrypted DM**, manage a persistent channel, send mail, run a push-to-talk room, or recall from a personal knowledge base — all through your own mosADD backend (BYOK).
+…starts an MCP server with **61 tools** across 5 live mosADD modules. Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send an **end-to-end-encrypted DM**, manage a persistent channel, send mail, run a push-to-talk room, or recall from a personal knowledge base — all through your own mosADD backend (BYOK).
 
 | Channel | Tools | Highlight |
 |---|---|---|
@@ -35,10 +35,10 @@ npx -y @mosadd/mcp@alpha
 | **mp0st** (11) | `mp0st_send`, `mp0st_view`, `mp0st_list`, `mp0st_delete`, `mp0st_stats`, `mp0st_events`, `mp0st_metrics`, `mp0st_revoke`, `mp0st_audit_export`, `mp0st_consent`, `mp0st_notify` | Every user gets `<userId>@mosadd.com` for free. **Transport + at-rest encrypted (not E2EE).** |
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own messages/mail/calls (hybrid vector + BM25). On-device keyword index for E2EE content — plaintext never leaves the device |
-| **comms_** (4) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities`, `comms_embed_create` | Agent→human one-link browser action (Tier 1) + one-call capability discovery |
+| **comms_** (3) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities` | Agent→human one-link browser action (Tier 1) + one-call capability discovery |
 | **threat_** (2) | `threat_catalog`, `threat_classify` | Pure **defensive** threat-event classification engine — not surveillance, not interception |
 
-**62 tools across 5 live modules** — mDM (14) + mIRC (22) + mp0st (11) + mTALK (5) + mRAG (4) = 56 channel tools, plus 4 `comms_*` and 2 `threat_*` (**62 callable**). `mCALL` (telephony, carrier-pending), `mROOM` and `mURL` — and the `mp0st_send_as_agent` provenance + `mTALK_ingest_ptt` scaffolds (backend contract not yet wired) — ship in the source but are **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
+**61 tools across 5 live modules** — mDM (14) + mIRC (22) + mp0st (11) + mTALK (5) + mRAG (4) = 56 channel tools, plus 3 `comms_*` and 2 `threat_*` (**61 callable**). `mCALL` (telephony, carrier-pending), `mROOM` and `mURL` — and the `mp0st_send_as_agent` provenance, `mTALK_ingest_ptt` PTT-ingest, and `comms_embed_create` scaffolds (backend not deployed / contract not wired) — ship in the source but are **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
 ## Quickstart (60 seconds)
 

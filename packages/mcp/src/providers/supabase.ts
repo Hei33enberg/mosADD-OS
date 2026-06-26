@@ -105,12 +105,40 @@ export async function invokeFunction<T = unknown>(
   const client = getSupabase();
   const { data, error } = await client.functions.invoke<T>(fn, { body });
   if (error) {
-    const msg =
-      error instanceof Error
+    // supabase-js throws FunctionsHttpError for any non-2xx, whose `.message`
+    // is the FIXED generic string "Edge Function returned a non-2xx status
+    // code" — the *real* reason (e.g. {"error":"wrapped_group_key required"},
+    // "forbidden", an RLS denial) lives in `error.context`, a Response. Read it
+    // so the agent gets an actionable message (and the HTTP status) it can
+    // reason about and self-correct on, instead of the same opaque sentence
+    // for every failure across mDM/mIRC/mp0st/mRAG/prekey/message-list.
+    let msg =
+      error instanceof Error && error.message
         ? error.message
-        : typeof (error as { message?: unknown })?.message === "string"
-          ? (error as { message: string }).message
-          : `Edge function ${fn} failed`;
+        : `Edge function ${fn} failed`;
+    const ctx = (error as { context?: unknown }).context;
+    if (ctx && typeof (ctx as Response).text === "function") {
+      const res = ctx as Response;
+      try {
+        const raw = await res.text();
+        if (raw) {
+          let detail = raw;
+          try {
+            const parsed = JSON.parse(raw) as { error?: unknown; message?: unknown };
+            detail =
+              (typeof parsed.error === "string" && parsed.error) ||
+              (typeof parsed.message === "string" && parsed.message) ||
+              raw;
+          } catch {
+            // non-JSON body — use the raw text as-is
+          }
+          const status = typeof res.status === "number" ? res.status : undefined;
+          msg = status ? `${fn} (${status}): ${detail}` : `${fn}: ${detail}`;
+        }
+      } catch {
+        // body already consumed or unreadable — keep the generic message
+      }
+    }
     throw new Error(msg);
   }
   if (data == null) {

@@ -150,7 +150,7 @@ async function mp0st_view(
   subject: string;
   body_text: string | null;
   body_html: string | null;
-  received_at: string;
+  sent_at: string;
 }> {
   readSupabaseEnv();
   // mp0st-get (NOT mp0st-view): mp0st-view is the open-tracking pixel endpoint
@@ -268,6 +268,9 @@ async function mp0st_consent(
   ctx: MosaddToolContext,
 ): Promise<Record<string, unknown>> {
   readSupabaseEnv();
+  if ((input.action === "check" || input.action === "optin") && !input.recipient) {
+    throw new Error(`mp0st_consent action '${input.action}' requires a 'recipient' email address.`);
+  }
   ctx.log("debug", "mp0st_consent invoking mp0st-consent", { action: input.action });
   return await invokeFunction("mp0st-consent", { action: input.action, recipient: input.recipient ?? null });
 }

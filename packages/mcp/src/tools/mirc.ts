@@ -42,12 +42,20 @@ const mIRC_create_input = z.object({
   access_mode: AccessMode.default("open"),
   password: z.string().min(6).max(120).optional().describe("Password (only for access_mode=password)."),
   capabilities: Capabilities,
+  wrapped_group_key: z
+    .string()
+    .optional()
+    .describe(
+      "Required for access_mode=password|private (these are E2EE channels): the channel's group key wrapped to the creator's identity key. Open channels ignore it. If omitted on a non-open channel the backend rejects the call with a 'wrapped_group_key required' error.",
+    ),
 });
 
 const mIRC_list_input = z.object({
   limit: z.number().int().min(1).max(500).default(100).optional(),
   offset: z.number().int().min(0).default(0).optional(),
-  access_mode: AccessMode.optional().describe("Filter to a single access mode."),
+  // NOTE: an access_mode filter was removed — channel-manage's list branch doesn't
+  // filter by it (it was a silent no-op). Filter client-side on the returned
+  // access_mode field. Server-side filtering is tracked in the consistency ticket.
 });
 
 const mIRC_get_input = z.object({
@@ -58,7 +66,9 @@ const mIRC_update_input = z.object({
   channel_id: ChannelId,
   name: z.string().min(1).max(80).optional(),
   topic: z.string().max(500).optional(),
-  access_mode: AccessMode.optional(),
+  // NOTE: access_mode was removed — channel-manage's update branch ignores it, and
+  // switching an existing channel to/from an E2EE (password/private) mode needs
+  // group-key handling that isn't wired yet. Recreate the channel to change mode.
   capabilities: Capabilities,
 });
 
@@ -74,9 +84,13 @@ async function mIRC_create(
 ): Promise<{ channel: unknown }> {
   readSupabaseEnv();
   ctx.log("debug", "mIRC_create invoking channel-manage", { name: input.name });
+  // channel-manage reads `description`, not `topic` — map it so the channel
+  // topic isn't silently dropped on create (the update handler does the same).
+  const { topic, ...rest } = input as typeof input & { topic?: string };
+  const payload = topic !== undefined ? { ...rest, description: topic } : { ...rest };
   return await invokeFunction<{ channel: unknown }>("channel-manage", {
     action: "create",
-    ...input,
+    ...payload,
   });
 }
 
@@ -140,7 +154,7 @@ export const mircTools: MosaddTool[] = [
     name: "mIRC_create",
     requires: "network",
     description:
-      "Create a new persistent channel (Discord/Slack-style). Set access_mode to open (anyone joins), password (shared-password gated), or private (invite-only). capabilities controls modes (txt/ptt/live).",
+      "Create a new persistent channel (Discord/Slack-style). Set access_mode to open (anyone joins), password (shared-password gated), or private (invite-only). capabilities controls modes (txt/ptt/live). NOTE: password and private channels are end-to-end encrypted — you must supply wrapped_group_key (the group key wrapped to your identity key); open channels do not need it.",
     inputSchema: mIRC_create_input,
     handler: mIRC_create as MosaddTool["handler"],
   },
@@ -148,7 +162,7 @@ export const mircTools: MosaddTool[] = [
     name: "mIRC_list",
     requires: "network",
     description:
-      "List channels available to the current user. Optionally filter by access_mode.",
+      "List channels available to the current user.",
     inputSchema: mIRC_list_input,
     handler: mIRC_list as MosaddTool["handler"],
   },
@@ -162,7 +176,7 @@ export const mircTools: MosaddTool[] = [
   {
     name: "mIRC_update",
     requires: "network",
-    description: "Update channel metadata (name, topic, access_mode, capabilities). Owner only.",
+    description: "Update channel metadata (name, topic, capabilities). Owner only. Access mode is fixed at creation — recreate the channel to change it.",
     inputSchema: mIRC_update_input,
     handler: mIRC_update as MosaddTool["handler"],
   },

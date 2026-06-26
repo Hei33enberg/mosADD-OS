@@ -2,11 +2,11 @@
 
 MCP server for [mosADD](https://mosadd.com) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **3.0.0-alpha.20** — **62 live tools across 5 live modules** (mDM incl. voice + files, mIRC, mp0st, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool + the defensive `threat_*` engine, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
+> **3.0.0-alpha.23** — **61 live tools across 5 live modules** (mDM incl. voice + files, mIRC, mp0st, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool + the defensive `threat_*` engine, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
 
 ## Connect your agent
 
-Three ways to authenticate, friendliest first — all three end with the same ~62 tools.
+Three ways to authenticate, friendliest first — all three end with the same ~61 tools.
 
 ### 1. `mosadd login` — recommended (one command, stays logged in)
 
@@ -65,7 +65,7 @@ In Phase 2 the hosted gateway at `mcp.mosadd.com` removes even this — add a UR
 
 ## Tools shipped in alpha
 
-**62 live tools across 5 live modules** (mDM, mIRC, mp0st, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool + the defensive `threat_*` engine. Highlights per module:
+**61 live tools across 5 live modules** (mDM, mIRC, mp0st, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool + the defensive `threat_*` engine. Highlights per module:
 
 | Module | Tools | What it does |
 |---|---|---|
@@ -74,10 +74,10 @@ In Phase 2 the hosted gateway at `mcp.mosadd.com` removes even this — add a UR
 | **mp0st** (11) | `mp0st_send`, `mp0st_view`, `mp0st_list`, `mp0st_delete`, `mp0st_stats`, `mp0st_events`, `mp0st_metrics`, `mp0st_revoke`, `mp0st_audit_export`, `mp0st_consent`, `mp0st_notify` | Mail; every user gets `<id>@mosadd.com`. `mp0st_revoke` recalls secure-reader access; `mp0st_audit_export` emits an HMAC-SHA256-signed engagement audit; `mp0st_consent` manages recipient tracking opt-outs (GDPR); `mp0st_notify` pulls the inbound-mail feed |
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own data (hybrid vector + BM25) |
-| **comms_** (4) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities`, `comms_embed_create` | `comms_action_create` mints an agent→user one-link browser action (Tier 1); `comms_action_frame_get` fetches a framed action; `comms_capabilities` is one-call discovery of every tool's transport `requires` flag; `comms_embed_create` builds an embeddable surface |
+| **comms_** (3) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities` | `comms_action_create` mints an agent→user one-link browser action (Tier 1); `comms_action_frame_get` fetches a framed action; `comms_capabilities` is one-call discovery of every tool's transport `requires` flag |
 | **threat_** (2) | `threat_catalog`, `threat_classify` | Pure defensive threat-event classification engine — enumerate the catalog and classify an operation against it |
 
-Counts by module prefix sum to **56 channel tools**; the 4 `comms_*` tools and 2 `threat_*` tools make **62 callable** in total. `mCALL` (telephony), `mROOM`, `mURL` — and the `mp0st_send_as_agent` provenance + `mTALK_ingest_ptt` scaffolds (backend contract not yet wired) — exist in the source but are **not registered**, so agents only ever see tools that actually work.
+Counts by module prefix sum to **56 channel tools**; the 3 `comms_*` tools and 2 `threat_*` tools make **61 callable** in total. `mCALL` (telephony), `mROOM`, `mURL` — and the `mp0st_send_as_agent` provenance, `mTALK_ingest_ptt` PTT-ingest, and `comms_embed_create` (embed-keys EF undeployed) scaffolds — exist in the source but are **not registered**, so agents only ever see tools that actually work.
 
 All tool names follow [RFC 0001](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 

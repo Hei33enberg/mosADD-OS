@@ -80,8 +80,10 @@ async function signalDm(
   const dm = ctx.providers.dm;
   const selfId = await dm.selfId();
   const threadId = dmThreadId(selfId, to, threadLabel);
+  // DmProvider.send returns DmSendResult { id, deliveredAt } — read `id` (the old
+  // `message_id` lookup was always undefined, so the echoed id never populated).
   const res = await dm.send({ to, threadId, payload: packEnvelope(envelope) });
-  return { message_id: (res as { message_id?: string })?.message_id, thread_id: threadId };
+  return { message_id: (res as { id?: string })?.id, thread_id: threadId };
 }
 
 // ---- Handlers ----
@@ -102,8 +104,12 @@ async function mDM_call_start(
   const selfId = await dm.selfId();
   const mode = input.video ? "video" : "audio";
 
-  // Stable room label tied to the DM pair so re-dials reuse one room.
-  const label = `dmcall-${dmThreadId(selfId, input.to, input.thread_label).replace(/[^a-zA-Z0-9._-]/g, "-")}`.slice(0, 120);
+  // Stable room label tied to the DM PAIR (no thread_label) so re-dials reuse one
+  // room AND the name stays short enough that both participants' full identity ids
+  // are always present — the livekit-token gate authorizes by full-id inclusion, so
+  // truncating an id would lock a real participant out. (thread_label still routes
+  // the call_invite message below, just not the room id.)
+  const label = `dmcall-${dmThreadId(selfId, input.to).replace(/[^a-zA-Z0-9._-]/g, "-")}`.slice(0, 120);
   const { roomId } = await ctx.providers.voice.createRoom(label);
   const ticket = await ctx.providers.voice.joinTicket(roomId);
 

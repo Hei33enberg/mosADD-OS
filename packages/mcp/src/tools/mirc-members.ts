@@ -38,35 +38,44 @@ const mIRC_join_input = z.object({
 
 const mIRC_request_access_input = z.object({
   channel_id: ChannelId,
-  message: z.string().max(500).optional().describe("Optional note for the channel owner explaining why."),
 });
 
 const mIRC_leave_input = z.object({
   channel_id: ChannelId,
 });
 
-const mIRC_approve_request_input = z.object({
+// EF channel-members-manage reads `target_identity_id` (the normalizer below maps
+// identity_id → target_identity_id). The old `request_id` field was ignored →
+// 400 "target_identity_id required" on every approve/reject.
+const mIRC_reject_request_input = z.object({
   channel_id: ChannelId,
-  // EF channel-members-manage reads `target_identity_id` (normalizer below maps
-  // identity_id → target_identity_id). The old `request_id` field was ignored →
-  // 400 "target_identity_id required" on every approve/reject.
-  identity_id: z.string().min(1).describe("Identity id of the requester to approve/reject (state=requested; from mIRC_list members). NOTE: approving an E2EE channel also needs a wrapped group key — LINEAR-3523."),
+  identity_id: z.string().min(1).describe("Identity id of the requester to reject (state=requested; from mIRC_list members)."),
 });
 
-const mIRC_reject_request_input = mIRC_approve_request_input;
+const mIRC_approve_request_input = mIRC_reject_request_input.extend({
+  wrapped_group_key: z
+    .string()
+    .optional()
+    .describe(
+      "Required to approve a join to a password/private (E2EE) channel: the channel group key wrapped to the approved member's identity key. Without it the backend rejects the approval with a 'wrapped_group_key required' error. (Access requests only exist on non-open channels, so this is effectively always required.)",
+    ),
+});
 
 const mIRC_kick_input = z.object({
   channel_id: ChannelId,
   identity_id: MemberIdentity,
-  reason: z.string().max(500).optional(),
+  // NOTE: a `reason` field used to be advertised here but channel-members-manage
+  // never persists it (no audit row on kick) — removed until the backend logs it
+  // (see consistency ticket) so the tool doesn't claim an audit trail it can't deliver.
 });
 
 const mIRC_ban_input = z.object({
   channel_id: ChannelId,
   identity_id: MemberIdentity,
-  reason: z.string().max(500).optional(),
-  /** Optional unban deadline (ISO-8601). Omit for permanent ban. */
-  until: z.string().optional(),
+  // NOTE: `reason` (no storage) and `until` (timed ban) were removed — the EF ban
+  // branch ignores both, so `until` produced a SILENT PERMANENT ban when a caller
+  // asked for a temporary one. Ban is permanent-until-unban; enforced temp-bans +
+  // ban audit are tracked in the consistency ticket.
 });
 
 const mIRC_unban_input = z.object({
@@ -121,7 +130,7 @@ export const mircMembersTools: MosaddTool[] = [
     name: "mIRC_request_access",
     requires: "network",
     description:
-      "Request access to an invite_only channel. Owner / admins get a notification with the optional message.",
+      "Request access to a password/private channel (your membership goes to state=requested for an admin to approve).",
     inputSchema: mIRC_request_access_input,
     handler: ((input, ctx) => invokeChannelMembers("request-access", input as Record<string, unknown>, ctx)) as MosaddTool["handler"],
   },
@@ -135,7 +144,8 @@ export const mircMembersTools: MosaddTool[] = [
   {
     name: "mIRC_approve_request",
     requires: "network",
-    description: "Approve a pending access request. Admins / moderators / owner only.",
+    description:
+      "Approve a pending access request (state=requested → active). Admins / moderators / owner only. Because access requests only exist on E2EE (password/private) channels, you must pass wrapped_group_key — the channel group key wrapped to the approved member's identity key.",
     inputSchema: mIRC_approve_request_input,
     handler: ((input, ctx) => invokeChannelMembers("approve-request", input as Record<string, unknown>, ctx)) as MosaddTool["handler"],
   },
@@ -150,7 +160,7 @@ export const mircMembersTools: MosaddTool[] = [
     name: "mIRC_kick",
     requires: "network",
     description:
-      "Remove a member from the channel. They can rejoin if not banned. Requires moderator+. `reason` is logged to channel-event-log.",
+      "Remove a member from the channel. They can rejoin if not banned. Requires moderator+.",
     inputSchema: mIRC_kick_input,
     handler: ((input, ctx) => invokeChannelMembers("kick", input as Record<string, unknown>, ctx)) as MosaddTool["handler"],
   },
@@ -158,7 +168,7 @@ export const mircMembersTools: MosaddTool[] = [
     name: "mIRC_ban",
     requires: "network",
     description:
-      "Ban a member from the channel. They cannot rejoin until unbanned. `until` (ISO-8601) for time-bound ban; omit for permanent. Requires admin+.",
+      "Ban a member from the channel. The ban is permanent until you call mIRC_unban. Requires admin+.",
     inputSchema: mIRC_ban_input,
     handler: ((input, ctx) => invokeChannelMembers("ban", input as Record<string, unknown>, ctx)) as MosaddTool["handler"],
   },

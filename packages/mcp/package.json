@@ -1,8 +1,8 @@
 {
   "name": "@mosadd/mcp",
-  "version": "3.0.0-alpha.22",
+  "version": "3.0.0-alpha.23",
   "mcpName": "io.github.hei33enberg/mosadd-mcp",
-  "description": "Model Context Protocol server for mosadd. Exposes the 5 live m* modules (mDM, mIRC, mTALK, mp0st, mRAG) plus comms + threat tools — 62 tools — to any agent runtime (Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom).",
+  "description": "Model Context Protocol server for mosadd. Exposes the 5 live m* modules (mDM, mIRC, mTALK, mp0st, mRAG) plus comms + threat tools — 61 tools — to any agent runtime (Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom).",
   "homepage": "https://github.com/Hei33enberg/mosADD-OS/tree/main/packages/mcp",
   "repository": {
     "type": "git",

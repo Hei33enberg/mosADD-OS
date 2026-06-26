@@ -31,7 +31,9 @@ import { attachmentTools } from "./attachments.js";
 // import { mcallTools } from "./mcall.js"; // mCALL: carrier-pending — not registered (see header note)
 import { knowledgeTools } from "./knowledge.js";
 import { actionTools } from "./actions.js";
-import { embedTools } from "./embed.js";
+// import { embedTools } from "./embed.js"; // comms_embed_create: SCAFFOLD — its
+//   embed-keys EF is NOT deployed to prod (404s every call) and the embed.mosadd.com
+//   widget surface is parked. Unregister until both ship. See consistency ticket.
 import { threatTools } from "./threat.js";
 // import { murlTools } from "./murl.js"; // mURL: brand/consumer surface, not a dev product — not registered
 import { makeCapabilitiesTool } from "./capabilities.js";
@@ -57,7 +59,7 @@ const channelTools: MosaddTool[] = [
   //   call) and the PTT→RAG path needs rework. Unregister until both are fixed. See consistency ticket.
   ...knowledgeTools,
   ...actionTools,  // Action links (Tier 1): agent → user one-link browser action via action-create EF
-  ...embedTools,   // comms_embed_create: agent embeds a live channel into the app it builds (embed-keys EF + embed.mosadd.com widget)
+  // ...embedTools,   // comms_embed_create: SCAFFOLD — embed-keys EF undeployed (404) + embed widget parked. Unregistered.
   ...threatTools,  // threat_catalog + threat_classify: pure defensive threat-event engine (@mosadd/threat-engine, LINEAR-3498)
   // ...murlTools,  // mURL: brand/consumer surface (murl.mosadd.com), not a dev product
   // ...mcallTools,  // mCALL: carrier-pending (no telephony carrier live) — re-register when a carrier is configured

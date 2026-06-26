@@ -342,8 +342,12 @@ async function mDM_respond_request(
 const mDM_publish_keys_input = z.object({});
 
 const mDM_edit_input = z.object({
+  to: ContactRef.describe(
+    "Recipient identity id of the conversation the message is in (needed to locate it and verify the edit won't break E2EE).",
+  ),
   message_id: z.string().min(1).describe("Id of the message to edit (from mDM_list)."),
   new_text: z.string().min(1).max(64_000).describe("Replacement message body (UTF-8). Max 64 KB."),
+  thread_label: ThreadSuffix.optional(),
 });
 
 const mDM_delete_input = z.object({
@@ -355,9 +359,33 @@ async function mDM_edit(
   ctx: MosaddToolContext,
 ): Promise<{ message_id: string; edited: true }> {
   readSupabaseEnv();
-  // Wire format = base64(JSON envelope), matching the EF (which atob()s it).
-  // NOTE: stored server-readable (like mDM_send_unencrypted). On an E2EE thread
-  // this does NOT re-seal the message — prefer delete + re-send for ciphertext.
+  const dm = ctx.providers.dm;
+  const selfId = await dm.selfId();
+  const threadId = dmThreadId(selfId, input.to, input.thread_label);
+
+  // Locate the target message before editing. mDM is E2EE by default and the
+  // Double Ratchet is FORWARD-ONLY (strict in-order, no skipped keys) — an edit
+  // cannot be re-sealed (the recipient's ratchet has already advanced past this
+  // message, so a re-encrypt would decrypt as <undecryptable>), and writing a
+  // fresh plaintext body would SILENTLY STRIP E2EE. So only legacy plaintext
+  // messages are editable; E2EE messages must be deleted + re-sent.
+  const recent = await dm.list({ threadId, limit: 100 });
+  const target = recent.messages.find((m) => m.id === input.message_id);
+  if (!target) {
+    throw new Error(
+      `mDM_edit could not find message ${input.message_id} in the recent history of this thread. ` +
+        `Pass the 'to' (and 'thread_label') of the conversation the message belongs to.`,
+    );
+  }
+  if (isE2eeEnvelope(target.payload)) {
+    throw new Error(
+      "mDM_edit cannot edit an end-to-end-encrypted message: the Double Ratchet is forward-only, so the edit " +
+        "can't be re-sealed and storing a new body would strip E2EE. Delete it with mDM_delete and send a " +
+        "replacement with mDM_send instead.",
+    );
+  }
+
+  // Legacy plaintext message — a plaintext edit matches its (non-E2EE) storage.
   const envelope = {
     v: PROTOCOL_VERSION,
     type: "text",
@@ -366,7 +394,7 @@ async function mDM_edit(
     sent_at: new Date().toISOString(),
   };
   const encrypted_payload = Buffer.from(JSON.stringify(envelope), "utf8").toString("base64");
-  ctx.log("debug", "mDM_edit via message-edit", { message_id: input.message_id });
+  ctx.log("debug", "mDM_edit via message-edit (legacy plaintext only)", { message_id: input.message_id });
   await invokeFunction("message-edit", { message_id: input.message_id, encrypted_payload });
   return { message_id: input.message_id, edited: true };
 }
@@ -436,7 +464,7 @@ export const mdmTools: MosaddTool[] = [
     name: "mDM_edit",
     requires: "any",
     description:
-      "Edit a direct message you sent — replace its body by message_id (from mDM_list). Stores a server-readable edited body; on an end-to-end-encrypted thread this does not re-encrypt, so for E2EE prefer deleting and re-sending.",
+      "Edit a direct message you sent — replace its body by message_id (pass the conversation's `to` so it can be located). NOTE: end-to-end-encrypted messages CANNOT be edited (the ratchet is forward-only) — mDM_edit refuses them and you should mDM_delete + mDM_send a replacement instead. Only legacy non-E2EE messages are editable.",
     inputSchema: mDM_edit_input,
     handler: mDM_edit as MosaddTool["handler"],
   },
