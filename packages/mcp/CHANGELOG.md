@@ -8,6 +8,17 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+## [3.0.0-alpha.21] — 2026-06-26
+
+### Changed
+- **Unregistered 2 scaffold tools that failed on every call.** `mp0st_send_as_agent`
+  (POSTed to a non-existent `hub-claim-mint` endpoint → 404, and sent provenance body
+  fields the deployed `mp0st-send` EF never reads) and `mTALK_ingest_ptt` (request body
+  didn't match the deployed `ptt-ingest` EF → 400). Both are now commented out in
+  `tools/index.ts` like the other not-registered modules, so an agent only ever discovers
+  tools that actually work. Registered tool count **64 → 62** (mp0st 12→11, mTALK 6→5).
+  Source is kept; both re-register once their backend contracts are wired + tested.
+
 ### Fixed
 - **mIRC `reject_request` / `approve_request` field (LINEAR-3522):** the tools sent
   `request_id` but `channel-members-manage` reads `target_identity_id` → 400 every
