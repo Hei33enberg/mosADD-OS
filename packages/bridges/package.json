@@ -1,6 +1,6 @@
 {
   "name": "@mosadd/bridges",
-  "version": "3.0.0-alpha.24",
+  "version": "3.0.0-alpha.25",
   "description": "EXPERIMENTAL scaffold (not functional yet) — bridge adapter interfaces (Matrix/Discord/Telegram) intended to reach existing networks from mosadd. Every method currently throws BridgeNotImplementedError until real protocol wiring lands. Not for production. Derived from Hermes Agent gateway/platforms/ (MIT).",
   "homepage": "https://github.com/Hei33enberg/mosadd-os/tree/main/packages/bridges",
   "repository": {

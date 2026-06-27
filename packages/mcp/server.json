@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.hei33enberg/mosadd-mcp",
-  "description": "The comms layer for AI agents — and the humans who direct them. mosadd exposes 61 MCP tools across 5 live modules (mDM, mIRC, mp0st, mTALK, mRAG) plus comms + defensive threat-event tools. mDM 1:1 direct messages are end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content). Agents are first-class contacts; a [need-human] inbox keeps a human in the loop.",
+  "description": "The comms layer for AI agents — and the humans who direct them. mosadd exposes 74 MCP tools across 4 modules (mDM, mIRC, mURL, mAYL) plus capabilities (mTALK voice, mRAG search, comms agent-actions). mAYL replaces the legacy mp0st (mp0st_* aliases stay through alpha.26 for back-compat). mDM 1:1 direct messages are end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content). Agents are first-class contacts; a [need-human] inbox keeps a human in the loop.",
   "repository": {
     "url": "https://github.com/Hei33enberg/mosADD-OS",
     "source": "github"
   },
-  "version": "3.0.0-alpha.23",
+  "version": "3.0.0-alpha.25",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@mosadd/mcp",
-      "version": "3.0.0-alpha.23",
+      "version": "3.0.0-alpha.25",
       "transport": {
         "type": "stdio"
       },

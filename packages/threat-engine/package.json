@@ -1,6 +1,6 @@
 {
   "name": "@mosadd/threat-engine",
-  "version": "3.0.0-alpha.24",
+  "version": "3.0.0-alpha.25",
   "description": "Threat-event taxonomy (166 canonical events) + scoring + pure defensive-decision engine for mosadd. The kernel-level security primitive that becomes the radar moat in the Phase 2 hub.",
   "homepage": "https://github.com/Hei33enberg/mosadd-os/tree/main/packages/threat-engine",
   "repository": {

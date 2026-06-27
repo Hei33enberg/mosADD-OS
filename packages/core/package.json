@@ -1,6 +1,6 @@
 {
   "name": "@mosadd/core",
-  "version": "3.0.0-alpha.24",
+  "version": "3.0.0-alpha.25",
   "description": "Core kernel for mosadd: channel primitives, routing, threat radar hook injection, identity. Used by @mosadd/mcp and @mosadd/ai.",
   "homepage": "https://github.com/Hei33enberg/mosadd-os/tree/main/packages/core",
   "repository": {
