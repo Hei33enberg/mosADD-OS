@@ -3,12 +3,12 @@
 > Status: **alpha, honest snapshot (2026-06).** This document states the *actual*
 > encryption behaviour of each surface as shipped — not the target. Where a surface
 > is not yet end-to-end encrypted, we say so plainly. Marketing copy on mosadd.com /
-> mosadd.dev must not claim stronger guarantees than this page.
+> this toolkit must not claim stronger guarantees than this page.
 
 There are two surfaces over one backend (Supabase + Edge Functions):
 
 - **mosadd.com app** — the consumer app.
-- **mosadd.dev toolkit** (`@mosadd/mcp`, this repo) — the developer/agent surface.
+- **mosADD toolkit** (`@mosadd/mcp`, this repo) — the developer/agent surface.
 
 They share the same message store **and the same mDM cryptography**: both use X3DH +
 Double Ratchet over the `mosadd.e2ee.v2` envelope, so an app user and an MCP/dev user
@@ -46,7 +46,7 @@ until the key is ready, and surface key state in the UI.
 the *same* `mosadd.e2ee.v2` wire format as the app — so app↔agent 1:1 DMs interoperate.
 What is **not** end-to-end encrypted: `mIRC_post_message` (group channels) and `mp0st`
 (mail) are transport-encrypted in flight and at rest but **server-readable by design**.
-The legacy `mDM_send_unencrypted` is a deprecated plaintext fallback. **mosadd.dev must
+The legacy `mDM_send_unencrypted` is a deprecated plaintext fallback. **this toolkit must
 not market mIRC channels or mp0st mail as "E2EE".** Tool descriptions state the posture
 inline.
 

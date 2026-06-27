@@ -12,7 +12,7 @@
 
 Push-to-talk floor control exists **twice** with different semantics: the mosadd.com app
 uses a **client-side Supabase Realtime broadcast** queue (`usePttQueue`), while the
-mosadd.dev toolkit uses a **server-authoritative finite state machine** (`floor.ts` +
+mosADD toolkit uses a **server-authoritative finite state machine** (`floor.ts` +
 `mtalk_floor` RPC + `mtalk-floor` edge function, behind the `VoiceProvider` DI seam).
 This RFC makes the server-authoritative FSM the single source of truth and reworks the
 app to consume it through a `VoiceProvider`, so both surfaces share one floor.

@@ -24,7 +24,7 @@ Maintainers can merge PRs in their area, request reviews, and vote on RFCs.
 | *(open)* | | `@mosadd/providers` — provider adapters (Supabase, LiveKit, nwaku) | seeking |
 | *(open)* | | `@mosadd/crypto` — E2E primitives, X3DH, Double Ratchet | seeking |
 | *(open)* | | `@mosadd/threat-engine` — radar event taxonomy | seeking |
-| *(open)* | | `apps/dev` — mosadd.dev developer portal | seeking |
+| *(open)* | | `apps/dev` — developer portal (folded into mosadd.com) | seeking |
 | *(open)* | | docs · RFCs · governance | seeking |
 
 We're seeking maintainers. If you want to help maintain one of these areas after a few merged contributions, open an issue tagged `maintainer-track` and we'll talk.

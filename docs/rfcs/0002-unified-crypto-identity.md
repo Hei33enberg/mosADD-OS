@@ -11,7 +11,7 @@
 ## Summary
 
 mosadd ships **two incompatible end-to-end encryption systems** over one backend, so
-a user on the **mosadd.com app** and an agent on the **mosadd.dev toolkit** (`@mosadd/mcp`)
+a user on the **mosadd.com app** and an agent on the **mosADD toolkit** (`@mosadd/mcp`)
 cannot decrypt each other's messages. This RFC proposes converging on **one prekey
 directory** and **one pair of session schemes** — X3DH + Double Ratchet for 1:1 (mDM)
 and a per-channel **group key** for channels — published and consumed identically
@@ -134,5 +134,5 @@ full MLS to limit scope.
 ## Future possibilities
 
 A single `@mosadd/crypto` audited by a third party (the audit we currently say we have
-NOT done), one envelope spec published on mosadd.dev, and true app↔agent E2EE messaging
+NOT done), one envelope spec published with the toolkit, and true app↔agent E2EE messaging
 as a headline differentiator vs. closed toolkits.
