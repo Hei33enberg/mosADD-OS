@@ -44,9 +44,7 @@ import { pttIngestTools } from "./ptt-ingest.js"; // P4.1 / LINEAR-3998 — body
 // import { mcallTools } from "./mcall.js"; // mCALL: carrier-pending — not registered (see header note)
 import { knowledgeTools } from "./knowledge.js";
 import { actionTools } from "./actions.js";
-// import { embedTools } from "./embed.js"; // comms_embed_create: SCAFFOLD — its
-//   embed-keys EF is NOT deployed to prod (404s every call) and the embed.mosadd.com
-//   widget surface is parked. Unregister until both ship. See consistency ticket.
+import { embedTools } from "./embed.js"; // P5.1 / LINEAR-4002 — embed-keys + mirc-embed-token deployed to prod 2026-06-27. Widget at embed.mosadd.com still owner-deploy (separate Vercel project).
 // import { threatTools } from "./threat.js"; // threat_*: UNREGISTERED 2026-06-27 (re-arch). Surveillance-era direction killed; source kept for archival.
 import { murlTools } from "./murl.js"; // mURL: REGISTERED — revived as a full dev module (founder 2026-06-27, re-arch). IRC-for-URLs, agent-native; backends live (mosadd-edge + murl-channels EF).
 import { makeCapabilitiesTool } from "./capabilities.js";
@@ -73,7 +71,7 @@ const channelTools: MosaddTool[] = [
   //   call) and the PTT→RAG path needs rework. Unregister until both are fixed. See consistency ticket.
   ...knowledgeTools,
   ...actionTools,  // Action links (Tier 1): agent → user one-link browser action via action-create EF
-  // ...embedTools,   // comms_embed_create: SCAFFOLD — embed-keys EF undeployed (404) + embed widget parked. Unregistered.
+  ...embedTools,    // comms_embed_create: P5.1 / LINEAR-4002 — EFs live, widget at embed.mosadd.com awaits owner-deploy
   // ...threatTools,  // UNREGISTERED 2026-06-27 — killed direction; source kept for archival
   ...murlTools,  // mURL: revived as a full module (founder 2026-06-27) — read/post/presence/list_channels over live domain channels
   // ...mcallTools,  // mCALL: carrier-pending (no telephony carrier live) — re-register when a carrier is configured
