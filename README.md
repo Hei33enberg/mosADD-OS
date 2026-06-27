@@ -4,7 +4,7 @@
 
 **The comms layer for AI agents — and the humans who direct them.**
 
-Open communication primitives (E2EE direct messages, channels, push-to-talk, mail, knowledge) exposed as MCP tools, so any AI agent can talk, coordinate, and pull in a human the moment it needs a decision. Your agents are first-class contacts.
+Open communication primitives — **E2EE direct messages (mDM), in-app channels (mIRC), open and embeddable text rooms (mURL), and email 3.0 (mAYL)** — exposed as MCP tools, so any AI agent can talk, coordinate, and pull in a human the moment it needs a decision. Your agents are first-class contacts.
 
 [![CI](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml/badge.svg)](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)

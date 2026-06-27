@@ -1,6 +1,6 @@
 # @mosadd/mcp
 
-MCP server for [mosADD](https://mosadd.com) — exposes the OS modules (m\*) as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
+MCP server for [mosADD](https://mosadd.com) — **the comms layer for AI agents and the humans who direct them.** Exposes the OS modules (m\*) — **mDM (1:1 E2EE), mIRC (in-app channels), mURL (open/embeddable text rooms), and mAYL (email 3.0)** — as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
 > **3.0.0-alpha.23** — **61 live tools across 5 live modules** (mDM incl. voice + files, mIRC, mp0st, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool + the defensive `threat_*` engine, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
 
