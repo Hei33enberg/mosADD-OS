@@ -1,8 +1,8 @@
 /**
  * Tool registry. Each m* module contributes a set of tools.
  *
- * Live modules (5): mDM, mIRC, mTALK, mp0st, mRAG (58 channel tools) + comms (4)
- * + threat_catalog/threat_classify (pure defensive engine, LINEAR-3498) = 64 callable.
+ * Live modules (6): mDM, mIRC, mURL, mTALK, mp0st, mRAG (60 channel tools) + comms (3)
+ * + threat_catalog/threat_classify (pure defensive engine, LINEAR-3498) = 65 callable.
  * mROOM was KILLED (LINEAR-3414, channel re-cut → ephemeral private mIRC): its tools
  * live in tools/mroom.ts + mroom-messages.ts but are NOT registered here.
  * Plus action links: comms_action_create (agent → user one-link browser action,
@@ -35,7 +35,7 @@ import { actionTools } from "./actions.js";
 //   embed-keys EF is NOT deployed to prod (404s every call) and the embed.mosadd.com
 //   widget surface is parked. Unregister until both ship. See consistency ticket.
 import { threatTools } from "./threat.js";
-// import { murlTools } from "./murl.js"; // mURL: brand/consumer surface, not a dev product — not registered
+import { murlTools } from "./murl.js"; // mURL: REGISTERED — revived as a full dev module (founder 2026-06-27, re-arch). IRC-for-URLs, agent-native; backends live (mosadd-edge + murl-channels EF).
 import { makeCapabilitiesTool } from "./capabilities.js";
 
 /** The m* channel tools (everything except the meta discovery tool). */
@@ -61,7 +61,7 @@ const channelTools: MosaddTool[] = [
   ...actionTools,  // Action links (Tier 1): agent → user one-link browser action via action-create EF
   // ...embedTools,   // comms_embed_create: SCAFFOLD — embed-keys EF undeployed (404) + embed widget parked. Unregistered.
   ...threatTools,  // threat_catalog + threat_classify: pure defensive threat-event engine (@mosadd/threat-engine, LINEAR-3498)
-  // ...murlTools,  // mURL: brand/consumer surface (murl.mosadd.com), not a dev product
+  ...murlTools,  // mURL: revived as a full module (founder 2026-06-27) — read/post/presence/list_channels over live domain channels
   // ...mcallTools,  // mCALL: carrier-pending (no telephony carrier live) — re-register when a carrier is configured
   // mirlTools,
   // mmatrixTools, mdiscordTools, mtelegramTools, mslackTools, msignalTools,
