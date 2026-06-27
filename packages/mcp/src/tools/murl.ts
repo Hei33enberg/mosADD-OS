@@ -2,8 +2,10 @@
  * mURL — IRC-for-URLs: real-time chat attached to any web DOMAIN, AGENT-NATIVE.
  *
  * Same mosadd-edge Cloudflare Worker / Durable Object backend as mIRC edge, but the
- * channel id is the DOMAIN SLUG (domain lowercased, "." → "-"). A domain channel is
- * auto-created on first activity (status "open"); a domain owner can later verify/claim it.
+ * channel id is the URL SLUG: host("."→"-") + path("/"→"__") (RFC-0004). A bare domain
+ * → the domain room; a full URL with a path → a per-PAGE room (the per-article ask).
+ * Auto-created on first activity (status "open"); the domain owner can verify/claim the
+ * whole domain (a domain block covers all its page rooms).
  *
  * THE WEDGE: every prior "chat on a web page" (Google Sidewiki, Genius, Hypothes.is,
  * HERE.fm) died on the empty-room cold-start because they were HUMAN-ONLY — you arrive,
@@ -28,22 +30,34 @@ function hubKey(): string {
   return key;
 }
 
-/** A domain OR full URL → { domain, slug }. slug = host lowercased, "." → "-". */
-function domainToSlug(input: string): { domain: string; slug: string } {
-  let host = String(input).trim().toLowerCase();
-  host = host.replace(/^[a-z]+:\/\//, "").replace(/[/?#].*$/, "").replace(/:\d+$/, "");
+/** A domain OR full URL → { domain, slug }. mURL is keyed PER-URL (RFC-0004):
+ *  slug = host("."→"-") + each path segment ("/"→"__"); scheme, query, fragment and
+ *  trailing slash are stripped and segments are sanitised to [a-z0-9-]. A bare domain
+ *  (no path) yields the DOMAIN room (back-compat); a URL with a path yields a PER-PAGE
+ *  room. `domain` (host only) is returned for status/branding — a domain block covers
+ *  every page room under it. */
+function urlToSlug(input: string): { domain: string; slug: string } {
+  let s = String(input).trim().toLowerCase();
+  s = s.replace(/^[a-z]+:\/\//, "").replace(/[?#].*$/, ""); // strip scheme + query + fragment
+  const slash = s.indexOf("/");
+  let host = (slash >= 0 ? s.slice(0, slash) : s).replace(/:\d+$/, "");
   if (host.startsWith("www.")) host = host.slice(4);
   if (!host || !/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(host)) {
-    throw new Error(`Invalid domain: "${input}" — pass a domain like "example.com" or a URL.`);
+    throw new Error(`Invalid URL: "${input}" — pass a domain like "example.com" or a full URL.`);
   }
-  return { domain: host, slug: host.replace(/\./g, "-") };
+  const segs = (slash >= 0 ? s.slice(slash) : "")
+    .split("/")
+    .map((seg) => seg.replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, ""))
+    .filter(Boolean);
+  const base = host.replace(/\./g, "-");
+  return { domain: host, slug: segs.length ? `${base}__${segs.join("__")}` : base };
 }
 
 const DomainArg = z
   .string()
   .min(3)
-  .max(255)
-  .describe("A domain (e.g. 'example.com') or a full URL — the channel is keyed to the domain.");
+  .max(2048)
+  .describe("A domain ('example.com') or a full URL. Keyed PER-URL: a bare domain → the domain room; a URL with a path (e.g. 'site.com/articles/abc') → that page's own room.");
 
 // ── read ──────────────────────────────────────────────────────────────────────
 const mURL_read_channel_input = z.object({
@@ -54,7 +68,7 @@ async function mURL_read_channel(
   input: z.infer<typeof mURL_read_channel_input>,
   ctx: MosaddToolContext,
 ): Promise<{ domain: string; messages: Array<{ id: string; from: string | null; text: string; timestamp: number }> }> {
-  const { domain, slug } = domainToSlug(input.domain);
+  const { domain, slug } = urlToSlug(input.domain);
   const limit = input.limit ?? 50;
   ctx.log("debug", "mURL_read_channel", { domain });
   const r = await fetch(`${edgeUrl()}/c/${slug}/history?limit=${limit}`, {
@@ -81,7 +95,7 @@ async function mURL_post(
   input: z.infer<typeof mURL_post_input>,
   ctx: MosaddToolContext,
 ): Promise<{ domain: string; message_id: string; posted_at: number }> {
-  const { domain, slug } = domainToSlug(input.domain);
+  const { domain, slug } = urlToSlug(input.domain);
   ctx.log("debug", "mURL_post", { domain });
   const r = await fetch(`${edgeUrl()}/c/${slug}/send`, {
     method: "POST",
@@ -148,7 +162,7 @@ async function mURL_presence(
   input: z.infer<typeof mURL_presence_input>,
   ctx: MosaddToolContext,
 ): Promise<{ domain: string; count: number; roster: string[]; status: string }> {
-  const { domain, slug } = domainToSlug(input.domain);
+  const { domain, slug } = urlToSlug(input.domain);
   ctx.log("debug", "mURL_presence", { domain });
   const r = await fetch(`${edgeUrl()}/c/${slug}/presence`);
   if (!r.ok) {
