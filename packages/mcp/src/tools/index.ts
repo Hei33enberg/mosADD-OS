@@ -40,7 +40,7 @@ import { mailProvenanceTools } from "./mail-provenance.js";  // mAYL_send_as_age
 // import { mailProvenanceTools } from "./mail-provenance.js"; // scaffold (mp0st_send_as_agent) — not registered, see below
 import { mtalkTools } from "./mtalk.js";
 import { attachmentTools } from "./attachments.js";
-// import { pttIngestTools } from "./ptt-ingest.js"; // scaffold (mTALK_ingest_ptt) — not registered, see below
+import { pttIngestTools } from "./ptt-ingest.js"; // P4.1 / LINEAR-3998 — body aligned to deployed ptt-ingest EF
 // import { mcallTools } from "./mcall.js"; // mCALL: carrier-pending — not registered (see header note)
 import { knowledgeTools } from "./knowledge.js";
 import { actionTools } from "./actions.js";
@@ -68,7 +68,7 @@ const channelTools: MosaddTool[] = [
   //   rewired onto hub-key-exchange (agent_id/task_id + mosadd_hub JWT claim). See consistency ticket.
   ...mtalkTools,
   ...attachmentTools,
-  // ...pttIngestTools,  // mTALK_ingest_ptt: SCAFFOLD — request body doesn't match the deployed
+  ...pttIngestTools,    // mTALK_ingest_ptt: P4.1 / LINEAR-3998 — body aligned to deployed ptt-ingest EF
   //   ptt-ingest EF (needs {direction, audio_base64, mime_type, message_id|thread_id} → 400s every
   //   call) and the PTT→RAG path needs rework. Unregister until both are fixed. See consistency ticket.
   ...knowledgeTools,

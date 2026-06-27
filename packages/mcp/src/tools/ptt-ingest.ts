@@ -1,82 +1,87 @@
 /**
- * PTT capture → ingest → RAG transcription.
+ * mTALK_ingest_ptt — submit a recorded PTT "over" for transcription + RAG ingest.
  *
- * mTALK (mtalk.ts) drives the live half-duplex FLOOR (who may transmit). What it
- * does NOT do is capture a finished PTT transmission as a durable, queued message
- * — i.e. a recorded "over" that lands in a channel's queued-PTT log AND (opt-in)
- * gets transcribed into RAG. That's this module.
+ * The actual mIRC/mDM voice-message PERSISTENCE (writing a message_meta row,
+ * fanning it out to listeners) is owned by the message-send/send-voice path,
+ * NOT by this tool. ptt-ingest exists purely to bridge a finished PTT segment
+ * into the user's RAG index — a row in `ptt_transcripts` (status='pending')
+ * + a transcribe job that lands in `user_embeddings(source_type='ptt')`.
  *
- * Flow (per the Lane A contract):
- *   1. agent records/has a PTT clip → base64 → uploadBlob(kind:'ptt') to
- *      'voice-blobs'.
- *   2. call `ptt-ingest` EF with the attachment descriptor + routing (which
- *      channel/room the "over" belongs to). The EF persists a queued-PTT message.
- *   3. if the user has opted in to RAG, `rag-transcribe` runs and the transcript
- *      lands in user_embeddings(source_type='ptt').
+ * Use this when an agent has a PTT audio buffer it wants searchable in the
+ * user's RAG later (e.g. "what did Alice tell me on PTT yesterday?"). The
+ * voice message itself is sent separately via mDM_send_voice / mIRC_send_voice.
  *
- * STATUS: scaffold — `ptt-ingest` is not yet deployed. Upload is real; the EF
- * call shape is best-guess (TODO Lane A).
+ * Auth: standard Supabase session JWT (the caller's RAG opt-in is read from
+ * their account; opted-out callers get status='skipped_optout').
+ * LINEAR-3998 (P4.1 PTT unify) — re-arch 2026-06-27.
  */
-
 import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
 import { invokeFunction, readSupabaseEnv } from "../providers/supabase.js";
-import { uploadBlob, decodeBase64Body } from "../providers/blob-upload.js";
 
 const mTALK_ingest_ptt_input = z.object({
   audio_base64: z
     .string()
     .min(1)
     .max(20_000_000)
-    .describe("Recorded PTT 'over' as base64 (or data: URL)."),
-  mime: z.string().min(1).max(120).default("audio/ogg"),
-  duration_ms: z.number().int().positive().optional(),
-  // Routing: exactly one of room_id / channel_id identifies where the over lands.
-  channel_id: z.string().optional().describe("mIRC channel id — route the queued PTT into the channel's PTT log."),
-  // room_id retained for the rare mTALK-only PTT room (no mIRC channel backing). mROOM is gone — do NOT pass an mROOM id (will 404). Prefer channel_id.
-  room_id: z.string().optional().describe("Optional mTALK-only PTT room id (no mIRC channel backing). For mIRC channels use channel_id."),
-  transcribe: z
-    .boolean()
+    .describe("Recorded PTT 'over' as base64 (a 'data:audio/…;base64,…' prefix is stripped if present)."),
+  mime_type: z
+    .string()
+    .min(1)
+    .max(120)
+    .default("audio/webm")
+    .describe("MIME type of the audio. Default audio/webm (browser MediaRecorder default)."),
+  direction: z
+    .enum(["human_to_agent", "agent_to_human"])
+    .describe("Direction the PTT crossed: who originated, who received. 'human_to_agent' = user spoke to an agent; 'agent_to_human' = agent spoke to the user."),
+  message_id: z
+    .string()
+    .min(1)
+    .max(120)
     .optional()
-    .describe("Request RAG transcription. Honored only if the user has opted in to rag ingest; ignored otherwise. Default true."),
+    .describe("Optional id of the messages_meta row this PTT belongs to. When present, links the transcript back to the message for jump-to-source from RAG."),
+  thread_id: z
+    .string()
+    .min(1)
+    .max(120)
+    .optional()
+    .describe("Optional thread id (e.g. `chat:<channel_id>` or `dm:<a>:<b>`) so the transcript carries its conversational scope into RAG."),
 });
+
+interface PttIngestResponse {
+  ptt_id?: string;
+  status?: "pending" | "skipped_optout" | "queued";
+  enqueued?: boolean;
+}
 
 async function mTALK_ingest_ptt(
   input: z.infer<typeof mTALK_ingest_ptt_input>,
   ctx: MosaddToolContext,
-): Promise<{ ptt_id: string; queued: true; transcription: "queued" | "skipped" | "opted_out" }> {
+): Promise<{ ptt_id: string; status: string; opted_in: boolean }> {
   readSupabaseEnv();
-  if (!input.channel_id && !input.room_id) {
-    throw new Error("mTALK_ingest_ptt requires one of channel_id or room_id to route the queued PTT.");
-  }
-  const prefix = input.channel_id ? `chat:${input.channel_id}` : `room:${input.room_id}`;
-  const attachment = await uploadBlob({
-    kind: "ptt",
-    bytes: decodeBase64Body(input.audio_base64),
-    mime: input.mime,
-    prefix,
-    duration_ms: input.duration_ms,
+
+  // Tolerate a "data:audio/…;base64,…" prefix from MediaRecorder/canvas captures.
+  const audio = input.audio_base64.replace(/^data:[^;]+;base64,/, "");
+
+  ctx.log("debug", "mTALK_ingest_ptt invoking ptt-ingest", {
+    direction: input.direction,
+    thread_id: input.thread_id ?? null,
+    mime_type: input.mime_type,
   });
 
-  ctx.log("debug", "mTALK_ingest_ptt invoking ptt-ingest", { prefix, transcribe: input.transcribe ?? true });
-
-  // TODO(Lane A): `ptt-ingest` EF not yet deployed. Confirm request/response shape.
-  // Expected: persists a queued-PTT message_meta row (message_type:'ptt') with the
-  // attachment, then (if rag opt-in) enqueues rag-transcribe → user_embeddings(source_type='ptt').
-  const res = await invokeFunction<{
-    ptt_id?: string;
-    transcription?: "queued" | "skipped" | "opted_out";
-  }>("ptt-ingest", {
-    attachment,
-    channel_id: input.channel_id ?? null,
-    room_id: input.room_id ?? null,
-    transcribe: input.transcribe ?? true,
+  const res = await invokeFunction<PttIngestResponse>("ptt-ingest", {
+    audio_base64: audio,
+    mime_type: input.mime_type,
+    direction: input.direction,
+    message_id: input.message_id ?? null,
+    thread_id: input.thread_id ?? null,
   });
 
+  const status = res.status ?? "pending";
   return {
     ptt_id: res.ptt_id ?? "",
-    queued: true,
-    transcription: res.transcription ?? "queued",
+    status,
+    opted_in: status !== "skipped_optout",
   };
 }
 
@@ -85,7 +90,7 @@ export const pttIngestTools: MosaddTool[] = [
     name: "mTALK_ingest_ptt",
     requires: "network",
     description:
-      "Capture a finished PTT transmission (an 'over') as a durable, QUEUED PTT message in an mIRC channel, and — if the user has opted in to RAG — transcribe it into searchable knowledge. Pass the clip as base64 + a route (channel_id; or room_id for an mTALK-only PTT room without a channel backing). Complements mTALK_press/release (which only manage the live floor).",
+      "Submit a finished PTT 'over' (push-to-talk audio segment) for transcription into the caller's RAG index — so 'what did X say on PTT?' is searchable later. The PERSISTENCE of the voice message itself (the message_meta row + fan-out) is handled by mDM_send_voice / mIRC_send_voice; this tool is the transcription bridge only. Honors per-user RAG opt-in: opted-out callers get status='skipped_optout' (no transcript stored). Auth: Supabase session JWT.",
     inputSchema: mTALK_ingest_ptt_input,
     handler: mTALK_ingest_ptt as MosaddTool["handler"],
   },
