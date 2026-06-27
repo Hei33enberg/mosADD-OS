@@ -36,6 +36,7 @@ import { mircEdgeTools } from "./mirc-edge.js";
 // import { mroomMessagesTools } from "./mroom-messages.js"; // mROOM: killed (LINEAR-3414) — not registered
 import { mailTools } from "./mail.js";
 import { mailAliasTools } from "./mail-aliases.js";  // mp0st_* back-compat aliases for mAYL_*
+import { mailProvenanceTools } from "./mail-provenance.js";  // mAYL_send_as_agent — LINEAR-3991
 // import { mailProvenanceTools } from "./mail-provenance.js"; // scaffold (mp0st_send_as_agent) — not registered, see below
 import { mtalkTools } from "./mtalk.js";
 import { attachmentTools } from "./attachments.js";
@@ -62,7 +63,7 @@ const channelTools: MosaddTool[] = [
   // ...mroomMessagesTools,  // mROOM: killed (LINEAR-3414)
   ...mailTools,         // mAYL_*: canonical email module (was mp0st_*; renamed re-arch 2026-06-27)
   ...mailAliasTools,    // mp0st_*: back-compat aliases — DEPRECATED, removed in alpha.27
-  // ...mailProvenanceTools,  // mp0st_send_as_agent: SCAFFOLD — calls a non-existent hub-claim-mint
+  ...mailProvenanceTools, // mAYL_send_as_agent: agent-attributed mail send via hub-claim-mint (LINEAR-3991)
   //   endpoint (404s every call) + sends provenance body fields the EF never reads. Unregister until
   //   rewired onto hub-key-exchange (agent_id/task_id + mosadd_hub JWT claim). See consistency ticket.
   ...mtalkTools,

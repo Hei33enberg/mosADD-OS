@@ -62,53 +62,51 @@ const mp0st_send_as_agent_input = z.object({
 });
 
 /**
- * Exchange the hub key for a hub-claim JWT that authorizes agent-attributed
- * actions. TODO(Lane A): confirm endpoint + response. Mirrors the
- * hub-mint-channel-token pattern in mirc-edge.ts.
+ * Exchange the hub key for an HS256 hub-claim JWT that authorizes agent-attributed
+ * mail sends. The `mp0st-send` EF verifies this token with HUB_JWT_SECRET and reads
+ * `agent_id` + `task_id` from its claims authoritatively (body fields are NOT trusted
+ * for provenance). LINEAR-3991.
  */
 async function mintHubClaim(agentId: string, taskId?: string): Promise<string> {
   const key = hubKey();
   if (!key) {
-    throw new Error("mp0st_send_as_agent needs MOSADD_API_KEY (hub key) to mint a provenance claim.");
+    throw new Error("mAYL_send_as_agent needs MOSADD_API_KEY (hub key) to mint a provenance claim.");
   }
   const r = await fetch(`${supabaseUrl()}/functions/v1/hub-claim-mint`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-    body: JSON.stringify({ scope: "mail:send", agent_id: agentId, task_id: taskId ?? null }),
+    body: JSON.stringify({ agent_id: agentId, task_id: taskId ?? null }),
   });
   if (!r.ok) {
     const b = await r.text().catch(() => "");
     throw new Error(`hub-claim-mint ${r.status}: ${b.slice(0, 200)}`);
   }
-  const data = (await r.json()) as { token?: string };
-  if (!data?.token) throw new Error("hub-claim-mint: no token in response");
-  return data.token;
+  const data = (await r.json()) as { access_token?: string };
+  if (!data?.access_token) throw new Error("hub-claim-mint: no access_token in response");
+  return data.access_token;
 }
 
-async function mp0st_send_as_agent(
+async function mAYL_send_as_agent(
   input: z.infer<typeof mp0st_send_as_agent_input>,
   ctx: MosaddToolContext,
 ): Promise<{ message_id: string; status: string; is_internal: boolean; sent_by: "agent" }> {
   if (!input.body_text && !input.body_html) {
-    throw new Error("mp0st_send_as_agent requires at least one of body_text or body_html.");
+    throw new Error("mAYL_send_as_agent requires at least one of body_text or body_html.");
   }
 
-  // Present the hub-claim JWT directly to mp0st-send (NOT the user session client)
-  // so the EF attributes the row to the agent. TODO(Lane A): confirm mp0st-send
-  // accepts a Bearer hub-claim and reads sent_by_agent_id / sent_by_task_id.
+  // Mint the hub-claim JWT and present it directly to mp0st-send (NOT the user
+  // session client) so the EF attributes the row to the agent. mp0st-send verifies
+  // the HS256 signature with HUB_JWT_SECRET and stamps sent_by_agent_id /
+  // sent_by_task_id from the verified claims — body fields are NOT trusted for
+  // provenance.
   const claim = await mintHubClaim(input.agent_id, input.task_id);
-  ctx.log("debug", "mp0st_send_as_agent invoking mp0st-send with hub-claim", { agent_id: input.agent_id });
+  ctx.log("debug", "mAYL_send_as_agent invoking mp0st-send with hub-claim", { agent_id: input.agent_id });
 
-  const { agent_id, task_id, ...mailFields } = input;
+  const { agent_id: _ai, task_id: _ti, ...mailFields } = input;
   const r = await fetch(`${supabaseUrl()}/functions/v1/mp0st-send`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${claim}` },
-    body: JSON.stringify({
-      ...mailFields,
-      sent_by: "agent",
-      sent_by_agent_id: agent_id,
-      sent_by_task_id: task_id ?? null,
-    }),
+    body: JSON.stringify(mailFields),
   });
   if (!r.ok) {
     const b = await r.text().catch(() => "");
@@ -127,11 +125,11 @@ async function mp0st_send_as_agent(
 
 export const mailProvenanceTools: MosaddTool[] = [
   {
-    name: "mp0st_send_as_agent",
+    name: "mAYL_send_as_agent",
     requires: "network",
     description:
-      "Send an email ATTRIBUTED TO THE AGENT (provenance-stamped). Unlike mp0st_send (sends as the user), this stamps sent_by='agent' plus your agent_id and optional task_id onto the email record and audit trail — so recipients and compliance can see the mail was agent-originated. Auth: presents a hub-claim JWT (needs MOSADD_API_KEY). SCAFFOLD: depends on mp0st-send honoring the hub-claim + provenance fields (TODO Lane A).",
+      "Send an email ATTRIBUTED TO THE AGENT (provenance-stamped). Unlike mAYL_send (sends as the user), this stamps sent_by='agent' plus your agent_id and optional task_id onto the email record and audit trail — so recipients and compliance can see the mail was agent-originated. Auth: presents a hub-claim JWT (needs MOSADD_API_KEY). The mp0st-send EF verifies the claim with HUB_JWT_SECRET; body trust is never granted for provenance.",
     inputSchema: mp0st_send_as_agent_input,
-    handler: mp0st_send_as_agent as MosaddTool["handler"],
+    handler: mAYL_send_as_agent as MosaddTool["handler"],
   },
 ];
