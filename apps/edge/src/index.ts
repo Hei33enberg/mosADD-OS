@@ -259,7 +259,10 @@ export class ChannelDO {
       const r = await fetch(`${this.env.SUPABASE_URL}/functions/v1/domain-channel-ensure`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.env.CF_INGEST_SECRET}` },
-        body: JSON.stringify({ slug, domain: slug.replace(/-/g, ".") }),
+        // mURL per-URL (RFC-0004): page slugs are host__path; the domain (for status/
+        // blocking) is the host = the prefix before the first "__". Bare-domain slugs
+        // (no "__") are unaffected.
+        body: JSON.stringify({ slug, domain: slug.split("__")[0].replace(/-/g, ".") }),
       });
       if (!r.ok) { this.ensure = fallback; return fallback; }
       const data = await r.json().catch(() => null) as { status?: string; branding?: Record<string, unknown> } | null;
