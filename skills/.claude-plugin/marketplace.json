@@ -13,7 +13,7 @@
   "mcpServers": {
     "mosadd": {
       "command": "npx",
-      "args": ["-y", "github:Hei33enberg/mosadd-os", "--package=@mosadd/mcp"],
+      "args": ["-y", "@mosadd/mcp@alpha"],
       "env": {
         "MOSADD_SUPABASE_URL": "https://<your-project>.supabase.co",
         "MOSADD_SUPABASE_ANON_KEY": "<anon key>",

@@ -5,10 +5,10 @@ Setup mosadd MCP server in Claude Code so the agent can send DMs, manage rooms, 
 ## Install
 
 ```bash
-claude mcp add mosadd -- npx -y github:Hei33enberg/mosadd-os --package=@mosadd/mcp
+claude mcp add mosadd -- npx -y @mosadd/mcp@alpha
 ```
 
-This adds an entry to your Claude Code MCP config pointing at the GitHub-hosted alpha package. (Once the `@mosadd` npm org is claimed, swap to `claude mcp add mosadd -- npx -y @mosadd/mcp@alpha`.) Restart Claude Code.
+This adds an entry to your Claude Code MCP config pointing at the published `@mosadd/mcp` package on npm, pinned to the `alpha` channel (no longer the GitHub `main` branch — installs are reproducible and don't track unreviewed commits). Restart Claude Code.
 
 ## Configure (BYOK)
 
@@ -21,7 +21,7 @@ Edit your Claude Code MCP config (find with `claude mcp list`, then edit the fil
   "mcpServers": {
     "mosadd": {
       "command": "npx",
-      "args": ["-y", "@mosadd/mcp"],
+      "args": ["-y", "@mosadd/mcp@alpha"],
       "env": {
         "MOSADD_SUPABASE_URL": "https://abc.supabase.co",
         "MOSADD_SUPABASE_ANON_KEY": "eyJhbGc...",
