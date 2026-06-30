@@ -58,7 +58,7 @@ jobs:
         run: |
           TAG="${{ github.event.inputs.tag || 'alpha' }}"
           ACCESS="${{ github.event.inputs.access || 'public' }}"
-          for pkg in protocol crypto providers core threat-engine bridges mcp ai; do
+          for pkg in protocol crypto providers core threat-engine bridges mcp ai agent; do
             echo "::group::publish @mosadd/$pkg"
             # NOTE: no --provenance. npm rejects provenance for PRIVATE source
             # repos (422 "Unsupported GitHub Actions source repository
@@ -98,7 +98,7 @@ jobs:
           # Point `latest` at the version in each package.json so a bare
           # `npm install @mosadd/<pkg>` resolves to the current build instead of
           # the very first alpha.0 publish.
-          for pkg in protocol crypto providers core threat-engine bridges mcp ai; do
+          for pkg in protocol crypto providers core threat-engine bridges mcp ai agent; do
             V=$(node -p "require('./packages/$pkg/package.json').version")
             echo "→ @mosadd/$pkg@$V → latest"
             if ! npm dist-tag add "@mosadd/$pkg@$V" latest 2> /tmp/dt.err; then

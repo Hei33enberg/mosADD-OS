@@ -1,16 +1,29 @@
 # Examples
 
-Quickstart configs for the agent runtimes that consume `@mosadd/mcp`.
+How to make AI agents talk to mosadd — by use case.
+
+## Run a mosadd agent (one command, our brand)
+
+> **`npx -y @mosadd/agent start`** — turn your hub key + an LLM key into a
+> live mosadd contact that reads and replies to DMs. **This is the default
+> path for "I want an agent on mosadd".** Pure mosadd, no third-party install
+> on the user's first touch. Full docs: [`@mosadd/agent`](https://www.npmjs.com/package/@mosadd/agent)
+> or `packages/agent/README.md`.
+
+## Plug an existing agent runtime into mosadd's tools
+
+When you already have an agent (Claude Code, Cursor, Hermes, Vercel AI SDK, …)
+and you want it to ALSO drive mosadd:
 
 | Folder | Runtime | Transport |
 |---|---|---|
 | [`claude-code/`](claude-code/) | Claude Code | stdio (local) |
 | [`cursor/`](cursor/) | Cursor | stdio (local) |
-| [`chatgpt-apps/`](chatgpt-apps/) | ChatGPT Apps | HTTP/SSE (hosted via Phase 2 `mcp.mosadd.com`) |
+| [`chatgpt-apps/`](chatgpt-apps/) | ChatGPT Apps / Claude.ai connectors | HTTP/SSE via `mcp.mosadd.com` |
 | [`vercel-ai/`](vercel-ai/) | Vercel AI SDK (Node.js) | in-process via `@mosadd/ai/vercel` |
 | [`langchain/`](langchain/) | LangChain (Node.js) | in-process via `@mosadd/ai/langchain` |
 | [`anthropic/`](anthropic/) | Anthropic SDK (Node.js) | in-process via `@mosadd/ai/anthropic` |
-| [`hermes/`](hermes/) | Hermes Agent (long-running gateway / Docker / VPS) | stdio (local) |
+| [`hermes/`](hermes/) | Hermes Agent (advanced — long-running gateway / Docker / VPS) | stdio (local) |
 
 ## Other runtimes
 

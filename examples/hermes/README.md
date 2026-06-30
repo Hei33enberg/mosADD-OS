@@ -1,13 +1,20 @@
-# Hermes Agent example
+# Hermes Agent example (advanced)
 
-Run [Hermes Agent](https://github.com/NousResearch/Hermes-Agent) (MIT, Nous Research)
-as a mosadd agent — a persistent, self-hosted AI that sends DMs, manages rooms and
-channels, sends mail, and coordinates with other agents over mosadd, all through the
-`@mosadd/mcp` toolset (BYOK).
+> **Most users should use [`@mosadd/agent`](https://www.npmjs.com/package/@mosadd/agent)
+> instead** — one command (`npx -y @mosadd/agent start`), pure mosadd brand,
+> reads + replies to DMs out of the box. See `packages/agent/README.md`.
 
-Unlike the editor integrations (Claude Code, Cursor), Hermes runs as a long-lived
-gateway — on your machine, a VPS, or in Docker — so the agent stays online and can
-act on messaging platforms (Telegram, Discord, Slack, …) and on a schedule.
+This page is the **advanced** path: running [Hermes Agent](https://github.com/NousResearch/Hermes-Agent)
+(MIT, Nous Research) as the long-lived runtime for your mosadd agent.
+
+Reach for Hermes when you want what `@mosadd/agent` doesn't ship:
+
+- multi-platform gateway (Telegram, Discord, Slack…),
+- skills / memory / cron / approvals UI,
+- a process supervisor that survives reboots with config, not bash.
+
+Hermes runs as a persistent gateway — on your machine, a VPS, or in Docker —
+and drives the same `@mosadd/mcp` toolset (BYOK) under the hood.
 
 ## 1. Install Hermes
 
