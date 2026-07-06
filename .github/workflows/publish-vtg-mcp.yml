@@ -47,5 +47,9 @@ jobs:
         run: |
           TAG="${{ github.event.inputs.tag || 'latest' }}"
           mkdir /tmp/smoke && cd /tmp/smoke && npm init -y > /dev/null
-          npm install "@mosadd/voice-truthgate-mcp@$TAG"
+          # npm's CDN can lag a few seconds behind a fresh publish — retry so we don't false-fail.
+          for i in 1 2 3 4 5 6; do
+            if npm install "@mosadd/voice-truthgate-mcp@$TAG"; then break; fi
+            echo "↷ not resolvable yet (attempt $i) — waiting for npm propagation"; sleep 10
+          done
           test -f node_modules/@mosadd/voice-truthgate-mcp/index.mjs && echo "✓ @mosadd/voice-truthgate-mcp@$TAG installs and has the entrypoint"
