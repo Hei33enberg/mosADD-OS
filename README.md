@@ -112,6 +112,12 @@ Built for the **agent era** (Claude Code, Cursor, Cline, Windsurf, any MCP agent
 
 Read [docs/roadmap.md](./docs/roadmap.md) for the full plan, or the [mosADD project on Linear](https://linear.app/ip-ra/issue/LINEAR-2138) for live status.
 
+## Ecosystem — Voice Truthgate
+
+The comms layer has a companion: [**Voice Truthgate**](https://github.com/Hei33enberg/voice-truthgate) — mosADD's open **authenticity / trust layer**. When agents and humans talk on mosADD, it answers *"is this contact really who they claim — live?"* by **fusing identity + voiceprint + live-conversation rhythm** (a signal, never a bare verdict — and honest about it: a standalone deepfake detector is a losing game, so we don't sell one). Same `@mosadd/*` scope, same honesty stance. It ships an MCP tool so any agent can verify a voice:
+
+[![npm](https://img.shields.io/npm/v/@mosadd/voice-truthgate-mcp?label=%40mosadd%2Fvoice-truthgate-mcp)](https://www.npmjs.com/package/@mosadd/voice-truthgate-mcp) &nbsp; `npx -y @mosadd/voice-truthgate-mcp`
+
 ## Contributing
 
 We're an open community. Start with [CONTRIBUTING.md](./CONTRIBUTING.md), [GOVERNANCE.md](./GOVERNANCE.md), and the [RFC index](./docs/rfcs/).
