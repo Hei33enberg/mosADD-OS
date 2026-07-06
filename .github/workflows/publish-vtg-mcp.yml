@@ -1,0 +1,51 @@
+name: Publish Voice Truthgate MCP
+
+# Publishes @mosadd/voice-truthgate-mcp to npm. The package source lives in the public
+# github.com/Hei33enberg/voice-truthgate repo (mcp/); this workflow runs from mosADD-OS
+# because that's where the NPM_TOKEN secret lives. Manual-only.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'npm dist-tag'
+        required: true
+        default: 'latest'
+
+jobs:
+  publish:
+    name: publish @mosadd/voice-truthgate-mcp
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Fetch the MCP source (public repo, single source of truth)
+        run: git clone --depth 1 https://github.com/Hei33enberg/voice-truthgate.git vtg
+
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd vtg/mcp
+          echo "publishing $(node -p "require('./package.json').name")@$(node -p "require('./package.json').version")"
+          TAG="${{ github.event.inputs.tag || 'latest' }}"
+          if ! npm publish --access public --tag "$TAG" 2> /tmp/pub.err; then
+            cat /tmp/pub.err
+            if grep -qi "cannot publish over the previously published" /tmp/pub.err; then
+              echo "↷ already at this version — not a failure"
+            else
+              echo "::error::publish failed"; exit 1
+            fi
+          fi
+
+      - name: Smoke install
+        run: |
+          TAG="${{ github.event.inputs.tag || 'latest' }}"
+          mkdir /tmp/smoke && cd /tmp/smoke && npm init -y > /dev/null
+          npm install "@mosadd/voice-truthgate-mcp@$TAG"
+          test -f node_modules/@mosadd/voice-truthgate-mcp/index.mjs && echo "✓ @mosadd/voice-truthgate-mcp@$TAG installs and has the entrypoint"
