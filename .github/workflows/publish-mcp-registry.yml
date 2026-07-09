@@ -1,0 +1,40 @@
+# Publish the mosADD MCP server to the official MCP Registry
+# (registry.modelcontextprotocol.org) so agents discover it in the canonical
+# directory that feeds Cursor, VS Code, Smithery, PulseMCP, mcp.so, etc.
+#
+# Auth = GitHub OIDC — NO secrets needed. It works because packages/mcp/server.json
+# is namespaced `io.github.hei33enberg/…`, which the registry verifies against the
+# authenticated GitHub owner of this repo.
+#
+# Manual trigger by design (Actions tab → Run workflow) so a listing is only ever
+# published deliberately. NOTE: the registry validates that the npm package +
+# version in server.json already exist on npm — keep `packages/mcp/server.json`'s
+# `version` in sync with the published @mosadd/mcp version before running this.
+name: Publish to MCP Registry
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # OIDC auth to the MCP Registry
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install mcp-publisher
+        working-directory: packages/mcp
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+
+      - name: Authenticate (GitHub OIDC)
+        working-directory: packages/mcp
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish server.json to the MCP Registry
+        working-directory: packages/mcp
+        run: ./mcp-publisher publish

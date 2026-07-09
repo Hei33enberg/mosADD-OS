@@ -82,9 +82,24 @@ registry + GitHub).
 | `Invalid or expired Registry JWT token` | `mcp-publisher login github` again. |
 | `You do not have permission to publish this server` | `mcpName` must start `io.github.hei33enberg/` (matches GitHub auth). |
 
-## Follow-up (after Step 5 lands)
+## Easiest path — the CI workflow (no device-code, no secrets)
+
+`.github/workflows/publish-mcp-registry.yml` publishes `packages/mcp/server.json`
+to the registry via **GitHub OIDC** — it authenticates as the repo owner
+(`Hei33enberg`) automatically, so you do NOT need the interactive `mcp-publisher
+login github` device-code flow or any secret. **This can do the FIRST publish too**,
+not just future bumps — as long as the npm package carries `mcpName` (it does).
+
+- **Run it:** GitHub → repo **Actions** tab → *Publish to MCP Registry* → **Run workflow**.
+- **Prereq:** `@mosadd/mcp` at the version in `server.json` must already be on npm
+  (the registry verifies the package + version there). Bump `server.json`'s `version`
+  to match the published npm version before running.
+- After it succeeds, verify with Step 5's `curl`.
+
+The manual OWNER STEPS above stay as the fallback if you ever want to publish from
+your laptop instead of CI.
+
+## Follow-up (after it lands)
 
 - Check Glama / mcp.so / Smithery / mcpservers.org ~24 h later; if missing, fall
   back to their manual submission forms (per-registry drafts in this folder).
-- Add `mcp-publisher publish` to a GitHub Actions workflow so future alpha bumps
-  auto-publish — see `docs/modelcontextprotocol-io/github-actions.md` upstream.
