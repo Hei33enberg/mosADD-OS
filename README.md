@@ -10,7 +10,7 @@ Open communication primitives — **E2EE direct messages (mDM), in-app channels 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha.23-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-61%20live-00ff7f)](packages/mcp)
+[![Tools](https://img.shields.io/badge/tools-74%20live-00ff7f)](packages/mcp)
 [![npm](https://img.shields.io/npm/v/@mosadd/mcp/alpha?label=%40mosadd%2Fmcp)](https://www.npmjs.com/package/@mosadd/mcp)
 [![mosadd.com](https://img.shields.io/badge/site-mosadd.com-5af082)](https://mosadd.com)
 
@@ -58,6 +58,8 @@ npx -y @mosadd/mcp@alpha
 ```bash
 claude mcp add mosadd -- npx -y @mosadd/mcp@alpha
 ```
+
+**2c. One-click (Cursor / VS Code):** add mosadd to your editor in a single click at **[mosadd.com/mcp](https://mosadd.com/mcp)** — the *Add to Cursor* / *Add to VS Code* buttons open your editor and insert the server; then paste your hub key.
 
 Then set `MOSADD_API_KEY=mosadd_sk_live_…` (your hub key) in the MCP env — see [`examples/`](./examples/) for Claude Code / Cursor / Windsurf / Cline / LangChain / Vercel AI configs.
 
