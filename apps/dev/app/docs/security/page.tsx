@@ -11,7 +11,7 @@ export default function SecurityPage() {
     <Prose>
       <H1>Security</H1>
       <Lead>
-        Security is the kernel, not a feature. Encryption, zero-knowledge storage and threat detection ship by
+        Security is the foundation, not a feature. Encryption, zero-knowledge storage and threat detection ship by
         default — and we tell you, plainly, exactly what is and isn&apos;t covered.
       </Lead>
 
@@ -21,7 +21,7 @@ export default function SecurityPage() {
         <li><strong>Zero-knowledge storage.</strong> The hosted layer stores opaque ciphertext for encrypted surfaces; it can&apos;t be compelled to produce plaintext it never holds.</li>
         <li><strong>RLS on every table.</strong> Row-level security is enforced per-tenant across the whole schema, with coverage verified in CI.</li>
         <li><strong>Cryptographic identity.</strong> Ed25519, not email/phone — no PII at the identity layer.</li>
-        <li><strong>Defensive threat engine.</strong> A pure defensive threat-event classification engine ships as <code className="font-mono text-primary">@mosadd/threat-engine</code> — <code className="font-mono">threat_catalog</code> enumerates the detection taxonomy and <code className="font-mono">threat_classify</code> scores an event against it. It flags device-integrity and network anomalies (rooted / tampered devices, sideloads, MITM) so your agent can react. It is classification you embed and run yourself — not surveillance, not traffic interception, and not a Pegasus detector (credible spyware detection is <em>forensic, off-device, post-hoc</em>). Embed it as a kernel primitive in your own app. See <Anchor href="/docs/modules/threat-engine">threat-engine</Anchor>.</li>
+        <li><strong>Irondome — on-device threat pillar.</strong> Flags device-integrity and network anomalies (rooted / tampered devices, sideloads, MITM) and Pegasus-class spyware <em>indicators</em> locally, shipping as an embeddable package (<code className="font-mono text-primary">@mosadd/threat-engine</code>). Runs on your device; nothing phones home. It flags indicators — not a forensic, off-device scan. See <Anchor href="/docs/modules/threat-engine">threat-engine</Anchor>.</li>
         <li><strong>Hardened supply chain.</strong> SBOM (SPDX 2.3) per package, CodeQL, gitleaks and license-check on every PR. Apache-2.0 — audit the source yourself.</li>
       </Ul>
 
@@ -51,7 +51,7 @@ export default function SecurityPage() {
       <Ul>
         <li>MCP server (stdio + hosted) — prompt injection, tool poisoning, BYOK exfiltration</li>
         <li>Edge functions — auth bypass, replay, IDOR on tenant scoping</li>
-        <li>mp0st (inbound mp0st) — sender spoofing, spam/phishing payloads, soft-delete abuse</li>
+        <li>mAYL (inbound mail) — sender spoofing, spam/phishing payloads, soft-delete abuse</li>
         <li>Voice (mTALK) — deepfake injection, prompt-injection-via-TTS, floor-control abuse</li>
         <li>Identity recovery — passphrase phishing, seed-phrase social engineering</li>
       </Ul>

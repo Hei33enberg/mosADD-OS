@@ -29,9 +29,9 @@ const ROWS: Array<{ label: string; cells: Cell[] }> = [
     ],
   },
   {
-    label: 'Channels: DM · voice · mail · channels · memory',
+    label: 'Modules: mDM · mIRC · mURL · mAYL',
     cells: [
-      { v: 'yes', note: '5 live modules' },
+      { v: 'yes', note: '4 modules' },
       { v: 'partial', note: 'voice · SMS · WA' },
       { v: 'no', note: 'tools, not comms' },
       { v: 'partial', note: 'voice/video' },

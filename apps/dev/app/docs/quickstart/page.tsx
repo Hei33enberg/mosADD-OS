@@ -53,7 +53,7 @@ export default function QuickstartPage() {
       <H2 id="byok-config">Auth config</H2>
       <P>
         <strong>Recommended — one hosted key.</strong> Paste a single hub key; the server exchanges it for a
-        scoped session, so every tool acts as the key&apos;s owner. mp0st (email) and voice run through the mosadd
+        scoped session, so every tool acts as the key&apos;s owner. mAYL (email) and voice run through the mosadd
         relay — no provider keys to manage.
       </P>
       <Pre lang="bash">{`MOSADD_API_KEY=mosadd_sk_live_...   # from mosadd.com/keys`}</Pre>
@@ -71,7 +71,7 @@ MOSADD_USER_JWT=...   # a signed-in user's access token`}</Pre>
 
       <H3>Next steps</H3>
       <Ul>
-        <li><Anchor href="/docs/mcp">MCP server reference</Anchor> — 64 tools, control/data plane split, transports</li>
+        <li><Anchor href="/docs/mcp">MCP server reference</Anchor> — 70+ tools, control/data plane split, transports</li>
         <li><Anchor href="/docs/modules">Module reference</Anchor> — every m* per-channel API</li>
         <li><Anchor href="/examples">Examples</Anchor> — 6 runnable example apps</li>
       </Ul>

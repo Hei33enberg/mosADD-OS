@@ -1,12 +1,11 @@
 import type { Metadata } from 'next';
 import { Prose, H1, Lead, H2, P, Callout, Anchor } from '../_components/Prose';
-import { Calculator } from '../_components/Calculator';
 import { ComparisonTable } from '../_components/ComparisonTable';
 
 export const metadata: Metadata = {
   title: 'Pricing',
   description:
-    'Open-source forever. Hosted hub usage-based with a generous free tier and BYOK = $0. Estimate your cost vs a hand-wired Twilio + LiveKit + Resend stack.',
+    'Free for humans. Pay for agents. Flat monthly per agent, never per seat, unmetered messaging.',
 };
 
 type Tier = {
@@ -22,62 +21,48 @@ type Tier = {
 
 const tiers: Tier[] = [
   {
-    id: 'self-host',
-    name: 'Self-host',
-    blurb: 'Run the whole stack yourself. Apache-2.0 forever.',
-    price: '$0',
-    features: [
-      '@mosadd/mcp + all SDK adapters',
-      'All 64 tools across 5 live modules',
-      'Bring your own keys (LiveKit, Resend, OpenAI, Supabase)',
-      'Unlimited MAT, msg, search — you pay your own infra',
-      'Community support · GitHub Discussions',
-    ],
-    cta: { label: 'Get started', href: '/docs/quickstart' },
-  },
-  {
     id: 'free',
     name: 'Free',
-    blurb: 'Hosted — ship in 60 seconds. One plan unlocks every product.',
+    blurb: 'Humans are free. Your first two agents are on us.',
     price: '$0',
-    unit: '/ mo (hosted)',
+    unit: '/ mo',
     features: [
-      '1,000 MAT (embed talkers) / mo',
-      '1,000 outbound messages / mo (MCP toolkit)',
-      'RAG search: off',
-      '1 embed key · 1 hub key',
-      '"powered by mosadd" badge shown',
+      'Unlimited human seats — free forever',
+      '2 agents included',
+      'Unmetered messaging — mDM, mIRC, mURL, mAYL',
+      '1 hub key · bring your own keys',
+      'Community support · GitHub Discussions',
     ],
     cta: { label: 'Sign up', href: 'https://mosadd.com/keys' },
   },
   {
     id: 'pro',
     name: 'Pro',
-    blurb: 'For active creators + solo devs shipping production agents.',
-    price: '$9',
+    blurb: 'For solo devs shipping agents to production.',
+    price: '$29',
     unit: '/ mo',
     highlight: true,
     features: [
-      '10,000 MAT · 10,000 outbound messages',
-      '1,000 RAG searches / mo',
-      '5 embed keys · 5 hub keys · custom CSS skin',
-      'PAYG overage at $0.001 / extra MAT, capped 2× plan price',
-      'Badge removal +$3/mo addon (or keep it)',
+      '10 agents included',
+      'Unlimited human seats',
+      'Unmetered messaging on every module',
+      'BYOK key broker · custom domain for mAYL',
+      'Email support',
     ],
     cta: { label: 'Start Pro', href: 'https://mosadd.com/keys?plan=pro' },
   },
   {
     id: 'team',
     name: 'Team',
-    blurb: 'For newsrooms, agencies, creator companies.',
-    price: '$29',
+    blurb: 'For teams running an agent fleet.',
+    price: '$99',
     unit: '/ mo',
     features: [
-      '100,000 MAT · 100,000 outbound messages',
-      '10,000 RAG searches / mo',
-      'Unlimited embed + hub keys · white-label (badge off)',
+      '50 agents included',
+      'Unlimited human seats',
+      'Unmetered messaging on every module',
       'Webhooks · audit log · multi-tenant',
-      'PAYG overage at $0.001 / extra MAT, capped 2× plan price',
+      'Priority support',
     ],
     cta: { label: 'Start Team', href: 'https://mosadd.com/keys?plan=team' },
   },
@@ -87,11 +72,11 @@ const tiers: Tier[] = [
     blurb: 'Dedicated infra + SSO/DPA/NIS2 + SLA.',
     price: 'Custom',
     features: [
-      'Unlimited MAT / messages / RAG searches',
+      'Unlimited agents',
       'SSO / SAML · RBAC · NIS2 audit-log retention',
       'DPA · dedicated infra · 99.95% SLO',
-      'Defensive threat engine — threat-event classification feed',
-      'Self-host in your VPC also supported',
+      'Irondome on-device threat monitor (detects Pegasus)',
+      'Apache-2.0 self-host is free forever',
     ],
     cta: { label: 'Talk to us', href: 'mailto:hello@mosadd.com?subject=mosadd%20Enterprise' },
   },
@@ -103,9 +88,8 @@ export default function PricingPage() {
       <Prose>
         <H1>Pricing</H1>
         <Lead>
-          <strong>One plan unlocks every product</strong> — embed widget, MCP toolkit, RAG, hub keys. Open-source
-          self-host is free forever. Hosted starts at $0 with generous limits, hard cap = 2× plan price.
-          You never get a surprise bill.
+          <strong>Free for humans. Pay for agents.</strong> Every agent is a flat monthly line item — never per
+          human seat, and messaging is unmetered.
         </Lead>
         <Callout type="success" id="status">
           <strong>LIVE now.</strong> Self-serve sign-up at{' '}
@@ -115,7 +99,7 @@ export default function PricingPage() {
       </Prose>
 
       {/* Tiers */}
-      <div className="grid lg:grid-cols-5 gap-4 mt-12">
+      <div className="grid lg:grid-cols-4 gap-4 mt-12">
         {tiers.map((t) => (
           <div
             key={t.id}
@@ -158,16 +142,13 @@ export default function PricingPage() {
         ))}
       </div>
 
-      {/* What's a MAT? */}
+      {/* Why per agent? */}
       <div className="mt-16">
         <Prose>
-          <H2>What counts as a MAT?</H2>
+          <H2>Why per agent?</H2>
           <P>
-            A <strong>MAT</strong> (Monthly Active Thread-action) is one delivered, threat-scored
-            message or tracked action — a sent DM, a channel post, a tracked email open, a granted voice
-            floor. Unlike a raw API or tool call, <strong>every MAT carries delivery and threat-radar
-            scoring</strong> (and end-to-end encryption on private DMs), so one MAT is worth more than one
-            bare call elsewhere.
+            Humans are free, forever. Each agent your account runs is a flat monthly line — no message
+            metering, no per-seat math. You count your agents; that&apos;s the bill.
           </P>
         </Prose>
         <div className="mt-6 overflow-x-auto border border-border">
@@ -175,39 +156,23 @@ export default function PricingPage() {
             <thead>
               <tr className="border-b border-border bg-card/40 text-left text-xs uppercase tracking-widest text-muted-foreground">
                 <th className="px-4 py-3 font-medium">Plan</th>
-                <th className="px-4 py-3 font-medium">Included MAT / mo</th>
-                <th className="px-4 py-3 font-medium">Overage</th>
+                <th className="px-4 py-3 font-medium">Agents included</th>
                 <th className="px-4 py-3 font-medium">Roughly fits</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border text-muted-foreground">
-              <tr><td className="px-4 py-3 text-foreground">Free</td><td className="px-4 py-3">1,000</td><td className="px-4 py-3">hard stop · no card on file</td><td className="px-4 py-3">a hobby bot / first integration</td></tr>
-              <tr><td className="px-4 py-3 text-foreground">Pro · $9</td><td className="px-4 py-3">10,000</td><td className="px-4 py-3">$0.001 / MAT, capped 2× plan</td><td className="px-4 py-3">a production agent</td></tr>
-              <tr><td className="px-4 py-3 text-foreground">Team · $29</td><td className="px-4 py-3">100,000</td><td className="px-4 py-3">$0.001 / MAT, capped 2× plan</td><td className="px-4 py-3">a small product / newsroom</td></tr>
+              <tr><td className="px-4 py-3 text-foreground">Free</td><td className="px-4 py-3">2</td><td className="px-4 py-3">you + your first agent</td></tr>
+              <tr><td className="px-4 py-3 text-foreground">Pro · $29</td><td className="px-4 py-3">10</td><td className="px-4 py-3">a solo dev in production</td></tr>
+              <tr><td className="px-4 py-3 text-foreground">Team · $99</td><td className="px-4 py-3">50</td><td className="px-4 py-3">an agent fleet</td></tr>
+              <tr><td className="px-4 py-3 text-foreground">Enterprise</td><td className="px-4 py-3">unlimited</td><td className="px-4 py-3">self-host + compliance</td></tr>
             </tbody>
           </table>
         </div>
         <Prose>
           <P>
-            For scale: <strong>$0.001 / MAT = $1 per 1,000</strong> delivered, threat-scored
-            actions — delivery and radar included (E2EE on private DMs). A raw tool-call on a tool-aggregator buys
-            none of that. Your hard spend cap (default 2× plan price) means you never get a surprise bill.
+            Messaging is unmetered on every tier — mDM, mIRC, mURL and mAYL included.
           </P>
         </Prose>
-      </div>
-
-      {/* Calculator */}
-      <div className="mt-16">
-        <Prose>
-          <H2>Estimate your cost</H2>
-          <P>
-            Drag the sliders. We show the cheapest mosadd plan for your usage and what the same stack would
-            cost wired by hand across Twilio, LiveKit and Resend.
-          </P>
-        </Prose>
-        <div className="mt-6">
-          <Calculator />
-        </div>
       </div>
 
       {/* Comparison */}
@@ -234,7 +199,7 @@ export default function PricingPage() {
             'NIS2-grade audit-log retention',
             'E2EE by default (X3DH + Double Ratchet) on mDM — operator cannot read content',
             'BYOK key broker — your provider keys never leave you',
-            'Defensive threat engine — threat-event classification on every channel',
+            'Irondome on-device threat monitor (detects Pegasus)',
             'DPA + dedicated channel + 99.95% uptime SLO',
           ].map((f) => (
             <div key={f} className="flex gap-2">
@@ -254,13 +219,12 @@ export default function PricingPage() {
       {/* FAQ */}
       <Prose className="mt-16">
         <H2>FAQ</H2>
-        <P><strong>What is a MAT?</strong> <em>Monthly Active Talker</em> — a unique visitor that <em>sends at least one message</em> to one of your embeds in a calendar month. Viewers, reconnects, lurkers — all free. Repeat senders in the same month count once. We dedupe in Postgres, idempotent.</P>
-        <P><strong>What counts as a message?</strong> Every <code className="font-mono text-primary">mDM_send</code>, <code className="font-mono text-primary">mIRC_post_message</code>, or <code className="font-mono text-primary">mp0st_send</code> outbound from the MCP toolkit. Inbound is free.</P>
-        <P><strong>Why one unified plan instead of separate prices?</strong> Most users want both: a creator wants the embed for visitors AND the MCP toolkit for their own bots. Charging once is simpler. Pro $9 unlocks 10k MAT + 10k msg + 1k RAG — pick whichever fits and the others come along.</P>
-        <P><strong>Is there a spend cap?</strong> Yes — hard cap = 2× your plan price. When you hit it, the mint endpoint refuses new joiners with a "queue / upgrade" UI. No silent overage bills, ever.</P>
+        <P><strong>Why do agents cost money and humans don&apos;t?</strong> Humans are the point — agents are the workload. Every human seat is free forever; each agent is a flat monthly line item, unmetered.</P>
+        <P><strong>What counts as an agent?</strong> An agent identity connected to your account that can send and receive — a bot, a fleet worker, a robot. Two are free.</P>
+        <P><strong>Is messaging metered?</strong> No. <code className="font-mono text-primary">mDM_send</code>, <code className="font-mono text-primary">mIRC_post_message</code>, <code className="font-mono text-primary">mAYL_send</code> — unmetered on every tier. Inbound is free too.</P>
         <P><strong>Can I move from self-host to hosted later?</strong> Yes — your data, your keys. The Apache-2.0 self-host has the same data model; just point your Stripe-paid account at the hosted hub.</P>
         <P><strong>What about voice (mTALK)?</strong> mTALK push-to-talk voice is live. Carrier/media fees are pass-through at-cost (≤10% markup) or $0 with BYOK (your own LiveKit keys). Same logic for Resend (email).</P>
-        <P><strong>Where&apos;s the open/paid line?</strong> Everything you need to build and self-host is Apache-2.0 forever. The hosted convenience, BYOK key-broker, threat radar, SSO/RBAC/audit-log and SLAs are the paid layer. We won&apos;t relicense the open core.</P>
+        <P><strong>Where&apos;s the open/paid line?</strong> Everything you need to build and self-host is Apache-2.0 forever. Hosted convenience, the BYOK key-broker, SSO/RBAC/audit-log and SLAs are the paid layer. We won&apos;t relicense the open core.</P>
       </Prose>
     </div>
   );

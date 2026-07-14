@@ -2,16 +2,16 @@ import type { Metadata } from 'next';
 import { Prose, H1, Lead, H2, H3, P, Ul, Pre, Table, Anchor, Callout } from '../../../_components/Prose';
 
 export const metadata: Metadata = {
-  title: 'Threat Engine',
+  title: 'Irondome',
   description:
-    'The 166-event threat taxonomy + scoring — the kernel security primitive, as an embeddable package. @mosadd/threat-engine ships the same engine that powers the mosadd.com radar.',
+    'Irondome — mosADD\'s on-device threat monitor (detects Pegasus-class spyware), shipped as an embeddable package. @mosadd/threat-engine is the same engine that runs on-device in mosadd.com.',
 };
 
 export default function ThreatEnginePage() {
   return (
     <Prose>
-      <H1>Threat Engine</H1>
-      <Lead>The 166-event threat taxonomy + scoring — the kernel security primitive, as an embeddable package.</Lead>
+      <H1>Irondome</H1>
+      <Lead>The on-device threat monitor — device-integrity and network-anomaly detection (166-event taxonomy), as an embeddable package.</Lead>
 
       <P>
         <code className="font-mono text-primary">@mosadd/threat-engine</code> (Apache-2.0) is the{' '}
@@ -80,10 +80,8 @@ const decision = evaluateEvent({
       <H2>Engine vs hosted radar</H2>
       <P>
         Be clear about what you get: the package is the detection <strong>engine</strong> you run client-side — the
-        same way mosadd.com evaluates threats on-device. A managed, hosted radar service (cross-tenant correlation,
-        live feeds, alerting) is the <strong>Phase-2 commercial layer</strong>, <em>not</em> something running on the
-        free dev toolkit today. The free toolkit hands you the engine; nothing here phones home or watches your
-        traffic.
+        same way mosadd.com evaluates threats on-device. A managed hosted service is not part of the free toolkit;
+        the package is the on-device engine, nothing phones home.
       </P>
 
       <P>

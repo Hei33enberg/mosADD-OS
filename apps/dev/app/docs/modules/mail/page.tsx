@@ -2,19 +2,20 @@ import type { Metadata } from 'next';
 import { Prose, H1, Lead, H2, H3, P, Ul, Pre, Anchor } from '../../../_components/Prose';
 
 export const metadata: Metadata = {
-  title: 'mp0st',
-  description: 'Email — every user gets <id>@mosadd.com. Provider-agnostic.',
+  title: 'mAYL',
+  description: 'mAYL — email 3.0. Every user gets <id>@mosadd.com. Provider-agnostic.',
 };
 
 export default function MailPage() {
   return (
     <Prose>
-      <H1>mp0st</H1>
-      <Lead>Email — every user gets a <code className="font-mono text-primary">&lt;id&gt;@mosadd.com</code> address. Provider-agnostic.</Lead>
+      <H1>mAYL</H1>
+      <Lead>Email 3.0 — every user gets a <code className="font-mono text-primary">&lt;id&gt;@mosadd.com</code> address. Provider-agnostic.</Lead>
 
       <P>
-        <code className="font-mono text-primary">mp0st</code> is the email OS module. Outbound via Resend or SES.
-        Inbound via a Postfix-backed catch-all that drops into the threat radar before delivery.
+        <code className="font-mono text-primary">mAYL</code> is the email module. Outbound via Resend or SES;
+        inbound via a Postfix-backed catch-all screened by Irondome before delivery.
+        {' '}(mAYL&apos;s MCP tools are prefixed <code className="font-mono text-primary">mp0st_</code> — the original module name — kept for API stability.)
       </P>
 
       <H2>Tools</H2>
@@ -123,7 +124,7 @@ export default function MailPage() {
         <li><strong>Postfix</strong> — self-host inbound + catch-all</li>
       </Ul>
 
-      <H2>Threat radar hooks</H2>
+      <H2>Irondome hooks</H2>
       <Ul>
         <li><code className="font-mono">PHISHING.suspicious_link</code> — URL similarity scoring against known brand domains</li>
         <li><code className="font-mono">COMINT.bulk_send</code> — N recipients in M minutes</li>

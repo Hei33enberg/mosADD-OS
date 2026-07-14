@@ -8,7 +8,7 @@
 
 mosadd.com/docs is the developer portal for the mosadd OS toolkit. The toolkit ships
 as `@mosadd/*` packages on npm; the headline artifact is `@mosadd/mcp` — a single
-MCP server exposing 64 tools across 5 live modules that any agent (Claude Code, Cursor, ChatGPT Apps,
+MCP server exposing 70+ tools across four modules that any agent (Claude Code, Cursor, ChatGPT Apps,
 Vercel AI SDK, LangChain, …) can call.
 
 Install: `npx -y @mosadd/mcp@alpha`
@@ -16,22 +16,24 @@ Install: `npx -y @mosadd/mcp@alpha`
 ## Docs
 - [Quickstart](https://mosadd.com/docs/quickstart): install for Claude Code, Cursor, Vercel AI SDK
 - [Credentials](https://mosadd.com/docs/auth): `mosadd login`, MOSADD_* env vars; mint a hub key at https://mosadd.com/keys
-- [MCP reference](https://mosadd.com/docs/mcp): all 64 live tools (discover + invoke)
-- [Modules](https://mosadd.com/docs/modules): mDM, mIRC, mp0st, mTALK, mRAG (alpha); threat-engine (alpha)
+- [MCP reference](https://mosadd.com/docs/mcp): all 70+ live tools (discover + invoke)
+- [Modules](https://mosadd.com/docs/modules): mDM, mIRC, mURL, mAYL; capabilities mTALK, mRAG; Irondome threat-engine (alpha)
 - [SDK adapters](https://mosadd.com/docs/sdk): Vercel AI, LangChain, OpenAI, Anthropic
 - [Security](https://mosadd.com/docs/security): threat model + hardening
 - [RFCs](https://mosadd.com/docs/rfcs): protocol RFC index
 
-## Channels (m*)
-- mDM — 1:1 direct messages, end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content), text + voice (14 tools)
-- mIRC — persistent channels (22 tools)
-- mp0st — email, every user gets <id>@mosadd.com (12 tools)
-- mTALK — push-to-talk, half-duplex floor control (6 tools)
-- mRAG — knowledge base, RAG recall over your own data (4 tools)
+## Modules (m*)
+- mDM — 1:1 direct messages, the only end-to-end-encrypted module by default (X3DH + Double Ratchet; operator cannot read content), text + voice (14 tools)
+- mIRC — persistent channels, server-readable (22 tools)
+- mURL — open-web rooms on any domain, server-readable (4 tools)
+- mAYL — email 3.0, every user gets <id>@mosadd.com, server-readable (11 tools)
 
-Plus: comms tools (action links, embed, capabilities) and a pure defensive
-threat engine — `threat_catalog` (detection taxonomy) + `threat_classify`
-(score an event). Classification you embed and run yourself; not surveillance.
+Capabilities (not modules): mTALK — push-to-talk voice, half-duplex floor control (5 tools);
+mRAG — agent memory, RAG recall over your own data (4 tools); comms_ — action links + capabilities.
+
+Plus Irondome — the on-device security pillar (`@mosadd/threat-engine`, embeddable):
+flags device-integrity + network anomalies and Pegasus-class spyware indicators locally.
+It flags indicators on-device; not a forensic off-device scan.
 
 ## Resources
 - [Examples](https://mosadd.com/docs/examples): 6 runnable example apps

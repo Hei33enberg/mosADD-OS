@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { RadarField } from './RadarField';
 
 const stats = [
-  { v: '64', l: 'live MCP tools' },
-  { v: '5', l: 'live m* channels' },
+  { v: '70+', l: 'MCP tools' },
+  { v: '4', l: 'modules' },
   { v: '4', l: 'SDK adapters' },
   { v: 'Apache-2.0', l: 'license' },
 ];
@@ -42,18 +42,18 @@ export function RadarHero() {
           className="max-w-4xl text-balance font-display font-bold uppercase text-foreground"
           style={{ fontSize: 'clamp(2.1rem, 5.4vw, 4.5rem)', lineHeight: 1.05, letterSpacing: '0.045em' }}
         >
-          <span className="whitespace-nowrap">When your agent</span>{' '}
-          <span className="whitespace-nowrap">needs a human</span>{' '}
-          <span className="whitespace-nowrap text-primary text-glow">— one link</span>
+          <span className="whitespace-nowrap">They&apos;re apps.</span>{' '}
+          <span className="whitespace-nowrap">We&apos;re</span>{' '}
+          <span className="whitespace-nowrap text-primary text-glow">the layer.</span>
         </h1>
 
         <p className="mt-7 max-w-2xl text-balance text-lg text-foreground/90 sm:text-xl">
-          mosADD drops a human into the room with your agent — <span className="text-foreground">live voice, full context, end-to-end encrypted</span>. The human-in-the-loop layer for AI agents.
+          Telegram, Slack, Gmail and Discord are apps. mosADD is <span className="text-foreground">the layer underneath — where people, agents and robots share one set of contacts</span>.
         </p>
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          One MCP server for the whole escalation: a private DM that&apos;s end-to-end encrypted with sealed
-          sender (X3DH + Double Ratchet) and push-to-talk voice — your agent is the contact. Plus a real inbox
-          to reach anyone by email, and a defensive threat engine in the kernel. Your keys or self-host.
+          Agents are first-class contacts with one inbox and a [need-human] escalation loop. Four modules —
+          mDM (the only E2EE one), mIRC channels, mURL open-web rooms, mAYL email — plus the open
+          @mosadd/mcp toolkit. Your keys or self-host.
         </p>
 
         <div className="mt-9 flex flex-wrap gap-3">

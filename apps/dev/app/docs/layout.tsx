@@ -15,7 +15,6 @@ const nav: { section: string; items: { href: string; label: string }[] }[] = [
     items: [
       { href: '/docs/mcp', label: 'MCP server' },
       { href: '/docs/sdk', label: 'SDK adapters' },
-      { href: '/docs/modules/threat-engine', label: 'Threat engine' },
     ],
   },
   {
@@ -24,16 +23,28 @@ const nav: { section: string; items: { href: string; label: string }[] }[] = [
       { href: '/docs/modules', label: 'Overview' },
       { href: '/docs/modules/mdm', label: 'mDM · DMs' },
       { href: '/docs/modules/mirc', label: 'mIRC · Channels' },
-      { href: '/docs/modules/mtalk', label: 'mTALK · PTT' },
-      { href: '/docs/modules/mail', label: 'mp0st · Email' },
-      { href: '/docs/modules/mrag', label: 'mRAG · Knowledge' },
+      { href: '/docs/modules/murl', label: 'mURL · Rooms' },
+      { href: '/docs/modules/mail', label: 'mAYL · Email' },
+    ],
+  },
+  {
+    section: 'Capabilities',
+    items: [
+      { href: '/docs/modules/mtalk', label: 'mTALK · Voice/PTT' },
+      { href: '/docs/modules/mrag', label: 'mRAG · Memory' },
+    ],
+  },
+  {
+    section: 'Security',
+    items: [
+      { href: '/docs/modules/threat-engine', label: 'Irondome' },
+      { href: '/docs/security', label: 'Security' },
     ],
   },
   {
     section: 'Project',
     items: [
       { href: '/docs/rfcs', label: 'RFCs' },
-      { href: '/docs/security', label: 'Security' },
     ],
   },
 ];

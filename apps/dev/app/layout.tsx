@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   applicationName: 'mosadd.dev',
   openGraph: {
     title: 'mosADD MCP — when your AI agent needs a human',
-    description: 'Pull a human into the room with your agent — live voice, full context, private E2EE DM, in one link. Threat radar in the kernel. Your keys or self-host. Apache-2.0. TRUST NO TRACE.',
+    description: 'Pull a human into the room with your agent — live voice, full context, private E2EE DM, in one link. Irondome threat radar runs on-device. Your keys or self-host. Apache-2.0. TRUST NO TRACE.',
     url: 'https://mosadd.dev',
     siteName: 'mosadd.dev',
     locale: 'en_US',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'mosADD MCP — when your AI agent needs a human',
-    description: 'The human-in-the-loop layer for AI agents. One MCP server — huddle, reach, remember. Threat radar in the kernel. Apache-2.0.',
+    description: 'The human-in-the-loop layer for AI agents. One MCP server — huddle, reach, remember. Irondome threat radar, on-device. Apache-2.0.',
   },
 };
 

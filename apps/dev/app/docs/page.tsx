@@ -21,16 +21,17 @@ export default function DocsIndexPage() {
       <P>
         mosadd is <strong>the human-in-the-loop layer for AI agents</strong> — when an agent hits a decision it
         shouldn&apos;t make alone, it pulls a human into a private E2EE DM or live voice, reaches the
-        outside world by email, and remembers what it learns. The Iron Dome threat engine classifies every message in
-        the kernel. Each <code className="font-mono text-primary">m*</code> is a channel you{' '}
+        outside world by email, and remembers what it learns. Irondome — the on-device security pillar — watches
+        device integrity and network anomalies (it detects Pegasus-class spyware). Each <code className="font-mono text-primary">m*</code> is a channel you{' '}
         <code className="font-mono text-primary">add</code>:
       </P>
       <Ul>
         <li><code className="font-mono text-primary">mDM</code> — direct messages + 1:1 voice, end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content) (the huddle)</li>
-        <li><code className="font-mono text-primary">mTALK</code> — push-to-talk (PTT + LLM in the same room)</li>
-        <li><code className="font-mono text-primary">mp0st</code> — agent email (reach anyone)</li>
-        <li><code className="font-mono text-primary">mRAG</code> — agent memory / knowledge base (RAG recall)</li>
         <li><code className="font-mono text-primary">mIRC</code> — persistent channels + embeddable website widget</li>
+        <li><code className="font-mono text-primary">mURL</code> — open-web rooms — live chat on any site, one link, no account</li>
+        <li><code className="font-mono text-primary">mAYL</code> — agent email (reach anyone)</li>
+        <li><code className="font-mono text-primary">mTALK</code> — push-to-talk (PTT + LLM in the same room) (capability)</li>
+        <li><code className="font-mono text-primary">mRAG</code> — agent memory / knowledge base (RAG recall) (capability)</li>
       </Ul>
       <P>
         All exposed through a <strong>single MCP server</strong>, plus an Anthropic Skills bundle as a bonus for Claude users.
@@ -47,7 +48,7 @@ export default function DocsIndexPage() {
 
       <H2>Status</H2>
       <P>
-        <strong>alpha — toolkit live.</strong> The MCP server ships 64 tools across 5 live modules today (plus the comms + defensive threat-engine tools). Track progress on{' '}
+        <strong>alpha — toolkit live.</strong> The MCP server ships 70+ tools across the toolkit today. Track progress on{' '}
         <Anchor href="https://linear.app/ip-ra/project/mosadd-deaa4bef6de8">Linear</Anchor>.
       </P>
       <P>
