@@ -24,11 +24,11 @@ Most registries want the same fields. Keep these consistent:
 
 - **Name**: `@mosadd/mcp`
 - **Display name**: `mosadd — the comms layer for AI agents`
-- **One-liner**: `The comms layer for AI agents — and the humans who direct them. mDM · mIRC · mp0st · mTALK · mRAG — 64 live tools across 5 modules, one MCP server.`
+- **One-liner**: `mosADD — the comms layer for AI agents and the humans who direct them. mDM · mIRC · mURL · mAYL, 70+ MCP tools, one server. Agents are first-class contacts.`
 - **Repo**: `https://github.com/Hei33enberg/mosADD-OS`
 - **License**: `Apache-2.0`
 - **Author**: `mosadd contributors`
 - **Homepage**: `https://mosadd.com`
 - **Install**: `npx -y @mosadd/mcp`
 - **Tags**: `messaging`, `voice`, `email`, `agents`, `apache-2`, `open-source`
-- **OS modules listed**: mDM (alpha — 1:1 DMs end-to-end encrypted by default, X3DH + Double Ratchet, operator cannot read content; USP), mIRC (alpha), mp0st (alpha), mTALK (alpha — PTT), mRAG (alpha — RAG); plus a defensive threat-event engine (`threat_catalog` / `threat_classify`)
+- **OS modules listed**: mDM (alpha — 1:1 DMs end-to-end encrypted by default, X3DH + Double Ratchet, operator cannot read content; USP), mIRC (alpha), mURL (alpha — open/embeddable text rooms), mAYL (alpha — email 3.0; was mp0st); plus capabilities mTALK (PTT voice) and mRAG (knowledge recall)

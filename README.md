@@ -10,7 +10,7 @@ Open communication primitives — **E2EE direct messages (mDM), in-app channels 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha.23-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-74%20live-00ff7f)](packages/mcp)
+[![Tools](https://img.shields.io/badge/tools-70%2B%20live-00ff7f)](packages/mcp)
 [![npm](https://img.shields.io/npm/v/@mosadd/mcp/alpha?label=%40mosadd%2Fmcp)](https://www.npmjs.com/package/@mosadd/mcp)
 [![mosadd.com](https://img.shields.io/badge/site-mosadd.com-5af082)](https://mosadd.com)
 
@@ -26,7 +26,7 @@ Open communication primitives — **E2EE direct messages (mDM), in-app channels 
 npx -y @mosadd/mcp@alpha
 ```
 
-…starts an MCP server with **74 tools** across **4 mosADD modules** (mDM, mIRC, mURL, mAYL) + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions). Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send an **end-to-end-encrypted DM**, manage a persistent channel, post to a web domain's live mURL channel, send mail, run a push-to-talk room, or recall from a personal knowledge base — through the hosted gateway with your hub key.
+…starts an MCP server with **70+ tools** across **4 mosADD modules** (mDM, mIRC, mURL, mAYL) + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions). Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send an **end-to-end-encrypted DM**, manage a persistent channel, post to a web domain's live mURL channel, send mail, run a push-to-talk room, or recall from a personal knowledge base — through the hosted gateway with your hub key.
 
 | Channel | Tools | Highlight |
 |---|---|---|
@@ -37,9 +37,8 @@ npx -y @mosadd/mcp@alpha
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own messages/mail/calls (hybrid vector + BM25). On-device keyword index for E2EE content — plaintext never leaves the device |
 | **comms_** (3) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities` | Agent→human one-link browser action (Tier 1) + one-call capability discovery |
-| **threat_** (2) | `threat_catalog`, `threat_classify` | Pure **defensive** threat-event classification engine — not surveillance, not interception |
 
-**74 callable tools across 4 mosADD modules + capabilities** — mDM (14) + mIRC (22) + mURL (4) + mAYL (11) = 51 module tools; mTALK (5) voice + mRAG (4) search + comms (3) agent-actions = 12 capability tools; plus 11 `mp0st_*` back-compat aliases for the mAYL rename (**74 callable**). `threat_*` was unregistered in alpha.25 (surveillance-era direction killed). `mCALL` (telephony, carrier-pending), `mROOM` (folded into ephemeral private mIRC), and the `mAYL_send_as_agent`/`mTALK_ingest_ptt`/`comms_embed_create` scaffolds ship in the source but are **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
+**70+ callable tools across 4 mosADD modules + capabilities** — mDM (14) + mIRC (22) + mURL (4) + mAYL (11) = 51 module tools; mTALK (5) voice + mRAG (4) search + comms (3) agent-actions = 12 capability tools; plus 11 `mp0st_*` back-compat aliases for the mAYL rename (**70+ callable**). `threat_*` was unregistered in alpha.25 (surveillance-era direction killed). `mCALL` (telephony, carrier-pending), `mROOM` (folded into ephemeral private mIRC), and the `mAYL_send_as_agent`/`mTALK_ingest_ptt`/`comms_embed_create` scaffolds ship in the source but are **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
 ## Quickstart (60 seconds)
 
@@ -89,7 +88,7 @@ This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.
 | `mTALK` | Push-to-talk voice, LLM-as-participant | Transport (LiveKit) | **alpha (shipped)** |
 | `mRAG` | Knowledge base — RAG recall (hybrid vector + BM25) | On-device for E2EE content | **alpha (shipped)** |
 
-We label encryption scope per channel rather than claiming blanket "encryption" — only mDM is end-to-end. Plus [`@mosadd/threat-engine`](./packages/threat-engine) — an embeddable defensive threat-event classification engine, surfaced to agents via `threat_catalog` / `threat_classify`.
+We label encryption scope per channel rather than claiming blanket "encryption" — only mDM is end-to-end. Plus [`@mosadd/threat-engine`](./packages/threat-engine) — an embeddable, on-device defensive security pillar (threat-event classification); it runs client-side and is not exposed as MCP tools.
 
 ## Architecture
 

@@ -2,11 +2,11 @@
 
 MCP server for [mosADD](https://mosadd.com) — **the comms layer for AI agents and the humans who direct them.** Exposes the OS modules (m\*) — **mDM (1:1 E2EE), mIRC (in-app channels), mURL (open/embeddable text rooms), and mAYL (email 3.0)** — as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
 
-> **3.0.0-alpha.23** — **61 live tools across 5 live modules** (mDM incl. voice + files, mIRC, mp0st, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool + the defensive `threat_*` engine, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com` with the 166-event radar in front.
+> **70+ tools** across **4 modules** (mDM, mIRC, mURL, mAYL) + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com`.
 
 ## Connect your agent
 
-Three ways to authenticate, friendliest first — all three end with the same ~61 tools.
+Three ways to authenticate, friendliest first — all three end with the same 70+ tools.
 
 ### 1. `mosadd login` — recommended (one command, stays logged in)
 
@@ -65,19 +65,19 @@ In Phase 2 the hosted gateway at `mcp.mosadd.com` removes even this — add a UR
 
 ## Tools shipped in alpha
 
-**61 live tools across 5 live modules** (mDM, mIRC, mp0st, mTALK, mRAG) + agent→user action links + the `comms_capabilities` discovery tool + the defensive `threat_*` engine. Highlights per module:
+**70+ tools** — 4 modules (mDM, mIRC, mURL, mAYL) + capabilities (mTALK voice, mRAG search, comms agent-actions) + the `comms_capabilities` discovery tool. Highlights per module:
 
 | Module | Tools | What it does |
 |---|---|---|
-| **mDM** (14) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`, `mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice`, `mDM_send_file` | 1:1 text, voice notes, calls + file/voice attachments. Multi-thread per contact. `mDM_send` is end-to-end encrypted by default (X3DH / Double Ratchet, `mosadd.e2ee.v2`); the operator cannot read message content |
+| **mDM** (14) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted` (DEPRECATED — migration-window fallback, only when the peer hasn't published keys), `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`, `mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice`, `mDM_send_file` | 1:1 text, voice notes, calls + file/voice attachments. Multi-thread per contact. `mDM_send` is end-to-end encrypted by default (X3DH / Double Ratchet, `mosadd.e2ee.v2`); the operator cannot read message content |
 | **mIRC** (22) | `mIRC_create/list/get/update/delete`, member RBAC (`mIRC_join/leave/kick/ban/unban/set_role/set_ptt/approve_request/reject_request/request_access`), `mIRC_post_message`, `mIRC_list_messages`, edge (`mIRC_mint_channel_token`, `mIRC_send_edge`, `mIRC_history_edge`), `mIRC_send_voice/file` | Persistent Discord/Slack-style channels + the agent-coordination edge transport |
-| **mp0st** (11) | `mp0st_send`, `mp0st_view`, `mp0st_list`, `mp0st_delete`, `mp0st_stats`, `mp0st_events`, `mp0st_metrics`, `mp0st_revoke`, `mp0st_audit_export`, `mp0st_consent`, `mp0st_notify` | Mail; every user gets `<id>@mosadd.com`. `mp0st_revoke` recalls secure-reader access; `mp0st_audit_export` emits an HMAC-SHA256-signed engagement audit; `mp0st_consent` manages recipient tracking opt-outs (GDPR); `mp0st_notify` pulls the inbound-mail feed |
+| **mURL** (4) | `mURL_read_channel`, `mURL_post`, `mURL_presence`, `mURL_list_channels` | IRC-for-URLs — open-web text rooms you can embed/share, no account needed; transport-encrypted, server-readable/public by design |
+| **mAYL** (11) | `mAYL_send`, `mAYL_view`, `mAYL_list`, `mAYL_delete`, `mAYL_stats`, `mAYL_events`, `mAYL_metrics`, `mAYL_revoke`, `mAYL_audit_export`, `mAYL_consent`, `mAYL_notify` | Mail; every user gets `<id>@mosadd.com`. Transport + at-rest encrypted (server-readable), NOT E2EE. `mAYL_revoke` recalls secure-reader access; `mAYL_audit_export` emits an HMAC-SHA256-signed engagement audit; `mAYL_consent` manages recipient tracking opt-outs (GDPR); `mAYL_notify` pulls the inbound-mail feed. (Was mp0st; deprecated `mp0st_*` aliases still function until alpha.27) |
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own data (hybrid vector + BM25) |
 | **comms_** (3) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities` | `comms_action_create` mints an agent→user one-link browser action (Tier 1); `comms_action_frame_get` fetches a framed action; `comms_capabilities` is one-call discovery of every tool's transport `requires` flag |
-| **threat_** (2) | `threat_catalog`, `threat_classify` | Pure defensive threat-event classification engine — enumerate the catalog and classify an operation against it |
 
-Counts by module prefix sum to **56 channel tools**; the 3 `comms_*` tools and 2 `threat_*` tools make **61 callable** in total. `mCALL` (telephony), `mROOM`, `mURL` — and the `mp0st_send_as_agent` provenance, `mTALK_ingest_ptt` PTT-ingest, and `comms_embed_create` (embed-keys EF undeployed) scaffolds — exist in the source but are **not registered**, so agents only ever see tools that actually work.
+Module tools: mDM (14) + mIRC (22) + mURL (4) + mAYL (11) = 51; capabilities: mTALK (5) + mRAG (4) + comms (3) = 12; plus the deprecated `mp0st_*` back-compat aliases for the mAYL rename — **70+ callable tools** in total. `threat_*` is unregistered — threat classification lives on-device as a security pillar, not as MCP tools. `mCALL` (telephony), `mROOM` — and the `mAYL_send_as_agent` provenance, `mTALK_ingest_ptt` PTT-ingest, and `comms_embed_create` (embed-keys EF undeployed) scaffolds — exist in the source but are **not registered**, so agents only ever see tools that actually work.
 
 All tool names follow [RFC 0001](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
@@ -125,7 +125,7 @@ For PTT / CALL (real-time media), the architecture separates **control plane** (
 | `MOSADD_SUPABASE_URL` | Supabase project URL — DM / IRC / mail / KB backend | yes (BYOK) |
 | `MOSADD_SUPABASE_ANON_KEY` | Supabase anon key | yes (BYOK) |
 | `MOSADD_USER_JWT` | User session token | yes (for tools that touch user data) |
-| `MOSADD_RESEND_API_KEY` | Resend API key — enables `mp0st` outbound | no (mp0st disabled if unset) |
+| `MOSADD_RESEND_API_KEY` | Resend API key — enables `mAYL` outbound mail (deprecated `mp0st_*` aliases still function) | no (mAYL disabled if unset) |
 | `MOSADD_LIVEKIT_URL` | LiveKit `wss://…` URL — enables `mTALK` voice | no (voice disabled if unset) |
 | `MOSADD_LIVEKIT_API_KEY` | LiveKit API key | no (with `…_URL` / `…_API_SECRET`) |
 | `MOSADD_LIVEKIT_API_SECRET` | LiveKit API secret | no |

@@ -36,22 +36,21 @@ startCommand:
 
 **Title:** mosadd — the comms layer for AI agents
 
-**Tagline:** The comms layer for AI agents — and the humans who direct them. mDM 1:1 end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content — plus channels, email, push-to-talk, knowledge recall — 64 tools today.
+**Tagline:** mosADD — the comms layer for AI agents and the humans who direct them. mDM · mIRC · mURL · mAYL, 70+ MCP tools, one server. Agents are first-class contacts.
 
 **Long description:**
 
 mosadd is the comms layer for AI agents — and the humans who direct them. Agents are first-class contacts; a [need-human] inbox keeps a human in the loop. Instead of stitching Twilio + LiveKit + Resend + Matrix yourself, you call OS-level semantic primitives — `mIRC_create` then `mIRC_post_message` instead of provisioning channel infra + auth + delivery yourself, or `mDM_send` for a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content.
 
-**64 live tools across 5 live modules (3.0.0-alpha):**
+**70+ MCP tools — 4 modules + capabilities (3.0.0-alpha):**
 - mDM (14 tools) — 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content) + 1:1 voice, multi-thread per contact (USP)
-- mIRC (22 tools) — Discord/Slack-style persistent encrypted channels
-- mTALK (6 tools) — Push-to-talk voice with agent-in-room
-- mp0st (12 tools) — Email from `<userId>@mosadd.com`
-- mRAG (4 tools) — Encrypted knowledge base, RAG recall
+- mIRC (22 tools) — Discord/Slack-style persistent channels (server-readable, not E2EE)
+- mURL (4 tools) — open/embeddable text rooms — live chat on any web domain, agent-native
+- mAYL (11 tools) — Email from `<userId>@mosadd.com` (was mp0st; deprecated aliases remain)
+- mTALK (5 tools, capability) — Push-to-talk voice with agent-in-room
+- mRAG (4 tools, capability) — Knowledge base, RAG recall
 - Action Links (`comms_action_create`) — agent → human one-link browser action
-
-Plus a pure defensive threat-event classification engine (`threat_catalog` / `threat_classify`) — classify communication-threat events without any surveillance.
 
 **License:** Apache-2.0. **Repo:** https://github.com/Hei33enberg/mosADD-OS
 
-**Tags:** messaging, voice, email, agents, communication, claude, cursor, anthropic, mcp, open-source, threat-classification
+**Tags:** messaging, voice, email, agents, communication, claude, cursor, anthropic, mcp, open-source

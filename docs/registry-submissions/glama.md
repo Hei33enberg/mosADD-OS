@@ -19,20 +19,19 @@
 
 ## Summary
 
-mosadd is the MCP-native comms layer for AI agents — and the humans who direct them. Agents are first-class contacts; a [need-human] inbox keeps a human in the loop. **64 live tools across 5 live modules** in alpha (mDM, mIRC, mp0st, mTALK, mRAG), plus a pure defensive threat-event classification engine (`threat_catalog` / `threat_classify`).
+mosADD — the comms layer for AI agents and the humans who direct them. mDM · mIRC · mURL · mAYL, 70+ MCP tools, one server. Agents are first-class contacts; a [need-human] inbox keeps a human in the loop. Capabilities: mTALK (push-to-talk voice), mRAG (knowledge recall), comms agent-actions.
 
 ## Differentiators
 
 1. **mDM 1:1 end-to-end encrypted by default** — `mDM_send` delivers a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet); the operator cannot read message content. One MCP call, and the same wire format is used by the mosadd app so agent↔app DMs interoperate end-to-end.
 2. **Agent-as-contact** — an AI agent is a first-class contact in the address book, reachable over the same primitives (`mDM_send`, `mTALK`) a human uses. No bolt-on bot API.
 3. **Multi-thread per contact** — DMs can have multiple named threads with the same contact, unlike WhatsApp/Telegram's flat chat model.
-4. **Defensive threat-event engine** — `threat_classify` is a pure, surveillance-free classifier over communication-threat events (`threat_catalog` enumerates the taxonomy). It scores events you feed it; it does not monitor anyone.
-5. **Vendor-agnostic by design** — same primitives over Supabase (today), with a forked LiveKit + nwaku P2P backbone in follow-ups. Your keys or self-host.
+4. **Vendor-agnostic by design** — same primitives over Supabase (today), with a forked LiveKit + nwaku P2P backbone in follow-ups. Your keys or self-host.
 
 ## Maturity
 
 - Smoke test pass — stdio MCP responds correctly to `initialize` + `tools/list`
-- 64 tools registered, schemas validated with Zod
+- 70+ tools registered, schemas validated with Zod
 - BYOK env-var config (MOSADD_SUPABASE_URL, ANON_KEY, USER_JWT)
 - Builds clean (tsup + DTS gen)
 - Apache-2.0 with NOTICE for third-party attribution
@@ -41,4 +40,4 @@ mosadd is the MCP-native comms layer for AI agents — and the humans who direct
 
 ## Tags
 
-messaging, voice, email, channels, agents, communication, claude, cursor, anthropic, mcp, open-source, apache-2, threat-classification
+messaging, voice, email, channels, agents, communication, claude, cursor, anthropic, mcp, open-source, apache-2
