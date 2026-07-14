@@ -4,7 +4,7 @@ Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosa
 
 ## Phase 1 — Public OS core
 
-> **Substantially shipped (3.0.0-alpha).** The toolkit is live — **64 tools across 5 modules**. The [README "What's live today"](../README.md) is the authoritative status. Open items below: P2P backbone, hosted MCP, and MCP-registry submissions.
+> **Substantially shipped (3.0.0-alpha).** The toolkit is live — **70+ tools** across the four modules (mDM · mIRC · mURL · mAYL) plus the open MCP toolkit. The [README "What's live today"](../README.md) is the authoritative status. Open items below: P2P backbone, hosted MCP, and MCP-registry submissions.
 
 - [x] Monorepo scaffold + Apache-2.0 + governance
 - [x] `@mosadd/crypto` — X3DH + Double Ratchet, powers mDM E2EE ([LINEAR-2142](https://linear.app/ip-ra/issue/LINEAR-2142))
@@ -16,7 +16,7 @@ Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosa
 - [ ] Anonymous identity recovery — descoped ([LINEAR-2170](https://linear.app/ip-ra/issue/LINEAR-2170))
 - [x] Anti-abuse PoW + rate limits ([LINEAR-2171](https://linear.app/ip-ra/issue/LINEAR-2171))
 - [ ] Messaging backbone: nwaku P2P ([LINEAR-2173](https://linear.app/ip-ra/issue/LINEAR-2173))
-- [x] Native channels (5 live): mDM, mIRC, **mTALK (killer feature)**, mp0st, mRAG ([LINEAR-2146](https://linear.app/ip-ra/issue/LINEAR-2146)-[2152](https://linear.app/ip-ra/issue/LINEAR-2152))
+- [x] Four comms modules live — mDM (1:1, E2EE-only), mIRC (in-app channels), mURL (open-web rooms), mAYL (email 3.0) — plus capabilities mTALK (voice/PTT), mRAG (agent memory), comms_ (action-links) ([LINEAR-2146](https://linear.app/ip-ra/issue/LINEAR-2146)-[2152](https://linear.app/ip-ra/issue/LINEAR-2152))
 - [x] SDK adapters: Vercel AI SDK + LangChain + OpenAI Agents + Anthropic Agents ([LINEAR-2153](https://linear.app/ip-ra/issue/LINEAR-2153))
 - [x] Claude Code plugin + Anthropic Skills bundle ([LINEAR-2154](https://linear.app/ip-ra/issue/LINEAR-2154))
 - [x] Example apps (6 shipped) ([LINEAR-2155](https://linear.app/ip-ra/issue/LINEAR-2155))
@@ -29,7 +29,7 @@ Operated by mosadd commercial entity at [hub.mosadd.com](https://hub.mosadd.com)
 
 - [ ] Hosted MCP `mcp.mosadd.com` with OAuth ([LINEAR-2158](https://linear.app/ip-ra/issue/LINEAR-2158))
 - [ ] BYOK key brokerage ([LINEAR-2159](https://linear.app/ip-ra/issue/LINEAR-2159))
-- [ ] **166-event threat radar middleware (THE MOAT)** ([LINEAR-2160](https://linear.app/ip-ra/issue/LINEAR-2160))
+- [ ] Optional on-device threat classification (security pillar, not the moat) ([LINEAR-2160](https://linear.app/ip-ra/issue/LINEAR-2160))
 - [ ] Stripe pricing tiers ([LINEAR-2161](https://linear.app/ip-ra/issue/LINEAR-2161))
 - [ ] SaaS dashboard ([LINEAR-2162](https://linear.app/ip-ra/issue/LINEAR-2162))
 
@@ -37,7 +37,7 @@ Operated by mosadd commercial entity at [hub.mosadd.com](https://hub.mosadd.com)
 
 - [ ] LP `mosadd.com` rebuild with OS framing ([LINEAR-2163](https://linear.app/ip-ra/issue/LINEAR-2163))
 - [ ] Consumer app rebuild on new SDK ([LINEAR-2164](https://linear.app/ip-ra/issue/LINEAR-2164))
-- [ ] PWA + Android + iOS + Electron + macOS — **global PTT keybind in Electron = killer feature** ([LINEAR-2165](https://linear.app/ip-ra/issue/LINEAR-2165))
+- [ ] PWA + Android + iOS + Electron + macOS — global PTT keybind in Electron ([LINEAR-2165](https://linear.app/ip-ra/issue/LINEAR-2165))
 
 ## Phase 4 — Migration & cleanup
 

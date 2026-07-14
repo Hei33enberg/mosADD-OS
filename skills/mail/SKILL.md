@@ -1,13 +1,15 @@
 ---
 name: mosadd-mail
-description: Send and read email through the mosadd OS module mp0st. Every mosadd user has a personal address `<userId>@mosadd.com` — outgoing mail flows through the mosadd mp0st pipeline. Use when the user asks to send an email or read a message by id.
+description: Send and read email through the mosadd OS module mAYL (email 3.0, was mp0st). Every mosadd user has a personal address `<userId>@mosadd.com` — outgoing mail flows through the mosadd mp0st pipeline. Use when the user asks to send an email or read a message by id.
 ---
 
-# mosadd Email (mp0st)
+# mosadd Email (mAYL)
 
-This skill operates the **mp0st** OS module of [mosadd](https://mosadd.com). Every mosadd user gets `<userId>@mosadd.com` as a built-in address — no separate email provider needed.
+This skill operates the **mAYL** OS module (email 3.0, renamed from `mp0st`) of [mosadd](https://mosadd.com). Every mosadd user gets `<userId>@mosadd.com` as a built-in address — no separate email provider needed.
 
 ## Tools (12 registered)
+
+> Tool names below use the `mp0st_*` back-compat aliases (still live through alpha.26). The current/preferred names are `mAYL_*` — e.g. `mAYL_send` for `mp0st_send`.
 
 | Tool | Use it for |
 |---|---|
@@ -64,6 +66,6 @@ Outbound delivery uses Resend by default in alpha. The mosadd hub will broker BY
 ## Don't
 
 - Don't fabricate recipient addresses if the user gave a name not an email — clarify or look up via context.
-- Don't claim mp0st is end-to-end encrypted — mail is transport-encrypted and at-rest encrypted but **server-readable by design** (not E2EE). For E2EE 1:1 messaging use `mDM_send`.
-- Don't suggest mp0st for instant messaging — that's `mDM_send` (the user almost always wants the chat module).
+- Don't claim mAYL is end-to-end encrypted — mail is transport-encrypted and at-rest encrypted but **server-readable by design** (not E2EE). For E2EE 1:1 messaging use `mDM_send`.
+- Don't suggest mAYL for instant messaging — that's `mDM_send` (the user almost always wants the chat module).
 - Don't enable tracking-heavy options (`force_reader`, `watermark`, `auto_destruct`) unless the user asks — and prefer `disclose_tracking` for GDPR/ePrivacy compliance when tracking is on.

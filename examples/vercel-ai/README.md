@@ -63,9 +63,9 @@ await generateText({ model: anthropic("claude-opus-4-7"), tools, prompt });
 ## Add more channels
 
 ```ts
-mosadd({ modules: ["mDM", "mIRC", "mp0st", "mTALK"] })
+mosadd({ modules: ["mDM", "mIRC", "mURL", "mAYL"] })
 // or all
 mosadd({})
 ```
 
-Today: 64 live tools across 5 live channel modules (mDM incl. voice / mIRC / mp0st / mTALK / mRAG) plus comms and the defensive threat engine.
+Today: 70+ live tools across the four modules (mDM · mIRC · mURL · mAYL) plus capabilities (mTALK voice, mRAG, comms_).

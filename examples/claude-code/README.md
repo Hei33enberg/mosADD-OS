@@ -53,11 +53,11 @@ Claude calls `mIRC_create` then `mIRC_post_message` → your channel is live wit
 
 > Send Bob an email with subject "Quote" and body "Attached is the quote."
 
-Claude calls `mp0st_send`.
+Claude calls `mAYL_send`.
 
 ## All tools available
 
-See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (64 live tools across 5 live channel modules: mDM incl. voice / mIRC / mp0st / mTALK / mRAG — plus comms and the defensive threat engine).
+See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (70+ tools across the four modules — mDM · mIRC · mURL · mAYL — plus capabilities: mTALK voice, mRAG, comms_).
 
 ## Troubleshooting
 

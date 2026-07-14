@@ -18,7 +18,7 @@ the app peer, and vice versa.
 ## Honest posture in one line
 
 - **mDM (1:1 DM)** — **end-to-end encrypted by DEFAULT** (X3DH + Double Ratchet, `mosadd.e2ee.v2`). The server/operator **cannot read message content**.
-- **mIRC (group) + mp0st (mail)** — **transport-encrypted in flight and at rest, but server-readable by design** (not E2EE). We label this honestly; do not market either as end-to-end encrypted.
+- **mIRC (group) + mURL (open rooms) + mAYL (mail)** — **transport-encrypted in flight and at rest, but server-readable by design** (not E2EE). We label this honestly; do not market any of them as end-to-end encrypted.
 
 ## Per-surface, per-channel posture
 
@@ -41,14 +41,14 @@ currently falls back to base64 **plaintext**. A message that *looks* sent is not
 necessarily encrypted. Target: never send on the plaintext path — block or queue
 until the key is ready, and surface key state in the UI.
 
-### 2. mIRC / mp0st are server-readable by design (not E2EE)
+### 2. mIRC / mURL / mAYL are server-readable by design (not E2EE)
 `mDM_send` **is end-to-end encrypted by default** (X3DH + Double Ratchet), and it uses
 the *same* `mosadd.e2ee.v2` wire format as the app — so app↔agent 1:1 DMs interoperate.
-What is **not** end-to-end encrypted: `mIRC_post_message` (group channels) and `mp0st`
-(mail) are transport-encrypted in flight and at rest but **server-readable by design**.
-The legacy `mDM_send_unencrypted` is a deprecated plaintext fallback. **this toolkit must
-not market mIRC channels or mp0st mail as "E2EE".** Tool descriptions state the posture
-inline.
+What is **not** end-to-end encrypted: `mIRC_post_message` (group channels), `mURL` (open
+rooms) and `mAYL` (mail) are transport-encrypted in flight and at rest but **server-readable
+by design**. The legacy `mDM_send_unencrypted` is a deprecated plaintext fallback. **this
+toolkit must not market mIRC channels, mURL rooms or mAYL mail as "E2EE".** Tool descriptions
+state the posture inline.
 
 ### 3. RAG / search is fundamentally not zero-knowledge
 Vector search needs content indexed in plaintext on the server. Anything searchable
@@ -72,5 +72,5 @@ encrypted message paths above — not to the search index.
 - ✅ "mIRC channels are encrypted with a per-channel group key on supported clients."
 - ⚠️ Only with the caveat: "Search/RAG indexes content server-side and is opt-in."
 - ❌ Any "sealed sender" claim — mosadd does NOT hide who-messaged-whom; the relay sees sender/recipient identity.
-- ❌ "mIRC channels / mp0st mail are end-to-end encrypted" — they are transport + at-rest, server-readable by design.
+- ❌ "mIRC channels / mURL rooms / mAYL mail are end-to-end encrypted" — they are transport + at-rest, server-readable by design.
 - ❌ Blanket "everything is zero-knowledge / we can never read anything."

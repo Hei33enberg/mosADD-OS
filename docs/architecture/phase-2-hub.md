@@ -28,9 +28,9 @@ Today's alpha asks users to paste `MOSADD_SUPABASE_*` env vars into agent config
 - Audit-trails every key use to the threat radar (see §3)
 - Users can opt for **self-host BYOK**: same code, but the secret store points at their own Vault / Doppler / AWS Secrets Manager instance — enterprise tier.
 
-### 3. 166-event threat radar middleware ([LINEAR-2160](https://linear.app/ip-ra/issue/LINEAR-2160))
+### 3. On-device threat classification — optional security pillar ([LINEAR-2160](https://linear.app/ip-ra/issue/LINEAR-2160))
 
-The moat. Every operation through the hub emits one or more events into the radar pipeline:
+An optional on-device security pillar (Irondome), not the product's moat. Where enabled, operations can emit events into the classification pipeline:
 
 ```
 operation → @mosadd/threat-engine → radar event → severity scoring
@@ -44,13 +44,13 @@ operation → @mosadd/threat-engine → radar event → severity scoring
 
 Open-source `@mosadd/threat-engine` ships the 166-event taxonomy and scoring primitives. The hub adds:
 
-- Real-time correlation across channels (a single actor spamming mDM + mIRC + mp0st looks innocent on each channel; correlated, it's abuse)
+- Real-time correlation across channels (a single actor spamming mDM + mIRC + mAYL looks innocent on each channel; correlated, it's abuse)
 - Cross-tenant threat intel feeds (private — paid threat intel partners, MISP feeds, our own observations)
 - ML scoring on voice (deepfake detection on PTT / mDM voice)
 - ML scoring on text (prompt-injection detection — model: distilled adversarial classifier)
 - Quarantine workflow: high-severity operation → human review queue
 
-Self-host: `@mosadd/threat-engine` runs locally with the open 166-event taxonomy. You won't get cross-tenant intel, but the kernel is the same.
+Self-host: `@mosadd/threat-engine` runs locally with the open 166-event taxonomy. You won't get cross-tenant intel, but the engine is the same.
 
 ### 4. Billing / metering ([LINEAR-2161](https://linear.app/ip-ra/issue/LINEAR-2161))
 

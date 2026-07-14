@@ -1,6 +1,6 @@
 # @mosadd/ai
 
-Framework adapters for [mosADD](https://mosadd.com) — use the 64 mosADD toolkit tools directly from your favorite agent framework without spinning up the MCP server.
+Framework adapters for [mosADD](https://mosadd.com) — use the 70+ mosADD toolkit tools directly from your favorite agent framework without spinning up the MCP server.
 
 **One package, four entrypoints, atomic releases** — pattern stolen from [Stripe Agent Toolkit](https://github.com/stripe/agent-toolkit).
 
@@ -52,7 +52,7 @@ import { Agent, run } from "@openai/agents";
 const agent = new Agent({
   name: "mosadd-helper",
   instructions: "Manage the user's mosADD communications when asked.",
-  tools: mosadd({ modules: ["mDM", "mIRC", "mp0st"] }),
+  tools: mosadd({ modules: ["mDM", "mIRC", "mURL", "mAYL"] }),
 });
 
 await run(agent, "Send Alice a message saying I'll be late.");

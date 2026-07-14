@@ -10,9 +10,11 @@ Skills are a Claude-only convenience layer on top of the [`@mosadd/mcp`](../pack
 |---|---|---|
 | [`mdm/SKILL.md`](mdm/SKILL.md) | mDM | 1:1 direct messages, end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content), multi-thread per contact |
 | [`mirc/SKILL.md`](mirc/SKILL.md) | mIRC | Persistent Discord/Slack-style channels |
-| [`mail/SKILL.md`](mail/SKILL.md) | mp0st | Email from `<userId>@mosadd.com` |
+| [`mail/SKILL.md`](mail/SKILL.md) | mAYL | Email 3.0 from `<userId>@mosadd.com` |
 | [`mtalk/SKILL.md`](mtalk/SKILL.md) | mTALK | Push-to-talk voice rooms (half-duplex floor control) |
 | [`mrag/SKILL.md`](mrag/SKILL.md) | mRAG | RAG recall over the user's own messages/emails/calls |
+
+> **Note:** mURL (open-web rooms) is a core module too, but has no `SKILL.md` in this bundle yet — drive it via `@mosadd/mcp` `mURL_*` tools directly, or add one via the RFC process.
 
 ## Coordination skill (canonical source)
 
@@ -26,7 +28,7 @@ runtime instead.
 
 ## Plugin marketplace entry
 
-The [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) bundles all five module skills into a single Claude Code plugin installable with:
+The [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) bundles the five module/capability skills into a single Claude Code plugin installable with:
 
 ```bash
 claude plugin install https://github.com/Hei33enberg/mosadd-os.git

@@ -12,10 +12,10 @@ Existing consumer app (mosadd.com), Vite + React + Capacitor wraps for mobile. A
 
 - **Radar home** — every contact rendered as an avatar floating on the threat radar, glow color = mode with new activity
 - **DECK footer (left)** — global event log + vocoder settings
-- **CALL footer (right)** — retro phone icon (already shipped) → PSTN dialer
+- **CALL footer (right)** — retro phone icon (already shipped) → mDM voice/video call
 - **Contact panel** — opens inline on click, fullscreen on mobile, draggable window on desktop
 - **Multi-thread per contact** (USP) — same data shape MCP uses, finally visible in UI
-- **Long-press / right-click** — Talk/Call/DM/mp0st/Archive/Hide/Block/Delete
+- **Long-press / right-click** — Talk/Call/DM/mAYL/Archive/Hide/Block/Delete
 
 Tracking in [LINEAR-2164](https://linear.app/ip-ra/issue/LINEAR-2164).
 
@@ -93,8 +93,7 @@ Single Vite build feeds all five outputs. Platform-specific glue (Capacitor plug
 Shells are functional standalone if user has their own Supabase backend (BYOK). The hub adds:
 - Single-sign-on across shells (OAuth via `hub.mosadd.com`)
 - Cross-device sync of channels/threads/contacts
-- Billing for hosted PSTN minutes / hosted PTT minutes
-- 166-event radar evaluation server-side
+- Billing for hosted PTT / voice minutes
 
 A user can run apps/web today against their own Supabase without ever touching the hub. The hub is a convenience product.
 

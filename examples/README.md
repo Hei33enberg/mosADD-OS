@@ -35,14 +35,17 @@ and you want it to ALSO drive mosadd:
 
 ## What you get
 
-**64 live MCP tools across 5 live channel modules** (+ comms + the defensive threat engine):
+**70+ live MCP tools across the four channel modules** (mDM · mIRC · mURL · mAYL), plus capabilities (mTALK, mRAG, comms_):
 
-- **mDM** (14): list_contacts, publish_keys, send, send_unencrypted, edit, delete, list, respond_request + voice ops — 1:1 DMs end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content)
+- **mDM** (14): list_contacts, publish_keys, send, send_unencrypted (DEPRECATED), edit, delete, list, respond_request + voice ops — 1:1 DMs end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content)
 - **mIRC** (22): create, list, get, update, delete, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops
-- **mp0st** (12): send, view, list, delete, stats, events, metrics, revoke, audit_export, consent, notify, send_as_agent
-- **mTALK** (6): open, join, press, release, state — half-duplex push-to-talk
+- **mURL** (4): read_channel, post, presence, list_channels — open-web rooms, embeddable, publicly joinable via link (server-readable)
+- **mAYL** (12): send, view, list, delete, stats, events, metrics, revoke, audit_export, consent, notify — email 3.0 (mp0st_* remain as deprecated aliases)
+
+Capabilities (not modules):
+
+- **mTALK** (5): open, join, press, release, state — half-duplex push-to-talk
 - **mRAG** (4): ingest, search, list_sources, delete — RAG recall over your own data
-- **comms** (4): comms_action_create, comms_action_frame_get, comms_capabilities, comms_embed_create
-- **threat** (2): threat_catalog, threat_classify — pure defensive threat-event classification engine
+- **comms** (3): comms_action_create, comms_action_frame_get, comms_capabilities
 
 All names follow [RFC 0001](../docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>`. Full reference: [packages/mcp/README.md](../packages/mcp/README.md).

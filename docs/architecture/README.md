@@ -14,4 +14,4 @@ Index of architecture documents.
 
 ## Overview (one-paragraph)
 
-mosadd is the comms layer for AI agents — and the humans who direct them. It exposes a set of orthogonal channel primitives (`mDM`, `mIRC`, `mTALK`, `mp0st`, `mRAG`) through a uniform tool layer (MCP tools). Each primitive can be backed by more than one provider (Supabase / LiveKit / Resend / ...). Threat classification hooks every call. Callers (agents, IDEs, apps) attach above the tool surface; backend providers attach below. See [mosadd Architecture](human-os.md) for the full picture.
+mosadd is the comms layer for AI agents — and the humans who direct them. It exposes a set of orthogonal modules (`mDM`, `mIRC`, `mURL`, `mAYL`) plus cross-cutting capabilities (`mTALK`, `mRAG`, `comms_`) through a uniform tool layer (MCP tools). Each primitive can be backed by more than one provider (Supabase / LiveKit / Resend / ...). Optional on-device threat classification (security pillar, not on every call). Callers (agents, IDEs, apps) attach above the tool surface; backend providers attach below. See [mosadd Architecture](human-os.md) for the full picture.

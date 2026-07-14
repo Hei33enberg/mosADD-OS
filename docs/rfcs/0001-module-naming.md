@@ -33,8 +33,9 @@ This naming choice has cascading effects on:
 
 - `mDM` — Direct messages + 1:1 voice
 - `mIRC` — Persistent encrypted channels
+- `mURL` — Open / embeddable text rooms
+- `mAYL` — Email 3.0 (renamed from `mp0st`)
 - `mTALK` — Push-to-talk voice
-- `mp0st` — Email
 - `mRAG` — Knowledge base (RAG recall)
 
 New modules require an accepted RFC (semantic primitive, ≥2 backend providers, radar hooks, MCP tool surface).

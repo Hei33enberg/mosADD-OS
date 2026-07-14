@@ -46,11 +46,10 @@
     "agent",
     "claude",
     "cursor",
-    "operating-system",
     "messaging",
     "ptt",
-    "matrix",
     "discord",
-    "telegram"
+    "telegram",
+    "e2ee"
   ]
 }

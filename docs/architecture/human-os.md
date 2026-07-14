@@ -2,23 +2,21 @@
 
 mosadd is the **comms layer for AI agents — and the humans who direct them**. The
 toolkit ships as `@mosadd/*` packages on npm; the headline artifact is `@mosadd/mcp`,
-a single MCP server exposing **64 tools across 5 live modules** that any agent
+a single MCP server exposing **70+ tools** across the four modules (mDM · mIRC · mURL · mAYL) plus capabilities (mTALK, mRAG, comms_) that any agent
 (Claude Code, Cursor, ChatGPT Apps, Vercel AI SDK, LangChain, …) can call.
 
 This document describes how the pieces fit together: the public OSS layer, the
-five channels and their encryption scope, the hosted gateway, and BYOK.
+four modules and their encryption scope, the hosted gateway, and BYOK.
 
 ## The public OSS layer (`@mosadd/*`)
 
 Everything you need to build and self-host is open source under Apache-2.0:
 
-- `@mosadd/mcp` — the MCP server; exposes all 64 tools (discover + invoke).
+- `@mosadd/mcp` — the MCP server; exposes all 70+ tools (discover + invoke).
 - `@mosadd/core` — channel primitives, identity, and routing logic.
 - `@mosadd/providers` — backend adapters (Supabase, LiveKit, Resend, …).
 - `@mosadd/ai` — framework adapters (Vercel AI SDK, LangChain, OpenAI, Anthropic).
 - `@mosadd/crypto` — the mDM end-to-end encryption (X3DH + Double Ratchet).
-- `@mosadd/threat-engine` — defensive threat classification you embed and run
-  yourself (`threat_catalog` + `threat_classify`); not surveillance.
 
 Each channel is a self-contained module that implements a channel interface,
 exposes its MCP tools, ships an Anthropic `SKILL.md`, and has a backend provider
@@ -26,17 +24,18 @@ under `packages/providers/<name>/`. New modules go through the RFC process
 (semantic primitive, ≥2 backend providers, threat hooks, MCP tool surface) — see
 [RFC 0001](../rfcs/0001-module-naming.md).
 
-## The five channels (and what's encrypted)
+## The four modules (and what's encrypted)
 
-| Channel | What it is | Encryption scope | Tools |
+| Module | What it is | Encryption scope | Tools |
 |---|---|---|---|
 | `mDM` | 1:1 direct messages, text + voice | **End-to-end encrypted by default** (X3DH + Double Ratchet) — the operator cannot read content | 14 |
-| `mIRC` | Persistent group channels | Transport + at-rest (operator-managed) | 22 |
-| `mp0st` | Email — every user gets `<id>@mosadd.com` | Transport + at-rest (operator-managed) | 12 |
-| `mTALK` | Push-to-talk, half-duplex floor control | Transport (WebRTC/SRTP) | 6 |
-| `mRAG` | Knowledge base, RAG recall over your own data | At-rest (operator-managed) | 4 |
+| `mIRC` | In-app group channels | Transport + at-rest (operator-managed, server-readable) | 22 |
+| `mURL` | Open-web rooms — embeddable, publicly joinable via link | Transport + at-rest (operator-managed, server-readable) | 4 |
+| `mAYL` | Email 3.0 — every user gets `<id>@mosadd.com` | Transport + at-rest (operator-managed, server-readable) | 12 |
 
-Only **mDM** is end-to-end encrypted. The other channels are protected in transit
+**Capabilities** (not modules) ride on top: **mTALK** (voice / push-to-talk, WebRTC/SRTP), **mRAG** (agent memory / RAG recall, at-rest), **comms_** (action-links).
+
+Only **mDM** is end-to-end encrypted. The other modules are protected in transit
 and at rest, but the operator can technically access content. We say this plainly —
 no "sealed sender", no "military-grade" claims.
 
@@ -63,15 +62,15 @@ loop — the agent flags a thread for human attention instead of guessing.
                      ▼
 ┌─────────────────────────────────────────────────────────┐
 │  Tool surface (@mosadd/mcp + @mosadd/ai)                 │
-│  - 64 tools: mDM_send, mTALK_open, mRAG_search, …        │
+│  - 70+ tools: mDM_send, mIRC_post_message, mAYL_send, …  │
 │  - Adapters: @mosadd/ai/vercel, /langchain, /openai      │
 └────────────────────┬────────────────────────────────────┘
                      │ in-process calls
                      ▼
 ┌─────────────────────────────────────────────────────────┐
 │  Core (@mosadd/core + @mosadd/providers)                 │
-│  - Channel primitives (mDM, mIRC, mp0st, mTALK, mRAG)    │
-│  - Threat classification (hook on every call)            │
+│  - Module primitives (mDM, mIRC, mURL, mAYL)             │
+│  - Capabilities (mTALK, mRAG, comms_)                    │
 │  - Identity (anonymous, passphrase-recoverable)          │
 └────────────────────┬────────────────────────────────────┘
                      │ network I/O
@@ -93,7 +92,7 @@ You don't have to self-host. The hosted gateway at `https://mcp.mosadd.com/mcp`
 runs the same toolkit for you. Mint a key at
 [mosadd.com/keys](https://mosadd.com/keys) (format `mosadd_sk_live_…`), set
 `MOSADD_API_KEY`, and point any MCP client at the gateway. The hosted layer adds
-convenience, the BYOK key broker, threat classification, and SSO/RBAC/audit-log
+convenience, the BYOK key broker, optional on-device threat classification, and SSO/RBAC/audit-log
 for teams — the open core is never relicensed.
 
 ## BYOK (bring your own keys)
@@ -110,5 +109,5 @@ property: your provider keys stay yours.
 - **Distribution: MCP-first** — agents are the primary callers, and MCP is their
   interface.
 - **Identity: anonymous-native** — no email/phone required to start.
-- **Encryption honesty** — mDM is E2EE; the other channels are transport + at-rest.
+- **Encryption honesty** — mDM is E2EE; the other modules are transport + at-rest.
   We never overstate it.
