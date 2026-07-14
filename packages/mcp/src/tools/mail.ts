@@ -19,7 +19,7 @@ const EmailAddress = z
   .max(254)
   .describe("RFC 5321 email address.");
 
-const MessageId = z.string().min(1).describe("Message id (UUID) from mp0st_send or inbox.");
+const MessageId = z.string().min(1).describe("Message id (UUID) from mAYL_send or inbox.");
 
 const mp0st_send_input = z.object({
   to: z.union([EmailAddress, z.array(EmailAddress).min(1).max(50)]).describe(
@@ -295,7 +295,7 @@ export const mailTools: MosaddTool[] = [
     name: "mAYL_list",
     requires: "network",
     description:
-      "List the user's mailbox (their <userId>@mosadd.com inbox/outbox) newest-first, with sender, subject, status and a short snippet. Filter by direction ('inbound' = received, 'outbound' = sent). Use the returned next_cursor with `before` to page through older mail. Call mp0st_view to read a full message body.",
+      "List the user's mailbox (their <userId>@mosadd.com inbox/outbox) newest-first, with sender, subject, status and a short snippet. Filter by direction ('inbound' = received, 'outbound' = sent). Use the returned next_cursor with `before` to page through older mail. Call mAYL_view to read a full message body.",
     inputSchema: mp0st_list_input,
     handler: mp0st_list as MosaddTool["handler"],
   },
@@ -318,7 +318,7 @@ export const mailTools: MosaddTool[] = [
     name: "mAYL_delete",
     requires: "network",
     description:
-      "Delete one of the user's emails by message_id (from mp0st_list). Soft-delete — it stops showing in mp0st_list. Owner-scoped: only your own mail.",
+      "Delete one of the user's emails by message_id (from mAYL_list). Soft-delete — it stops showing in mAYL_list. Owner-scoped: only your own mail.",
     inputSchema: mp0st_delete_input,
     handler: mp0st_delete as MosaddTool["handler"],
   },
@@ -334,7 +334,7 @@ export const mailTools: MosaddTool[] = [
     name: "mAYL_events",
     requires: "network",
     description:
-      "Raw engagement timeline for one email (by message_id): every tracked event (pixel_open, link_click, forwarded, page_view, copy/print/focus signals) with timestamp, device type and link URL. Use mp0st_stats for the rollup; use this for the per-event detail. Owner-scoped.",
+      "Raw engagement timeline for one email (by message_id): every tracked event (pixel_open, link_click, forwarded, page_view, copy/print/focus signals) with timestamp, device type and link URL. Use mAYL_stats for the rollup; use this for the per-event detail. Owner-scoped.",
     inputSchema: mp0st_events_input,
     handler: mp0st_events as MosaddTool["handler"],
   },
@@ -366,7 +366,7 @@ export const mailTools: MosaddTool[] = [
     name: "mAYL_consent",
     requires: "network",
     description:
-      "Manage recipient tracking opt-outs (GDPR/ePrivacy). action 'list' = recipients who opted out of your tracking; 'check' {recipient} = whether one opted out; 'optin' {recipient} = re-enable. Recipients self-opt-out via the footer link in your tracked emails; mp0st_send then automatically sends them with NO pixel/link-wrap. Owner-scoped.",
+      "Manage recipient tracking opt-outs (GDPR/ePrivacy). action 'list' = recipients who opted out of your tracking; 'check' {recipient} = whether one opted out; 'optin' {recipient} = re-enable. Recipients self-opt-out via the footer link in your tracked emails; mAYL_send then automatically sends them with NO pixel/link-wrap. Owner-scoped.",
     inputSchema: mp0st_consent_input,
     handler: mp0st_consent as MosaddTool["handler"],
   },

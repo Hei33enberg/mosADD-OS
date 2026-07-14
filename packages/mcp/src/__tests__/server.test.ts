@@ -15,10 +15,11 @@ describe("@mosadd/mcp", () => {
       // mIRC (5 tools)
       expect(names).toContain("mIRC_create");
       expect(names).toContain("mIRC_delete");
-      // threat engine (LINEAR-3498) — mROOM killed (LINEAR-3414)
-      expect(names).toContain("threat_catalog");
-      expect(names).toContain("threat_classify");
-      // mp0st (2 tools)
+      // mURL (revived module) + mAYL (email 3.0, was mp0st) — threat_* stays UNREGISTERED
+      // (surveillance-era direction killed 2026-06-27; on-device security pillar, not an MCP tool)
+      expect(names).toContain("mURL_post");
+      expect(names).toContain("mAYL_send");
+      // mp0st_* remain as deprecated back-compat aliases for mAYL_*
       expect(names).toContain("mp0st_send");
       expect(names).toContain("mp0st_view");
     });

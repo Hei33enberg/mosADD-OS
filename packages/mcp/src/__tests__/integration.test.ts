@@ -137,8 +137,9 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
     // All live channels surface their tools
     expect(names).toContain("mDM_send");
     expect(names).toContain("mIRC_create");
-    expect(names).toContain("threat_classify"); // threat engine exposed (LINEAR-3498); mROOM killed (LINEAR-3414)
-    expect(names).toContain("mp0st_send");
+    expect(names).toContain("mURL_post"); // mURL revived module (2026-06-27)
+    expect(names).toContain("mAYL_send"); // mAYL = email 3.0 (was mp0st); threat_* stays UNREGISTERED (killed)
+    expect(names).toContain("mp0st_send"); // deprecated back-compat alias
     expect(names).toContain("mTALK_press"); // mTALK PTT now shipped
     expect(names).toContain("mRAG_search"); // mRAG RAG-for-devs now shipped
     expect(names).toContain("mIRC_post_message"); // channel messaging now shipped
