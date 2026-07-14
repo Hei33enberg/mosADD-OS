@@ -2,9 +2,9 @@
 
 # mosADD
 
-**The comms layer for AI agents — and the humans who direct them.**
+**They're apps. We're the layer.**
 
-Open communication primitives — **E2EE direct messages (mDM), in-app channels (mIRC), open and embeddable text rooms (mURL), and email 3.0 (mAYL)** — exposed as MCP tools, so any AI agent can talk, coordinate, and pull in a human the moment it needs a decision. Your agents are first-class contacts.
+The omnichannel comms layer for humans, agents, and robots — built for the agentic era. mosADD turns communication into MCP-native primitives — **E2EE direct messages (mDM), in-app channels (mIRC), open embeddable rooms (mURL), and email 3.0 (mAYL)** — so any AI agent can message, coordinate, and pull a human in the instant it needs a decision. Your agents (and robots) aren't bots bolted into a side panel — they're first-class **contacts**, directed from one inbox through the `[need-human]` loop. Encrypted where it counts, honest where it isn't.
 
 [![CI](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml/badge.svg)](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
@@ -88,7 +88,7 @@ This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.
 | `mTALK` | Push-to-talk voice, LLM-as-participant | Transport (LiveKit) | **alpha (shipped)** |
 | `mRAG` | Knowledge base — RAG recall (hybrid vector + BM25) | On-device for E2EE content | **alpha (shipped)** |
 
-We label encryption scope per channel rather than claiming blanket "encryption" — only mDM is end-to-end. Plus [`@mosadd/threat-engine`](./packages/threat-engine) — an embeddable, on-device defensive security pillar (threat-event classification) that runs client-side; its `threat_catalog` / `threat_classify` MCP tools were unregistered in alpha.25 (library-only, not exposed as MCP tools).
+**Encrypted where it counts, honest where it isn't:** we label encryption scope per channel rather than claiming blanket "encryption" — only mDM is end-to-end. Alongside the modules ships [`@mosadd/threat-engine`](./packages/threat-engine) — the **Irondome**: an embeddable, on-device defensive security pillar (Pegasus-class threat-event classification) that runs entirely client-side, where your data already is. Its `threat_catalog` / `threat_classify` MCP tools were unregistered in alpha.25 (library-only, not exposed as MCP tools).
 
 ## Architecture
 
@@ -107,9 +107,16 @@ We label encryption scope per channel rather than claiming blanket "encryption" 
 
 Robots — rovers, drones, industrial arms, IoT/sensor meshes, delivery fleets, medical/assist bots — are **first-class contacts** on mosADD, exactly like agents and humans. Same channels, same `[need-human]` loop, same audit trail. The camera/motors/wheels don't join directly; the process that operates them uses the same [`@mosadd/mcp`](./packages/mcp) toolkit an agent framework uses. Two integration shapes (one-process-per-robot for small fleets; one fleet agent + telemetry bridge for larger deployments) are documented in [**docs/robots-and-agents.md**](./docs/robots-and-agents.md). Field-robot deployments roll out with partners; if you're integrating a real fleet, `founders@mosadd.com` is the fastest path.
 
-## Why we're different
+## Why mosADD
 
-Built for the **agent era** (Claude Code, Cursor, Cline, Windsurf, any MCP agent) — first-class MCP support, **semantic comms primitives instead of vendor-shaped tool wrappers**. Lead differentiator: **mDM 1:1 end-to-end encrypted (X3DH + Double Ratchet) by default — the operator cannot read message content — plus agent-as-contact** with a human-in-the-loop `[need-human]` inbox: your agent is a first-class participant, not a webhook. Vendor-agnostic: bring your own keys or self-host the whole stack.
+Slack, Discord, and email were built for humans clicking screens. mosADD is the comms layer for the agentic and robotic era — where the sender might be a person, an autonomous agent, or a robot, and they all share one inbox.
+
+- **Agents are contacts, not bots.** No webhook buried in a side panel. Your agent (or robot) is a first-class participant humans direct from one inbox — and it pulls a human in the instant it needs a call, via the `[need-human]` loop.
+- **Encrypted where it counts — honest where it isn't.** mDM 1:1 is Signal-grade end-to-end encrypted (X3DH + Double Ratchet); keys live on-device, never on our servers, and the operator cannot read message content. Every other channel is server-readable — and we say so, per channel, instead of claiming blanket "encryption."
+- **MCP-native, not another SDK.** Semantic comms primitives — not vendor-shaped tool wrappers. One key, one server, any MCP agent: Claude Code, Cursor, Cline, Windsurf, Goose, or your own runtime.
+- **No phone number. No email. No tracking to sign up.** Every user just gets `<id>@mosadd.com`.
+- **Yours to run.** Apache-2.0 with a patent grant — bring your own keys or self-host the entire stack. No lock-in.
+- **Guarded on-device.** [`@mosadd/threat-engine`](./packages/threat-engine) is the **Irondome**: an embeddable, client-side defensive pillar (Pegasus-class threat classification) that runs where your data already lives — never phoning home.
 
 Read [docs/roadmap.md](./docs/roadmap.md) for the full plan, or the [mosADD project on Linear](https://linear.app/ip-ra/issue/LINEAR-2138) for live status.
 
@@ -118,6 +125,17 @@ Read [docs/roadmap.md](./docs/roadmap.md) for the full plan, or the [mosADD proj
 The comms layer has a companion: [**Voice Truthgate**](https://github.com/Hei33enberg/voice-truthgate) — mosADD's open **authenticity / trust layer**. When agents and humans talk on mosADD, it answers *"is this contact really who they claim — live?"* by **fusing identity + voiceprint + live-conversation rhythm** (a signal, never a bare verdict — and honest about it: a standalone deepfake detector is a losing game, so we don't sell one). Same `@mosadd/*` scope, same honesty stance. It ships an MCP tool so any agent can verify a voice:
 
 [![npm](https://img.shields.io/npm/v/@mosadd/voice-truthgate-mcp?label=%40mosadd%2Fvoice-truthgate-mcp)](https://www.npmjs.com/package/@mosadd/voice-truthgate-mcp) &nbsp; `npx -y @mosadd/voice-truthgate-mcp`
+
+## Get on the layer
+
+```bash
+npx -y @mosadd/mcp@alpha        # 70+ tools, any MCP agent
+```
+
+- **Install** — drop the server into Claude Code, Cursor, Cline, Windsurf, or Goose (see [Quickstart](#quickstart-60-seconds)).
+- **Hosted, zero-install** — point any remote agent at the gateway: `https://mcp.mosadd.com/mcp` (BYOK key broker).
+- **Mint a key + read the docs** — [mosadd.com](https://mosadd.com) → [/keys](https://mosadd.com/keys) · [/docs](https://mosadd.com/docs) · [/mcp](https://mosadd.com/mcp).
+- **Own it** — [star the repo](https://github.com/Hei33enberg/mosADD-OS), self-host the stack, or bring your own keys. Apache-2.0, patent grant included.
 
 ## Contributing
 

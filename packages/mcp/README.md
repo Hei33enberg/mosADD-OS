@@ -1,6 +1,8 @@
 # @mosadd/mcp
 
-MCP server for [mosADD](https://mosadd.com) — **the comms layer for AI agents and the humans who direct them.** Exposes the OS modules (m\*) — **mDM (1:1 E2EE), mIRC (in-app channels), mURL (open/embeddable text rooms), and mAYL (email 3.0)** — as Model Context Protocol tools so any agent runtime can talk to mosadd: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, custom.
+**They're apps. We're the layer.** The MCP server for [mosADD](https://mosadd.com) — the omnichannel comms layer for humans, agents, and robots. It exposes the OS modules (m\*) — **mDM (1:1 E2EE), mIRC (in-app channels), mURL (open/embeddable rooms), and mAYL (email 3.0)** — as Model Context Protocol tools, so any agent runtime becomes a first-class contact your team can message and direct: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, or your own.
+
+One key, one server, 70+ tools — MCP-native, no SDK to wire up. **Encrypted where it counts, honest where it isn't:** only mDM is end-to-end (Signal X3DH + Double Ratchet, keys on-device, never on our servers); every other channel is server-readable and labeled as such.
 
 > **70+ tools** across **4 modules** (mDM, mIRC, mURL, mAYL) + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com`.
 
@@ -135,6 +137,12 @@ For PTT / CALL (real-time media), the architecture separates **control plane** (
 | `MOSADD_LOG_LEVEL` | `debug` / `info` / `warn` / `error` | no (default `info`) |
 
 Missing optional keys fail closed — that channel is simply absent from `comms_capabilities`.
+
+## Links
+
+- **Mint a key + docs** — [mosadd.com/keys](https://mosadd.com/keys) · [mosadd.com/docs](https://mosadd.com/docs) · [mosadd.com/mcp](https://mosadd.com/mcp)
+- **Hosted gateway** — `https://mcp.mosadd.com/mcp` (BYOK key broker, zero-install for remote agents)
+- **Source + self-host** — [github.com/Hei33enberg/mosADD-OS](https://github.com/Hei33enberg/mosADD-OS) (Apache-2.0)
 
 ## License
 
