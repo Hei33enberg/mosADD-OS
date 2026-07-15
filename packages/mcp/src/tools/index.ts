@@ -39,7 +39,7 @@ import { mircEdgeTools } from "./mirc-edge.js";
 // import { mroomTools } from "./mroom.js"; // mROOM: killed (LINEAR-3414) — not registered
 // import { mroomMessagesTools } from "./mroom-messages.js"; // mROOM: killed (LINEAR-3414) — not registered
 import { mailTools } from "./mail.js";
-import { mailAliasTools } from "./mail-aliases.js";  // mp0st_* back-compat aliases for mAYL_*
+// import { mailAliasTools } from "./mail-aliases.js"; // mp0st_* aliases RETIRED 2026-07-15 (founder: unify on mAYL, drop the mp0st codename from every user-visible surface). Source kept for reference.
 // import { mailProvenanceTools } from "./mail-provenance.js"; // mAYL_send_as_agent SCAFFOLD — UNREGISTERED 2026-07-14 (hub-claim EF 404s; re-register when live — CTO-1 live-ping)
 import { mtalkTools } from "./mtalk.js";
 import { attachmentTools } from "./attachments.js";
@@ -62,8 +62,8 @@ const channelTools: MosaddTool[] = [
   ...mircEdgeTools,
   // ...mroomTools,  // mROOM: killed (LINEAR-3414) — channel re-cut into ephemeral private mIRC
   // ...mroomMessagesTools,  // mROOM: killed (LINEAR-3414)
-  ...mailTools,         // mAYL_*: canonical email module (was mp0st_*; renamed re-arch 2026-06-27)
-  ...mailAliasTools,    // mp0st_*: back-compat aliases — DEPRECATED, removed in a later alpha
+  ...mailTools,         // mAYL_*: canonical email module (was the mp0st codename; renamed re-arch 2026-06-27)
+  // ...mailAliasTools, // mp0st_* aliases RETIRED 2026-07-15 — mAYL is the one name; the mp0st codename is now backend-internal only
   // ...mailProvenanceTools, // mAYL_send_as_agent: UNREGISTERED 2026-07-14 — hub-claim EF 404s every call; re-register when rewired onto hub-key-exchange (CTO-1 live-ping)
   ...mtalkTools,
   ...attachmentTools,

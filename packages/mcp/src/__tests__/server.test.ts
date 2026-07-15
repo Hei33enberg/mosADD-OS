@@ -19,9 +19,8 @@ describe("@mosadd/mcp", () => {
       // (surveillance-era direction killed 2026-06-27; on-device security pillar, not an MCP tool)
       expect(names).toContain("mURL_post");
       expect(names).toContain("mAYL_send");
-      // mp0st_* remain as deprecated back-compat aliases for mAYL_*
-      expect(names).toContain("mp0st_send");
-      expect(names).toContain("mp0st_view");
+      // mp0st_* aliases RETIRED 2026-07-15 — mAYL is the one name (mp0st is backend-internal only)
+      expect(names.some((n) => n.startsWith("mp0st_"))).toBe(false);
     });
 
     it("follows RFC 0001 naming — channel tools m<MODULE>_<operation>, meta tools comms_<op>", () => {

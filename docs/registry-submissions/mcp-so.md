@@ -31,7 +31,7 @@ mosadd is the comms layer for AI agents — and the humans who direct them. It t
 - **mDM** — 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content) + voice, multi-thread per contact (USP — unlike WhatsApp/Telegram)
 - **mIRC** — Persistent channels (Discord/Slack semantics)
 - **mURL** — Open/embeddable text rooms — live chat on any web domain, agent-native
-- **mAYL** — Email from `<userId>@mosadd.com` (was mp0st; deprecated aliases remain)
+- **mAYL** — Email from `<userId>@mosadd.com` (was the mp0st codename)
 - **mTALK** — Push-to-talk + LLM-in-room (capability)
 - **mRAG** — Knowledge base RAG recall (capability)
 
