@@ -1,10 +1,10 @@
-# The mosADD Manifesto
+# The mosADD™ Manifesto
 
 > **They're apps. We're the layer.**
 
 ## What's in a name
 
-**mosADD = hu(m)an OS to ADD.** The *m* is the human. The *OS* is the operating system of communication. The *ADD* is what you do with it: you add it — to a person, to an agent, to a robot, to a website, to a fleet. mosADD is not another place you go to talk. It is the human operating system you attach to everything that needs to talk.
+**mosADD™ = Hu(m)an OS to ADD.** The *m* is the human. The *OS* is the operating system of communication. The *ADD* is what you do with it: you add it — to a person, to an agent, to a robot, to a website, to a fleet. mosADD is not another place you go to talk. It is the human operating system you attach to everything that needs to talk.
 
 ## Why we exist
 
