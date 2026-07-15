@@ -106,4 +106,20 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Audit
-        run: pnpm audit --audit-level=high --prod || (echo "::warning::pnpm audit found high+ severity vulnerabilities" && exit 1)
+        run: |
+          # npm retired the legacy audit endpoint (returns HTTP 410) — pnpm audit
+          # can't reach it right now, which is NOT a vulnerability. Treat the
+          # retired-endpoint response as a skip (warn), but still fail on real
+          # high+ advisories if the endpoint ever answers again.
+          set +e
+          OUT=$(pnpm audit --audit-level=high --prod 2>&1)
+          CODE=$?
+          echo "$OUT"
+          if echo "$OUT" | grep -qE "ERR_PNPM_AUDIT_BAD_RESPONSE|being retired|410"; then
+            echo "::warning::pnpm audit endpoint retired (npm HTTP 410) — gate skipped until pnpm adopts the bulk advisory endpoint"
+            exit 0
+          fi
+          if [ "$CODE" -ne 0 ]; then
+            echo "::error::pnpm audit found high+ severity vulnerabilities"
+            exit 1
+          fi
