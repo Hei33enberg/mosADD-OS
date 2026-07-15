@@ -95,6 +95,15 @@ try {
 } catch (e) {
   fail(`packages/mcp/server.json: ${e.message}`);
 }
+// server.ts hardcodes the MCP serverInfo version — keep it in lockstep too.
+try {
+  const serverTs = read("packages/mcp/src/server.ts");
+  for (const m of serverTs.matchAll(/3\.0\.0-alpha\.\d+/g))
+    if (m[0] !== mcpVersion)
+      fail(`packages/mcp/src/server.ts serverInfo version '${m[0]}' != package.json '${mcpVersion}'`);
+} catch (e) {
+  fail(`packages/mcp/src/server.ts: ${e.message}`);
+}
 
 // ── 4. honesty-lint ──────────────────────────────────────────────────────────
 // Banned phrases in prose. Each entry: [regex, why]. Case-insensitive.

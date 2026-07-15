@@ -22,6 +22,7 @@ import {
   THREAT_EVENTS,
   THREAT_EVENT_COUNT,
   evaluateEvent,
+  getEventDef,
   type ThreatEventDef,
 } from "@mosadd/threat-engine";
 
@@ -66,8 +67,34 @@ const threat_classify_input = z.object({
 async function threat_classify(
   input: z.infer<typeof threat_classify_input>,
   _ctx: MosaddToolContext,
-): Promise<{ action: string; severity: string; reason: string }> {
-  return evaluateEvent({ eventType: input.event_type, severity: input.severity, details: input.details });
+): Promise<{
+  action: string;
+  severity: string;
+  reason: string;
+  known_event: boolean;
+  category: string | null;
+  label: string | null;
+}> {
+  // Known taxonomy event → surface ITS severity immediately. Pegasus-class events
+  // (PROCESS_INJECTION, STINGRAY_DETECT, IMSI_CATCHER_SCAN, MEMORY_INJECTION, SS7_PROBE…)
+  // classify as critical/killswitch right away. But the engine NEVER auto-acts:
+  // action is always "monitor" — it tells you, it never disconnects, locks, or wipes.
+  // The taxonomy's own autoActions are what a stricter host policy COULD do; we do
+  // not execute them here ("monitoruje, nie działa").
+  const def = getEventDef(String(input.event_type).toUpperCase());
+  if (def) {
+    return {
+      action: "monitor",
+      severity: def.severity,
+      reason: `${def.label} (${def.category}) — classified from the mosadd threat taxonomy. Monitor-only: surfaced for you to act on, no automatic action taken.`,
+      known_event: true,
+      category: def.category,
+      label: def.label,
+    };
+  }
+  // Unknown event string → fall back to the pure DECK decision engine (unchanged).
+  const decision = evaluateEvent({ eventType: input.event_type, severity: input.severity, details: input.details });
+  return { ...decision, known_event: false, category: null, label: null };
 }
 
 // ── Registration ──
@@ -85,7 +112,7 @@ export const threatTools: MosaddTool[] = [
     name: "threat_classify",
     requires: "any",
     description:
-      "Classify a single telemetry event with the pure mosadd DECK decision engine and get a defensive recommendation: { action (log_only|revoke_sessions|lock_account|suspend_did), severity, reason }. Deterministic, side-effect-free, no backend — the engine DECIDES; the caller carries out the action. Use to evaluate a threat event you already observed.",
+      "Classify a single telemetry event against the mosadd threat taxonomy + DECK engine. For a known event type (e.g. PROCESS_INJECTION, STINGRAY_DETECT, IMSI_CATCHER_SCAN, MEMORY_INJECTION) it returns that event's real severity (info|warning|elevated|critical|killswitch) with action=\"monitor\" — Pegasus-class events surface as critical immediately, but the engine NEVER auto-acts (it tells you, it never disconnects/locks). Unknown strings fall back to the pure DECK decision (log_only|revoke_sessions|lock_account|suspend_did). Returns { action, severity, reason, known_event, category, label }. Deterministic, offline, no backend.",
     inputSchema: threat_classify_input,
     handler: threat_classify as MosaddTool["handler"],
   },

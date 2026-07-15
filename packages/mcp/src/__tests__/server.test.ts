@@ -15,7 +15,7 @@ describe("@mosadd/mcp", () => {
       // mIRC (5 tools)
       expect(names).toContain("mIRC_create");
       expect(names).toContain("mIRC_delete");
-      // mURL (revived module) + mAYL (email 3.0, was mp0st) — threat_* stays UNREGISTERED
+      // mURL (revived module) + mAYL (email 3.0, was mp0st) — threat_* re-registered (LINEAR-3498)
       // (surveillance-era direction killed 2026-06-27; on-device security pillar, not an MCP tool)
       expect(names).toContain("mURL_post");
       expect(names).toContain("mAYL_send");

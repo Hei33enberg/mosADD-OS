@@ -138,7 +138,7 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
     expect(names).toContain("mDM_send");
     expect(names).toContain("mIRC_create");
     expect(names).toContain("mURL_post"); // mURL revived module (2026-06-27)
-    expect(names).toContain("mAYL_send"); // mAYL = email 3.0 (was mp0st); threat_* stays UNREGISTERED (killed)
+    expect(names).toContain("mAYL_send"); // mAYL = email 3.0 (was mp0st); threat_catalog/threat_classify ARE registered (LINEAR-3498)
     expect(names).toContain("mp0st_send"); // deprecated back-compat alias
     expect(names).toContain("mTALK_press"); // mTALK PTT now shipped
     expect(names).toContain("mRAG_search"); // mRAG RAG-for-devs now shipped

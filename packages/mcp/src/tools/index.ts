@@ -7,8 +7,10 @@
  *
  * Capabilities (not modules — cross-cutting agent tooling): mRAG, comms_.
  * mTALK = voice tier inside mIRC, still its own tools for now; folding into
- * mIRC_voice_* in a follow-up release. threat_* UNREGISTERED — surveillance-
- * era direction is dead (decision_killed_directions).
+ * mIRC_voice_* in a follow-up release. threat_* (threat_catalog + threat_classify)
+ * are REGISTERED (2026-07-15, founder directive + LINEAR-3498): pure/offline
+ * defensive classification over the threat taxonomy — the surveillance-era
+ * *marketing* was killed, the classification engine is real and wanted.
  *
  * ~70+ callable tools registered (public copy says "70+ tools", matching mosadd.com).
  * Modules (4): mDM, mIRC, mURL, mAYL. Capabilities: mTALK (voice/PTT), mRAG, comms_.
