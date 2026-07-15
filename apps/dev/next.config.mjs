@@ -5,26 +5,19 @@ const config = {
   outputFileTracingRoot: process.cwd(),
   async redirects() {
     return [
-      // mURL now has its own consumer home at murl.mosadd.com. Send the old
-      // mosadd.dev/murl/* (and the legacy /channel0/* extension links) there so
-      // there is a single canonical site and CWS privacy/abuse links resolve.
+      // KEEP — external + still live. murl.mosadd.com is a separate consumer site,
+      // and these are the Chrome-Web-Store privacy/abuse links that MUST keep
+      // resolving. They stay ABOVE the catch-all (Next matches the first hit).
       { source: '/murl', destination: 'https://murl.mosadd.com', permanent: true },
       { source: '/murl/:path*', destination: 'https://murl.mosadd.com/:path*', permanent: true },
       { source: '/channel0', destination: 'https://murl.mosadd.com', permanent: true },
       { source: '/channel0/:path*', destination: 'https://murl.mosadd.com/:path*', permanent: true },
-      // Skin Shop deferred — point any stale /skins link at the embed landing.
-      { source: '/skins', destination: '/embed', permanent: false },
-      { source: '/skins/:path*', destination: '/embed', permanent: false },
-      // mCALL (no carrier) + mIRL (design) are not part of the current release —
-      // de-listed from the site for now. Send any stale deep links to the modules index.
-      { source: '/docs/modules/mcall', destination: '/docs/modules', permanent: false },
-      { source: '/docs/modules/mirl', destination: '/docs/modules', permanent: false },
-      // mURL de-listed as a dev/MCP module (parked — consumer product at murl.mosadd.com
-      // stays live). Send the dev-docs module page to the modules index, like mCALL.
-      { source: '/docs/modules/murl', destination: '/docs/modules', permanent: false },
-      // mKB was renamed to mRAG (RAG / "ask your own data" engine). Permanently
-      // redirect the old module page to preserve inbound links and SEO.
-      { source: '/docs/modules/mkb', destination: '/docs/modules/mrag', permanent: true },
+      // mosadd.dev is retired as a standalone surface — everything else collapses
+      // to the builder front door. statusCode:301 (a literal 301; `permanent:true`
+      // would emit 308). Fixed destination → every path lands on /developers.
+      // The internal /skins, /docs/modules/* redirects are dropped: the catch-all
+      // sends them to /developers anyway (no double hops).
+      { source: '/:path*', destination: 'https://mosadd.com/developers', statusCode: 301 },
     ];
   },
 };
