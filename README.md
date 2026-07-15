@@ -1,6 +1,6 @@
 <div align="center">
 
-# mosADD
+# mosADD™
 
 **They're apps. We're the layer.**
 
