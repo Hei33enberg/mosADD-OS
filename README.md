@@ -40,7 +40,7 @@ npx -y @mosadd/mcp@alpha
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own messages/mail/calls (hybrid vector + BM25). On-device keyword index for E2EE content — plaintext never leaves the device |
 | **comms_** (3) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities` | Agent→human one-link browser action (Tier 1) + one-call capability discovery |
 
-**70+ callable tools across 4 mosADD modules + capabilities** — mDM (14) + mIRC (22) + mURL (4) + mAYL (11) = 51 module tools; mTALK (5) voice + mRAG (4) search + comms (3) agent-actions = 12 capability tools; plus 11 `mp0st_*` back-compat aliases for the mAYL rename (**70+ callable**). `threat_*` was unregistered in alpha.25 (surveillance-era direction killed). `mCALL` (telephony, carrier-pending), `mROOM` (folded into ephemeral private mIRC), and the `mAYL_send_as_agent`/`mTALK_ingest_ptt`/`comms_embed_create` scaffolds ship in the source but are **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
+**70+ callable tools across 4 mosADD modules + capabilities** — mDM (14) + mIRC (22) + mURL (4) + mAYL (11) = 51 module tools; mTALK (5) voice + mRAG (4) search + comms (3) agent-actions + `threat_*` (2) defensive classification = 14 capability tools; plus 11 `mp0st_*` back-compat aliases for the mAYL rename (**70+ callable**). `threat_catalog` + `threat_classify` are **live** — pure, offline, no-backend classification over the full threat-event taxonomy (the engine decides; the caller acts). `mCALL` (telephony, carrier-pending), `mROOM` (folded into ephemeral private mIRC), and the `mAYL_send_as_agent`/`mTALK_ingest_ptt`/`comms_embed_create` scaffolds ship in the source but are **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
 ## Quickstart (60 seconds)
 
@@ -90,7 +90,7 @@ This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.
 | `mTALK` | Push-to-talk voice, LLM-as-participant | Transport (LiveKit) | **alpha (shipped)** |
 | `mRAG` | Knowledge base — RAG recall (hybrid vector + BM25) | On-device for E2EE content | **alpha (shipped)** |
 
-**Encrypted where it counts, honest where it isn't:** we label encryption scope per channel rather than claiming blanket "encryption" — only mDM is end-to-end. Alongside the modules ships [`@mosadd/threat-engine`](./packages/threat-engine) — the **Irondome**: an embeddable, on-device defensive security pillar (Pegasus-class threat-event classification) that runs entirely client-side, where your data already is. Its `threat_catalog` / `threat_classify` MCP tools were unregistered in alpha.25 (library-only, not exposed as MCP tools).
+**Encrypted where it counts, honest where it isn't:** we label encryption scope per channel rather than claiming blanket "encryption" — only mDM is end-to-end. Alongside the modules ships [`@mosadd/threat-engine`](./packages/threat-engine) — the **Irondome**: an embeddable, on-device defensive security pillar (Pegasus-class threat-event classification) that runs entirely client-side, where your data already is. Its `threat_catalog` / `threat_classify` MCP tools are **live** — pure, offline classification over the full threat-event taxonomy (the engine decides; the caller acts).
 
 ## Architecture
 
@@ -126,7 +126,7 @@ Read the [Manifesto](./MANIFESTO.md) for what we believe, [docs/roadmap.md](./do
 
 ## Who's behind this
 
-mosADD is built and directed by [@Hei33enberg](https://github.com/Hei33enberg) (Maciej Damian Białek) from Plan-les-Ouates, Switzerland — a grassroots, self-funded project with no venture capital behind it ([GOVERNANCE.md](./GOVERNANCE.md) explains the — honest — kingdom model, [REALM.md](./REALM.md) the community charter).
+mosADD is built and directed by [@Hei33enberg](https://github.com/Hei33enberg) (Joseph Matthew Damian White) from Plan-les-Ouates, Switzerland — a grassroots, self-funded project with no venture capital behind it ([GOVERNANCE.md](./GOVERNANCE.md) explains the — honest — kingdom model, [REALM.md](./REALM.md) the community charter).
 
 **Ex-Founders or Investors. Guess who is who.**
 

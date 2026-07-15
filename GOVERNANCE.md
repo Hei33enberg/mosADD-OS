@@ -18,13 +18,13 @@ Contributors with merge rights. Two kinds:
 Merge rights are **delegated authority** — granted by the Sovereign, revocable by the Sovereign, and exercised autonomously day-to-day within the maintainer's area.
 
 Becoming a maintainer:
-1. Land 5+ meaningful PRs over 3+ months
+1. Land 5+ substantive PRs over 3+ months
 2. Demonstrated good judgement in reviews
 3. Active in community (Discussions, the mosADD community room, RFCs, issue triage)
 4. Nominated by an existing maintainer, ratified by the Sovereign
 
 ### The Sovereign (BDFL)
-**Hei33enberg (Maciej Damian Białek)** — founder. Holds the vision, the final word, and the trademark. See [MAINTAINERS.md](./MAINTAINERS.md) for areas and [REALM.md → Succession](./REALM.md#succession--absorption-proofing) for what happens if the Sovereign is ever absent or captured.
+**Hei33enberg (Joseph Matthew Damian White)** — founder. Holds the vision, the final word, and the trademark. See [MAINTAINERS.md](./MAINTAINERS.md) for areas and [REALM.md → Succession](./REALM.md#succession--absorption-proofing) for what happens if the Sovereign is ever absent or captured.
 
 ## Decision making
 

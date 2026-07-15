@@ -8,7 +8,7 @@ The Sovereign holds final authority on strategic direction, trademark, licence p
 
 | Name | GitHub | Areas |
 |---|---|---|
-| Maciej Damian Białek | [@Hei33enberg](https://github.com/Hei33enberg) | founder · strategic direction · trademark · commercial hub roadmap |
+| Joseph Matthew Damian White | [@Hei33enberg](https://github.com/Hei33enberg) | founder · strategic direction · trademark · commercial hub roadmap |
 
 Succession and absorption-proofing are written down in [REALM.md](./REALM.md#succession--absorption-proofing).
 
@@ -18,7 +18,7 @@ Maintainers can merge PRs in their area, request reviews, and advise on RFCs (RF
 
 | Name | GitHub | Area | Status |
 |---|---|---|---|
-| Maciej Damian Białek | [@Hei33enberg](https://github.com/Hei33enberg) | all areas (bootstrap) | active |
+| Joseph Matthew Damian White | [@Hei33enberg](https://github.com/Hei33enberg) | all areas (bootstrap) | active |
 | *(open)* | | `@mosadd/mcp` — MCP server, tool surface | seeking |
 | *(open)* | | `@mosadd/ai` — framework adapters | seeking |
 | *(open)* | | `@mosadd/providers` — provider adapters (Supabase, LiveKit, nwaku) | seeking |
@@ -41,7 +41,7 @@ Reviewers can approve PRs in their area but cannot merge unilaterally. Promotion
 2. Show good judgement in code review (comments on others' PRs)
 3. Be active in the [community channels](./README.md#contributing) — GitHub Discussions, the mosADD community room
 4. Open an issue tagged `maintainer-track` with your case
-5. 2 existing maintainers +1 OR Sovereign approval
+5. Nominated by an existing maintainer and ratified by the Sovereign (see [GOVERNANCE.md](./GOVERNANCE.md))
 
 Step 1 is the main gate. Substantive means: not typo fixes, not dependency bumps. Real feature work or non-trivial bug fixes.
 
