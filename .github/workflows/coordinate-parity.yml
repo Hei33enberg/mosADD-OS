@@ -1,0 +1,114 @@
+name: coordinate-parity
+
+# skills/coordinate/SKILL.md is canonical; the mosadd-agent repo vendors it as
+# skills/mosadd-coordinate/SKILL.md and the contract is BYTE-IDENTICAL
+# (skills/README.md). This job compares sha256 of the raw bytes and, on
+# mismatch, opens/updates a single pinned issue labeled drift:coordinate.
+# It never auto-merges anything — sync PRs are a human decision.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/coordinate/**"
+  schedule:
+    - cron: "43 5 * * *" # daily 05:43 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Compare canonical vs vendored
+        id: cmp
+        env:
+          # Optional fine-grained PAT with contents:read on Hei33enberg/mosadd-agent
+          # (needed only if that repo is/becomes private). Falls back to anonymous raw fetch.
+          AGENT_REPO_TOKEN: ${{ secrets.MOSADD_AGENT_READ_TOKEN }}
+        run: |
+          set -euo pipefail
+          CANON="skills/coordinate/SKILL.md"
+          URL="https://raw.githubusercontent.com/Hei33enberg/mosadd-agent/main/skills/mosadd-coordinate/SKILL.md"
+          AUTH=()
+          if [ -n "${AGENT_REPO_TOKEN:-}" ]; then AUTH=(-H "Authorization: Bearer ${AGENT_REPO_TOKEN}"); fi
+          HTTP=$(curl -sS -o vendored.md -w "%{http_code}" "${AUTH[@]}" "$URL" || echo "000")
+          if [ "$HTTP" != "200" ]; then
+            echo "fetch_failed=true" >> "$GITHUB_OUTPUT"
+            echo "::warning::Could not fetch vendored copy (HTTP $HTTP) — repo private without MOSADD_AGENT_READ_TOKEN secret, or network issue."
+            exit 0
+          fi
+          H1=$(sha256sum "$CANON" | cut -d' ' -f1)
+          H2=$(sha256sum vendored.md | cut -d' ' -f1)
+          echo "canon=$H1"    >> "$GITHUB_OUTPUT"
+          echo "vendored=$H2" >> "$GITHUB_OUTPUT"
+          if [ "$H1" = "$H2" ]; then
+            echo "drift=false" >> "$GITHUB_OUTPUT"
+            echo "✓ byte-identical ($H1)"
+          else
+            echo "drift=true" >> "$GITHUB_OUTPUT"
+            diff -u "$CANON" vendored.md > drift.diff || true
+            echo "::error::coordinate skill drift detected"
+          fi
+
+      - name: Open/update pinned drift issue
+        if: steps.cmp.outputs.drift == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const diff = fs.existsSync('drift.diff') ? fs.readFileSync('drift.diff', 'utf8').slice(0, 6000) : '(no diff)';
+            const title = 'drift: coordinate skill is not byte-identical with mosadd-agent';
+            const body = [
+              'The vendored `skills/mosadd-coordinate/SKILL.md` in `Hei33enberg/mosadd-agent` has drifted from the canonical `skills/coordinate/SKILL.md` here.',
+              '',
+              `- canonical sha256: \`${{ steps.cmp.outputs.canon }}\``,
+              `- vendored  sha256: \`${{ steps.cmp.outputs.vendored }}\``,
+              '',
+              '**Contract:** the canonical file is the single source of truth; the agent repo must vendor it byte-identical (see `skills/README.md`). Sync direction: mosadd-os → mosadd-agent. Do not auto-merge — review the diff:',
+              '',
+              '```diff',
+              diff,
+              '```',
+            ].join('\n');
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'drift:coordinate',
+            });
+            if (issues.length) {
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issues[0].number, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['drift:coordinate'],
+              });
+            }
+
+      - name: Close drift issue if parity restored
+        if: steps.cmp.outputs.drift == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'drift:coordinate',
+            });
+            for (const i of issues) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: i.number, body: '✓ Parity restored — closing automatically.',
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: i.number, state: 'closed',
+              });
+            }

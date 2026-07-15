@@ -1,0 +1,43 @@
+name: skill-lint
+
+# The drift gate: skill frontmatter, marketplace sync, version triple-check,
+# honesty-lint (banned claims + ghost community surfaces). Hard CI failure —
+# drift cannot merge. Weekly cron as a safety net for out-of-band edits.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/**"
+      - "README.md"
+      - "MANIFESTO.md"
+      - "REALM.md"
+      - "GOVERNANCE.md"
+      - "HALL_OF_FAME.md"
+      - "CONTRIBUTING.md"
+      - "MAINTAINERS.md"
+      - "TRADEMARK.md"
+      - "docs/**"
+      - "packages/mcp/package.json"
+      - "packages/mcp/server.json"
+      - "community/**"
+      - "scripts/check-skill-lint.mjs"
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "17 6 * * 1" # Monday 06:17 UTC safety net
+
+permissions:
+  contents: read
+
+jobs:
+  skill-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+      - name: skill-lint + honesty-lint
+        run: node scripts/check-skill-lint.mjs

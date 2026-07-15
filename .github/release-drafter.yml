@@ -1,0 +1,35 @@
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+categories:
+  - title: "🧩 Modules (mDM · mIRC · mURL · mAYL)"
+    labels: ["m:mdm", "m:mirc", "m:murl", "m:mayl", "module"]
+  - title: "🎙 Capabilities (mTALK · mRAG · comms)"
+    labels: ["m:mtalk", "m:mrag", "m:comms", "capability"]
+  - title: "📜 Skills"
+    labels: ["m:skills", "skills"]
+  - title: "🛠 Fixes"
+    labels: ["fix", "bug"]
+  - title: "📚 Docs & Realm"
+    labels: ["docs", "realm", "governance"]
+  - title: "⚙️ CI & tooling"
+    labels: ["ci", "tooling", "chore"]
+change-template: "- $TITLE (#$NUMBER) — @$AUTHOR"
+no-changes-template: "- Quiet release — housekeeping only."
+exclude-labels: ["skip-changelog"]
+version-resolver:
+  major:
+    labels: ["breaking"]
+  minor:
+    labels: ["feature", "module"]
+  patch:
+    labels: ["fix", "docs", "chore", "ci"]
+  default: patch
+template: |
+  ## What changed
+
+  $CHANGES
+
+  ---
+  **Install:** `npx -y @mosadd/mcp@alpha` · [Manifesto](https://github.com/Hei33enberg/mosADD-OS/blob/main/MANIFESTO.md) · [Join the Realm](https://github.com/Hei33enberg/mosADD-OS/blob/main/REALM.md)
+
+  New contributors are credited automatically in the [Hall of Fame](https://github.com/Hei33enberg/mosADD-OS/blob/main/HALL_OF_FAME.md).

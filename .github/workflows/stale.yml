@@ -1,0 +1,36 @@
+name: stale
+
+# Community-friendly staleness: only issues explicitly awaiting a response go
+# stale (30d), then close (14d more). RFCs, security, pinned, roadmap and
+# good-first-issues are never staled.
+
+on:
+  schedule:
+    - cron: "51 4 * * *" # daily 04:51 UTC
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/stale@v9
+        with:
+          only-labels: "awaiting-response"
+          days-before-stale: 30
+          days-before-close: 14
+          stale-issue-label: "stale"
+          stale-pr-label: "stale"
+          exempt-issue-labels: "pinned,rfc,security,good-first-issue,roadmap,drift:coordinate,link-rot"
+          exempt-pr-labels: "pinned,rfc,security"
+          stale-issue-message: >-
+            No response for 30 days — marking stale. Reply to keep it open; it
+            closes in 14 days otherwise. (This only happens on issues labeled
+            awaiting-response.)
+          close-issue-message: >-
+            Closed for inactivity. If this is still relevant, reopen or open a
+            fresh issue with current details — always welcome.
+          operations-per-run: 100

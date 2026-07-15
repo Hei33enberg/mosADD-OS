@@ -1,0 +1,24 @@
+{
+  "$comment": "Community surfaces that actually exist. Docs may only reference surfaces listed here — scripts/check-skill-lint.mjs enforces it (the 'ghost Discord' class of bug). Add a surface here in the same PR that creates it for real.",
+  "surfaces": [
+    {
+      "id": "github-discussions",
+      "label": "GitHub Discussions",
+      "url": "https://github.com/Hei33enberg/mosADD-OS/discussions"
+    },
+    {
+      "id": "github-issues",
+      "label": "GitHub Issues",
+      "url": "https://github.com/Hei33enberg/mosADD-OS/issues"
+    },
+    {
+      "id": "mosadd-community-room",
+      "label": "mosADD community room (dogfooded — mURL room on mosadd.com)",
+      "url": "https://mosadd.com"
+    }
+  ],
+  "banned_references": [
+    "Discord (link in README)",
+    "discord.gg/"
+  ]
+}

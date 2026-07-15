@@ -1,0 +1,76 @@
+name: realm-ledger
+
+# The REALM ledger: on every merged PR, count it for the author in
+# community/realm.json, regenerate the HALL_OF_FAME.md table, and celebrate
+# level-ups. Anti-farming: only PRs labeled 'substantive' (applied by
+# maintainers/L3+) count toward L2 Knight; raw merge count is tracked but
+# does not level anyone past L1. Bots are ignored. The commit uses [skip ci]
+# and this workflow ignores its own commit paths, so it cannot loop.
+
+on:
+  pull_request_target:
+    types: [closed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  ledger:
+    if: >-
+      github.event.pull_request.merged == true &&
+      !endsWith(github.event.pull_request.user.login, '[bot]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: realm-ledger
+      cancel-in-progress: false
+    steps:
+      # Safe with pull_request_target: we check out MAIN, never the PR head,
+      # and we execute only repo-trusted scripts.
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+
+      - name: Update ledger
+        id: ledger
+        env:
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          SUBSTANTIVE: ${{ contains(github.event.pull_request.labels.*.name, 'substantive') }}
+        run: |
+          set -euo pipefail
+          OUT=$(node scripts/update-realm-ledger.mjs "$AUTHOR" "$SUBSTANTIVE")
+          echo "$OUT"
+          LEVELUP=$(echo "$OUT" | grep '^LEVELUP:' || true)
+          echo "levelup=${LEVELUP}" >> "$GITHUB_OUTPUT"
+
+      - name: Commit ledger
+        run: |
+          set -euo pipefail
+          git config user.name "realm-ledger[bot]"
+          git config user.email "noreply@mosadd.com"
+          git add community/realm.json HALL_OF_FAME.md
+          if git diff --cached --quiet; then
+            echo "nothing to commit"; exit 0
+          fi
+          git commit -m "chore(realm): ledger update for @${{ github.event.pull_request.user.login }} (#${{ github.event.pull_request.number }}) [skip ci]"
+          git push origin main
+
+      - name: Level-up ceremony
+        if: steps.ledger.outputs.levelup != ''
+        uses: actions/github-script@v7
+        env:
+          LEVELUP: ${{ steps.ledger.outputs.levelup }}
+        with:
+          script: |
+            const [, login, level] = process.env.LEVELUP.split(':');
+            const titles = { L1: 'Squire', L2: 'Knight' };
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `🏰 Level up: @${login} is now **${level} ${titles[level] ?? ''}** of the [Realm](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/REALM.md). The [ledger](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/HALL_OF_FAME.md) has been updated.`,
+            });

@@ -1,0 +1,15 @@
+{
+  "$comment": "Machine-readable REALM ledger (see REALM.md). Updated automatically by .github/workflows/realm-ledger.yml on merged PRs. Levels: L1 Squire (1 substantive merged PR), L2 Knight (3+), L3 Baron (maintainer per MAINTAINERS.md), L4 Herald (named by the Crown), L5 Peer of the Realm. The founder is 'crown', outside the level ladder. Only PRs carrying the 'substantive' label count toward L2+.",
+  "updated": "2026-07-15",
+  "members": {
+    "Hei33enberg": {
+      "name": "Maciej Damian Białek",
+      "role": "crown",
+      "level": null,
+      "merged_prs": 0,
+      "substantive_prs": 0,
+      "contributions": "monorepo scaffold · MCP server skeleton · provider abstraction · governance",
+      "since": "2026"
+    }
+  }
+}
