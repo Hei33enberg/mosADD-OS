@@ -1,0 +1,8 @@
+{
+  "redirects": [
+    { "source": "/murl", "destination": "https://murl.mosadd.com", "permanent": true },
+    { "source": "/murl/:path*", "destination": "https://murl.mosadd.com/:path*", "permanent": true },
+    { "source": "/channel0", "destination": "https://murl.mosadd.com", "permanent": true },
+    { "source": "/channel0/:path*", "destination": "https://murl.mosadd.com/:path*", "permanent": true }
+  ]
+}
