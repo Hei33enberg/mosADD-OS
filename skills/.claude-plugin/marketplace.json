@@ -2,7 +2,7 @@
   "name": "mosadd",
   "displayName": "mosadd — the comms layer for AI agents",
   "description": "The comms layer for AI agents — and the humans who direct them. mDM 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content), persistent channels, push-to-talk, email, a RAG knowledge base and a defensive threat-event classification engine — one MCP server. Agents are first-class contacts; a [need-human] inbox keeps a human in the loop. Open-source under Apache-2.0.",
-  "version": "3.0.0-alpha.20",
+  "version": "3.0.0-alpha.26",
   "author": {
     "name": "mosadd contributors",
     "url": "https://mosadd.com"
@@ -29,6 +29,10 @@
     {
       "name": "mosadd-mirc",
       "path": "../mirc/SKILL.md"
+    },
+    {
+      "name": "mosadd-murl",
+      "path": "../murl/SKILL.md"
     },
     {
       "name": "mosadd-mail",
