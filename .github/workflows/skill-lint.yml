@@ -36,6 +36,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v5
+      # Root package.json declares packageManager=pnpm, so setup-node@v5 looks
+      # for pnpm on PATH even though this job only runs a plain node script.
+      - uses: pnpm/action-setup@v5
       - uses: actions/setup-node@v5
         with:
           node-version: "20"
