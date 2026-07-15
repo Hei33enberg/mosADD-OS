@@ -3,7 +3,7 @@
  *
  * User-facing modules (4): mDM, mIRC, mURL, mAYL — the re-arch (LINEAR-3938)
  * mAYL replaces the old mp0st name (mp0st_* still registered as back-compat
- * aliases via mail-aliases.ts; will be removed in alpha.27).
+ * aliases via mail-aliases.ts; will be removed in a later alpha).
  *
  * Capabilities (not modules — cross-cutting agent tooling): mRAG, comms_.
  * mTALK = voice tier inside mIRC, still its own tools for now; folding into
@@ -14,7 +14,7 @@
  *
  * ~70+ callable tools registered (public copy says "70+ tools", matching mosadd.com).
  * Modules (4): mDM, mIRC, mURL, mAYL. Capabilities: mTALK (voice/PTT), mRAG, comms_.
- * mp0st_* stay as DEPRECATED back-compat aliases for mAYL_* (removed in alpha.27).
+ * mp0st_* stay as DEPRECATED back-compat aliases for mAYL_* (removed in a later alpha).
  * Exact integer pending a live EF ping (CTO-1) — don't hard-code a drifting count.
  * UNREGISTERED 2026-07-14 (broken scaffolds whose EFs 404/400 every call — re-register when
  * live): mAYL_send_as_agent (mail-provenance), mTALK_ingest_ptt (ptt-ingest), comms_embed_create.
@@ -63,7 +63,7 @@ const channelTools: MosaddTool[] = [
   // ...mroomTools,  // mROOM: killed (LINEAR-3414) — channel re-cut into ephemeral private mIRC
   // ...mroomMessagesTools,  // mROOM: killed (LINEAR-3414)
   ...mailTools,         // mAYL_*: canonical email module (was mp0st_*; renamed re-arch 2026-06-27)
-  ...mailAliasTools,    // mp0st_*: back-compat aliases — DEPRECATED, removed in alpha.27
+  ...mailAliasTools,    // mp0st_*: back-compat aliases — DEPRECATED, removed in a later alpha
   // ...mailProvenanceTools, // mAYL_send_as_agent: UNREGISTERED 2026-07-14 — hub-claim EF 404s every call; re-register when rewired onto hub-key-exchange (CTO-1 live-ping)
   ...mtalkTools,
   ...attachmentTools,

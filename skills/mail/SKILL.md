@@ -9,7 +9,7 @@ This skill operates the **mAYL** OS module (email 3.0, renamed from `mp0st`) of 
 
 ## Tools (12 registered)
 
-> Tool names below use the `mp0st_*` back-compat aliases (still live through alpha.26). The current/preferred names are `mAYL_*` — e.g. `mAYL_send` for `mp0st_send`.
+> Tool names below use the `mp0st_*` back-compat aliases (still live). The current/preferred names are `mAYL_*` — e.g. `mAYL_send` for `mp0st_send`.
 
 | Tool | Use it for |
 |---|---|

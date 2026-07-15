@@ -8,7 +8,7 @@
 //
 // Rule: never drop an alias in the release that adds its replacement — live
 // agents would 404. mp0st_* aliases stay through alpha.25 and the next minor;
-// flag for removal goes into the alpha.27 release notes.
+// flag for removal goes into the a later release's notes.
 // =============================================================================
 
 import type { MosaddTool } from "../types.js";
@@ -20,6 +20,6 @@ export const mailAliasTools: MosaddTool[] = mailTools.map((tool) => ({
   name: tool.name.replace(/^mAYL_/, "mp0st_"),
   description:
     `[DEPRECATED — use ${tool.name} instead. mp0st_* aliases stay through alpha.25 ` +
-    `for back-compat; will be removed in alpha.27.] ` +
+    `for back-compat; will be removed in a later alpha.] ` +
     tool.description,
 }));
