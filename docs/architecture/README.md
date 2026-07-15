@@ -8,7 +8,7 @@ Index of architecture documents.
 | [phase-3-shells.md](phase-3-shells.md) | Draft | App shells design — apps/web rebuild + PWA + Android + iOS + Electron + macOS (with global PTT keybind) |
 | control-data-plane.md | TODO | PTT/CALL: agent ↔ MCP control + client ↔ WebRTC data |
 | fork-strategy.md | TODO | LiveKit fork + divergence discipline |
-| identity-recovery.md | TODO | Anonymous identity + passphrase/seed recovery |
+| identity-recovery.md | Descoped | Anonymous identity + passphrase/seed recovery (descoped — see [roadmap](../roadmap.md)) |
 | anti-abuse.md | TODO | PoW + rate limits + radar scoring |
 | threat-radar.md | TODO | 166-event taxonomy (ported from the proprietary mosADD backend) |
 

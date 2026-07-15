@@ -43,4 +43,4 @@ The source code remains free forever under Apache-2.0. The brand stays guarded s
 
 ## Questions
 
-Email `trademark@mosadd.com` for trademark questions. For general questions, use [GitHub Discussions](https://github.com/Hei33enberg/mosadd-os/discussions) or our Discord (link in [README.md](./README.md)).
+Email `trademark@mosadd.com` for trademark questions. For general questions, use [GitHub Discussions](https://github.com/Hei33enberg/mosadd-os/discussions) or the mosADD community room (see [README → Contributing](./README.md#contributing)).

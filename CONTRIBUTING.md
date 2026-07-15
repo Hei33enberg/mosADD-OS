@@ -34,7 +34,7 @@ This is a **major contribution**. Follow the RFC process:
 
 1. Open an issue with title `RFC: m{NAME}` describing the use case
 2. After community input, copy [`docs/rfcs/0000-template.md`](./docs/rfcs/0000-template.md) to `docs/rfcs/0XXX-m{NAME}.md`
-3. Open a PR for the RFC. We do **lazy consensus** — silence for 3 business days = approval
+3. Open a PR for the RFC. We do **lazy consensus** — silence for 3 business days = approval — followed by final ratification by the founder (see [GOVERNANCE.md](./GOVERNANCE.md))
 4. After RFC is merged, implementation PR can land
 
 ### Pull requests
@@ -66,7 +66,7 @@ Additional architecture docs (control-data-plane, fork-strategy, identity-recove
 
 - **GitHub Discussions** — design questions, ideas
 - **GitHub Issues** — bugs, RFCs, concrete proposals
-- **Discord** (link in README) — chat, help, real-time coordination
+- **mosADD community room** — chat, help, real-time coordination; our community chat runs on mosADD itself (see [README → Contributing](./README.md#contributing))
 
 ## License
 

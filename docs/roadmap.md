@@ -20,7 +20,7 @@ Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosa
 - [x] SDK adapters: Vercel AI SDK + LangChain + OpenAI Agents + Anthropic Agents ([LINEAR-2153](https://linear.app/ip-ra/issue/LINEAR-2153))
 - [x] Claude Code plugin + Anthropic Skills bundle ([LINEAR-2154](https://linear.app/ip-ra/issue/LINEAR-2154))
 - [x] Example apps (6 shipped) ([LINEAR-2155](https://linear.app/ip-ra/issue/LINEAR-2155))
-- [x] Community: CONTRIBUTING, GOVERNANCE, RFC (Discord soon) ([LINEAR-2156](https://linear.app/ip-ra/issue/LINEAR-2156))
+- [x] Community: CONTRIBUTING, GOVERNANCE, RFC (GitHub Discussions + the mosADD community room) ([LINEAR-2156](https://linear.app/ip-ra/issue/LINEAR-2156))
 - [ ] Submit to 5 MCP registries ([LINEAR-2157](https://linear.app/ip-ra/issue/LINEAR-2157))
 
 ## Phase 2 — Commercial Hub (3-4 months)

@@ -6,6 +6,8 @@
 
 The omnichannel comms layer for humans, agents, and robots — built for the agentic era. mosADD turns communication into MCP-native primitives — **E2EE direct messages (mDM), in-app channels (mIRC), open embeddable rooms (mURL), and email 3.0 (mAYL)** — so any AI agent can message, coordinate, and pull a human in the instant it needs a decision. Your agents (and robots) aren't bots bolted into a side panel — they're first-class **contacts**, directed from one inbox through the `[need-human]` loop. Encrypted where it counts, honest where it isn't.
 
+**[Read the Manifesto →](./MANIFESTO.md)**
+
 [![CI](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml/badge.svg)](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha.26-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
@@ -109,6 +111,8 @@ Robots — rovers, drones, industrial arms, IoT/sensor meshes, delivery fleets, 
 
 ## Why mosADD
 
+> **What's in a name:** mosADD = **hu(m)an OS to ADD**. The *m* is the human, the *OS* is the operating system of communication, and the *ADD* is what you do with it — you add it to a person, an agent, a robot, a website, a fleet.
+
 Slack, Discord, and email were built for humans clicking screens. mosADD is the comms layer for the agentic and robotic era — where the sender might be a person, an autonomous agent, or a robot, and they all share one inbox.
 
 - **Agents are contacts, not bots.** No webhook buried in a side panel. Your agent (or robot) is a first-class participant humans direct from one inbox — and it pulls a human in the instant it needs a call, via the `[need-human]` loop.
@@ -118,7 +122,17 @@ Slack, Discord, and email were built for humans clicking screens. mosADD is the 
 - **Yours to run.** Apache-2.0 with a patent grant — bring your own keys or self-host the entire stack. No lock-in.
 - **Guarded on-device.** [`@mosadd/threat-engine`](./packages/threat-engine) is the **Irondome**: an embeddable, client-side defensive pillar (Pegasus-class threat classification) that runs where your data already lives — never phoning home.
 
-Read [docs/roadmap.md](./docs/roadmap.md) for the full plan, or the [mosADD project on Linear](https://linear.app/ip-ra/issue/LINEAR-2138) for live status.
+Read the [Manifesto](./MANIFESTO.md) for what we believe, [docs/roadmap.md](./docs/roadmap.md) for the full plan, and [Releases](https://github.com/Hei33enberg/mosADD-OS/releases) for live status.
+
+## Who's behind this
+
+mosADD is built and directed by [@Hei33enberg](https://github.com/Hei33enberg) (Maciej Damian Białek) from Plan-les-Ouates, Switzerland — a grassroots, self-funded project with no venture capital behind it ([GOVERNANCE.md](./GOVERNANCE.md) explains the — honest — kingdom model, [REALM.md](./REALM.md) the community charter).
+
+**Ex-Founders or Investors. Guess who is who.**
+
+[Bielik.AI](https://bielik.ai) · [Catch Tornado](https://catchthetornado.com) · [cyber_Folks](https://cyberfolks.pl) · [ElevenLabs](https://elevenlabs.io) · [InPost](https://inpost.pl) · [Proton](https://proton.me) · [text](https://text.com) *(investor)*
+
+*Swiss HQ · Plan-les-Ouates · CH*
 
 ## Ecosystem — Voice Truthgate
 
@@ -139,11 +153,13 @@ npx -y @mosadd/mcp@alpha        # 70+ tools, any MCP agent
 
 ## Contributing
 
-We're an open community. Start with [CONTRIBUTING.md](./CONTRIBUTING.md), [GOVERNANCE.md](./GOVERNANCE.md), and the [RFC index](./docs/rfcs/).
+We're an open community. Start with the [Manifesto](./MANIFESTO.md), [CONTRIBUTING.md](./CONTRIBUTING.md), [GOVERNANCE.md](./GOVERNANCE.md), [REALM.md](./REALM.md) (roles, levels, and the ledger), and the [RFC index](./docs/rfcs/). Bringing an AI agent as a contributor? See [AGENTS.md](./AGENTS.md).
 
 Adding a new `m*` module requires an RFC — see [RFC 0001](./docs/rfcs/0001-module-naming.md) for the bar (semantic primitive, ≥2 backend providers, threat-engine hooks, MCP tool surface).
 
-Web: [mosadd.com](https://mosadd.com) · Linear: [mosADD epic](https://linear.app/ip-ra/issue/LINEAR-2138)
+**Community:** [GitHub Discussions](https://github.com/Hei33enberg/mosADD-OS/discussions) for design and help, async. For live chat we dogfood our own layer — the mosADD community room runs on mosADD itself: open [mosadd.com](https://mosadd.com), or from any MCP agent: `mURL_read_channel({ domain: "mosadd.com" })`. No Discord — the layer is the community home.
+
+Web: [mosadd.com](https://mosadd.com) · Releases: [GitHub](https://github.com/Hei33enberg/mosADD-OS/releases)
 
 ## License
 
