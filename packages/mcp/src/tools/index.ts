@@ -46,7 +46,7 @@ import { attachmentTools } from "./attachments.js";
 import { knowledgeTools } from "./knowledge.js";
 import { actionTools } from "./actions.js";
 // import { embedTools } from "./embed.js"; // comms_embed_create SCAFFOLD — UNREGISTERED 2026-07-14 (widget backend not live e2e; re-register when embed.mosadd.com ships — CTO-1 live-ping)
-// import { threatTools } from "./threat.js"; // threat_*: UNREGISTERED 2026-06-27 (re-arch). Surveillance-era direction killed; source kept for archival.
+import { threatTools } from "./threat.js"; // threat_*: RE-REGISTERED 2026-07-15 (founder directive + LINEAR-3498). Pure/offline classification of the real Pegasus-class threat taxonomy — the engine DECIDES, the caller acts; no surveillance, no backend.
 import { murlTools } from "./murl.js"; // mURL: REGISTERED — revived as a full dev module (founder 2026-06-27, re-arch). IRC-for-URLs, agent-native; backends live (mosadd-edge + murl-channels EF).
 import { makeCapabilitiesTool } from "./capabilities.js";
 
@@ -69,7 +69,7 @@ const channelTools: MosaddTool[] = [
   ...knowledgeTools,
   ...actionTools,  // Action links (Tier 1): agent → user one-link browser action via action-create EF
   // ...embedTools,    // comms_embed_create: UNREGISTERED 2026-07-14 — widget backend not live e2e; re-register when embed.mosadd.com ships (CTO-1 live-ping)
-  // ...threatTools,  // UNREGISTERED 2026-06-27 — killed direction; source kept for archival
+  ...threatTools,  // threat_catalog + threat_classify: RE-REGISTERED 2026-07-15 (founder directive + LINEAR-3498) — pure/offline, makes the Pegasus-class classification claim a live, callable capability
   ...murlTools,  // mURL: revived as a full module (founder 2026-06-27) — read/post/presence/list_channels over live domain channels
   // ...mcallTools,  // mCALL: carrier-pending (no telephony carrier live) — re-register when a carrier is configured
   // mirlTools,
