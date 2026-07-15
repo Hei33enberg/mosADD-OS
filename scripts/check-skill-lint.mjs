@@ -104,8 +104,12 @@ const BANNED = [
   [/unbannable/i, `"unbannable" — we don't claim that (HYDRA lesson)`],
   [/everything is (end-to-end )?encrypted/i, `blanket encryption claim — only mDM is E2EE`],
   [/all messages are (end-to-end )?encrypted/i, `blanket encryption claim — only mDM is E2EE`],
+  [/zero[- ]knowledge everywhere/i, `blanket zero-knowledge claim — only the encrypted paths are`],
   [/sealed sender/i, `"sealed sender" — mosadd does not hide who-messaged-whom`],
   [/military[- ]grade/i, `"military-grade" — meaningless marketing crypto claim`],
+  [/nsa[- ]proof/i, `"NSA-proof" — false absolute`],
+  [/zero[- ]trace/i, `"zero-trace" — false absolute (the motto "Trust no trace" is fine; "zero-trace" is not)`],
+  [/cannot be monitored/i, `"cannot be monitored" — false absolute`],
   [/\bno logs\b/i, `"no logs" — we don't claim that`],
   [/we can never be compelled/i, `false legal absolute`],
 ];
