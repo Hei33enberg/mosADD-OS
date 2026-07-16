@@ -12,10 +12,13 @@
  * defensive classification over the threat taxonomy — the surveillance-era
  * *marketing* was killed, the classification engine is real and wanted.
  *
- * ~70+ callable tools registered (public copy says "70+ tools", matching mosadd.com).
- * Modules (4): mDM, mIRC, mURL, mAYL. Capabilities: mTALK (voice/PTT), mRAG, comms_.
+ * 68 callable tools registered — the exact live count is exported as TOOL_COUNT
+ * (= allTools.length) below; ALWAYS reference that, never re-hard-code a number that drifts.
+ * Breakdown (2026-07-17): mDM 14 · mIRC 22 · mAYL 11 · mURL 7 · mTALK 5 · mRAG 4 ·
+ * comms 2 · Irondome/threat 2 + comms_capabilities discovery 1 = 68. (mDM/mIRC each
+ * include their 2 attachment tools from attachments.ts.)
+ * Modules (4): mDM, mIRC, mURL, mAYL. Capabilities: mTALK (voice/PTT), mRAG, comms_, Irondome (threat_*).
  * mp0st_* stay as DEPRECATED back-compat aliases for mAYL_* (removed in a later alpha).
- * Exact integer pending a live EF ping (CTO-1) — don't hard-code a drifting count.
  * UNREGISTERED 2026-07-14 (broken scaffolds whose EFs 404/400 every call — re-register when
  * live): mAYL_send_as_agent (mail-provenance), mTALK_ingest_ptt (ptt-ingest), comms_embed_create.
  * mROOM was KILLED (LINEAR-3414, channel re-cut → ephemeral private mIRC): its tools
@@ -24,6 +27,9 @@
  * incl. screen_share) + comms_action_frame_get (see the recipient's shared screen).
  * mURL is a FULL registered dev module (revived, founder 2026-06-27) — IRC-for-URLs,
  * agent-native; backends live (mosadd-edge + murl-channels EF). tools/murl.ts.
+ * mURL now has full lifecycle: read/post/presence/list_channels (hub-key) PLUS owner-side
+ * create/claim + update(branding/status) + delete (mURL_create/update/delete → murl-manage
+ * EF, owner-scoped via user JWT — same auth as mURL_list_channels action='mine').
  * mCALL is carrier-pending (no telephony carrier live yet): its tools live in
  * tools/mcall.ts but are NOT registered here, so an agent only ever discovers
  * tools that actually work. Re-register the one line below when a carrier ships.
@@ -87,3 +93,11 @@ export const allTools: MosaddTool[] = [
   // so carrier-aware hosts (cymru-os) can gate the tool list by transport.
   makeCapabilitiesTool(channelTools),
 ];
+
+/**
+ * The exact, live number of callable tools this server registers. Reference THIS
+ * (import { TOOL_COUNT }) in any code/doc surface that shows a tool count, instead
+ * of hard-coding a number that silently drifts (the "70+/65/68" inconsistency that
+ * bit us). Mirrors @mosadd/threat-engine's THREAT_EVENT_COUNT pattern.
+ */
+export const TOOL_COUNT: number = allTools.length;

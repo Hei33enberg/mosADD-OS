@@ -68,4 +68,4 @@ mosadd({ modules: ["mDM", "mIRC", "mURL", "mAYL"] })
 mosadd({})
 ```
 
-Today: 70+ live tools across the four modules (mDM · mIRC · mURL · mAYL) plus capabilities (mTALK voice, mRAG, comms_).
+Today: 68 live tools across the four modules (mDM · mIRC · mURL · mAYL) plus capabilities (mTALK voice, mRAG, comms_).

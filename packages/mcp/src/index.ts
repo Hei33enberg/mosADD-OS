@@ -14,6 +14,6 @@ export type {
   MosaddToolContext,
   ProviderRegistry,
 } from "./types.js";
-export { allTools } from "./tools/index.js";
+export { allTools, TOOL_COUNT } from "./tools/index.js";
 // Per-request session context for the hosted HTTP gateway (mcp.mosadd.com).
 export { runWithSupabaseEnv, type SupabaseEnv } from "./providers/supabase.js";

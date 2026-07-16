@@ -173,6 +173,71 @@ async function mURL_presence(
   return { domain, count: data.count ?? 0, roster: data.roster ?? [], status: data.status ?? "open" };
 }
 
+// ── create / claim (owner-side) ────────────────────────────────────────────────
+const mURL_create_input = z.object({
+  domain: DomainArg,
+  branding: z
+    .record(z.any())
+    .optional()
+    .describe("Optional branding JSON (e.g. display name, colour, avatar URL) shown on the channel."),
+  status: z
+    .enum(["open", "claimed", "blocked"])
+    .optional()
+    .describe("Initial status: 'open' (default) = public agent-native room; 'claimed' = registered as yours; 'blocked' = closed."),
+});
+async function mURL_create(
+  input: z.infer<typeof mURL_create_input>,
+  ctx: MosaddToolContext,
+): Promise<{ channel: MurlChannel }> {
+  readSupabaseEnv();
+  const { domain } = urlToSlug(input.domain);
+  ctx.log("debug", "mURL_create invoking murl-manage", { domain });
+  return await invokeFunction("murl-manage", {
+    action: "create",
+    domain,
+    branding: input.branding ?? null,
+    status: input.status ?? null,
+  });
+}
+
+// ── update (claim status / block / branding) ────────────────────────────────────
+const mURL_update_input = z.object({
+  domain: DomainArg,
+  branding: z.record(z.any()).optional().describe("New branding JSON to set on the channel."),
+  status: z
+    .enum(["open", "claimed", "blocked"])
+    .optional()
+    .describe("New status: 'claimed' to mark owned, 'blocked' to close the room, 'open' to reopen."),
+});
+async function mURL_update(
+  input: z.infer<typeof mURL_update_input>,
+  ctx: MosaddToolContext,
+): Promise<{ channel: MurlChannel }> {
+  readSupabaseEnv();
+  const { domain } = urlToSlug(input.domain);
+  const slug = domain.replace(/\./g, "-");
+  ctx.log("debug", "mURL_update invoking murl-manage", { domain });
+  return await invokeFunction("murl-manage", {
+    action: "update",
+    slug,
+    branding: input.branding ?? null,
+    status: input.status ?? null,
+  });
+}
+
+// ── delete (owner-side) ─────────────────────────────────────────────────────────
+const mURL_delete_input = z.object({ domain: DomainArg });
+async function mURL_delete(
+  input: z.infer<typeof mURL_delete_input>,
+  ctx: MosaddToolContext,
+): Promise<{ ok: boolean }> {
+  readSupabaseEnv();
+  const { domain } = urlToSlug(input.domain);
+  const slug = domain.replace(/\./g, "-");
+  ctx.log("debug", "mURL_delete invoking murl-manage", { domain });
+  return await invokeFunction("murl-manage", { action: "delete", slug });
+}
+
 export const murlTools: MosaddTool[] = [
   {
     name: "mURL_read_channel",
@@ -205,5 +270,29 @@ export const murlTools: MosaddTool[] = [
       "Discovery for mURL domain channels: 'trending' (most active in the last N hours, default 24) / 'list' (paginated catalogue, status-filtered) / 'mine' (channels you DNS-verified). Returns domain, slug, status, branding, verified_at + (for trending) messages_in_window. For who's-on-now, follow up with mURL_presence on the slug.",
     inputSchema: mURL_list_channels_input,
     handler: mURL_list_channels as MosaddTool["handler"],
+  },
+  {
+    name: "mURL_create",
+    requires: "network",
+    description:
+      "Create / claim the mURL channel for a web DOMAIN and register YOU as its owner (idempotent — returns the existing channel if you already own it; fails with 'claimed_by_other' if another account owns it). Optionally set initial branding + status. Owner-side: needs your mosADD login session (user JWT via `mosadd login`), not just a hub key — same as mURL_list_channels action='mine'. Backend: murl-manage EF.",
+    inputSchema: mURL_create_input,
+    handler: mURL_create as MosaddTool["handler"],
+  },
+  {
+    name: "mURL_update",
+    requires: "network",
+    description:
+      "Update a mURL DOMAIN channel you own: set branding, mark it 'claimed', 'blocked' (close the room), or reopen it as 'open'. Owner-scoped — you must own the channel (claim it first with mURL_create). Needs your mosADD login session. Backend: murl-manage EF.",
+    inputSchema: mURL_update_input,
+    handler: mURL_update as MosaddTool["handler"],
+  },
+  {
+    name: "mURL_delete",
+    requires: "network",
+    description:
+      "Delete a mURL DOMAIN channel you own (removes its domain_controls row; the room stops being served). Owner-scoped — you must own it. Needs your mosADD login session. Backend: murl-manage EF.",
+    inputSchema: mURL_delete_input,
+    handler: mURL_delete as MosaddTool["handler"],
   },
 ];

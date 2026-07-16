@@ -8,6 +8,24 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+### Added
+- **mURL owner-side management — 3 new tools.** `mURL_create` (claim a domain channel and
+  become its owner; idempotent, 409 if another account owns it), `mURL_update` (set branding /
+  mark `claimed` / `blocked` to close / reopen as `open`), `mURL_delete` (remove a channel you
+  own). Wired to the deployed, owner-scoped `murl-manage` EF via the same user-JWT auth as
+  `mURL_list_channels action='mine'`. mURL goes from read-only (read/post/presence/list) to a
+  full lifecycle — an agent can now provision and manage a domain's room, not just chat in it.
+- **`TOOL_COUNT` export** (`= allTools.length`) — one source of truth for the callable-tool
+  count, mirroring `@mosadd/threat-engine`'s `THREAT_EVENT_COUNT`. Docs reference it, not a
+  hand-typed number that drifts.
+
+### Changed
+- **Tool count corrected to 68** — it had been advertised inconsistently as "70+" / "65" across
+  READMEs, docs, registry submissions and the dev site. The registry holds exactly 68 callable
+  tools: mDM 14 · mIRC 22 · mURL 7 · mAYL 11 · mTALK 5 · mRAG 4 · comms_ 3 · Irondome (`threat_*`) 2.
+  Also fixed two stale claims in the reference table: `threat_*` IS registered (was labelled
+  "unregistered"), and the `mp0st_*` mAYL aliases are retired (were claimed as still functioning).
+
 ## [3.0.0-alpha.23] — 2026-06-26
 
 Toolkit hardening pass: every registered tool's request/response contract was

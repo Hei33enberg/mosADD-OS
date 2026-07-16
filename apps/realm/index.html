@@ -8,6 +8,7 @@
 <meta name="robots" content="index,follow" />
 <meta property="og:title" content="mosADD.dev — build the layer" />
 <meta property="og:description" content="Open MCP toolkit + a contributor kingdom. No VC, no capture. Join the Realm." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23050506'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='700' fill='%2300ff7a' text-anchor='middle'%3Em%3C/text%3E%3C/svg%3E" />
 <style>
   :root{
     --bg:#050506; --panel:#0c0d10; --line:#1c1e24; --ink:#e9edf0; --dim:#8b9199; --faint:#5a6069;
@@ -17,6 +18,15 @@
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--mono);
     font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  /* product visual DNA: a faint grid, and a green glow behind the hero */
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:44px 44px;opacity:.14;
+    -webkit-mask-image:radial-gradient(120% 90% at 50% 0%,#000 30%,transparent 85%);
+    mask-image:radial-gradient(120% 90% at 50% 0%,#000 30%,transparent 85%)}
+  body::after{content:"";position:fixed;top:-260px;left:50%;transform:translateX(-50%);width:900px;height:560px;z-index:0;
+    pointer-events:none;background:radial-gradient(closest-side,rgba(0,255,122,.10),transparent 72%)}
+  header,main,footer{position:relative;z-index:1}
   a{color:var(--green);text-decoration:none}
   a:hover{text-decoration:underline}
   .wrap{max-width:940px;margin:0 auto;padding:0 22px}
@@ -94,7 +104,7 @@
       </h1>
       <div class="term">
         <code><span class="dollar">$</span> npx -y @mosadd/mcp@alpha</code>
-        <code class="cmt"># 65 tools · any MCP agent · Apache-2.0</code>
+        <code class="cmt"># 68 tools · any MCP agent · Apache-2.0</code>
       </div>
       <a class="cta" href="#build">Start building →</a>
       <a class="cta ghost" href="https://github.com/Hei33enberg/mosADD-OS/blob/main/MANIFESTO.md">Read the Manifesto</a>
@@ -118,7 +128,7 @@
 
     <section id="build">
       <h2>Build with the toolkit</h2>
-      <p class="h2sub">One open MCP server. 65 tools. Every agent runtime.</p>
+      <p class="h2sub">One open MCP server. 68 tools. Every agent runtime.</p>
       <p class="lead">Drop <span class="k">@mosadd/mcp</span> into Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and it can send an end-to-end-encrypted DM, run a channel, post to a web-domain room, send mail, hold a push-to-talk floor, recall from a knowledge base, and classify a threat event — all as first-class tools.</p>
       <div class="term"><code><span class="dollar">$</span> claude mcp add mosadd -- npx -y @mosadd/mcp@alpha</code></div>
       <div class="grid">
