@@ -13,6 +13,7 @@ The omnichannel comms layer for humans, agents, and robots — built for the age
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha.28-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
 [![Tools](https://img.shields.io/badge/tools-65%20live-00ff7f)](packages/mcp)
+[![Threat events](https://img.shields.io/badge/threat%20events-166-ff3b3b)](packages/threat-engine)
 [![npm](https://img.shields.io/npm/v/@mosadd/mcp/alpha?label=%40mosadd%2Fmcp)](https://www.npmjs.com/package/@mosadd/mcp)
 [![mosadd.com](https://img.shields.io/badge/site-mosadd.com-5af082)](https://mosadd.com)
 
@@ -89,8 +90,9 @@ This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.
 | `mAYL` | Mail, every user gets `<id>@mosadd.com` (was the `mp0st` codename) | Transport + at-rest (server-readable) | **alpha (shipped)** |
 | `mTALK` | Push-to-talk voice, LLM-as-participant | Transport (LiveKit) | **alpha (shipped)** |
 | `mRAG` | Knowledge base — RAG recall (hybrid vector + BM25) | On-device for E2EE content | **alpha (shipped)** |
+| `Irondome` | On-device threat classification — 166-event, 9-category (SIGINT/CYBER/MASINT/…) catalog + decision engine | Client-side, never phones home | **alpha (shipped)** — `threat_catalog`/`threat_classify` live |
 
-**Encrypted where it counts, honest where it isn't:** we label encryption scope per channel rather than claiming blanket "encryption" — only mDM is end-to-end. Alongside the modules ships [`@mosadd/threat-engine`](./packages/threat-engine) — the **Irondome**: an embeddable, on-device defensive security pillar (Pegasus-class threat-event classification) that runs entirely client-side, where your data already is. Its `threat_catalog` / `threat_classify` MCP tools are **live** — pure, offline classification over the full threat-event taxonomy (the engine decides; the caller acts).
+**Encrypted where it counts, honest where it isn't:** we label encryption scope per channel rather than claiming blanket "encryption" — only mDM is end-to-end. Alongside the modules ships [`@mosadd/threat-engine`](./packages/threat-engine) — the **Irondome**: an embeddable, on-device defensive security pillar (Pegasus-class threat-event classification) that runs entirely client-side, where your data already is. It ships a canonical taxonomy of **166 threat events across 9 intelligence-discipline categories** — SIGINT (69) · MASINT (21) · CYBER (21) · BEHAVIORAL (15) · COMINT (12) · ELINT (10) · MPOST (8) · PRIVACY (7) · OSINT (3) — and a pure `evaluateEvent(event) → {action, severity, reason}` decision engine. Its `threat_catalog` / `threat_classify` MCP tools are **live**: offline, no-backend classification over that full catalog (the engine decides; the caller acts). *Honest scope: 166 events are **classifiable**; a live detector wires up a subset of them to real sensors — the catalog is the map, not a claim that every event is auto-detected on every platform today.*
 
 ## Architecture
 
@@ -120,7 +122,7 @@ Slack, Discord, and email were built for humans clicking screens. mosADD is the 
 - **MCP-native, not another SDK.** Semantic comms primitives — not vendor-shaped tool wrappers. One key, one server, any MCP agent: Claude Code, Cursor, Cline, Windsurf, Goose, or your own runtime.
 - **No phone number. No email. No tracking to sign up.** Every user just gets `<id>@mosadd.com`.
 - **Yours to run.** Apache-2.0 with a patent grant — bring your own keys or self-host the entire stack. No lock-in.
-- **Guarded on-device.** [`@mosadd/threat-engine`](./packages/threat-engine) is the **Irondome**: an embeddable, client-side defensive pillar (Pegasus-class threat classification) that runs where your data already lives — never phoning home.
+- **Guarded on-device.** [`@mosadd/threat-engine`](./packages/threat-engine) is the **Irondome**: an embeddable, client-side defensive pillar — a **166-event, 9-category** (SIGINT/COMINT/ELINT/MASINT/CYBER/BEHAVIORAL/PRIVACY/OSINT/MPOST) Pegasus-class threat catalog + decision engine that runs where your data already lives, never phoning home.
 
 Read the [Manifesto](./MANIFESTO.md) for what we believe, [docs/roadmap.md](./docs/roadmap.md) for the full plan, and [Releases](https://github.com/Hei33enberg/mosADD-OS/releases) for live status.
 
