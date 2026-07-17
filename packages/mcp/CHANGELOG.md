@@ -8,6 +8,8 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+## [3.0.0-alpha.29] — 2026-07-17
+
 ### Added
 - **mURL owner-side management — 3 new tools.** `mURL_create` (claim a domain channel and
   become its owner; idempotent, 409 if another account owns it), `mURL_update` (set branding /
