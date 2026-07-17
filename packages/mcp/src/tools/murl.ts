@@ -177,7 +177,7 @@ async function mURL_presence(
 const mURL_create_input = z.object({
   domain: DomainArg,
   branding: z
-    .record(z.any())
+    .record(z.string(), z.any())
     .optional()
     .describe("Optional branding JSON (e.g. display name, colour, avatar URL) shown on the channel."),
   status: z
@@ -203,7 +203,7 @@ async function mURL_create(
 // ── update (claim status / block / branding) ────────────────────────────────────
 const mURL_update_input = z.object({
   domain: DomainArg,
-  branding: z.record(z.any()).optional().describe("New branding JSON to set on the channel."),
+  branding: z.record(z.string(), z.any()).optional().describe("New branding JSON to set on the channel."),
   status: z
     .enum(["open", "claimed", "blocked"])
     .optional()
