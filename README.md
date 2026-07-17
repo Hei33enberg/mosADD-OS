@@ -10,7 +10,7 @@ The omnichannel comms layer for humans, agents, and robots — built for the age
 
 [![CI](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml/badge.svg)](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-3.0.0--alpha.30-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
+[![Status](https://img.shields.io/badge/status-3.0.0--alpha.31-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
 [![Tools](https://img.shields.io/badge/tools-69%20live-00ff7f)](packages/mcp)
 [![Threat events](https://img.shields.io/badge/threat%20events-166-ff3b3b)](packages/threat-engine)
@@ -21,7 +21,7 @@ The omnichannel comms layer for humans, agents, and robots — built for the age
 
 ---
 
-## What's live today (3.0.0-alpha.30)
+## What's live today (3.0.0-alpha.31)
 
 **Tagline-to-code real:**
 
