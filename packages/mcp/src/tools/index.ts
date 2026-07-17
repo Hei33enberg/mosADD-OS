@@ -12,15 +12,16 @@
  * defensive classification over the threat taxonomy — the surveillance-era
  * *marketing* was killed, the classification engine is real and wanted.
  *
- * 68 callable tools registered — the exact live count is exported as TOOL_COUNT
+ * 69 callable tools registered — the exact live count is exported as TOOL_COUNT
  * (= allTools.length) below; ALWAYS reference that, never re-hard-code a number that drifts.
  * Breakdown (2026-07-17): mDM 14 · mIRC 22 · mAYL 11 · mURL 7 · mTALK 5 · mRAG 4 ·
- * comms 2 · Irondome/threat 2 + comms_capabilities discovery 1 = 68. (mDM/mIRC each
- * include their 2 attachment tools from attachments.ts.)
+ * comms 3 (action_create/frame_get/embed_create) · Irondome/threat 2 + comms_capabilities
+ * discovery 1 = 69. (mDM/mIRC each include their 2 attachment tools from attachments.ts.)
  * Modules (4): mDM, mIRC, mURL, mAYL. Capabilities: mTALK (voice/PTT), mRAG, comms_, Irondome (threat_*).
  * mp0st_* stay as DEPRECATED back-compat aliases for mAYL_* (removed in a later alpha).
  * UNREGISTERED 2026-07-14 (broken scaffolds whose EFs 404/400 every call — re-register when
- * live): mAYL_send_as_agent (mail-provenance), mTALK_ingest_ptt (ptt-ingest), comms_embed_create.
+ * live): mAYL_send_as_agent (mail-provenance), mTALK_ingest_ptt (ptt-ingest).
+ * comms_embed_create RE-REGISTERED 2026-07-17 (embed.mosadd.com/v1.js live — P3 of mURL→mIRC).
  * mROOM was KILLED (LINEAR-3414, channel re-cut → ephemeral private mIRC): its tools
  * live in tools/mroom.ts + mroom-messages.ts but are NOT registered here.
  * Plus action links: comms_action_create (agent → user one-link browser action,
@@ -53,7 +54,7 @@ import { attachmentTools } from "./attachments.js";
 // import { mcallTools } from "./mcall.js"; // mCALL: carrier-pending — not registered (see header note)
 import { knowledgeTools } from "./knowledge.js";
 import { actionTools } from "./actions.js";
-// import { embedTools } from "./embed.js"; // comms_embed_create SCAFFOLD — UNREGISTERED 2026-07-14 (widget backend not live e2e; re-register when embed.mosadd.com ships — CTO-1 live-ping)
+import { embedTools } from "./embed.js"; // comms_embed_create RE-REGISTERED 2026-07-17: embed.mosadd.com/v1.js is LIVE (served by the mosadd Vercel project) — the widget + embed-keys/mirc-embed-token backend were already complete.
 import { threatTools } from "./threat.js"; // threat_*: RE-REGISTERED 2026-07-15 (founder directive + LINEAR-3498). Pure/offline classification of the real Pegasus-class threat taxonomy — the engine DECIDES, the caller acts; no surveillance, no backend.
 import { murlTools } from "./murl.js"; // mURL: REGISTERED — revived as a full dev module (founder 2026-06-27, re-arch). IRC-for-URLs, agent-native; backends live (mosadd-edge + murl-channels EF).
 import { makeCapabilitiesTool } from "./capabilities.js";
@@ -76,7 +77,7 @@ const channelTools: MosaddTool[] = [
   // ...pttIngestTools,    // mTALK_ingest_ptt: UNREGISTERED 2026-07-14 — ptt-ingest EF 400s every call; re-register when payload + PTT→RAG path fixed (CTO-1 live-ping)
   ...knowledgeTools,
   ...actionTools,  // Action links (Tier 1): agent → user one-link browser action via action-create EF
-  // ...embedTools,    // comms_embed_create: UNREGISTERED 2026-07-14 — widget backend not live e2e; re-register when embed.mosadd.com ships (CTO-1 live-ping)
+  ...embedTools,    // comms_embed_create: RE-REGISTERED 2026-07-17 — embed.mosadd.com/v1.js live; mints an embed key + paste-in snippet (mURL→mIRC rework P3)
   ...threatTools,  // threat_catalog + threat_classify: RE-REGISTERED 2026-07-15 (founder directive + LINEAR-3498) — pure/offline, makes the Pegasus-class classification claim a live, callable capability
   ...murlTools,  // mURL: revived as a full module (founder 2026-06-27) — read/post/presence/list_channels over live domain channels
   // ...mcallTools,  // mCALL: carrier-pending (no telephony carrier live) — re-register when a carrier is configured

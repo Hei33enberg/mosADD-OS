@@ -1,6 +1,6 @@
 # @mosadd/ai
 
-Framework adapters for [mosADD](https://mosadd.com) — use the 68 mosADD toolkit tools directly from your favorite agent framework without spinning up the MCP server.
+Framework adapters for [mosADD](https://mosadd.com) — use the 69 mosADD toolkit tools directly from your favorite agent framework without spinning up the MCP server.
 
 **One package, four entrypoints, atomic releases** — pattern stolen from [Stripe Agent Toolkit](https://github.com/stripe/agent-toolkit).
 

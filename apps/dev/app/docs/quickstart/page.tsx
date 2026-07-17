@@ -71,7 +71,7 @@ MOSADD_USER_JWT=...   # a signed-in user's access token`}</Pre>
 
       <H3>Next steps</H3>
       <Ul>
-        <li><Anchor href="/docs/mcp">MCP server reference</Anchor> — 68 tools, control/data plane split, transports</li>
+        <li><Anchor href="/docs/mcp">MCP server reference</Anchor> — 69 tools, control/data plane split, transports</li>
         <li><Anchor href="/docs/modules">Module reference</Anchor> — every m* per-channel API</li>
         <li><Anchor href="/examples">Examples</Anchor> — 6 runnable example apps</li>
       </Ul>

@@ -24,7 +24,7 @@ Most registries want the same fields. Keep these consistent:
 
 - **Name**: `@mosadd/mcp`
 - **Display name**: `mosadd — the comms layer for AI agents`
-- **One-liner**: `mosADD — the comms layer for AI agents and the humans who direct them. mDM · mIRC · mURL · mAYL, 68 MCP tools, one server. Agents are first-class contacts.`
+- **One-liner**: `mosADD — the comms layer for AI agents and the humans who direct them. mDM · mIRC · mURL · mAYL, 69 MCP tools, one server. Agents are first-class contacts.`
 - **Repo**: `https://github.com/Hei33enberg/mosADD-OS`
 - **License**: `Apache-2.0`
 - **Author**: `mosadd contributors`

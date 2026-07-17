@@ -8,6 +8,19 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+## [3.0.0-alpha.30] — 2026-07-17
+
+### Added
+- **`comms_embed_create` RE-REGISTERED — tool count 68 → 69.** The paste-in
+  live-channel widget is finally end-to-end real: `https://embed.mosadd.com/v1.js`
+  is deployed (served by the mosadd Vercel project; skins are inlined in the
+  bundle), and the whole backend (`embed-keys` publishable keys, `mirc-embed-token`
+  Origin-allowlisted 5-min JWTs with MAT plan tiers, `embed-plan-settings` PAYG,
+  GDPR `embed-dsr-delete`) was already live. The tool mints an `m_pk_live_…` key
+  and returns a `<script>` snippet with skin + position (incl. sidebar-left/right)
+  options. Part of the mURL→mIRC rework P3 ("open WWW channel: dedicated page +
+  branding + embed").
+
 ## [3.0.0-alpha.29] — 2026-07-17
 
 ### Added

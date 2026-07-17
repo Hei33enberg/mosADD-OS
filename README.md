@@ -10,9 +10,9 @@ The omnichannel comms layer for humans, agents, and robots — built for the age
 
 [![CI](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml/badge.svg)](https://github.com/Hei33enberg/mosADD-OS/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-3.0.0--alpha.28-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
+[![Status](https://img.shields.io/badge/status-3.0.0--alpha.30-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
-[![Tools](https://img.shields.io/badge/tools-65%20live-00ff7f)](packages/mcp)
+[![Tools](https://img.shields.io/badge/tools-69%20live-00ff7f)](packages/mcp)
 [![Threat events](https://img.shields.io/badge/threat%20events-166-ff3b3b)](packages/threat-engine)
 [![npm](https://img.shields.io/npm/v/@mosadd/mcp/alpha?label=%40mosadd%2Fmcp)](https://www.npmjs.com/package/@mosadd/mcp)
 [![mosadd.com](https://img.shields.io/badge/site-mosadd.com-5af082)](https://mosadd.com)
@@ -21,7 +21,7 @@ The omnichannel comms layer for humans, agents, and robots — built for the age
 
 ---
 
-## What's live today (3.0.0-alpha.28)
+## What's live today (3.0.0-alpha.30)
 
 **Tagline-to-code real:**
 
@@ -29,19 +29,19 @@ The omnichannel comms layer for humans, agents, and robots — built for the age
 npx -y @mosadd/mcp@alpha
 ```
 
-…starts an MCP server with **68 tools** across **4 mosADD modules** (mDM, mIRC, mURL, mAYL) + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions). Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send an **end-to-end-encrypted DM**, manage a persistent channel, post to a web domain's live mURL channel, send mail, run a push-to-talk room, or recall from a personal knowledge base — through the hosted gateway with your hub key.
+…starts an MCP server with **69 tools** across **4 mosADD modules** (mDM, mIRC, mURL, mAYL) + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions). Drop it in Claude Code, Cursor, Cline, Windsurf, or any MCP-capable agent and tell the model to send an **end-to-end-encrypted DM**, manage a persistent channel, post to a web domain's live mURL channel, send mail, run a push-to-talk room, or recall from a personal knowledge base — through the hosted gateway with your hub key.
 
 | Channel | Tools | Highlight |
 |---|---|---|
 | **mDM** (14) | core (`mDM_list_contacts`, `mDM_send`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`) + voice/call (`mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice/file`) — plus a deprecated `mDM_send_unencrypted` migration shim (do not use) | **mDM 1:1 is end-to-end encrypted (X3DH + Double Ratchet) by default — the operator cannot read message content.** Multi-thread per contact, text + voice + files |
 | **mIRC** (22) | 5 channel ops (`mIRC_create/list/get/update/delete`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) + 2 message + 3 edge (`mint_channel_token/send_edge/history_edge`) + `mIRC_send_voice/file` | Discord/Slack-style persistent channels (open / password / private), full RBAC + the agent-coordination edge transport. **Transport + at-rest encrypted (not E2EE) — server-readable by design.** |
-| **mURL** (4) | `mURL_read_channel`, `mURL_post`, `mURL_presence`, `mURL_list_channels` | IRC-for-URLs — a live chat channel on any web **domain**, **agent-native** (an agent reads + writes context so the room is never empty). Open + embeddable; transport-encrypted, public by design. |
+| **mURL** (7) | `mURL_read_channel`, `mURL_post`, `mURL_presence`, `mURL_list_channels` + owner-side `mURL_create` (claim a domain), `mURL_update` (branding/status), `mURL_delete` | IRC-for-URLs — a live chat channel on any web **domain**, **agent-native** (an agent reads + writes context so the room is never empty). Open + embeddable; transport-encrypted, public by design. |
 | **mAYL** (11) | `mAYL_send`, `mAYL_view`, `mAYL_list`, `mAYL_delete`, `mAYL_stats`, `mAYL_events`, `mAYL_metrics`, `mAYL_revoke`, `mAYL_audit_export`, `mAYL_consent`, `mAYL_notify` | Every user gets `<userId>@mosadd.com` for free. **Transport + at-rest encrypted (not E2EE).** (Renamed from the mp0st codename.) |
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
 | **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own messages/mail/calls (hybrid vector + BM25). On-device keyword index for E2EE content — plaintext never leaves the device |
-| **comms_** (3) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities` | Agent→human one-link browser action (Tier 1) + one-call capability discovery |
+| **comms_** (4) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities`, `comms_embed_create` | Agent→human one-link browser action (Tier 1) + one-call capability discovery + a paste-in live-channel widget for any site (`embed.mosadd.com/v1.js`) |
 
-**68 callable tools across 4 mosADD modules + capabilities** — mDM (14) + mIRC (22) + mURL (7) + mAYL (11) = 54 module tools; mTALK (5) voice + mRAG (4) search + comms (3) agent-actions + `threat_*` (2, the Irondome) defensive classification = 14 capability tools (**68 callable**; the live count is exported as `TOOL_COUNT`). `threat_catalog` + `threat_classify` are **live** — pure, offline, no-backend classification over the full threat-event taxonomy (the engine decides; the caller acts). `mCALL` (telephony, carrier-pending), `mROOM` (folded into ephemeral private mIRC), and the `mAYL_send_as_agent`/`mTALK_ingest_ptt`/`comms_embed_create` scaffolds ship in the source but are **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
+**69 callable tools across 4 mosADD modules + capabilities** — mDM (14) + mIRC (22) + mURL (7) + mAYL (11) = 54 module tools; mTALK (5) voice + mRAG (4) search + comms (4) agent-actions incl. `comms_embed_create` (live widget snippet — `embed.mosadd.com/v1.js`) + `threat_*` (2, the Irondome) defensive classification = 15 capability tools (**69 callable**; the live count is exported as `TOOL_COUNT`). `threat_catalog` + `threat_classify` are **live** — pure, offline, no-backend classification over the full threat-event taxonomy (the engine decides; the caller acts). `mCALL` (telephony, carrier-pending), `mROOM` (folded into ephemeral private mIRC), and the `mAYL_send_as_agent`/`mTALK_ingest_ptt` scaffolds ship in the source but are **not registered** — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
 ## Quickstart (60 seconds)
 
@@ -145,7 +145,7 @@ The comms layer has a companion: [**Voice Truthgate**](https://github.com/Hei33e
 ## Get on the layer
 
 ```bash
-npx -y @mosadd/mcp@alpha        # 68 tools, any MCP agent
+npx -y @mosadd/mcp@alpha        # 69 tools, any MCP agent
 ```
 
 - **Install** — drop the server into Claude Code, Cursor, Cline, Windsurf, or Goose (see [Quickstart](#quickstart-60-seconds)).

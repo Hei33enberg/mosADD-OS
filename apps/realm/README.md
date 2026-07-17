@@ -3,7 +3,7 @@
 Static single-page front door for developers & contributors, served at **mosadd.dev**.
 mosadd.com = the product (consumers); mosadd.dev = the kingdom (builders).
 
-Sections: manifesto-for-builders · toolkit quickstart (68 tools) · the REALM ladder
+Sections: manifesto-for-builders · toolkit quickstart (69 tools) · the REALM ladder
 (L0–L5) · Hall of Fame · "what we will never do".
 
 ## Deploy

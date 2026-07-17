@@ -40,7 +40,7 @@ export default function McpPage() {
       />
 
       <P>
-        Total surface today: <strong>68 tools</strong> — modules mDM ×14 (incl. voice + file/voice) / mIRC ×22 / mURL ×7 (read/post/presence/list + create/update/delete) / mAYL ×11 — plus capabilities mTALK ×5, mRAG ×4, Irondome ×2 (<code className="font-mono text-primary">threat_catalog</code>, <code className="font-mono text-primary">threat_classify</code>), and the comms_ tools (<code className="font-mono text-primary">comms_action_create</code>, <code className="font-mono text-primary">comms_action_frame_get</code>, <code className="font-mono text-primary">comms_capabilities</code>).
+        Total surface today: <strong>69 tools</strong> — modules mDM ×14 (incl. voice + file/voice) / mIRC ×22 / mURL ×7 (read/post/presence/list + create/update/delete) / mAYL ×11 — plus capabilities mTALK ×5, mRAG ×4, Irondome ×2 (<code className="font-mono text-primary">threat_catalog</code>, <code className="font-mono text-primary">threat_classify</code>), and the comms_ tools (<code className="font-mono text-primary">comms_action_create</code>, <code className="font-mono text-primary">comms_action_frame_get</code>, <code className="font-mono text-primary">comms_capabilities</code>, <code className="font-mono text-primary">comms_embed_create</code> — a paste-in live-channel widget for any site).
       </P>
 
       <H2>Transports</H2>

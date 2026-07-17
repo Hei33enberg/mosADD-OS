@@ -48,7 +48,7 @@ export default function DocsIndexPage() {
 
       <H2>Status</H2>
       <P>
-        <strong>alpha — toolkit live.</strong> The MCP server ships 68 tools across the toolkit today. Track progress on{' '}
+        <strong>alpha — toolkit live.</strong> The MCP server ships 69 tools across the toolkit today. Track progress on{' '}
         <Anchor href="https://linear.app/ip-ra/project/mosadd-deaa4bef6de8">Linear</Anchor>.
       </P>
       <P>
