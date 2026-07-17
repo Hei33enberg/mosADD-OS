@@ -8,6 +8,18 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+## [3.0.0-alpha.31] — 2026-07-17
+
+### Fixed
+- **`mURL_create` / `mURL_update` branding validation.** The `branding` arg used
+  `z.record(z.any())` — the Zod v3 single-argument form — which fails typecheck under
+  this project's Zod v4, where `z.record` requires both a key and a value schema. Now
+  `z.record(z.string(), z.any())`. alpha.30 shipped with the pre-fix source; alpha.31
+  corrects it so the published package builds clean and validates branding correctly.
+- **CI green (repo).** Synced the version refs (`server.json`, `server.ts` serverInfo,
+  `marketplace.json`) to `package.json`, and updated the MCP smoke test to expect
+  `mAYL_send` — the `mp0st_*` aliases were retired in alpha.28.
+
 ## [3.0.0-alpha.30] — 2026-07-17
 
 ### Added
