@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/main/apps/realm/icon-512.png" width="132" alt="mosADD" />
+
 # mosADD™
 
 **They're apps. We're the layer.**

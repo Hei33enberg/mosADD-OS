@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- mosADD mark: open VAULT gates (white) + green sun, on black -->
+  <rect width="512" height="512" fill="#000000"/>
+  <circle cx="256" cy="244" r="92" fill="#00FF6A"/>
+  <polygon points="66,424 150,88 234,424" fill="#FFFFFF"/>
+  <polygon points="278,424 362,88 446,424" fill="#FFFFFF"/>
+  <rect x="66" y="438" width="380" height="12" fill="#FFFFFF" opacity="0.92"/>
+</svg>
