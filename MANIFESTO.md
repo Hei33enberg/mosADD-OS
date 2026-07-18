@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/main/apps/realm/icon-512.png" width="120" alt="mosADD" /></p>
+
 # The mosADD™ Manifesto
 
 > **They're apps. We're the layer.**
