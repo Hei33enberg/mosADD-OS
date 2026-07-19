@@ -30,10 +30,12 @@ const AccessMode = z
 const Capabilities = z
   .object({
     txt: z.boolean().default(true),
+    voice: z.boolean().default(false),
+    files: z.boolean().default(false),
     ptt: z.boolean().default(false),
     live: z.boolean().default(false),
   })
-  .describe("Which modes are enabled in this channel: txt (text), ptt (push-to-talk voice), live (live stream).")
+  .describe("Which modes are enabled: txt (text), voice (group voice), files (file attach), ptt (push-to-talk), live (live stream). Voice/PTT/live are server-relayed via LiveKit — NOT end-to-end encrypted.")
   .optional();
 
 const mIRC_create_input = z.object({
@@ -42,6 +44,10 @@ const mIRC_create_input = z.object({
   access_mode: AccessMode.default("open"),
   password: z.string().min(6).max(120).optional().describe("Password (only for access_mode=password)."),
   capabilities: Capabilities,
+  discoverable: z
+    .boolean()
+    .optional()
+    .describe("List this channel in the PUBLIC directory (mIRC_discover). Honoured ONLY for access_mode=open; ignored for password/private."),
   wrapped_group_key: z
     .string()
     .optional()
@@ -70,6 +76,19 @@ const mIRC_update_input = z.object({
   // switching an existing channel to/from an E2EE (password/private) mode needs
   // group-key handling that isn't wired yet. Recreate the channel to change mode.
   capabilities: Capabilities,
+  discoverable: z.boolean().optional().describe("Toggle public-directory listing (open channels only)."),
+});
+
+const mIRC_discover_input = z.object({
+  q: z.string().max(100).optional().describe("Optional channel-name filter."),
+  limit: z.number().int().min(1).max(500).default(50).optional(),
+  offset: z.number().int().min(0).default(0).optional(),
+});
+
+const mIRC_report_input = z.object({
+  channel_id: ChannelId,
+  reason: z.enum(["spam", "abuse", "harassment", "illegal", "other"]).describe("Report reason."),
+  detail: z.string().max(1000).optional().describe("Optional free-text context."),
 });
 
 const mIRC_delete_input = z.object({
@@ -147,6 +166,31 @@ async function mIRC_delete(
   return { deleted: true };
 }
 
+async function mIRC_discover(
+  input: z.infer<typeof mIRC_discover_input>,
+  ctx: MosaddToolContext,
+): Promise<{ channels: unknown[] }> {
+  readSupabaseEnv();
+  ctx.log("debug", "mIRC_discover invoking channel-manage");
+  return await invokeFunction<{ channels: unknown[] }>("channel-manage", {
+    action: "discover",
+    ...input,
+  });
+}
+
+async function mIRC_report(
+  input: z.infer<typeof mIRC_report_input>,
+  ctx: MosaddToolContext,
+): Promise<{ ok: boolean }> {
+  readSupabaseEnv();
+  ctx.log("debug", "mIRC_report invoking report-content", { channel_id: input.channel_id });
+  return await invokeFunction<{ ok: boolean }>("report-content", {
+    thread_id: `channel:${input.channel_id}`,
+    reason: input.reason,
+    detail: input.detail,
+  });
+}
+
 // ---- Registration ----
 
 export const mircTools: MosaddTool[] = [
@@ -154,7 +198,7 @@ export const mircTools: MosaddTool[] = [
     name: "mIRC_create",
     requires: "network",
     description:
-      "Create a new persistent channel (Discord/Slack-style). Set access_mode to open (anyone joins), password (shared-password gated), or private (invite-only). capabilities controls modes (txt/ptt/live). NOTE: password and private channels are end-to-end encrypted — you must supply wrapped_group_key (the group key wrapped to your identity key); open channels do not need it.",
+      "Create a new persistent channel (Discord/Slack-style). Set access_mode to open (anyone joins), password (shared-password gated), or private (invite-only). capabilities controls modes (txt/voice/files/ptt/live; voice/ptt/live are server-relayed via LiveKit, NOT E2EE). Set discoverable:true (open channels only) to list it in the public directory. NOTE: password and private channels have end-to-end encrypted TEXT — supply wrapped_group_key (the group key wrapped to your identity key); open channels do not need it. Channel voice is never E2EE.",
     inputSchema: mIRC_create_input,
     handler: mIRC_create as MosaddTool["handler"],
   },
@@ -186,5 +230,21 @@ export const mircTools: MosaddTool[] = [
     description: "Delete a channel and cascade-remove its members. Owner only.",
     inputSchema: mIRC_delete_input,
     handler: mIRC_delete as MosaddTool["handler"],
+  },
+  {
+    name: "mIRC_discover",
+    requires: "network",
+    description:
+      "Browse the PUBLIC channel DIRECTORY — open channels whose owners opted in (discoverable=true). Returns {id, channel_key, name, description, capabilities, member_count, is_member}. Filter by name with q; paginated. Join a result with mIRC_join (open = one-click). Private/password/partner channels never appear.",
+    inputSchema: mIRC_discover_input,
+    handler: mIRC_discover as MosaddTool["handler"],
+  },
+  {
+    name: "mIRC_report",
+    requires: "network",
+    description:
+      "Report a channel for abuse (spam/harassment/illegal/etc). Metadata + reason only — never message content. The reported party is the channel owner (server-derived). Use for public-directory moderation.",
+    inputSchema: mIRC_report_input,
+    handler: mIRC_report as MosaddTool["handler"],
   },
 ];

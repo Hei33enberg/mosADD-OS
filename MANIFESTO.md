@@ -20,7 +20,7 @@ We think the moment demands the opposite: communication as **infrastructure** �
 Telegram, Slack, Gmail, and Discord are apps. mosADD is the layer underneath them — semantic, MCP-native primitives any human, agent, or robot can plug into. An agent is a contact, not a bot. A robot is a contact, not an endpoint. A human is pulled in the instant a machine needs a decision, through the `[need-human]` loop.
 
 **2. Encrypted where it counts, honest where it isn't.**
-mDM 1:1 messages are end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content. mIRC channels, mURL rooms, and mAYL mail are transport-encrypted in flight and at rest, but server-readable by design — and we label them so, per channel, in the tools themselves. Our differentiator is not that everything is encrypted. It is that **we never lie about what is**. The full posture lives in this repo: [docs/security/e2ee-posture.md](./docs/security/e2ee-posture.md). Check us.
+mDM 1:1 messages are end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content. mIRC **private and password channels** end-to-end-encrypt their **text** with a per-channel group key the operator can't read. **Open** mIRC channels, mURL rooms, and mAYL mail are transport-encrypted in flight and at rest but server-readable by design; **all channel voice is server-relayed** (never end-to-end). We label encryption per channel, in the tools themselves. Our differentiator is not that everything is encrypted. It is that **we never lie about what is**. The full posture lives in this repo: [docs/security/e2ee-posture.md](./docs/security/e2ee-posture.md). Check us.
 
 **3. We will not build scanning backdoors.**
 Chat Control and its siblings — in the EU, the US, or anywhere else — ask operators to scan what people say before it is sealed. We refuse. If a law requires us to scan or weaken mDM's end-to-end encryption, we will withdraw from that market before we break the seal. We designed mDM so that we hold no message content to hand over. We do not claim to be beyond the reach of any law — no one is — but we can promise what we control: **we will not build the scanner.**
@@ -37,7 +37,7 @@ Centralized infrastructure is a single point of pressure. Our direction is decen
 ## What we will never do
 
 - Sell or mine your message content for advertising.
-- Claim blanket encryption. Only mDM is end-to-end, and we say so.
+- Claim blanket encryption. Only mDM and private/password-channel text are end-to-end encrypted — and we label it per channel.
 - Build content-scanning into mDM — under any law, in any market.
 - Take investor money that can outvote the mission.
 - Claim decentralization we have not shipped.

@@ -24,7 +24,7 @@ Install: `npx -y @mosadd/mcp@alpha`
 
 ## Modules (m*)
 - mDM — 1:1 direct messages, the only end-to-end-encrypted module by default (X3DH + Double Ratchet; operator cannot read content), text + voice (14 tools)
-- mIRC — persistent channels, server-readable (22 tools)
+- mIRC — persistent channels; open = server-readable, password/private = end-to-end-encrypted text (per-channel group key), voice server-relayed (24 tools)
 - mURL — open-web rooms on any domain, server-readable; read/post/presence/discovery + owner-side create/claim, update, delete (7 tools)
 - mAYL — email 3.0, every user gets <id>@mosadd.com, server-readable (11 tools)
 

@@ -9,7 +9,7 @@
 
 ## Encryption (honest)
 - mDM 1:1 direct messages are end-to-end encrypted by default (X3DH + Double Ratchet); the operator cannot read them.
-- Channels, rooms and mail are server-readable by design and labelled plainly. mosADD never claims more encryption than the code delivers.
+- mIRC private & password channels end-to-end-encrypt their text with a per-channel group key (operator can't read it). Open channels, rooms and mail are server-readable by design; all channel voice is server-relayed. Labelled per channel — mosADD never claims more encryption than the code delivers.
 
 ## Toolkit (@mosadd/mcp — 69 tools)
 - Install: `npx -y @mosadd/mcp@alpha` — works with Claude Code, Cursor, Cline, Windsurf, or any MCP agent.

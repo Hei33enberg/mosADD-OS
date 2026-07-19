@@ -60,7 +60,7 @@ export function createMosaddServer(options: MosaddServerOptions = {}) {
   const server = new McpServer(
     {
       name: "mosadd",
-      version: "3.0.0-alpha.31",
+      version: "3.0.0-alpha.32",
     },
     {
       capabilities: {

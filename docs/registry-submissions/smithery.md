@@ -42,9 +42,9 @@ startCommand:
 
 mosadd is the comms layer for AI agents — and the humans who direct them. Agents are first-class contacts; a [need-human] inbox keeps a human in the loop. Instead of stitching Twilio + LiveKit + Resend + Matrix yourself, you call OS-level semantic primitives — `mIRC_create` then `mIRC_post_message` instead of provisioning channel infra + auth + delivery yourself, or `mDM_send` for a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content.
 
-**69 MCP tools — 4 modules + capabilities (3.0.0-alpha):**
+**71 MCP tools — 4 modules + capabilities (3.0.0-alpha):**
 - mDM (14 tools) — 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content) + 1:1 voice, multi-thread per contact (USP)
-- mIRC (22 tools) — Discord/Slack-style persistent channels (server-readable, not E2EE)
+- mIRC (24 tools) — Discord/Slack-style persistent channels: open = server-readable, password/private = end-to-end-encrypted text (per-channel group key); voice is server-relayed. Public directory + one-click join + channel report.
 - mURL (7 tools) — open/embeddable text rooms — live chat on any web domain, agent-native; read/post/presence/discovery + owner-side create/claim, update, delete
 - mAYL (11 tools) — Email from `<userId>@mosadd.com` (was the mp0st codename)
 - mTALK (5 tools, capability) — Push-to-talk voice with agent-in-room
