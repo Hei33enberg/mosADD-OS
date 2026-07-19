@@ -8,6 +8,27 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+## [3.0.0-alpha.32] — 2026-07-19
+
+### Added
+- **`mIRC_discover`** — browse the PUBLIC channel directory (open channels whose
+  owners set `discoverable=true`). Filter by name, paginated; join a result with
+  `mIRC_join` (open = one-click). Private/password/partner channels never appear.
+- **`mIRC_report`** — report a channel for abuse/moderation (routes to the shared
+  `content_reports` store as `channel:<id>`), the moderation floor for public discovery.
+- **`discoverable`** flag on `mIRC_create` / `mIRC_update` (honoured only for
+  `access_mode=open`), plus `voice` + `files` added to the capabilities enum.
+- Tool count **69 → 71** (mIRC **22 → 24**); `TOOL_COUNT` (`= allTools.length`) stays
+  the single source of truth.
+
+### Changed
+- **Encryption posture wording corrected across docs.** `mIRC_post_message` posts a
+  **server-readable** plaintext payload — the per-channel group-key TEXT E2EE is the
+  mosadd.com **app** (supported clients), not the toolkit (parity is the next crypto
+  milestone). Tool descriptions, README, MANIFESTO, e2ee-posture and the registry
+  copy now state this instead of implying private/password channels are E2EE via the
+  toolkit. Voice/PTT is always server-relayed (LiveKit SFU, DTLS-SRTP hop-by-hop).
+
 ## [3.0.0-alpha.31] — 2026-07-17
 
 ### Fixed

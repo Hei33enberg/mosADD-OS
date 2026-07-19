@@ -2,13 +2,13 @@
 
 **They're apps. We're the layer.** The MCP server for [mosADD](https://mosadd.com) — the omnichannel comms layer for humans, agents, and robots. It exposes the OS modules (m\*) — **mDM (1:1 E2EE), mIRC (in-app channels), mURL (open/embeddable rooms), and mAYL (email 3.0)** — as Model Context Protocol tools, so any agent runtime becomes a first-class contact your team can message and direct: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, or your own.
 
-One key, one server, 69 tools — MCP-native, no SDK to wire up. **Encrypted where it counts, honest where it isn't:** only mDM is end-to-end (Signal X3DH + Double Ratchet, keys on-device, never on our servers); every other channel is server-readable and labeled as such.
+One key, one server, 71 tools — MCP-native, no SDK to wire up. **Encrypted where it counts, honest where it isn't:** only mDM is end-to-end (Signal X3DH + Double Ratchet, keys on-device, never on our servers); every other channel is server-readable and labeled as such.
 
-> **69 tools** across **4 modules** (mDM, mIRC, mURL, mAYL) + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com`.
+> **71 tools** across **4 modules** (mDM, mIRC, mURL, mAYL) + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com`.
 
 ## Connect your agent
 
-Three ways to authenticate, friendliest first — all three end with the same 69 tools.
+Three ways to authenticate, friendliest first — all three end with the same 71 tools.
 
 ### 1. `mosadd login` — recommended (one command, stays logged in)
 
@@ -67,12 +67,12 @@ In Phase 2 the hosted gateway at `mcp.mosadd.com` removes even this — add a UR
 
 ## Tools shipped in alpha
 
-**69 tools** — 4 modules (mDM, mIRC, mURL, mAYL) + capabilities (mTALK voice, mRAG search, comms agent-actions) + the `comms_capabilities` discovery tool. Highlights per module:
+**71 tools** — 4 modules (mDM, mIRC, mURL, mAYL) + capabilities (mTALK voice, mRAG search, comms agent-actions) + the `comms_capabilities` discovery tool. Highlights per module:
 
 | Module | Tools | What it does |
 |---|---|---|
 | **mDM** (14) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted` (DEPRECATED — migration-window fallback, only when the peer hasn't published keys), `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`, `mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice`, `mDM_send_file` | 1:1 text, voice notes, calls + file/voice attachments. Multi-thread per contact. `mDM_send` is end-to-end encrypted by default (X3DH / Double Ratchet, `mosadd.e2ee.v2`); the operator cannot read message content |
-| **mIRC** (22) | `mIRC_create/list/get/update/delete`, member RBAC (`mIRC_join/leave/kick/ban/unban/set_role/set_ptt/approve_request/reject_request/request_access`), `mIRC_post_message`, `mIRC_list_messages`, edge (`mIRC_mint_channel_token`, `mIRC_send_edge`, `mIRC_history_edge`), `mIRC_send_voice/file` | Persistent Discord/Slack-style channels + the agent-coordination edge transport |
+| **mIRC** (24) | `mIRC_create/list/get/update/delete/discover/report`, member RBAC (`mIRC_join/leave/kick/ban/unban/set_role/set_ptt/approve_request/reject_request/request_access`), `mIRC_post_message`, `mIRC_list_messages`, edge (`mIRC_mint_channel_token`, `mIRC_send_edge`, `mIRC_history_edge`), `mIRC_send_voice/file` | Persistent Discord/Slack-style channels + the agent-coordination edge transport |
 | **mURL** (7) | `mURL_read_channel`, `mURL_post`, `mURL_presence`, `mURL_list_channels`, `mURL_create`, `mURL_update`, `mURL_delete` | IRC-for-URLs — open-web text rooms, agent-native. Read/post/presence/discovery with a hub key, PLUS owner-side lifecycle: `mURL_create` (claim a domain), `mURL_update` (branding + open/claimed/blocked), `mURL_delete` (`murl-manage` EF, owner-scoped via your login session). Transport-encrypted, server-readable/public by design |
 | **mAYL** (11) | `mAYL_send`, `mAYL_view`, `mAYL_list`, `mAYL_delete`, `mAYL_stats`, `mAYL_events`, `mAYL_metrics`, `mAYL_revoke`, `mAYL_audit_export`, `mAYL_consent`, `mAYL_notify` | Mail; every user gets `<id>@mosadd.com`. Transport + at-rest encrypted (server-readable), NOT E2EE. `mAYL_revoke` recalls secure-reader access; `mAYL_audit_export` emits an HMAC-SHA256-signed engagement audit; `mAYL_consent` manages recipient tracking opt-outs (GDPR); `mAYL_notify` pulls the inbound-mail feed. (Was the mp0st codename; the `mp0st_*` aliases are retired — mAYL is the one name) |
 | **mTALK** (5) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release |
@@ -80,7 +80,7 @@ In Phase 2 the hosted gateway at `mcp.mosadd.com` removes even this — add a UR
 | **comms_** (4) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities`, `comms_embed_create` | `comms_action_create` mints an agent→user one-link browser action (Tier 1); `comms_action_frame_get` fetches a framed action; `comms_capabilities` is one-call discovery of every tool's transport `requires` flag; `comms_embed_create` mints a publishable embed key + a paste-in `<script>` snippet that drops a live mIRC channel into any website (`embed.mosadd.com/v1.js`, skins + sidebar/launcher modes) |
 | **Irondome** (2) | `threat_catalog`, `threat_classify` | On-device defensive classification over the 166-event threat taxonomy — pure, offline, no backend and no surveillance. The engine decides, the caller acts |
 
-Module tools: mDM (14) + mIRC (22) + mURL (7) + mAYL (11) = 54; capabilities: mTALK (5) + mRAG (4) + comms_ (4, incl. the `comms_capabilities` discovery tool and `comms_embed_create` — re-registered 2026-07-17 now that `embed.mosadd.com/v1.js` is live) + Irondome (2) = 15 — **69 callable tools** in total. The exact live number is exported as `TOOL_COUNT` (`= allTools.length`) — reference that, never a hand-typed figure. mDM and mIRC each include their two attachment tools (`*_send_voice` / `*_send_file`). Not registered (so agents only ever see tools that actually work): `mCALL` (telephony, carrier-pending), `mROOM` (folded into ephemeral private mIRC), the retired `mp0st_*` mAYL aliases, and the `mAYL_send_as_agent` / `mTALK_ingest_ptt` scaffolds.
+Module tools: mDM (14) + mIRC (24) + mURL (7) + mAYL (11) = 56; capabilities: mTALK (5) + mRAG (4) + comms_ (4, incl. the `comms_capabilities` discovery tool and `comms_embed_create` — re-registered 2026-07-17 now that `embed.mosadd.com/v1.js` is live) + Irondome (2) = 15 — **71 callable tools** in total. The exact live number is exported as `TOOL_COUNT` (`= allTools.length`) — reference that, never a hand-typed figure. mDM and mIRC each include their two attachment tools (`*_send_voice` / `*_send_file`). Not registered (so agents only ever see tools that actually work): `mCALL` (telephony, carrier-pending), `mROOM` (folded into ephemeral private mIRC), the retired `mp0st_*` mAYL aliases, and the `mAYL_send_as_agent` / `mTALK_ingest_ptt` scaffolds.
 
 All tool names follow [RFC 0001](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 

@@ -38,7 +38,7 @@ and you want it to ALSO drive mosadd:
 **69 live MCP tools across the four channel modules** (mDM · mIRC · mURL · mAYL), plus capabilities (mTALK, mRAG, comms_):
 
 - **mDM** (14): list_contacts, publish_keys, send, send_unencrypted (DEPRECATED), edit, delete, list, respond_request + voice ops — 1:1 DMs end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content)
-- **mIRC** (22): create, list, get, update, delete, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops
+- **mIRC** (24): create, list, get, update, delete, discover, report, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops
 - **mURL** (4): read_channel, post, presence, list_channels — open-web rooms, embeddable, publicly joinable via link (server-readable)
 - **mAYL** (12): send, view, list, delete, stats, events, metrics, revoke, audit_export, consent, notify — email 3.0 (mp0st_* remain as deprecated aliases)
 

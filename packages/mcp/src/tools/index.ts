@@ -12,9 +12,9 @@
  * defensive classification over the threat taxonomy — the surveillance-era
  * *marketing* was killed, the classification engine is real and wanted.
  *
- * 69 callable tools registered — the exact live count is exported as TOOL_COUNT
+ * 71 callable tools registered — the exact live count is exported as TOOL_COUNT
  * (= allTools.length) below; ALWAYS reference that, never re-hard-code a number that drifts.
- * Breakdown (2026-07-17): mDM 14 · mIRC 22 · mAYL 11 · mURL 7 · mTALK 5 · mRAG 4 ·
+ * Breakdown (2026-07-17): mDM 14 · mIRC 24 · mAYL 11 · mURL 7 · mTALK 5 · mRAG 4 ·
  * comms 3 (action_create/frame_get/embed_create) · Irondome/threat 2 + comms_capabilities
  * discovery 1 = 69. (mDM/mIRC each include their 2 attachment tools from attachments.ts.)
  * Modules (4): mDM, mIRC, mURL, mAYL. Capabilities: mTALK (voice/PTT), mRAG, comms_, Irondome (threat_*).

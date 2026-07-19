@@ -36,7 +36,7 @@ startCommand:
 
 **Title:** mosadd — the comms layer for AI agents
 
-**Tagline:** mosADD — the comms layer for AI agents and the humans who direct them. mDM · mIRC · mURL · mAYL, 69 MCP tools, one server. Agents are first-class contacts.
+**Tagline:** mosADD — the comms layer for AI agents and the humans who direct them. mDM · mIRC · mURL · mAYL, 71 MCP tools, one server. Agents are first-class contacts.
 
 **Long description:**
 
