@@ -33,7 +33,7 @@ const Role = z
 
 const mIRC_join_input = z.object({
   channel_id: ChannelId,
-  password: z.string().min(1).optional().describe("Required if the channel is access_mode=private."),
+  password: z.string().min(1).optional().describe("Pass only for access_mode=password channels. Private channels cannot be joined directly (403) — use mIRC_request_access."),
 });
 
 const mIRC_request_access_input = z.object({
@@ -122,7 +122,7 @@ export const mircMembersTools: MosaddTool[] = [
     name: "mIRC_join",
     requires: "network",
     description:
-      "Join a channel as the current user. For private channels pass `password`. Returns a membership row or 409 if already a member.",
+      "Join a channel as the current user. Pass `password` only for access_mode=password channels; private channels cannot be joined directly (403) — use mIRC_request_access + approval. Idempotent: an existing active member gets their membership row back (200, no 409).",
     inputSchema: mIRC_join_input,
     handler: ((input, ctx) => invokeChannelMembers("join", input as Record<string, unknown>, ctx)) as MosaddTool["handler"],
   },
@@ -183,7 +183,7 @@ export const mircMembersTools: MosaddTool[] = [
     name: "mIRC_set_role",
     requires: "network",
     description:
-      "Promote / demote a member. Roles: owner > admin > moderator > member > guest. Only owner can promote to admin; only admin+ can promote to moderator.",
+      "Promote / demote a member. Roles: owner(100) > superadmin(90) > admin(80) > moderator(70) > member(10). No 'guest'. An actor may assign any role below their own tier — so a superadmin (not only the owner) can promote to admin.",
     inputSchema: mIRC_set_role_input,
     handler: ((input, ctx) => invokeChannelMembers("set-role", input as Record<string, unknown>, ctx)) as MosaddTool["handler"],
   },

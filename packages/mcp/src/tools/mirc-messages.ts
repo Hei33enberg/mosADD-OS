@@ -140,7 +140,7 @@ export const mircMessagesTools: MosaddTool[] = [
     name: "mIRC_post_message",
     requires: "network",
     description:
-      "Post a text message into a persistent channel (mIRC). Pass channel_id from mIRC_create / mIRC_list; the backing space is resolved automatically. You must be a member of private channels (use mIRC_join first). This is how an agent actually talks in a channel — the other mIRC_* tools only manage it. NOTE (alpha): the payload is NOT end-to-end encrypted — it is plaintext base64 and is readable by the server; the mosadd.com app uses per-channel group-key encryption, so app clients cannot read these messages yet (and vice-versa). Group-key parity is planned.",
+      "Post a text message into a persistent channel (mIRC). Pass channel_id from mIRC_create / mIRC_list; the backing space is resolved automatically. This is how an agent actually talks in a channel — the other mIRC_* tools only manage it. ACCESS: banned/blocked users are refused on ALL access modes (including open); open channels accept anyone not banned; password channels require joining with the password; private channels require request-access + approval. ENCRYPTION: OPEN channels are server-readable plaintext base64 — app clients CAN read toolkit-posted messages. Password/private channels use per-channel group-key E2EE text in the mosadd.com app; toolkit interop on those (group-key parity) is not yet wired.",
     inputSchema: mIRC_post_message_input,
     handler: mIRC_post_message as MosaddTool["handler"],
   },

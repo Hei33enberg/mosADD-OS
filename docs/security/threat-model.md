@@ -92,7 +92,7 @@ Boundaries:
 | Threat | Vector | Mitigation |
 |---|---|---|
 | S | Floor-control bypass — speaker injection by non-floor-holder | Server-side floor-control middleware (Go ~3-5k LOC, see LINEAR-2149) gates RTP forwarding |
-| T | Audio modified in flight | DTLS-SRTP end-to-end between participants |
+| T | Audio modified in flight | DTLS-SRTP hop-by-hop (client ↔ LiveKit SFU); media terminates at the server-relayed SFU — NOT end-to-end between participants |
 | I | Recording leaks via S3 bucket misconfig | Recordings written to per-room ephemeral storage; signed URLs with 5-min TTL |
 | D | Track flood — attacker publishes 1000 audio tracks | Per-participant track cap (default 2 audio, 1 video) |
 | E | Participant promoted to admin via crafted token | LiveKit tokens are signed; we add `mosadd_role` claim and verify server-side |
