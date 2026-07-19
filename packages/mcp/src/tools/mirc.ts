@@ -52,7 +52,7 @@ const mIRC_create_input = z.object({
     .string()
     .optional()
     .describe(
-      "Required for access_mode=password|private (these are E2EE channels): the channel's group key wrapped to the creator's identity key. Open channels ignore it. If omitted on a non-open channel the backend rejects the call with a 'wrapped_group_key required' error.",
+      "Required for access_mode=password|private (these channels are provisioned for group-key text encryption on supported clients): the channel's group key wrapped to the creator's identity key. Open channels ignore it. If omitted on a non-open channel the backend rejects the call with a 'wrapped_group_key required' error.",
     ),
 });
 
@@ -198,7 +198,7 @@ export const mircTools: MosaddTool[] = [
     name: "mIRC_create",
     requires: "network",
     description:
-      "Create a new persistent channel (Discord/Slack-style). Set access_mode to open (anyone joins), password (shared-password gated), or private (invite-only). capabilities controls modes (txt/voice/files/ptt/live; voice/ptt/live are server-relayed via LiveKit, NOT E2EE). Set discoverable:true (open channels only) to list it in the public directory. NOTE: password and private channels have end-to-end encrypted TEXT — supply wrapped_group_key (the group key wrapped to your identity key); open channels do not need it. Channel voice is never E2EE.",
+      "Create a new persistent channel (Discord/Slack-style). Set access_mode to open (anyone joins), password (shared-password gated), or private (invite-only). capabilities controls modes (txt/voice/files/ptt/live; voice/ptt/live are server-relayed via LiveKit, NOT E2EE). Set discoverable:true (open channels only) to list it in the public directory. NOTE: password/private channels are provisioned for group-key TEXT encryption — supply wrapped_group_key (the group key wrapped to your identity key); open channels do not need it. The mosadd.com app encrypts/decrypts channel text with that key on supported clients; the toolkit's own mIRC_post_message posts server-readable text today (group-key parity is the next milestone). Channel voice is never E2EE.",
     inputSchema: mIRC_create_input,
     handler: mIRC_create as MosaddTool["handler"],
   },

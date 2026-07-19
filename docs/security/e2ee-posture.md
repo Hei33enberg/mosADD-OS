@@ -18,7 +18,7 @@ the app peer, and vice versa.
 ## Honest posture in one line
 
 - **mDM (1:1 DM)** — **end-to-end encrypted by DEFAULT** (X3DH + Double Ratchet, `mosadd.e2ee.v2`). The server/operator **cannot read message content**.
-- **mIRC private/password channels** — **end-to-end-encrypted TEXT** via a per-channel group key (conditional on the vault being unlocked — see caveat 1); the operator cannot read it.
+- **mIRC private/password channels** — **group-key-encrypted TEXT on supported clients** (the mosadd.com app; conditional on the vault being unlocked — see caveat 1). The dev `mIRC_post_message` path is server-readable (see the table + caveat 2).
 - **mIRC open channels + mURL (open rooms) + mAYL (mail)** — **transport-encrypted in flight and at rest, but server-readable by design** (not E2EE).
 - **All channel/room voice & PTT** — **server-relayed via the LiveKit SFU** (transport-encrypted to the SFU, NEVER end-to-end between participants).
 - We label per channel; never market **open** channels, rooms, mail, or **any channel voice** as end-to-end encrypted.
@@ -44,7 +44,7 @@ currently falls back to base64 **plaintext**. A message that *looks* sent is not
 necessarily encrypted. Target: never send on the plaintext path — block or queue
 until the key is ready, and surface key state in the UI.
 
-### 2. Open mIRC / mURL / mAYL are server-readable; private/password channel text is E2EE; channel voice is always relayed
+### 2. Open mIRC / mURL / mAYL are server-readable; private/password channel text is group-key-encrypted on supported clients (toolkit posts are server-readable); channel voice is always relayed
 `mDM_send` **is end-to-end encrypted by default** (X3DH + Double Ratchet), and it uses
 the *same* `mosadd.e2ee.v2` wire format as the app — so app↔agent 1:1 DMs interoperate.
 What is **not** end-to-end encrypted: `mIRC_post_message` (group channels), `mURL` (open

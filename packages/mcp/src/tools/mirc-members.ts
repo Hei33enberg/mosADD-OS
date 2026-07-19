@@ -57,7 +57,7 @@ const mIRC_approve_request_input = mIRC_reject_request_input.extend({
     .string()
     .optional()
     .describe(
-      "Required to approve a join to a password/private (E2EE) channel: the channel group key wrapped to the approved member's identity key. Without it the backend rejects the approval with a 'wrapped_group_key required' error. (Access requests only exist on non-open channels, so this is effectively always required.)",
+      "Required to approve a join to a password/private (group-key) channel: the channel group key wrapped to the approved member's identity key. Without it the backend rejects the approval with a 'wrapped_group_key required' error. (Access requests only exist on non-open channels, so this is effectively always required.)",
     ),
 });
 
@@ -145,7 +145,7 @@ export const mircMembersTools: MosaddTool[] = [
     name: "mIRC_approve_request",
     requires: "network",
     description:
-      "Approve a pending access request (state=requested → active). Admins / moderators / owner only. Because access requests only exist on E2EE (password/private) channels, you must pass wrapped_group_key — the channel group key wrapped to the approved member's identity key.",
+      "Approve a pending access request (state=requested → active). Admins / moderators / owner only. Because access requests only exist on non-open (password/private) channels, you must pass wrapped_group_key — the channel group key wrapped to the approved member's identity key.",
     inputSchema: mIRC_approve_request_input,
     handler: ((input, ctx) => invokeChannelMembers("approve-request", input as Record<string, unknown>, ctx)) as MosaddTool["handler"],
   },
