@@ -467,7 +467,7 @@ export class MosaddMircWidget {
 
     // Badge (visible until JWT says otherwise)
     this.badgeEl = el<HTMLDivElement>("div", "m-badge");
-    this.badgeEl.innerHTML = `${t(this.cfg.locale, "powered")} <a href="https://mosadd.dev" target="_blank" rel="noopener">mosadd</a>`;
+    this.badgeEl.innerHTML = `${t(this.cfg.locale, "powered")} <a href="https://mosadd.com" target="_blank" rel="noopener">mosadd</a>`;
     card.appendChild(this.badgeEl);
 
     this.root.appendChild(card);
@@ -707,7 +707,7 @@ export class MosaddMircWidget {
   }
 
   /** LINEAR-2744: hide stream + render a "channel at capacity" panel with a
-   *  link to mosadd.dev/pricing (the OWNER upgrades, not the visitor). */
+   *  link to mosadd.com/pricing (the OWNER upgrades, not the visitor). */
   private renderQueueOverlay(): void {
     // Hide the input row + the join form — there's nothing to send.
     this.inputEl.style.display = "none";
@@ -726,7 +726,7 @@ export class MosaddMircWidget {
     const sub = el<HTMLDivElement>("div", "m-queue-sub");
     sub.textContent = t(this.cfg.locale, "queue_sub");
     const link = el<HTMLAnchorElement>("a", "m-queue-cta");
-    link.href = "https://mosadd.dev/pricing";
+    link.href = "https://mosadd.com/pricing";
     link.target = "_blank";
     link.rel = "noopener noreferrer";
     link.textContent = t(this.cfg.locale, "queue_cta");
