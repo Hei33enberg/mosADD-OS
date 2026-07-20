@@ -76,9 +76,14 @@
   .navmenu>summary{list-style:none;cursor:pointer;color:var(--dim);font-size:13px;margin-left:18px}
   .navmenu>summary::-webkit-details-marker{display:none}
   .navmenu[open]>summary{color:var(--ink)}
-  .navmenu .menu{position:absolute;right:0;top:28px;background:var(--panel);border:1px solid var(--line);
-    border-radius:8px;padding:6px 4px;min-width:150px;z-index:6}
-  .navmenu .menu a{display:block;color:var(--dim);font-size:13px;padding:6px 14px;margin:0}
+  /* Mobile menu = a full-width OPAQUE sheet dropped below the 56px nav bar — not a narrow box
+     floating over the hero headline (founder: the menu overlapped "They're apps. We're the layer."). */
+  .navmenu .menu{position:fixed;left:0;right:0;top:56px;background:var(--bg);border-bottom:1px solid var(--line);
+    border-radius:0;padding:6px 22px 10px;z-index:6;box-shadow:0 16px 34px rgba(0,0,0,.65)}
+  header:has(.navmenu[open]){background:rgba(5,5,6,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line)}
+  .navmenu .menu a{display:block;color:var(--dim);font-size:14px;padding:11px 0;margin:0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .navmenu .menu a:last-child{border-bottom:none}
   .navmenu .menu a:hover{color:var(--ink);background:rgba(255,255,255,.03);text-decoration:none}
   @media(max-width:640px){.navmenu{display:inline-block}}
 
