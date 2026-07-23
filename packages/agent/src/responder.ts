@@ -9,6 +9,17 @@
  */
 
 import { allTools, defaultProviders } from "@mosadd/mcp";
+import {
+  DECISION_TYPE,
+  parseDecision,
+  parseDecisionResponse,
+  buildDecisionPayload,
+  encodeB64Json,
+  extractDecisionDirective,
+  summarizeDecision,
+  summarizeResponse,
+  type Decision,
+} from "./decisionProtocol.js";
 
 export interface ResponderOptions {
   /** Supabase project URL. Default: env MOSADD_SUPABASE_URL. */
@@ -33,6 +44,47 @@ const DEFAULT_SYSTEM =
   "Jestes mosadd general — operacyjny agent mosADD. Odpowiadasz po polsku, krotko i konkretnie. " +
   "Nie jestes chatbotem-asystentem, jestes operatorem komunikacji dzialajacym w imieniu czlowieka. " +
   "Odpowiadaj rzeczowo na to, co czlowiek napisal. Bez korpo-waty, bez 'Jako model jezykowy'.";
+
+// T11/T12 — the agent can ASK the human to DECIDE (Claude-Code-style: one or more steps, several
+// options each). Only when a real choice is needed, the LLM emits a fenced ```decision block; the
+// responder turns it into a message_type:"decision" the app renders as clickable options, and reads
+// the answer back on the next cycle (the sequential loop: ask -> answer -> continue).
+const DECISION_GUIDE =
+  "\n\nDECYZJE: jesli potrzebujesz, zeby rozmowca WYBRAL sposrod opcji (zatwierdz/odrzuc, wariant, " +
+  "kolejny krok) - NIE pisz zwyklego pytania, tylko odpowiedz WYLACZNIE blokiem ```decision z JSON:\n" +
+  '```decision\n{"title":"...","steps":[{"prompt":"...","options":[{"label":"...","tone":"approve|reject|neutral|danger|info","irreversible":false}]}]}\n```\n' +
+  "Mozesz dac kilka krokow (kazdy = jedno pytanie). Nieodwracalne opcje ustaw irreversible:true. " +
+  "Gdy rozmowca odpowie (zobaczysz w rozmowie linie o odpowiedzi na decyzje), kontynuuj na podstawie jego wyboru.";
+
+/** Send a structured DECISION as message_type:"decision" (the app renders clickable options).
+ *  mDM_send_unencrypted is text-only, so POST message-send directly on the plaintext agent lane. */
+async function sendDecision(
+  supabaseUrl: string,
+  anonKey: string,
+  peerId: string,
+  selfId: string,
+  decision: Decision,
+): Promise<void> {
+  const threadId = "dm:" + [selfId, peerId].sort().join(":");
+  const r = await fetch(`${supabaseUrl}/functions/v1/message-send`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.MOSADD_USER_JWT}`,
+      apikey: anonKey,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      space_id: "dm",
+      thread_id: threadId,
+      encrypted_payload: encodeB64Json(buildDecisionPayload(decision)),
+      message_type: DECISION_TYPE,
+      protocol_version: "mosadd.chat.v1",
+    }),
+  });
+  if (r.status !== 200) {
+    throw new Error(`decision send ${r.status}: ${(await r.text().catch(() => "")).slice(0, 140)}`);
+  }
+}
 
 interface Ctx {
   options: { mode: string; hubUrl: string };
@@ -180,26 +232,55 @@ export async function startResponder(opts: ResponderOptions = {}): Promise<() =>
             replied.add(last.id);
             continue;
           }
-          const convo = msgs
-            .slice(-8)
-            .map(
-              (m) =>
-                (m.sender_identity_id === selfId ? "JA" : c.display_name || "KONTAKT") + ": " + m.text,
-            )
+          // T11/T12 decision loop: content-sniff each message so the agent SEES decision requests/
+          // answers in context and continues from a choice.
+          const recent = msgs.slice(-8);
+          const decisionsById = new Map<string, Decision>();
+          for (const m of recent) {
+            const d = parseDecision(m.text);
+            if (d?.id) decisionsById.set(d.id, d);
+          }
+          const convo = recent
+            .map((m) => {
+              const who = m.sender_identity_id === selfId ? "JA" : c.display_name || "KONTAKT";
+              const resp = parseDecisionResponse(m.text);
+              if (resp) return `${who}: ${summarizeResponse(resp, decisionsById.get(resp.decision_id))}`;
+              const dec = parseDecision(m.text);
+              if (dec) return `${who}: ${summarizeDecision(dec)}`;
+              return `${who}: ${m.text}`;
+            })
             .join("\n");
           let reply: string;
           try {
-            reply = await llmReply(c.display_name, convo, openRouterKey, model, systemPrompt);
+            reply = await llmReply(c.display_name, convo, openRouterKey, model, systemPrompt + DECISION_GUIDE);
           } catch (e) {
             process.stderr.write(`[mosadd/agent] LLM err: ${(e as Error).message}\n`);
             continue;
           }
           try {
-            await invoke("mDM_send_unencrypted", { to: c.identity_id, text: reply }, ctx);
-            replied.add(last.id);
-            process.stderr.write(
-              `[mosadd/agent] replied to ${c.display_name || c.identity_id}: ${reply.slice(0, 80)}\n`,
-            );
+            // If the LLM asked for a DECISION (fenced ```decision block) → send it as a structured
+            // message_type:"decision" the app renders as clickable options; else a plain text reply.
+            const directive = extractDecisionDirective(reply);
+            if (directive) {
+              const decision: Decision = {
+                ...directive,
+                id: crypto.randomUUID(),
+                requester_identity_id: selfId,
+                requester_kind: "agent",
+                allowed_responder_ids: [c.identity_id],
+              };
+              await sendDecision(supabaseUrl, anonKey, c.identity_id, selfId, decision);
+              replied.add(last.id);
+              process.stderr.write(
+                `[mosadd/agent] asked a DECISION of ${c.display_name || c.identity_id}: ${decision.title}\n`,
+              );
+            } else {
+              await invoke("mDM_send_unencrypted", { to: c.identity_id, text: reply }, ctx);
+              replied.add(last.id);
+              process.stderr.write(
+                `[mosadd/agent] replied to ${c.display_name || c.identity_id}: ${reply.slice(0, 80)}\n`,
+              );
+            }
           } catch (e) {
             process.stderr.write(`[mosadd/agent] send err: ${(e as Error).message}\n`);
           }
