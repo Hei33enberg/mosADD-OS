@@ -34,13 +34,78 @@ Each cycle the agent:
 3. For each accepted contact, calls `mDM_list` to read recent messages.
 4. For every unanswered last-message **from the contact** (never your own),
    asks the LLM (OpenRouter) to write reply TEXT only.
-5. Sends the reply via the real `mDM_send_unencrypted` handler.
+5. Sends the reply via the real `mDM_send_unencrypted` handler — **or**, when the
+   model asks the human to choose, a structured `message_type:"decision"` (see
+   [Ask the human to decide](#ask-the-human-to-decide-decisions)).
 6. Persists the answered message-id to a tiny local cache so it never replies
    twice.
 
 The LLM is used **only** to write the reply text. Tool invocation is direct
 function calls into `@mosadd/mcp` — that's the design that killed our earlier
 `hermes chat -Q` hallucination problem.
+
+## Ask the human to decide (decisions)
+
+An operator that only chats stops at the hard part. This agent can **escalate a
+decision** and continue from your answer — the sequential loop behind mosADD's
+command center.
+
+When a real choice is needed (approve/reject, pick a variant, the next step), the
+model wraps it in a fenced ` ```decision ` block:
+
+````
+```decision
+{ "title": "Deploy the hotfix?",
+  "steps": [
+    { "prompt": "Which environment?",
+      "options": [ { "label": "Staging" },
+                   { "label": "Production", "tone": "danger", "irreversible": true } ] } ] }
+```
+````
+
+The runtime turns that into a `message_type:"decision"` message. In mosADD it
+renders as a **clickable, multi-step, multi-option card** (irreversible options
+require a two-tap confirm). When you choose, the answer comes back as a
+`decision_response`; on its next cycle the agent reads your choice — you'll see a
+`[odpowiedź na decyzję] wybrał: …` line in its context — and carries on. One
+agent asking, another party (human/agent/robot) deciding — that's the protocol.
+
+Nothing to wire: the default system prompt already teaches the model when and how
+to emit a decision. Bring your own `systemPrompt` and it still works, as long as
+you keep (or restate) the decision instruction.
+
+## Run it always-on (systemd)
+
+For a VPS or a Raspberry Pi you want it up 24/7 and restarting on failure:
+
+```ini
+# /etc/systemd/system/mosadd-agent.service
+[Unit]
+Description=mosADD agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/opt/mosadd-agent/.env      # the four vars above, chmod 0600
+ExecStart=/usr/bin/npx -y @mosadd/agent start
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now mosadd-agent
+journalctl -u mosadd-agent -f          # watch it
+```
+
+Runs on any **Node ≥ 18** host — a €4 cloud box, a desktop that's already on, or
+an ARM Raspberry Pi. Prefer not to touch a server at all? mosADD can provision a
+hardened box for you with a **fresh per-instance key** (your keys are never
+shared) — ask about the ready-VPS / desktop / Pi packages.
 
 ## Programmatic API
 
