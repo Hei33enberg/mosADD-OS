@@ -12,15 +12,15 @@
  * defensive classification over the threat taxonomy — the surveillance-era
  * *marketing* was killed, the classification engine is real and wanted.
  *
- * 72 callable tools registered — the exact live count is exported as TOOL_COUNT
+ * 73 callable tools registered — the exact live count is exported as TOOL_COUNT
  * (= allTools.length) below; ALWAYS reference that, never re-hard-code a number that drifts.
  * Breakdown (2026-07-17): mDM 14 · mIRC 24 · mAYL 11 · mURL 7 · mTALK 5 · mRAG 4 ·
  * comms 3 (action_create/frame_get/embed_create) · Irondome/threat 2 + comms_capabilities
  * discovery 1 = 69. (mDM/mIRC each include their 2 attachment tools from attachments.ts.)
  * Modules (4): mDM, mIRC, mURL, mAYL. Capabilities: mTALK (voice/PTT), mRAG, comms_, Irondome (threat_*).
  * mp0st_* stay as DEPRECATED back-compat aliases for mAYL_* (removed in a later alpha).
- * UNREGISTERED: mAYL_send_as_agent (mail-provenance) — needs a real hub key to verify.
- * mTALK_ingest_ptt RE-REGISTERED 2026-07-29 after an authenticated 200 (see the registry note).
+ * mAYL_send_as_agent + mTALK_ingest_ptt were RE-REGISTERED 2026-07-29: both had been disabled
+ * on 07-14 notes that had since become false, and both were re-verified on authenticated calls.
  * comms_embed_create RE-REGISTERED 2026-07-17 (embed.mosadd.com/v1.js live — P3 of mURL→mIRC).
  * mROOM was KILLED (LINEAR-3414, channel re-cut → ephemeral private mIRC): its tools
  * live in tools/mroom.ts + mroom-messages.ts but are NOT registered here.
@@ -47,7 +47,7 @@ import { mircEdgeTools } from "./mirc-edge.js";
 // import { mroomMessagesTools } from "./mroom-messages.js"; // mROOM: killed (LINEAR-3414) — not registered
 import { mailTools } from "./mail.js";
 // import { mailAliasTools } from "./mail-aliases.js"; // mp0st_* aliases RETIRED 2026-07-15 (founder: unify on mAYL, drop the mp0st codename from every user-visible surface). Source kept for reference.
-// import { mailProvenanceTools } from "./mail-provenance.js"; // mAYL_send_as_agent SCAFFOLD — UNREGISTERED 2026-07-14 (hub-claim EF 404s; re-register when live — CTO-1 live-ping)
+import { mailProvenanceTools } from "./mail-provenance.js"; // mAYL_send_as_agent — RE-REGISTERED 2026-07-29, see the note at the registry below
 import { mtalkTools } from "./mtalk.js";
 import { attachmentTools } from "./attachments.js";
 import { pttIngestTools } from "./ptt-ingest.js"; // mTALK_ingest_ptt — RE-REGISTERED 2026-07-29, see the note at the registry below
@@ -71,7 +71,21 @@ const channelTools: MosaddTool[] = [
   // ...mroomMessagesTools,  // mROOM: killed (LINEAR-3414)
   ...mailTools,         // mAYL_*: canonical email module (was the mp0st codename; renamed re-arch 2026-06-27)
   // ...mailAliasTools, // mp0st_* aliases RETIRED 2026-07-15 — mAYL is the one name; the mp0st codename is now backend-internal only
-  // ...mailProvenanceTools, // mAYL_send_as_agent: UNREGISTERED 2026-07-14 — see the re-measure below
+  // ⭐ mAYL_send_as_agent: RE-REGISTERED 2026-07-29 — proven end to end, without sending mail.
+  // Unregistered since 07-14 on the note "hub-claim EF 404s every call". That note was stale in
+  // the same way ptt-ingest's was: unauthenticated it returns 401 (the auth gate), not 404.
+  //
+  // Settled by running the whole chain rather than the convenient half:
+  //   1. hub-keys with a plain user JWT issued a real `mosadd_sk_live_…` — so a user session
+  //      mints a hub key and no founder credential was ever needed. I had told the founder it
+  //      required his key; that was wrong and this is the retraction.
+  //   2. hub-claim-mint with that key → 200, valid claim token, aud `mp0st-send`, 600s expiry.
+  //   3. mp0st-send with the claim token and a DELIBERATELY EMPTY payload → 400 "Missing to or
+  //      subject". A 400 on payload validation proves the token was ACCEPTED; 401/403 would have
+  //      proven it was not. Auth verified end to end with zero mail sent — a diagnostic must not
+  //      put a real message in someone's inbox.
+  // The diagnostic key was then REVOKED (revoked_at set, not deleted, so the audit trail lives).
+  ...mailProvenanceTools,
   ...mtalkTools,
   ...attachmentTools,
   // ⭐ mTALK_ingest_ptt: RE-REGISTERED 2026-07-29 — the backend finally does what the tool promises.
@@ -90,7 +104,7 @@ const channelTools: MosaddTool[] = [
   // whole point of this registry is that an agent sees only tools that actually work.
   ...pttIngestTools,
   //
-  // ⚠️ mAYL_send_as_agent ONLY — the ptt half of this note is RESOLVED (registered above).
+  // ✅ RESOLVED 2026-07-29 — both halves of this note are closed; kept as the record of how.
   // The disable note recorded a diagnosis from 2026-07-14: hub-claim "404s every call".
   // Live-probed today, unauthenticated:
   //     hub-claim-mint → 401 · ptt-ingest → 401 · mp0st-send → 401 (the control, a tool that
