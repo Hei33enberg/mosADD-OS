@@ -71,10 +71,31 @@ const channelTools: MosaddTool[] = [
   // ...mroomMessagesTools,  // mROOM: killed (LINEAR-3414)
   ...mailTools,         // mAYL_*: canonical email module (was the mp0st codename; renamed re-arch 2026-06-27)
   // ...mailAliasTools, // mp0st_* aliases RETIRED 2026-07-15 — mAYL is the one name; the mp0st codename is now backend-internal only
-  // ...mailProvenanceTools, // mAYL_send_as_agent: UNREGISTERED 2026-07-14 — hub-claim EF 404s every call; re-register when rewired onto hub-key-exchange (CTO-1 live-ping)
+  // ...mailProvenanceTools, // mAYL_send_as_agent: UNREGISTERED 2026-07-14 — see the re-measure below
   ...mtalkTools,
   ...attachmentTools,
-  // ...pttIngestTools,    // mTALK_ingest_ptt: UNREGISTERED 2026-07-14 — ptt-ingest EF 400s every call; re-register when payload + PTT→RAG path fixed (CTO-1 live-ping)
+  // ...pttIngestTools,    // mTALK_ingest_ptt: UNREGISTERED 2026-07-14 — see the re-measure below
+  //
+  // ⚠️ RE-MEASURED 2026-07-29 — BOTH REASONS ABOVE ARE STALE, AND THE TOOLS MAY BE FINE.
+  // The two disable notes recorded a diagnosis from 2026-07-14: hub-claim "404s every call",
+  // ptt-ingest "400s every call". Live-probed today, unauthenticated:
+  //     hub-claim-mint → 401 · ptt-ingest → 401 · mp0st-send → 401 (the control, a tool that
+  //     IS registered and works)
+  // 401 is the auth gate answering. A dead or missing function returns 404; a function that
+  // rejects our payload shape returns 400. Neither happens any more, and both are ACTIVE on
+  // the project. So whatever was broken in July was fixed at some point and nobody came back
+  // to these lines — we have been advertising two capabilities as unavailable while their
+  // backends answer.
+  //
+  // NOT re-registering on this evidence, deliberately. An unauthenticated 401 proves the
+  // function is alive; it proves NOTHING about the authenticated path, which is where both
+  // originally failed. Re-registering on a liveness probe would swap "wrongly disabled" for
+  // "advertised and broken in a user's hands", which is the worse of the two.
+  //
+  // TO CLOSE: call each with a real hub key / session token. If they succeed, delete these
+  // two comment blocks and uncomment the imports — the count moves 71 → 73 and the anti-drift
+  // gate will then force every doc surface to follow. (This session cannot mint a session
+  // token, so it stops here rather than guess.)
   ...knowledgeTools,
   ...actionTools,  // Action links (Tier 1): agent → user one-link browser action via action-create EF
   ...embedTools,    // comms_embed_create: RE-REGISTERED 2026-07-17 — embed.mosadd.com/v1.js live; mints an embed key + paste-in snippet (mURL→mIRC rework P3)
