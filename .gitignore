@@ -59,3 +59,5 @@ forks/*/build/
 **/supabase/.temp/
 apps/channel0-ext/*.zip
 apps/dev/public/v1.js.map
+# Vercel CLI pulls project config into a local .vercel/ on manual deploys — never commit it
+**/.vercel/

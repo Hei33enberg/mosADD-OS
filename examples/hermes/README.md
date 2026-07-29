@@ -22,7 +22,7 @@ and drives the same `@mosadd/mcp` toolset (BYOK) under the hood.
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 ```
 
-## 2. Add the mosadd MCP server (71 tools)
+## 2. Add the mosadd MCP server (73 tools)
 
 ```bash
 hermes mcp add mosadd --command "npx -y @mosadd/mcp@alpha"

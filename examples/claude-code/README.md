@@ -57,7 +57,7 @@ Claude calls `mAYL_send`.
 
 ## All tools available
 
-See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (71 tools across the four modules — mDM · mIRC · mURL · mAYL — plus capabilities: mTALK voice, mRAG, comms_).
+See [packages/mcp/README.md](../../packages/mcp/README.md) for the full list (73 tools across the four modules — mDM · mIRC · mURL · mAYL — plus capabilities: mTALK voice, mRAG, comms_).
 
 ## Troubleshooting
 

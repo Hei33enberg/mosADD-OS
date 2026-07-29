@@ -8,7 +8,7 @@
 
 mosadd.com/docs is the developer portal for the mosadd OS toolkit. The toolkit ships
 as `@mosadd/*` packages on npm; the headline artifact is `@mosadd/mcp` — a single
-MCP server exposing 71 tools across four modules that any agent (Claude Code, Cursor, ChatGPT Apps,
+MCP server exposing 73 tools across four modules that any agent (Claude Code, Cursor, ChatGPT Apps,
 Vercel AI SDK, LangChain, …) can call.
 
 Install: `npx -y @mosadd/mcp@alpha`
@@ -16,7 +16,7 @@ Install: `npx -y @mosadd/mcp@alpha`
 ## Docs
 - [Quickstart](https://mosadd.com/docs/quickstart): install for Claude Code, Cursor, Vercel AI SDK
 - [Credentials](https://mosadd.com/docs/auth): `mosadd login`, MOSADD_* env vars; mint a hub key at https://mosadd.com/keys
-- [MCP reference](https://mosadd.com/docs/mcp): all 71 live tools (discover + invoke)
+- [MCP reference](https://mosadd.com/docs/mcp): all 73 live tools (discover + invoke)
 - [Modules](https://mosadd.com/docs/modules): mDM, mIRC, mURL, mAYL; capabilities mTALK, mRAG; Irondome threat-engine (alpha)
 - [SDK adapters](https://mosadd.com/docs/sdk): Vercel AI, LangChain, OpenAI, Anthropic
 - [Security](https://mosadd.com/docs/security): threat model + hardening

@@ -1,6 +1,6 @@
 # mosADD
 
-> mosADD is a grassroots, self-funded, sovereign communication layer for humans, agents and robots. It ships as an open MCP toolkit (@mosadd/mcp — 71 tools, Apache-2.0) and is built in the open by a contributor kingdom called the Realm. It takes no venture capital, ever.
+> mosADD is a grassroots, self-funded, sovereign communication layer for humans, agents and robots. It ships as an open MCP toolkit (@mosadd/mcp — 73 tools, Apache-2.0) and is built in the open by a contributor kingdom called the Realm. It takes no venture capital, ever.
 
 ## About
 - mosADD treats communication as infrastructure, not an app owned by a platform.
@@ -11,7 +11,7 @@
 - mDM 1:1 direct messages are end-to-end encrypted by default (X3DH + Double Ratchet); the operator cannot read them.
 - mIRC channels, rooms and mail are server-readable by design; the mosadd.com app group-key-encrypts private/password channel text on supported clients (the toolkit posts server-readable today), and all channel voice is server-relayed. Labelled per channel — mosADD never claims more encryption than the code delivers.
 
-## Toolkit (@mosadd/mcp — 71 tools)
+## Toolkit (@mosadd/mcp — 73 tools)
 - Install: `npx -y @mosadd/mcp@alpha` — works with Claude Code, Cursor, Cline, Windsurf, or any MCP agent.
 - mDM (14): E2EE 1:1 messaging — text, voice, files.
 - mIRC (24): persistent channels, RBAC, agent-coordination transport.
