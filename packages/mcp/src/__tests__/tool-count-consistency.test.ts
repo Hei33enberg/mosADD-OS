@@ -18,6 +18,14 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "../../../.."); // packages/mcp/src/__tests__ -> repo root
 
 const SURFACES: { file: string; re: RegExp; what: string }[] = [
+  // README FIRST, because it is the one people actually read. It was NOT in this list until
+  // 2026-07-29 — the gate guarded four internal surfaces and left the public face of the project
+  // unguarded, which is the wrong way round. The badge is checked because a wrong number in a
+  // green badge is the most confident-looking lie a repo can tell.
+  { file: "README.md", re: /badge\/tools-(\d+)%20live/, what: "README badge" },
+  { file: "README.md", re: /starts an MCP server with \*\*(\d+) tools\*\*/, what: "README intro line" },
+  { file: "README.md", re: /\*\*(\d+) callable tools across/, what: "README module breakdown" },
+  { file: "README.md", re: /npx -y @mosadd\/mcp@alpha\s+#\s*(\d+) tools/, what: "README quickstart comment" },
   { file: "packages/mcp/server.json", re: /(\d+)\s+MCP tools/, what: "MCP registry manifest description" },
   { file: "apps/realm/index.html", re: /#\s*(\d+)\s+tools/, what: "mosadd.dev Realm hero" },
   { file: "apps/dev/app/docs/mcp/page.tsx", re: /Total surface today:[\s\S]*?(\d+)\s+tools/, what: "dev docs /docs/mcp" },
