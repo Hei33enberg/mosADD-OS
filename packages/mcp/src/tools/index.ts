@@ -12,15 +12,15 @@
  * defensive classification over the threat taxonomy — the surveillance-era
  * *marketing* was killed, the classification engine is real and wanted.
  *
- * 71 callable tools registered — the exact live count is exported as TOOL_COUNT
+ * 72 callable tools registered — the exact live count is exported as TOOL_COUNT
  * (= allTools.length) below; ALWAYS reference that, never re-hard-code a number that drifts.
  * Breakdown (2026-07-17): mDM 14 · mIRC 24 · mAYL 11 · mURL 7 · mTALK 5 · mRAG 4 ·
  * comms 3 (action_create/frame_get/embed_create) · Irondome/threat 2 + comms_capabilities
  * discovery 1 = 69. (mDM/mIRC each include their 2 attachment tools from attachments.ts.)
  * Modules (4): mDM, mIRC, mURL, mAYL. Capabilities: mTALK (voice/PTT), mRAG, comms_, Irondome (threat_*).
  * mp0st_* stay as DEPRECATED back-compat aliases for mAYL_* (removed in a later alpha).
- * UNREGISTERED 2026-07-14 (broken scaffolds whose EFs 404/400 every call — re-register when
- * live): mAYL_send_as_agent (mail-provenance), mTALK_ingest_ptt (ptt-ingest).
+ * UNREGISTERED: mAYL_send_as_agent (mail-provenance) — needs a real hub key to verify.
+ * mTALK_ingest_ptt RE-REGISTERED 2026-07-29 after an authenticated 200 (see the registry note).
  * comms_embed_create RE-REGISTERED 2026-07-17 (embed.mosadd.com/v1.js live — P3 of mURL→mIRC).
  * mROOM was KILLED (LINEAR-3414, channel re-cut → ephemeral private mIRC): its tools
  * live in tools/mroom.ts + mroom-messages.ts but are NOT registered here.
@@ -50,7 +50,7 @@ import { mailTools } from "./mail.js";
 // import { mailProvenanceTools } from "./mail-provenance.js"; // mAYL_send_as_agent SCAFFOLD — UNREGISTERED 2026-07-14 (hub-claim EF 404s; re-register when live — CTO-1 live-ping)
 import { mtalkTools } from "./mtalk.js";
 import { attachmentTools } from "./attachments.js";
-// import { pttIngestTools } from "./ptt-ingest.js"; // mTALK_ingest_ptt SCAFFOLD — UNREGISTERED 2026-07-14 (ptt-ingest EF 400s; re-register when fixed — CTO-1 live-ping)
+import { pttIngestTools } from "./ptt-ingest.js"; // mTALK_ingest_ptt — RE-REGISTERED 2026-07-29, see the note at the registry below
 // import { mcallTools } from "./mcall.js"; // mCALL: carrier-pending — not registered (see header note)
 import { knowledgeTools } from "./knowledge.js";
 import { actionTools } from "./actions.js";
@@ -74,20 +74,34 @@ const channelTools: MosaddTool[] = [
   // ...mailProvenanceTools, // mAYL_send_as_agent: UNREGISTERED 2026-07-14 — see the re-measure below
   ...mtalkTools,
   ...attachmentTools,
-  // ...pttIngestTools,    // mTALK_ingest_ptt: UNREGISTERED 2026-07-14 — see the re-measure below
+  // ⭐ mTALK_ingest_ptt: RE-REGISTERED 2026-07-29 — the backend finally does what the tool promises.
+  // Unregistered since 07-14 on the note "ptt-ingest EF 400s every call". Re-measured 07-29: that
+  // reason was stale (it returned 401, the auth gate), and an AUTHENTICATED probe then exposed the
+  // real fault — 500, `Could not find the table 'public.rag_jobs'`. It authenticated, validated,
+  // wrote the transcript row, and died one step later against a table dropped when the rag_events
+  // v2 queue landed. Agent push-to-talk had NEVER once reached memory.
   //
-  // ⚠️ RE-MEASURED 2026-07-29 — BOTH REASONS ABOVE ARE STALE, AND THE TOOLS MAY BE FINE.
-  // The two disable notes recorded a diagnosis from 2026-07-14: hub-claim "404s every call",
-  // ptt-ingest "400s every call". Live-probed today, unauthenticated:
+  // Fixed by handing the audio to `rag-transcribe` (NOT to the v2 queue — that queue carries TEXT
+  // for embedding and cannot transcribe; audio has to become words first). Verified on prod:
+  // 200 {"queued":true}, edge log 200 in 2.7s where it used to 500, and the transcript row's
+  // updated_at moved 4s after insert, so the backgrounded chain genuinely ran.
+  //
+  // Registered only AFTER that authenticated 200 — a liveness probe was never enough, because the
+  // whole point of this registry is that an agent sees only tools that actually work.
+  ...pttIngestTools,
+  //
+  // ⚠️ mAYL_send_as_agent ONLY — the ptt half of this note is RESOLVED (registered above).
+  // The disable note recorded a diagnosis from 2026-07-14: hub-claim "404s every call".
+  // Live-probed today, unauthenticated:
   //     hub-claim-mint → 401 · ptt-ingest → 401 · mp0st-send → 401 (the control, a tool that
   //     IS registered and works)
   // 401 is the auth gate answering. A dead or missing function returns 404; a function that
   // rejects our payload shape returns 400. Neither happens any more, and both are ACTIVE on
   // the project. So whatever was broken in July was fixed at some point and nobody came back
-  // to these lines — we have been advertising two capabilities as unavailable while their
-  // backends answer.
+  // to these lines — we advertised two capabilities as unavailable while their backends
+  // answered. One of them (ptt) is now proven and registered; this is the other.
   //
-  // NOT re-registering on this evidence, deliberately. An unauthenticated 401 proves the
+  // NOT re-registering hub-claim on this evidence, deliberately. An unauthenticated 401 proves the
   // function is alive; it proves NOTHING about the authenticated path, which is where both
   // originally failed. Re-registering on a liveness probe would swap "wrongly disabled" for
   // "advertised and broken in a user's hands", which is the worse of the two.
