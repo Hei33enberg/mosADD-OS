@@ -10,7 +10,7 @@ Index of architecture documents.
 | fork-strategy.md | TODO | LiveKit fork + divergence discipline |
 | identity-recovery.md | Descoped | Anonymous identity + passphrase/seed recovery (descoped — see [roadmap](../roadmap.md)) |
 | anti-abuse.md | TODO | PoW + rate limits + radar scoring |
-| threat-radar.md | TODO | 166-event taxonomy (ported from the proprietary mosADD backend) |
+| [../threat-monitoring.md](../threat-monitoring.md) | **Live** | mLIDAR end to end — collectors, what leaves the device, signal-only stance, the honest Pegasus section, and what fires today |
 
 ## Overview (one-paragraph)
 

@@ -43,7 +43,7 @@ export default function ModulesPage() {
       <Table
         headers={['Module', 'Posture', 'Description', 'Status']}
         rows={[
-          [<Anchor key="threat-engine" href="/docs/modules/threat-engine">Irondome</Anchor>, 'on-device', 'Irondome — the on-device security pillar: device-integrity + network-anomaly monitoring (detects Pegasus-class spyware), embeddable engine', 'alpha'],
+          [<Anchor key="threat-engine" href="/docs/modules/threat-engine">Irondome</Anchor>, 'on-device', 'Irondome — the on-device security pillar: device-integrity + network-anomaly monitoring, incl. mercenary-spyware C2 lookups; embeddable engine', 'alpha'],
         ]}
       />
 

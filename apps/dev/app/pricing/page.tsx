@@ -75,7 +75,7 @@ const tiers: Tier[] = [
       'Unlimited agents',
       'SSO / SAML · RBAC · NIS2 audit-log retention',
       'DPA · dedicated infra · 99.95% SLO',
-      'Irondome on-device threat monitor (detects Pegasus)',
+      'Irondome on-device threat monitor (mercenary-spyware C2 + device integrity)',
       'Apache-2.0 self-host is free forever',
     ],
     cta: { label: 'Talk to us', href: 'mailto:hello@mosadd.com?subject=mosadd%20Enterprise' },
@@ -199,7 +199,7 @@ export default function PricingPage() {
             'NIS2-grade audit-log retention',
             'E2EE by default (X3DH + Double Ratchet) on mDM — operator cannot read content',
             'BYOK key broker — your provider keys never leave you',
-            'Irondome on-device threat monitor (detects Pegasus)',
+            'Irondome on-device threat monitor (mercenary-spyware C2 + device integrity)',
             'DPA + dedicated channel + 99.95% uptime SLO',
           ].map((f) => (
             <div key={f} className="flex gap-2">

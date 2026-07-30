@@ -6,21 +6,38 @@
  * for the exact count rather than hardcoding a number.
  *
  * Each event has:
- *  - category: intelligence discipline (SIGINT/COMINT/ELINT/MASINT/CYBER/BEHAVIORAL/PRIVACY/OSINT/MPOST)
+ *  - category: intelligence discipline (SPYWARE/SIGINT/COMINT/ELINT/MASINT/CYBER/BEHAVIORAL/PRIVACY/OSINT/MPOST)
  *  - severity: default severity tier (runtime scoring can override)
- *  - autoActions: what the system does automatically when this event fires
- *  - platforms: which platforms can detect this event (apk/ios/pwa/harmony)
+ *  - autoActions: the RECOMMENDED policy for a host that chooses to act (see the
+ *    warning on `AutoAction` — nothing in mosADD executes these today)
+ *  - platforms: which platforms can detect this event (apk/ios/pwa/harmony/desktop)
+ *
+ * ⚠️ A TAXONOMY ENTRY IS NOT A DETECTOR. This catalog is the map of events the engine
+ * can *classify*. Whether any given event is *emitted* depends on a collector being
+ * wired to a real sensor on a real platform — far fewer than the catalog size. Never
+ * describe the catalog size as a number of detections, signals, or things "detected".
+ * See ../README.md → "Coverage today" for what actually fires.
  *
  * Pairs with `evaluateEvent()` (the pure decision engine) in ./index.ts.
  */
 
-export type EventCategory = 'COMINT' | 'ELINT' | 'MASINT' | 'CYBER' | 'BEHAVIORAL' | 'PRIVACY' | 'SIGINT' | 'OSINT' | 'MPOST';
+export type EventCategory = 'COMINT' | 'ELINT' | 'MASINT' | 'CYBER' | 'BEHAVIORAL' | 'PRIVACY' | 'SIGINT' | 'OSINT' | 'MPOST' | 'SPYWARE';
 
 export type EventSeverity = 'info' | 'warning' | 'elevated' | 'critical' | 'killswitch';
 
+/**
+ * The recommended policy attached to a taxonomy entry.
+ *
+ * ⚠️ ADVISORY ONLY. mosADD does NOT execute these. `evaluateEvent()` never returns
+ * them (it returns a `ThreatAction`), and the `threat_classify` MCP tool deliberately
+ * answers `action: "monitor"`. `disconnect_call`, `destroy_room` and `wipe_account`
+ * describe what a stricter host *could* choose to do with its own authority — no
+ * mosADD code path disconnects a call, destroys a room, or wipes an account. mLIDAR
+ * is signal-only by design.
+ */
 export type AutoAction = 'log' | 'alert_user' | 'increase_sampling' | 'disconnect_call' | 'destroy_room' | 'wipe_account';
 
-export type Platform = 'apk' | 'ios' | 'pwa' | 'harmony';
+export type Platform = 'apk' | 'ios' | 'pwa' | 'harmony' | 'desktop';
 
 export interface ThreatEventDef {
     id: string;
@@ -50,13 +67,18 @@ const APK_ONLY: Platform[] = ['apk'];
 const IOS_ONLY: Platform[] = ['ios'];
 const HARMONY: Platform[] = ['harmony'];
 const SERVER: Platform[] = ['pwa']; // server-side events (edge functions)
+const DESKTOP_ONLY: Platform[] = ['desktop']; // Electron main-process OS signals
+const DESK_APK: Platform[] = ['desktop', 'apk']; // IOC-matchable on both computer + phone
 
 function def(id: string, category: EventCategory, severity: EventSeverity, autoActions: AutoAction[], label: string, platforms: Platform[] = ALL): ThreatEventDef {
     return { id, category, severity, autoActions, label, platforms };
 }
 
 export const THREAT_EVENTS: ThreatEventDef[] = [
-    // ── SIGINT (56 events — signals & device) ──
+    // ── SIGINT — signals & device ──
+    // NOTE: block headers describe the BLOCK, not the category total. Later blocks
+    // (Android/iOS/Harmony/correlations) add to these categories too. For real
+    // per-category totals read CATEGORY_EVENT_COUNTS — never a comment.
     def('SMS_RECEIVED', 'SIGINT', 'info', LOG, 'SMS received', NATIVE),
     def('NET_SAMPLE', 'SIGINT', 'info', LOG, 'Network sample'),
     def('NETWORK_SCAN', 'SIGINT', 'info', LOG, 'Network scan'),
@@ -122,7 +144,7 @@ export const THREAT_EVENTS: ThreatEventDef[] = [
     def('ARP_TABLE_CHANGE', 'SIGINT', 'elevated', ELEVATE, 'ARP table change — MITM risk', NATIVE),
     def('INOTIFY_SYSTEM_CHANGE', 'SIGINT', 'critical', DISCONNECT, '/system partition modified', APK_ONLY),
 
-    // ── COMINT (8) ──
+    // ── COMINT ──
     def('RTP_STREAM_HIJACK', 'COMINT', 'critical', DISCONNECT, 'RTP stream hijack'),
     def('VOIP_MAN_IN_MIDDLE', 'COMINT', 'critical', DISCONNECT, 'VoIP MITM'),
     def('SMS_SILENT_DELIVERY', 'COMINT', 'critical', DISCONNECT, 'Silent SMS attack', NATIVE),
@@ -132,7 +154,7 @@ export const THREAT_EVENTS: ThreatEventDef[] = [
     def('VOLTE_DOWNGRADE', 'COMINT', 'critical', DISCONNECT, 'VoLTE forced downgrade', NATIVE),
     def('RCS_METADATA_LEAK', 'COMINT', 'warning', ALERT, 'RCS metadata leak', NATIVE),
 
-    // ── ELINT (8) ──
+    // ── ELINT ──
     def('RF_SPECTRUM_SCAN', 'ELINT', 'info', LOG, 'RF spectrum scan', NATIVE),
     def('EMF_ANOMALY', 'ELINT', 'elevated', ELEVATE, 'EMF anomaly', NATIVE),
     def('RADAR_PULSE_DETECT', 'ELINT', 'warning', ALERT, 'Radar pulse detected', NATIVE),
@@ -142,7 +164,7 @@ export const THREAT_EVENTS: ThreatEventDef[] = [
     def('SIGNAL_TRIANGULATION', 'ELINT', 'elevated', ELEVATE, 'Signal triangulation', NATIVE),
     def('ANTENNA_PATTERN_CHANGE', 'ELINT', 'warning', ALERT, 'Antenna pattern change', NATIVE),
 
-    // ── MASINT (8) ──
+    // ── MASINT ──
     def('ACOUSTIC_FINGERPRINT', 'MASINT', 'warning', ALERT, 'Acoustic fingerprint', NATIVE),
     def('VIBRATION_ANALYSIS', 'MASINT', 'info', LOG, 'Vibration analysis', NATIVE),
     def('POWER_CONSUMPTION_ANOMALY', 'MASINT', 'elevated', ELEVATE, 'Power anomaly', NATIVE),
@@ -152,7 +174,7 @@ export const THREAT_EVENTS: ThreatEventDef[] = [
     def('CLOCK_SKEW_ANALYSIS', 'MASINT', 'warning', ALERT, 'Clock skew anomaly'),
     def('ENTROPY_POOL_CHECK', 'MASINT', 'info', LOG, 'Entropy pool check'),
 
-    // ── CYBER (17 — runtime attacks & anti-tamper) ──
+    // ── CYBER — runtime attacks & anti-tamper ──
     def('MEMORY_INJECTION', 'CYBER', 'killswitch', KILL, 'Memory injection', NATIVE),
     def('HEAP_SPRAY_DETECT', 'CYBER', 'killswitch', KILL, 'Heap spray attack', NATIVE),
     def('SYSCALL_HOOKING', 'CYBER', 'killswitch', KILL, 'Syscall rootkit', APK_ONLY),
@@ -171,7 +193,7 @@ export const THREAT_EVENTS: ThreatEventDef[] = [
     def('OVERLAY_ATTACK', 'CYBER', 'critical', DISCONNECT, 'Overlay/tapjacking attack', NATIVE),
     def('CERTIFICATE_PINNING_FAIL', 'CYBER', 'critical', DISCONNECT, 'SSL certificate pinning failure'),
 
-    // ── BEHAVIORAL (5) ──
+    // ── BEHAVIORAL ──
     def('TYPING_PATTERN_CHANGE', 'BEHAVIORAL', 'warning', ALERT, 'Typing pattern change'),
     def('GAIT_ANALYSIS', 'BEHAVIORAL', 'info', LOG, 'Gait analysis', NATIVE),
     def('USAGE_TIME_ANOMALY', 'BEHAVIORAL', 'info', LOG, 'Usage time anomaly'),
@@ -179,7 +201,7 @@ export const THREAT_EVENTS: ThreatEventDef[] = [
     def('SLEEP_WAKE_ANOMALY', 'BEHAVIORAL', 'warning', ALERT, 'Sleep/wake anomaly'),
     def('BEHAVIORAL_ANOMALY', 'BEHAVIORAL', 'info', LOG, 'Behavioral anomaly'),
 
-    // ── PRIVACY (7) ──
+    // ── PRIVACY ──
     def('AD_TRACKER_DETECT', 'PRIVACY', 'warning', ALERT, 'Ad tracker detected'),
     def('CANVAS_FINGERPRINT', 'PRIVACY', 'elevated', ELEVATE, 'Canvas fingerprinting'),
     def('WEBRTC_LEAK', 'PRIVACY', 'elevated', ELEVATE, 'WebRTC leak'),
@@ -188,12 +210,12 @@ export const THREAT_EVENTS: ThreatEventDef[] = [
     def('CAMERA_INDICATOR_BYPASS', 'PRIVACY', 'critical', DISCONNECT, 'Camera indicator bypass'),
     def('MIC_INDICATOR_BYPASS', 'PRIVACY', 'critical', DISCONNECT, 'Mic indicator bypass'),
 
-    // ── OSINT (3 — open source intelligence) ──
+    // ── OSINT — open source intelligence ──
     def('EMAIL_BREACH_CHECK', 'OSINT', 'warning', ALERT, 'Email found in breach DB'),
     def('DARK_WEB_MENTION', 'OSINT', 'elevated', ELEVATE, 'Identity mentioned on dark web'),
     def('PUBLIC_DATA_EXPOSURE', 'OSINT', 'warning', ALERT, 'Public data exposure detected'),
 
-    // ── MPOST (8 — mp0st email tracking intel) ──
+    // ── MPOST — mp0st email tracking intel ──
     def('MPOST_INBOUND_RECEIVED', 'MPOST', 'info', LOG, 'Inbound email received', SERVER),
     def('MPOST_SENT', 'MPOST', 'info', LOG, 'Outbound email sent', SERVER),
     def('MPOST_DELIVERED', 'MPOST', 'info', LOG, 'Email delivered to recipient', SERVER),
@@ -203,7 +225,7 @@ export const THREAT_EVENTS: ThreatEventDef[] = [
     def('MPOST_COMPLAINED', 'MPOST', 'critical', DISCONNECT, 'Email reported as spam', SERVER),
     def('MPOST_FORWARDED', 'MPOST', 'elevated', ELEVATE, 'Email forwarded to third party', SERVER),
 
-    // ── HARMONY (2 — HarmonyOS-specific) ──
+    // ── HARMONY — HarmonyOS-specific ──
     def('HARMONY_DISTRIBUTED_DEVICE', 'SIGINT', 'info', LOG, 'HarmonyOS distributed device event', HARMONY),
     def('HEART_RATE_ANOMALY', 'MASINT', 'warning', ALERT, 'Heart rate anomaly detected', HARMONY),
 
@@ -253,6 +275,41 @@ export const THREAT_EVENTS: ThreatEventDef[] = [
     def('SENSOR_ENV_MISMATCH', 'MASINT', 'elevated', ELEVATE, 'Sensor environment mismatch', NATIVE),
     def('RF_JAMMING_CORRELATED', 'ELINT', 'killswitch', KILL, 'RF Jamming correlated with packet loss', NATIVE),
     def('MULTI_DEVICE_SHADOWING', 'SIGINT', 'killswitch', KILL, 'Multi-device shadowing detected', NATIVE),
+
+    // ── mLIDAR · SPYWARE / PEGASUS (IOC-based, the Amnesty-MVT / iVerify method) ──
+    // Alert-level auto-actions only — no auto-wipe. A confirmed compromise raises a
+    // CRITICAL alert plus recommended actions; mLIDAR itself never acts.
+    def('PEGASUS_C2_BEACON', 'SPYWARE', 'critical', ELEVATE, 'Beacon to known Pegasus C2', DESK_APK),
+    def('SPYWARE_C2_BEACON', 'SPYWARE', 'critical', ELEVATE, 'Beacon to known mercenary-spyware C2', DESK_APK),
+    def('SPYWARE_PROCESS_MATCH', 'SPYWARE', 'critical', ELEVATE, 'Known spyware process running', DESK_APK),
+    def('SPYWARE_PACKAGE_MATCH', 'SPYWARE', 'critical', ELEVATE, 'Known spyware package installed', APK_ONLY),
+    def('ROGUE_CONFIG_PROFILE', 'SPYWARE', 'elevated', ELEVATE, 'Rogue configuration / MDM profile', DESK_APK),
+    def('SPYWARE_ARTIFACT_PATH', 'SPYWARE', 'elevated', ELEVATE, 'Known spyware artifact on disk', DESKTOP_ONLY),
+    def('MERCENARY_EXPLOIT_TRACE', 'SPYWARE', 'critical', ELEVATE, 'Mercenary-spyware exploit trace', DESK_APK),
+
+    // ── mLIDAR · DESKTOP (Electron main-process OS security posture) ──
+    def('DESK_SUSPICIOUS_PROCESS', 'CYBER', 'warning', ALERT, 'Suspicious process', DESKTOP_ONLY),
+    def('DESK_NEW_LISTENING_PORT', 'CYBER', 'warning', ALERT, 'New listening port', DESKTOP_ONLY),
+    def('DESK_UNKNOWN_OUTBOUND', 'CYBER', 'warning', ALERT, 'Unknown outbound connection', DESKTOP_ONLY),
+    def('DESK_USB_ATTACHED', 'SIGINT', 'info', LOG, 'USB device attached', DESKTOP_ONLY),
+    def('DESK_DISK_UNENCRYPTED', 'CYBER', 'elevated', ELEVATE, 'Disk not encrypted', DESKTOP_ONLY),
+    def('DESK_FIREWALL_OFF', 'CYBER', 'elevated', ELEVATE, 'Firewall disabled', DESKTOP_ONLY),
+    def('DESK_AV_OFF', 'CYBER', 'elevated', ELEVATE, 'Antivirus / Defender disabled', DESKTOP_ONLY),
+    def('DESK_REMOTE_ACCESS_ON', 'CYBER', 'elevated', ELEVATE, 'Remote access (RDP/SSH) enabled', DESKTOP_ONLY),
+    def('DESK_SCREEN_RECORDING', 'PRIVACY', 'warning', ALERT, 'Screen recording active', DESKTOP_ONLY),
+    def('DESK_CAM_MIC_IN_USE', 'PRIVACY', 'warning', ALERT, 'Camera / microphone in use', DESKTOP_ONLY),
+    def('DESK_AUTORUN_ADDED', 'CYBER', 'warning', ALERT, 'New autorun / startup item', DESKTOP_ONLY),
+    def('DESK_NEW_ROOT_CERT', 'CYBER', 'elevated', ELEVATE, 'New root certificate installed', DESKTOP_ONLY),
+    def('DESK_SECUREBOOT_OFF', 'CYBER', 'elevated', ELEVATE, 'Secure Boot disabled', DESKTOP_ONLY),
+    def('DESK_OS_OUTDATED', 'CYBER', 'warning', ALERT, 'OS missing security updates', DESKTOP_ONLY),
+    def('DESK_VPN_OFF', 'SIGINT', 'info', LOG, 'VPN disconnected', DESKTOP_ONLY),
+    def('DESK_ADMIN_SESSION', 'CYBER', 'info', LOG, 'Elevated / admin session', DESKTOP_ONLY),
+
+    // ── mLIDAR · ANDROID (Capacitor native posture; distinct ids from the SIGINT block) ──
+    def('DEV_OPTIONS_ENABLED', 'CYBER', 'warning', ALERT, 'Developer options enabled', APK_ONLY),
+    def('ACCESSIBILITY_ABUSE', 'CYBER', 'elevated', ELEVATE, 'Suspicious accessibility service', APK_ONLY),
+    def('DEVICE_ADMIN_ADDED', 'CYBER', 'elevated', ELEVATE, 'New device-admin app', APK_ONLY),
+    def('SIDELOAD_SOURCE', 'CYBER', 'info', LOG, 'App installed outside the store', APK_ONLY),
 ];
 
 // ── Helpers ──
@@ -263,9 +320,10 @@ export function getEventDef(id: string): ThreatEventDef | undefined {
     return EVENT_BY_ID.get(id);
 }
 
-export const CATEGORIES: EventCategory[] = ['SIGINT', 'COMINT', 'ELINT', 'MASINT', 'CYBER', 'BEHAVIORAL', 'PRIVACY', 'OSINT', 'MPOST'];
+export const CATEGORIES: EventCategory[] = ['SPYWARE', 'SIGINT', 'COMINT', 'ELINT', 'MASINT', 'CYBER', 'BEHAVIORAL', 'PRIVACY', 'OSINT', 'MPOST'];
 
 export const CATEGORY_LABELS: Record<EventCategory, string> = {
+    SPYWARE: 'SPYWARE',
     SIGINT: 'SIGINT',
     COMINT: 'COMINT',
     ELINT: 'ELINT',
@@ -312,6 +370,18 @@ export const PLATFORM_EVENT_COUNTS = {
     ios: THREAT_EVENTS.filter(e => e.platforms.includes('ios')).length,
     pwa: THREAT_EVENTS.filter(e => e.platforms.includes('pwa')).length,
     harmony: THREAT_EVENTS.filter(e => e.platforms.includes('harmony')).length,
+    desktop: THREAT_EVENTS.filter(e => e.platforms.includes('desktop')).length,
     total: THREAT_EVENTS.length,
 } as const;
+
+/**
+ * Per-category event counts, derived from THREAT_EVENTS.
+ *
+ * Read this instead of writing a number in prose — every stale count in this repo's
+ * history came from a human typing a total into a comment or a README.
+ */
+export const CATEGORY_EVENT_COUNTS: Record<EventCategory, number> = CATEGORIES.reduce(
+    (acc, c) => { acc[c] = THREAT_EVENTS.filter(e => e.category === c).length; return acc; },
+    {} as Record<EventCategory, number>,
+);
 

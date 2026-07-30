@@ -42,7 +42,7 @@ operation → @mosadd/threat-engine → radar event → severity scoring
     block / allow / quarantine  (per-tier policy)
 ```
 
-Open-source `@mosadd/threat-engine` ships the 166-event taxonomy and scoring primitives. The hub adds:
+Open-source `@mosadd/threat-engine` ships the full threat-event taxonomy and scoring primitives (read `THREAT_EVENT_COUNT` for the live size). The hub adds:
 
 - Real-time correlation across channels (a single actor spamming mDM + mIRC + mAYL looks innocent on each channel; correlated, it's abuse)
 - Cross-tenant threat intel feeds (private — paid threat intel partners, MISP feeds, our own observations)
@@ -50,7 +50,7 @@ Open-source `@mosadd/threat-engine` ships the 166-event taxonomy and scoring pri
 - ML scoring on text (prompt-injection detection — model: distilled adversarial classifier)
 - Quarantine workflow: high-severity operation → human review queue
 
-Self-host: `@mosadd/threat-engine` runs locally with the open 166-event taxonomy. You won't get cross-tenant intel, but the engine is the same.
+Self-host: `@mosadd/threat-engine` runs locally with the full open taxonomy. You won't get cross-tenant intel, but the engine is the same.
 
 ### 4. Billing / metering ([LINEAR-2161](https://linear.app/ip-ra/issue/LINEAR-2161))
 

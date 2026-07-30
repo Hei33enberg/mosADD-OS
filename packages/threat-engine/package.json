@@ -1,7 +1,7 @@
 {
   "name": "@mosadd/threat-engine",
   "version": "3.0.0-alpha.26",
-  "description": "Threat-event taxonomy (166 canonical events) + scoring + pure defensive-decision engine for mosadd. The kernel-level security primitive that becomes the radar moat in the Phase 2 hub.",
+  "description": "Threat-event taxonomy (193 canonical events) + scoring + pure defensive-decision engine for mosadd — the classification layer behind mLIDAR and the Irondome security pillar.",
   "homepage": "https://github.com/Hei33enberg/mosadd-os/tree/main/packages/threat-engine",
   "repository": {
     "type": "git",

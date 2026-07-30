@@ -35,7 +35,7 @@ Now that AI has **69 mosADD tools** — send/read DMs (mDM), post in channels (m
 The desktop app loads the live site and adds native powers:
 - **Tray + native notifications**, deep-links.
 - A **local, read-only knowledge server** (127.0.0.1) so tools like Claude Code can query *your own mosADD history* (mRAG) — every access asks your **permission** first and is logged.
-- **mLIDAR** — an on-device security scan (processes, open ports, SSH/RDP/VPN posture) — the "Irondome / detects-Pegasus" pillar.
+- **mLIDAR** — an opt-in on-device security scan (processes, open ports, SSH/RDP/VPN posture, plus DNS lookups of known mercenary-spyware C2 domains) — the Irondome pillar. It signals; it never acts. See [threat monitoring](./threat-monitoring.md).
 - It does **not** run commands, open your files, or reach other machines yet.
 
 ### 6. Creating agents

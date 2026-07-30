@@ -14,7 +14,7 @@ The omnichannel comms layer for humans, agents, and robots — built for the age
 [![Status](https://img.shields.io/badge/status-3.0.0--alpha.32-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
 [![Tools](https://img.shields.io/badge/tools-73%20live-00ff7f)](packages/mcp)
-[![Threat events](https://img.shields.io/badge/threat%20events-166-ff3b3b)](packages/threat-engine)
+[![Threat events](https://img.shields.io/badge/threat%20events-193-ff3b3b)](packages/threat-engine)
 [![npm](https://img.shields.io/npm/v/@mosadd/mcp/alpha?label=%40mosadd%2Fmcp)](https://www.npmjs.com/package/@mosadd/mcp)
 [![mosadd.com](https://img.shields.io/badge/site-mosadd.com-5af082)](https://mosadd.com)
 
@@ -91,22 +91,52 @@ This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.
 | `mAYL` | Mail, every user gets `<id>@mosadd.com` (was the `mp0st` codename) | Transport + at-rest (server-readable) | **alpha (shipped)** |
 | `mTALK` | Push-to-talk voice, LLM-as-participant | Transport (LiveKit) | **alpha (shipped)** |
 | `mRAG` | Knowledge base — RAG recall (hybrid vector + BM25) | On-device for E2EE content | **alpha (shipped)** |
-| `Irondome` | On-device threat classification — 166-event, 9-category (SIGINT/CYBER/MASINT/…) catalog + decision engine | Client-side, never phones home | **alpha (shipped)** — `threat_catalog`/`threat_classify` live |
+| `Irondome` | On-device threat classification — 10-category (SPYWARE/SIGINT/CYBER/MASINT/…) catalog + decision engine, and the mLIDAR collectors that feed it | The engine is a pure function with no network. **mLIDAR telemetry does upload** — see [threat monitoring](./docs/threat-monitoring.md) | **alpha (shipped)** — `threat_catalog`/`threat_classify` live |
 
-**Encrypted where it counts, honest where it isn't:** we label encryption scope per channel rather than claiming blanket "encryption" — only mDM is end-to-end. Alongside the modules ships [`@mosadd/threat-engine`](./packages/threat-engine) — the **Irondome**: an embeddable, on-device defensive security pillar (Pegasus-class threat-event classification) that runs entirely client-side, where your data already is. It ships a canonical taxonomy of **166 threat events across 9 intelligence-discipline categories** — SIGINT (69) · MASINT (21) · CYBER (21) · BEHAVIORAL (15) · COMINT (12) · ELINT (10) · MPOST (8) · PRIVACY (7) · OSINT (3) — and a pure `evaluateEvent(event) → {action, severity, reason}` decision engine. Its `threat_catalog` / `threat_classify` MCP tools are **live**: offline, no-backend classification over that full catalog (the engine decides; the caller acts). *Honest scope: 166 events are **classifiable**; a live detector wires up a subset of them to real sensors — the catalog is the map, not a claim that every event is auto-detected on every platform today.*
+**Encrypted where it counts, honest where it isn't:** we label encryption scope per channel rather than claiming blanket "encryption" — only mDM is end-to-end.
+
+Alongside the modules ships [`@mosadd/threat-engine`](./packages/threat-engine) — the **Irondome**: the classification layer behind **mLIDAR**, mosADD's on-device threat monitor. It ships a canonical taxonomy of **193 threat events** across 10 intelligence-discipline categories — SPYWARE · SIGINT · CYBER · MASINT · BEHAVIORAL · COMINT · ELINT · PRIVACY · MPOST · OSINT — plus a pure `evaluateEvent(event) → {action, severity, reason}` decision engine. Its `threat_catalog` / `threat_classify` MCP tools are **live**: offline, no-backend classification over the full catalog (the engine decides; the caller acts).
+
+> **Honest scope, stated up front.** A **taxonomy entry is not a detector**. 193 events are *classifiable*; **20 event types are actually emitted** by live collectors today (7 desktop, 11 Android native, 2 web).
+>
+> Detecting mercenary spyware is the destination mLIDAR is built for, and the part that is real is real: **we detect a machine reaching for 4,166 known mercenary-spyware C2 domains — including dead ones, which is precisely what an implant does.** Matching the OS DNS resolver cache means a *failed* lookup of a seized 2021 C2 still counts, because the machine still reached for it.
+>
+> The blunt limit, in the same breath: **live Pegasus infrastructure is not detectable** — no free public feed publishes live mercenary C2s, so the constraint is intelligence, not code. Behavioural correlation is the stated path past it. mLIDAR **alerts and never acts**, and its telemetry **is uploaded** to the backend. The whole picture — what fires, what does not, and the two threat feeds we rejected rather than ship — is in [**docs/threat-monitoring.md**](./docs/threat-monitoring.md).
 
 ## Architecture
 
-**Public OSS layer (Apache-2.0, this repo):**
-- [`@mosadd/mcp`](./packages/mcp) — single MCP server, all channels (THE main artifact)
-- [`@mosadd/core`](./packages/core) — channel primitives
-- [`@mosadd/providers`](./packages/providers) — vendor adapters (LiveKit voice)
-- [`@mosadd/ai`](./packages/ai) — framework adapters (Vercel AI SDK, LangChain, OpenAI Agents, Anthropic Agents)
-- [`@mosadd/crypto`](./packages/crypto), [`@mosadd/protocol`](./packages/protocol), [`@mosadd/threat-engine`](./packages/threat-engine)
+### What's in each package
 
-**Hosted layer:**
+Apache-2.0, this repo. Status is per-package and deliberately unglamorous.
+
+| Package | What it is | Status |
+|---|---|---|
+| [`@mosadd/mcp`](./packages/mcp) | **The main artifact.** One MCP server exposing every channel as tools — stdio or hosted HTTP. If you install one thing, install this | **alpha — live on npm** |
+| [`@mosadd/threat-engine`](./packages/threat-engine) | The Irondome: threat-event taxonomy + the pure `evaluateEvent()` decision function. No backend, no network | **alpha — live on npm** |
+| [`@mosadd/core`](./packages/core) | Channel primitives the modules are built from | **alpha** |
+| [`@mosadd/crypto`](./packages/crypto) | X3DH + Double Ratchet, built on [@noble](https://paulmillr.com/noble/) | **alpha** |
+| [`@mosadd/protocol`](./packages/protocol) | Wire formats and message envelopes shared across clients | **alpha** |
+| [`@mosadd/providers`](./packages/providers) | Vendor adapters (LiveKit voice) | **alpha** |
+| [`@mosadd/ai`](./packages/ai) | Framework adapters — Vercel AI SDK, LangChain, OpenAI Agents, Anthropic Agents | **alpha** |
+| [`@mosadd/bridges`](./packages/bridges) | Agent-runtime bridges (Hermes Agent, MIT — Nous Research) | **alpha** |
+| [`@mosadd/skins`](./packages/skins) | Theming for embeddable surfaces | **alpha** |
+
+`pnpm-workspace.yaml` covers `packages/*`, `examples/*` and `skills/*`. The `apps/*` trees (docs site, embed widget, Realm, extensions) are deployed separately and are not part of the published package build.
+
+### Hosted layer
+
 - **Onboarding + docs + key minting:** [mosadd.com](https://mosadd.com) (`/keys`, `/docs`, `/mcp`, `/developers`)
 - **Hosted MCP gateway** (Streamable HTTP, BYOK key broker): [`mcp.mosadd.com`](https://mcp.mosadd.com) — for remote/server agents (stdio is local-only)
+
+### Docs worth reading
+
+| Doc | What's in it |
+|---|---|
+| [**docs/threat-monitoring.md**](./docs/threat-monitoring.md) | mLIDAR end to end — the collectors, what leaves your device, the signal-only stance, the honest Pegasus section, and what fires today |
+| [docs/security/e2ee-posture.md](./docs/security/e2ee-posture.md) | Exactly what encryption copy is allowed to say, per channel |
+| [docs/security/threat-model.md](./docs/security/threat-model.md) | STRIDE threat model for the public layer |
+| [docs/robots-and-agents.md](./docs/robots-and-agents.md) | Integrating a real robot fleet |
+| [docs/architecture/](./docs/architecture/) · [docs/rfcs/](./docs/rfcs/) | Design docs and the RFC index |
 
 ## Robots on the same layer
 
@@ -123,7 +153,7 @@ Slack, Discord, and email were built for humans clicking screens. mosADD is the 
 - **MCP-native, not another SDK.** Semantic comms primitives — not vendor-shaped tool wrappers. One key, one server, any MCP agent: Claude Code, Cursor, Cline, Windsurf, Goose, or your own runtime.
 - **No phone number. No email. No tracking to sign up.** Every user just gets `<id>@mosadd.com`.
 - **Yours to run.** Apache-2.0 with a patent grant — bring your own keys or self-host the entire stack. No lock-in.
-- **Guarded on-device.** [`@mosadd/threat-engine`](./packages/threat-engine) is the **Irondome**: an embeddable, client-side defensive pillar — a **166-event, 9-category** (SIGINT/COMINT/ELINT/MASINT/CYBER/BEHAVIORAL/PRIVACY/OSINT/MPOST) Pegasus-class threat catalog + decision engine that runs where your data already lives, never phoning home.
+- **Guarded on-device — and honest about the limits.** [`@mosadd/threat-engine`](./packages/threat-engine) is the **Irondome**: an embeddable, client-side threat catalog + decision engine, and [**mLIDAR**](./docs/threat-monitoring.md) is the opt-in monitor that feeds it. It **signals; it never acts** — no blocking, no quarantine, no wipe. That restraint is deliberate: a false alarm that acts does more damage than the threat it guessed at.
 
 Read the [Manifesto](./MANIFESTO.md) for what we believe, [docs/roadmap.md](./docs/roadmap.md) for the full plan, and [Releases](https://github.com/Hei33enberg/mosADD-OS/releases) for live status.
 

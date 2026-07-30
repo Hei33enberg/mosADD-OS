@@ -25,8 +25,8 @@ const threats = [
     d: 'BYOK or self-host: bring your own provider keys (LiveKit, Resend, OpenAI, Supabase) or run the whole Apache-2.0 stack yourself. The operator is not a black box you have to trust — the source is auditable.',
   },
   {
-    t: 'Irondome detects Pegasus',
-    d: 'An on-device monitor for device-integrity and network anomalies — rooted/tampered devices, sideloaded apps, MITM, Pegasus-class spyware indicators. It runs on your device and flags, so you and your agent can react. Not a hosted service watching your traffic.',
+    t: 'Irondome — mercenary-spyware watch',
+    d: 'An on-device monitor for device integrity and network anomalies — rooted/tampered devices, sideloaded apps, anti-tamper signals, and DNS lookups of known mercenary-spyware C2 domains. It flags, so you and your agent can react; it never acts on your behalf. Findings are recorded to your account.',
   },
 ];
 
@@ -100,11 +100,14 @@ export default function HomePage() {
       <section className="relative overflow-hidden py-16">
         <div aria-hidden className="pointer-events-none absolute -right-32 top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-primary/[0.06] blur-[120px]" />
         <SectionTag n="03" label="Irondome · on-device threat monitor" />
-        <h2 className="font-display text-3xl font-semibold tracking-tight">The only messenger that detects Pegasus.</h2>
+        <h2 className="font-display text-3xl font-semibold tracking-tight">Built to catch mercenary spyware.</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          Irondome is mosADD&apos;s on-device threat monitor — it watches device integrity and network anomalies,
-          including Pegasus-class spyware indicators, on your device. Detection runs locally; nothing phones home.
-          Ships as an embeddable package (<code className="font-mono text-primary">@mosadd/threat-engine</code>) — a security pillar, not a hosted service watching your traffic.
+          Irondome is mosADD&apos;s on-device threat monitor. It detects a machine reaching for <strong>4,166 known
+          mercenary-spyware C2 domains</strong> — including dead ones, which is precisely what an implant does — plus
+          device-integrity and anti-tamper signals on desktop and Android. It <strong>signals; it never acts</strong>.
+          Detected events are uploaded to your account, not kept purely on-device. Live Pegasus infrastructure is not
+          yet detectable — no public feed publishes it — and behavioural correlation is how we get there. The engine
+          ships as an embeddable package (<code className="font-mono text-primary">@mosadd/threat-engine</code>).
         </p>
         <div className="mt-8 grid gap-px overflow-hidden border border-border bg-border md:grid-cols-3">
           {threats.map((c) => (

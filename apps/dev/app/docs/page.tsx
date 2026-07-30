@@ -22,7 +22,7 @@ export default function DocsIndexPage() {
         mosadd is <strong>the human-in-the-loop layer for AI agents</strong> — when an agent hits a decision it
         shouldn&apos;t make alone, it pulls a human into a private E2EE DM or live voice, reaches the
         outside world by email, and remembers what it learns. Irondome — the on-device security pillar — watches
-        device integrity and network anomalies (it detects Pegasus-class spyware). Each <code className="font-mono text-primary">m*</code> is a channel you{' '}
+        device integrity and network anomalies, including lookups of known mercenary-spyware C2 domains. Each <code className="font-mono text-primary">m*</code> is a channel you{' '}
         <code className="font-mono text-primary">add</code>:
       </P>
       <Ul>
