@@ -1,10 +1,15 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "mkdir -p public && printf '%s' '<!doctype html><meta charset=utf-8><title>mosadd MCP gateway</title>mosadd MCP gateway — POST JSON-RPC to /mcp with header: Authorization: Bearer mosadd_sk_live_… — get a key at https://mosadd.com/keys' > public/index.html",
+  "buildCommand": "mkdir -p public && printf '%s' '<!doctype html><meta charset=utf-8><title>mosadd MCP gateway</title>mosadd MCP gateway — POST JSON-RPC to /mcp with header: Authorization: Bearer mosadd_sk_live_… — get a key at https://mosadd.com/keys, or add this URL as a connector and sign in.' > public/index.html",
   "outputDirectory": "public",
   "rewrites": [
     { "source": "/mcp", "destination": "/api/mcp" },
-    { "source": "/", "destination": "/api/mcp" }
+    { "source": "/", "destination": "/api/mcp" },
+    { "source": "/.well-known/oauth-authorization-server", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/metadata" },
+    { "source": "/.well-known/oauth-authorization-server/mcp", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/metadata" },
+    { "source": "/.well-known/oauth-protected-resource", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/resource" },
+    { "source": "/.well-known/oauth-protected-resource/mcp", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/resource" },
+    { "source": "/oauth/:path*", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/:path*" }
   ]
 }

@@ -38,6 +38,35 @@ curl -s http://localhost:3030/mcp \
 Verified locally: `initialize` → 200, `tools/list` → 73 tools (mDM/mIRC/mURL/mAYL
 modules + mTALK/mRAG capabilities + comms_* — mCALL and threat_* unregistered), `tools/call mIRC_list` → real backend response, bad key → 401.
 
+## Adding it as a CONNECTOR (OAuth) — not just a key in a header
+
+A bearer key is enough for Claude Code on a terminal and for n8n. It is NOT enough to appear in a
+host's connector list (Claude, ChatGPT): those add a server **by URL** and expect OAuth 2.1 with
+dynamic client registration. Since 2026-07-30 this gateway supports both.
+
+What a host does, with nothing pasted by the user:
+
+1. `POST /mcp` with no key → **401 + `WWW-Authenticate: … resource_metadata="…"`**
+2. `GET /.well-known/oauth-protected-resource` → names the authorization server (this origin)
+3. `GET /.well-known/oauth-authorization-server` → authorize / token / register endpoints
+4. `POST /oauth/register` (RFC 7591) → a `client_id`, no secret, PKCE required
+5. `GET /oauth/authorize?…` → 302 to `https://mosadd.com/oauth/authorize`, where the user signs in
+   and approves
+6. `POST /oauth/token` with the code + PKCE verifier → an access token
+
+**The access token IS a `mosadd_sk_live_…` hub key.** That is the whole design: the resource server
+keeps ONE auth path, the connector shows up in the user's key list, revoking it is revoking the key,
+and usage accounting already counts these calls. The authorization server itself is the
+`hub-oauth` edge function in the mosADD repo; the `/oauth/*` and `/.well-known/*` routes here are
+rewrites onto it so discovery sees one issuer, `https://mcp.mosadd.com`, as the spec requires.
+
+Smoke it:
+
+```bash
+curl -s https://mcp.mosadd.com/.well-known/oauth-protected-resource
+curl -si -X POST https://mcp.mosadd.com/mcp -H 'Content-Type: application/json'   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | grep -i www-authenticate
+```
+
 ## Deploy (mcp.mosadd.com)
 
 This is a standalone Vercel project (Root Directory `apps/mcp-http`).

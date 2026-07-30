@@ -31,12 +31,30 @@ function setCors(res: ServerResponse): void {
     "Access-Control-Allow-Headers",
     "authorization, content-type, mcp-session-id, mcp-protocol-version",
   );
-  res.setHeader("Access-Control-Expose-Headers", "mcp-session-id");
+  res.setHeader("Access-Control-Expose-Headers", "mcp-session-id, WWW-Authenticate");
 }
 
-function jsonRpcError(res: ServerResponse, status: number, code: number, message: string): void {
+// The origin this gateway answers on. Used to point an unauthenticated caller at the metadata that
+// tells it how to sign in — see WWW_AUTHENTICATE below.
+const PUBLIC_ORIGIN = process.env.MOSADD_MCP_ORIGIN ?? "https://mcp.mosadd.com";
+
+// WHAT TURNS A REJECTION INTO A SIGN-IN. Per the MCP authorization spec (and RFC 9728), a 401 from a
+// protected resource must name the metadata document describing who can authorize access. Without
+// this header a host that supports OAuth has no way to discover our authorization server, so adding
+// this URL as a connector fails with a bare 401 and the user sees "couldn't connect" — the exact
+// difference between a URL you curl with a key and a connector you can add.
+const WWW_AUTHENTICATE =
+  `Bearer realm="mosadd", resource_metadata="${PUBLIC_ORIGIN}/.well-known/oauth-protected-resource"`;
+
+function jsonRpcError(
+  res: ServerResponse,
+  status: number,
+  code: number,
+  message: string,
+  headers: Record<string, string> = {},
+): void {
   setCors(res);
-  res.writeHead(status, { "Content-Type": "application/json" });
+  res.writeHead(status, { "Content-Type": "application/json", ...headers });
   res.end(JSON.stringify({ jsonrpc: "2.0", error: { code, message }, id: null }));
 }
 
@@ -117,7 +135,11 @@ export async function handleMcp(
   const authHeader = req.headers["authorization"];
   const apiKey = (typeof authHeader === "string" ? authHeader : "").replace(/^Bearer\s+/i, "").trim();
   if (!API_KEY_RE.test(apiKey)) {
-    jsonRpcError(res, 401, -32001, "Unauthorized — send Authorization: Bearer mosadd_sk_live_… (get a key at https://mosadd.com/keys)");
+    jsonRpcError(
+      res, 401, -32001,
+      "Unauthorized — add this server as a connector and sign in, or send Authorization: Bearer mosadd_sk_live_… (keys: https://mosadd.com/keys)",
+      { "WWW-Authenticate": WWW_AUTHENTICATE },
+    );
     return;
   }
 
@@ -126,7 +148,9 @@ export async function handleMcp(
     env = await exchangeKey(apiKey, clientNameFrom(parsedBody));
   } catch (e) {
     const msg = (e as Error).message === "invalid_key" ? "Invalid or revoked API key" : "Key exchange failed";
-    jsonRpcError(res, 401, -32001, msg);
+    // A revoked key must also advertise how to get a new one — this is the path a connector takes
+    // after the user revokes it from the keys page and then tries to use it again.
+    jsonRpcError(res, 401, -32001, msg, { "WWW-Authenticate": WWW_AUTHENTICATE });
     return;
   }
 
