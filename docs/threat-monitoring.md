@@ -103,7 +103,7 @@ This is the honest boundary, and it matters:
 - **mDM message content is end-to-end encrypted and the operator cannot read it.**
 - **mLIDAR telemetry is not.** It is uploaded and readable by the operator.
 
-Any claim that mLIDAR is "100% on-device" or that "nothing phones home" is false and must not be made about mLIDAR. The [`@mosadd/threat-engine`](../packages/threat-engine) *package* is genuinely pure — a function with no network — but the collectors that use it do upload.
+Any claim that mLIDAR is "100% on-device" or that "nothing phones home" is false and must not be made about mLIDAR. The [`@mosadd/threat-engine`](../packages/threat-engine) *package* is genuinely pure — a function with no network — but the collectors that use it do upload. <!-- honesty-lint:allow — this line DEFINES the ban, same as e2ee-posture.md does for the encryption phrases -->
 
 mLIDAR is off unless you turn it on, and turning it off stops collection immediately.
 

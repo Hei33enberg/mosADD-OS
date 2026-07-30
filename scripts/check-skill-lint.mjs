@@ -121,6 +121,27 @@ const BANNED = [
   [/cannot be monitored/i, `"cannot be monitored" — false absolute`],
   [/\bno logs\b/i, `"no logs" — we don't claim that`],
   [/we can never be compelled/i, `false legal absolute`],
+
+  // ── mLIDAR / threat-detection over-claims (LINEAR-4838) ────────────────────────────────────
+  // These come from the 2026-07-14 mLIDAR code+DB audit, which found every one of them live on a
+  // public surface. Until now the honesty lint had NO rule for any of them: it policed encryption
+  // language and said nothing about detection language, which is the half with the bigger gap
+  // between what the taxonomy describes (193 event types) and what a collector emits (20).
+  // The counter-claims, one at a time:
+  //   · Nothing detects live Pegasus from a public list — the Amnesty sets are seized 2021 infra.
+  //   · Zero-click, IMSI-catcher/Stingray, rogue-certificate and jailbreak detection are taxonomy
+  //     entries with no emitter. They are not features.
+  //   · mLIDAR uploads detections to `device_events`, so it is not "100% on-device".
+  //   · It is a 60-second poll while the desktop app is open — not 24/7, not always-on.
+  [/(only|first) (messenger|app|product)[^.]{0,40}detects?/i, `superlative detection claim — we are not the only or first anything here`],
+  [/detects? (live )?pegasus/i, `"detects Pegasus" — public indicator lists cannot detect live Pegasus infrastructure`],
+  [/zero[- ]click[^.]{0,30}(detect|scan|flag|protect)/i, `zero-click detection — in the taxonomy, no detector emits it`],
+  [/(imsi[- ]catcher|stingray)[^.]{0,30}(detect|scan|flag)/i, `IMSI-catcher/Stingray detection — in the taxonomy, no detector emits it`],
+  [/rogue[- ]certificate[s]?[^.]{0,30}(detect|scan|flag)/i, `rogue-certificate detection — not implemented (no certificate inspection)`],
+  [/100% on[- ]device/i, `"100% on-device" — mLIDAR uploads detections to your account; true of mDM content only`],
+  [/zero cloud custody/i, `"zero cloud custody" — false for mLIDAR telemetry`],
+  [/24\/7[^.]{0,25}(monitor|scan|watch|protect)/i, `"24/7 monitoring" — mLIDAR is a 60-second poll, only while the desktop app is open`],
+  [/iron ?dome for your phone/i, `"iron dome for your phone" — there is no phone spyware monitor; desktop + Android posture only`],
 ];
 // Files that legitimately discuss banned phrases (they define the policy).
 // Kept minimal on purpose: the two files that must literally spell out the
@@ -140,20 +161,44 @@ try {
   fail(`community/surfaces.json: ${e.message}`);
 }
 
-const PROSE_DIRS = ["", "docs", "skills", ".github"];
+/*
+ * WHICH TREES THE HONESTY LINT WALKS.
+ *
+ * WIDENED 2026-07-30 (LINEAR-4838). This walk used to skip `apps` outright and collect only `.md`
+ * files. Both exclusions pointed at the same blind spot, and it was the worst possible one: the
+ * entire PUBLIC MARKETING SITE lives in `apps/dev/app/**` as `.tsx`, plus `apps/dev/public/llms.txt`
+ * — the file we hand to language models. So the one tree with the widest audience was the one tree
+ * the honesty lint could not see, and it is exactly where the audit found "the only messenger that
+ * detects Pegasus"-class copy, a stale 69-tool count on the hero, and a Discord link that
+ * `community/surfaces.json` explicitly bans.
+ *
+ * A linter that reads the documentation and not the marketing has it precisely backwards: prose in
+ * `docs/` is read by contributors who can spot an over-claim, and the landing page is read by people
+ * who cannot. So `apps` is now walked, and the collected extensions cover the files public copy
+ * actually lives in.
+ *
+ * `packages` is walked for READMEs (they are published to npm and rendered on the package page).
+ * `node_modules`, build output and `examples` stay excluded.
+ */
+const SKIP_DIRS = new Set([
+  "node_modules", ".git", "dist", "build", "out", ".next", ".next-build", ".claude", ".claude-plugin",
+  "coverage", ".turbo", ".vercel", "android", "ios",
+]);
+/** Trees whose contents are, or become, public copy. */
+const SKIP_TOP = new Set(["examples", "supabase", "skins", "scripts"]);
+/** Extensions that carry public prose. `.tsx` because the marketing site is a React app. */
+const PROSE_EXT = /\.(md|mdx|txt|tsx|jsx)$/i;
+
 const proseFiles = [];
 (function walk(dir) {
   for (const entry of readdirSync(join(ROOT, dir))) {
-    if (["node_modules", ".git", "dist", ".next", ".next-build", ".claude", ".claude-plugin"].includes(entry)) continue;
+    if (SKIP_DIRS.has(entry)) continue;
     const rel = dir ? `${dir}/${entry}` : entry;
     const full = join(ROOT, rel);
     if (statSync(full).isDirectory()) {
-      // only walk prose-bearing trees
-      if (PROSE_DIRS.some((p) => rel === p || rel.startsWith(`${p}/`) || p === "")) {
-        if (["packages", "apps", "examples", "supabase", "skins", "scripts", "community"].includes(rel)) continue;
-        walk(rel);
-      }
-    } else if (/\.md$/i.test(entry)) {
+      if (!dir && SKIP_TOP.has(rel)) continue;
+      walk(rel);
+    } else if (PROSE_EXT.test(entry)) {
       proseFiles.push(rel);
     }
   }
@@ -166,10 +211,18 @@ for (const rel of proseFiles) {
   lines.forEach((line, i) => {
     if (line.includes("honesty-lint:allow")) return;
     for (const [re, why] of BANNED) {
-      // Skip explicit negations like "never claim", "don't claim", "not unbannable"
-      if (re.test(line) && !/never|don'?t|do not|won'?t|isn'?t|not\b|❌/i.test(line)) {
-        fail(`${relPosix}:${i + 1}: banned phrase — ${why}`);
-      }
+      const m = re.exec(line);
+      if (!m) continue;
+      // Skip explicit negations like "never claim X", "we don't say X", "❌ X".
+      //
+      // TIGHTENED 2026-07-30 (LINEAR-4838): this used to test the WHOLE line for `not\b`, which is
+      // one of the most common words in English prose — so a sentence like "mosADD is not a toy and
+      // everything is encrypted" passed the gate while making the exact blanket claim the rule
+      // exists to stop. The negation now has to appear in the ~40 characters immediately BEFORE the
+      // banned phrase, which is where a real negation of it would actually sit.
+      const before = line.slice(Math.max(0, m.index - 40), m.index);
+      if (/\b(never|don'?t|do not|won'?t|isn'?t|is not|are not|no longer|not)\b[^.]*$|❌/i.test(before)) continue;
+      fail(`${relPosix}:${i + 1}: banned phrase — ${why}`);
     }
     if (surfaces) {
       for (const ghost of surfaces.banned_references ?? []) {

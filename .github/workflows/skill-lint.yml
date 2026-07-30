@@ -22,6 +22,11 @@ on:
       - "packages/mcp/server.json"
       - "community/**"
       - "scripts/check-skill-lint.mjs"
+      # LINEAR-4838: apps/** and packages/** were BOTH absent here, and apps/dev/** is the public
+      # marketing site. So the tree with the widest audience could change without ever running the
+      # honesty lint — a push-path filter that mirrored the linter's own blind spot.
+      - "apps/**"
+      - "packages/*/README.md"
   pull_request:
     branches: [main]
   schedule:
