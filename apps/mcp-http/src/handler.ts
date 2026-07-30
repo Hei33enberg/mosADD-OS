@@ -40,18 +40,62 @@ function jsonRpcError(res: ServerResponse, status: number, code: number, message
   res.end(JSON.stringify({ jsonrpc: "2.0", error: { code, message }, id: null }));
 }
 
-async function exchangeKey(apiKey: string): Promise<SupabaseEnv> {
+// ── Per-key session cache (LINEAR-4813) ─────────────────────────────────────
+// The handler used to exchange the API key for a fresh Supabase session on EVERY
+// request — one hub-key-exchange round-trip (and one GoTrue magiclink mint) per
+// tool call. The exchanged token lives ~an hour; caching it per key in module
+// memory kills that overhead. TTL is deliberately WELL below expires_in so a
+// cached token is never handed out near its expiry mid-request. Module state
+// survives warm serverless invocations and is empty on a cold start — both fine.
+// A revoked key keeps working for at most SESSION_TTL_SAFETY_S after revocation;
+// acceptable for a cache this hot, same trade Supabase makes with JWTs.
+const SESSION_TTL_SAFETY_S = 300; // refresh 5 min before the token would expire
+const MAX_CACHED_SESSIONS = 1000; // hard cap — evict oldest, never grow unbounded
+
+type CachedSession = { env: SupabaseEnv; expiresAtMs: number };
+const sessionCache = new Map<string, CachedSession>();
+
+async function exchangeKey(apiKey: string, clientName?: string): Promise<SupabaseEnv> {
+  const cached = sessionCache.get(apiKey);
+  if (cached && cached.expiresAtMs > Date.now()) return cached.env;
+  sessionCache.delete(apiKey);
+
   const res = await fetch(exchangeEndpoint(), {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: "{}",
+    // client_name (from MCP initialize clientInfo, when this request carries it) lets
+    // hub-key-exchange stamp agent_name on its per-exchange mcp_sessions telemetry row.
+    body: JSON.stringify(clientName ? { client_name: clientName } : {}),
   });
   if (!res.ok) {
     throw new Error(res.status === 401 ? "invalid_key" : `exchange_failed_${res.status}`);
   }
-  const d = (await res.json()) as { url?: string; anon_key?: string; access_token?: string };
+  const d = (await res.json()) as {
+    url?: string;
+    anon_key?: string;
+    access_token?: string;
+    expires_in?: number;
+    user_id?: string;
+  };
   if (!d.url || !d.anon_key || !d.access_token) throw new Error("exchange_incomplete");
-  return { url: d.url, anonKey: d.anon_key, userJwt: d.access_token };
+  const env: SupabaseEnv = { url: d.url, anonKey: d.anon_key, userJwt: d.access_token };
+
+  const expiresInS = typeof d.expires_in === "number" && d.expires_in > 0 ? d.expires_in : 3600;
+  const ttlS = Math.max(60, expiresInS - SESSION_TTL_SAFETY_S); // TTL strictly < expires_in
+  if (sessionCache.size >= MAX_CACHED_SESSIONS) {
+    const oldest = sessionCache.keys().next().value;
+    if (oldest !== undefined) sessionCache.delete(oldest);
+  }
+  sessionCache.set(apiKey, { env, expiresAtMs: Date.now() + ttlS * 1000 });
+  return env;
+}
+
+/** Best-effort: pull clientInfo.name out of an MCP initialize request body. */
+function clientNameFrom(parsedBody: unknown): string | undefined {
+  const b = parsedBody as { method?: unknown; params?: { clientInfo?: { name?: unknown } } } | null;
+  if (!b || b.method !== "initialize") return undefined;
+  const name = b.params?.clientInfo?.name;
+  return typeof name === "string" && name.trim() ? name.trim().slice(0, 120) : undefined;
 }
 
 /**
@@ -79,12 +123,22 @@ export async function handleMcp(
 
   let env: SupabaseEnv;
   try {
-    env = await exchangeKey(apiKey);
+    env = await exchangeKey(apiKey, clientNameFrom(parsedBody));
   } catch (e) {
     const msg = (e as Error).message === "invalid_key" ? "Invalid or revoked API key" : "Key exchange failed";
     jsonRpcError(res, 401, -32001, msg);
     return;
   }
+
+  // TODO(metering, LINEAR-4813): `public.hub_usage_increment(p_user_id uuid, p_period text,
+  // p_messages bigint, p_ptt_minutes bigint)` exists with ZERO callers, and this handler CAN
+  // see `parsedBody.method === "tools/call"` cheaply. It is NOT wired here on purpose: the RPC
+  // meters MESSAGES and PTT MINUTES against the plan quotas hub-key-exchange returns —
+  // incrementing it once per tools/call would burn a user's message allowance on read-only
+  // calls (mDM_list_threads, mIRC_read, …), which is metering fraud in the user's disfavor.
+  // The correct wiring is inside the SEND-path tool implementations in @mosadd/mcp (or their
+  // EFs), where "this call produced N outbound messages / M PTT minutes" is actually known.
+  // The exchange already returns user_id for exactly that attribution.
 
   // Stateless: a fresh server + transport per request (no session store), and
   // JSON responses (not SSE) so the gateway works behind any serverless host.

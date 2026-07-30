@@ -14,9 +14,12 @@
  *
  * 73 callable tools registered — the exact live count is exported as TOOL_COUNT
  * (= allTools.length) below; ALWAYS reference that, never re-hard-code a number that drifts.
- * Breakdown (2026-07-17): mDM 14 · mIRC 24 · mAYL 11 · mURL 7 · mTALK 5 · mRAG 4 ·
- * comms 3 (action_create/frame_get/embed_create) · Irondome/threat 2 + comms_capabilities
- * discovery 1 = 69. (mDM/mIRC each include their 2 attachment tools from attachments.ts.)
+ * Breakdown (2026-07-30, measured from allTools): mDM 14 · mIRC 24 · mAYL 12 · mURL 7 ·
+ * mTALK 6 · mRAG 4 · comms 3 (action_create/frame_get/embed_create) · Irondome/threat 2 +
+ * comms_capabilities discovery 1 = 73. (The 2026-07-17 breakdown ended "= 69" — wrong twice
+ * over: its own terms summed to 71, and the 07-29 re-registrations of mAYL_send_as_agent +
+ * mTALK_ingest_ptt moved the real total to 73. Arithmetic in comments drifts; TOOL_COUNT doesn't.)
+ * (mDM/mIRC each include their 2 attachment tools from attachments.ts.)
  * Modules (4): mDM, mIRC, mURL, mAYL. Capabilities: mTALK (voice/PTT), mRAG, comms_, Irondome (threat_*).
  * mp0st_* stay as DEPRECATED back-compat aliases for mAYL_* (removed in a later alpha).
  * mAYL_send_as_agent + mTALK_ingest_ptt were RE-REGISTERED 2026-07-29: both had been disabled

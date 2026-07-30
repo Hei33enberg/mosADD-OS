@@ -13,6 +13,14 @@ import { TOOL_COUNT } from "../tools/index.js";
 // NOT checked here: the mosADD app's LP `McpToolReference` computes its total
 // dynamically from the rendered list, so it cannot drift; and the mosadd-agent README
 // lives in a separate repo. Both are noted in the migration handoff.
+//
+// ⚠ CROSS-REPO SURFACE THIS TEST CANNOT REACH: the public MCP server card at
+// apps/web/public/.well-known/mcp/server-card.json lives in the m0ssad-3 repo
+// (served at mosadd.com/.well-known/mcp/server-card.json). Found 2026-07-30
+// advertising 69 AND 64 at once while TOOL_COUNT was 73. It is pinned by its own
+// static gate THERE: m0ssad-3 scripts/check-mcp-server-card.mjs (wired into
+// scripts/gates-local.mjs), whose EXPECTED_TOOL_COUNT constant must be bumped in
+// the same change whenever TOOL_COUNT moves.
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "../../../.."); // packages/mcp/src/__tests__ -> repo root
@@ -27,6 +35,9 @@ const SURFACES: { file: string; re: RegExp; what: string }[] = [
   { file: "README.md", re: /\*\*(\d+) callable tools across/, what: "README module breakdown" },
   { file: "README.md", re: /npx -y @mosadd\/mcp@alpha\s+#\s*(\d+) tools/, what: "README quickstart comment" },
   { file: "packages/mcp/server.json", re: /(\d+)\s+MCP tools/, what: "MCP registry manifest description" },
+  // The npm-visible description — what `npm view @mosadd/mcp description` and the npmjs.com
+  // page show. Added 2026-07-30 (LINEAR-4813): it already said 73 but nothing enforced it.
+  { file: "packages/mcp/package.json", re: /—\s*(\d+)\s+tools\s+—/, what: "package.json description" },
   { file: "apps/realm/index.html", re: /#\s*(\d+)\s+tools/, what: "mosadd.dev Realm hero" },
   { file: "apps/dev/app/docs/mcp/page.tsx", re: /Total surface today:[\s\S]*?(\d+)\s+tools/, what: "dev docs /docs/mcp" },
   { file: "apps/dev/app/opengraph-image.tsx", re: /(\d+)\s+MCP tools/, what: "dev OG image" },
