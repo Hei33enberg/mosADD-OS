@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "mkdir -p public && printf '%s' '<!doctype html><meta charset=utf-8><title>mosadd MCP gateway</title>mosadd MCP gateway — POST JSON-RPC to /mcp with header: Authorization: Bearer mosadd_sk_live_… — get a key at https://mosadd.com/keys, or add this URL as a connector and sign in.' > public/index.html",
+  "buildCommand": "true",
   "outputDirectory": "public",
   "rewrites": [
     { "source": "/mcp", "destination": "/api/mcp" },
