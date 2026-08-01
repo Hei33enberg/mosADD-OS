@@ -12,12 +12,13 @@ const config = {
       { source: '/murl/:path*', destination: 'https://murl.mosadd.com/:path*', permanent: true },
       { source: '/channel0', destination: 'https://murl.mosadd.com', permanent: true },
       { source: '/channel0/:path*', destination: 'https://murl.mosadd.com/:path*', permanent: true },
-      // mosadd.dev is retired as a standalone surface — everything else collapses
-      // to the builder front door. statusCode:301 (a literal 301; `permanent:true`
-      // would emit 308). Fixed destination → every path lands on /developers.
-      // The internal /skins, /docs/modules/* redirects are dropped: the catch-all
-      // sends them to /developers anyway (no double hops).
-      { source: '/:path*', destination: 'https://mosadd.com/developers', statusCode: 301 },
+      // ⛔ The 2026-07-15 "retire mosadd.dev" catch-all (301 everything →
+      // mosadd.com/developers) is REMOVED. It was committed but never deployed;
+      // on 2026-07-20 the founder explicitly ruled mosadd.dev LIVE ("the Realm")
+      // and the LP footer links out to it — a domain-wide redirect contradicts
+      // that standing decision. It briefly went live on 2026-08-01 when a fresh
+      // deploy carried it by accident; reverted the same hour. Do not re-add a
+      // catch-all here without the founder's explicit say-so.
     ];
   },
 };
