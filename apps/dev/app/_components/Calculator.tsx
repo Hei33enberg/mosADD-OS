@@ -1,52 +1,64 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import {
+  PLANS,
+  OVERAGE_RATE_USD,
+  SPEND_CAP_MULTIPLIER,
+  type Plan,
+} from '../_lib/plans';
 
 /**
- * Interactive cost calculator. Pure client-side math from a rate table — no
- * backend. Shows the cheapest mosadd plan for the entered usage and the
- * estimated cost of wiring the equivalent raw stack (Twilio SMS + LiveKit voice)
- * yourself.
+ * Interactive cost calculator. Pure client-side math — no backend.
  *
- * Rates are list rates for the hosted hub; BYOK sets voice orchestration to $0
- * (you pay your own provider at cost).
+ * CANON: `app/_lib/plans.ts` is the single source of truth for prices, MAT
+ * caps and the overage/spend-cap constants. This calculator AND
+ * `app/pricing/page.tsx` both read from it — never re-introduce a local rate
+ * table here. (A third hand-typed copy is exactly how this component drifted
+ * to $9/$29 while billing charged $19/$49 — audit LINEAR-5066 B-10.)
+ *
+ * Voice (mTALK) is not a plan quota: carrier/media fees are pass-through
+ * at-cost, and $0 with BYOK (your own LiveKit keys) — so it is modeled as a
+ * separate line, not as per-plan included minutes.
  */
-type Plan = { id: string; name: string; base: number; msg: number; ptt: number };
-// Keep in sync with `tiers[]` in app/pricing/page.tsx — single source of truth is the pricing page.
-const PLANS: Plan[] = [
-  { id: 'free', name: 'Free', base: 0, msg: 1_000, ptt: 30 },
-  { id: 'pro', name: 'Pro', base: 9, msg: 10_000, ptt: 600 },
-  { id: 'team', name: 'Team', base: 29, msg: 100_000, ptt: 6_000 },
-];
-const OVER = { msg: 0.0006, ptt: 0.005 }; // mosadd overage per unit
+const SELF_SERVE: Plan[] = [PLANS.free, PLANS.pro, PLANS.team];
+/** Hosted PTT pass-through $/min shown to the user (at-cost, ≤10% markup). */
+const PTT_PASSTHROUGH_USD_MIN = 0.005;
+/** Public list rates for the hand-wired equivalent stack. */
 const RAW = { msg: 0.0083, ptt: 0.0075 }; // Twilio SMS / LiveKit list
 
 function money(n: number) {
   return n < 10 && n > 0 ? `$${n.toFixed(2)}` : `$${Math.round(n).toLocaleString()}`;
 }
 
-// Mirrors the pricing-page promise: "hard cap = 2× your plan price". The cap
-// applies to paid plans (Pro/Team); on Free, we stop at $0 — usage beyond the
-// included allowance is a quota-exceeded signal, not a charge.
-function mosaddCost(msg: number, ptt: number, byok: boolean) {
+/**
+ * Cheapest self-serve plan for the entered MAT volume. Free is only
+ * recommended within its hard cap (it never bills — beyond the cap the answer
+ * is an upgrade, not an invoice). Paid plans absorb overage at
+ * OVERAGE_RATE_USD/MAT until the default spend cap (SPEND_CAP_MULTIPLIER ×
+ * plan price), where billing stops — `capped` marks that state.
+ */
+function mosaddCost(mat: number, ptt: number, byok: boolean) {
   let best: { plan: Plan; total: number; capped: boolean } | null = null;
-  for (const p of PLANS) {
-    const overRaw =
-      Math.max(0, msg - p.msg) * OVER.msg +
-      (byok ? 0 : Math.max(0, ptt - p.ptt) * OVER.ptt);
+  for (const p of SELF_SERVE) {
+    const cap = p.mat ?? Infinity;
+    const overMat = Math.max(0, mat - cap);
     let total: number;
     let capped = false;
-    if (p.base === 0) {
-      total = 0; // Free: no overage is ever charged; over-quota means upgrade.
-      capped = overRaw > 0;
+    if (!p.priceUsd) {
+      if (overMat > 0) continue; // Free never bills; over-cap = upgrade, not a charge.
+      total = 0;
     } else {
-      const cap = 2 * p.base;
-      total = Math.min(p.base + overRaw, cap);
-      capped = p.base + overRaw > cap;
+      const spendCap = p.priceUsd * SPEND_CAP_MULTIPLIER;
+      const withOverage = p.priceUsd + overMat * OVERAGE_RATE_USD;
+      total = Math.min(withOverage, spendCap);
+      capped = withOverage > spendCap;
     }
     if (!best || total < best.total) best = { plan: p, total, capped };
   }
-  return best!;
+  const chosen = best ?? { plan: PLANS.team, total: PLANS.team.priceUsd ?? 0, capped: true };
+  const voice = byok ? 0 : ptt * PTT_PASSTHROUGH_USD_MIN;
+  return { ...chosen, voice, totalWithVoice: chosen.total + voice };
 }
 
 function Field({
@@ -85,19 +97,36 @@ function Field({
 }
 
 export function Calculator() {
-  const [msg, setMsg] = useState(10_000);
+  const [mat, setMat] = useState(10_000);
   const [ptt, setPtt] = useState(300);
   const [byok, setByok] = useState(false);
 
-  const { plan, total, capped } = useMemo(() => mosaddCost(msg, ptt, byok), [msg, ptt, byok]);
-  const raw = useMemo(() => msg * RAW.msg + ptt * RAW.ptt, [msg, ptt]);
-  const savings = raw - total;
+  const { plan, capped, voice, totalWithVoice } = useMemo(
+    () => mosaddCost(mat, ptt, byok),
+    [mat, ptt, byok],
+  );
+  const raw = useMemo(() => mat * RAW.msg + ptt * RAW.ptt, [mat, ptt]);
+  const savings = raw - totalWithVoice;
 
   return (
     <div className="grid gap-6 border border-border p-5 md:grid-cols-2">
       <div className="space-y-5">
-        <Field label="Messages / mo" value={msg} onChange={setMsg} max={200_000} step={1_000} hint="mDM · mIRC · mAYL outbound" />
-        <Field label="Push-to-talk min / mo" value={ptt} onChange={setPtt} max={12_000} step={100} hint="mTALK voice minutes" />
+        <Field
+          label="Thread-actions (MAT) / mo"
+          value={mat}
+          onChange={setMat}
+          max={200_000}
+          step={1_000}
+          hint="delivered, threat-scored messages/actions — mDM · mIRC · mAYL"
+        />
+        <Field
+          label="Push-to-talk min / mo"
+          value={ptt}
+          onChange={setPtt}
+          max={12_000}
+          step={100}
+          hint="mTALK voice minutes — pass-through at-cost, $0 with BYOK"
+        />
         <label className="flex items-center gap-2 text-sm text-foreground">
           <input type="checkbox" checked={byok} onChange={(e) => setByok(e.target.checked)} className="accent-primary" />
           Bring my own keys (LiveKit) — voice orchestration $0
@@ -107,16 +136,21 @@ export function Calculator() {
       <div className="flex flex-col justify-between gap-4 border-t border-border pt-5 md:border-l md:border-t-0 md:pl-6 md:pt-0">
         <div>
           <div className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Recommended plan</div>
-          <div className="font-display text-2xl text-primary">{plan.name}</div>
+          <div className="font-display text-2xl text-primary">{plan.label}</div>
           <div className="mt-1 font-display text-4xl text-foreground">
-            {money(total)}
+            {money(totalWithVoice)}
             <span className="text-sm text-muted-foreground">/mo</span>
           </div>
           {capped ? (
             <div className="mt-2 text-[11px] uppercase tracking-[0.15em] text-warning">
-              {plan.base === 0
-                ? 'over Free quota — upgrade required (no surprise bill)'
-                : `capped at 2× plan price (${money(2 * plan.base)}/mo)`}
+              {plan.priceUsd
+                ? `MAT billing capped at ${SPEND_CAP_MULTIPLIER}× plan price (${money((plan.priceUsd ?? 0) * SPEND_CAP_MULTIPLIER)}/mo default) — talk to us about Enterprise`
+                : 'over the Free cap — upgrade required (no surprise bill)'}
+            </div>
+          ) : null}
+          {voice > 0 ? (
+            <div className="mt-2 text-[11px] text-muted-foreground">
+              incl. {money(voice)}/mo voice pass-through (at-cost)
             </div>
           ) : null}
         </div>
@@ -128,16 +162,18 @@ export function Calculator() {
           {savings > 0 ? (
             <div className="flex justify-between font-medium text-primary">
               <span>You save</span>
-              <span>{money(savings)}/mo ({Math.round((savings / raw) * 100)}%)</span>
+              <span>
+                {money(savings)}/mo ({Math.round((savings / raw) * 100)}%)
+              </span>
             </div>
           ) : (
             <div className="text-xs text-muted-foreground">Self-host is always $0 — Apache-2.0.</div>
           )}
         </div>
         <p className="text-[10px] leading-relaxed text-muted-foreground">
-          List rates for the hosted hub (live). Raw-stack estimate uses public list rates
-          (Twilio SMS $0.0083/msg · LiveKit ~$0.0075/min) and excludes the
-          integration + maintenance you&apos;d write yourself.
+          Plan prices and MAT caps read live from the canonical plan table (the same one billing
+          uses). Raw-stack estimate uses public list rates (Twilio SMS $0.0083/msg · LiveKit
+          ~$0.0075/min) and excludes the integration + maintenance you&apos;d write yourself.
         </p>
       </div>
     </div>
