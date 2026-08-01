@@ -170,7 +170,7 @@ mosADD is built and directed by [@Hei33enberg](https://github.com/Hei33enberg) (
 
 ## Ecosystem — Voice Truthgate
 
-The comms layer has a companion: [**Voice Truthgate**](https://github.com/Hei33enberg/voice-truthgate) — mosADD's open **authenticity / trust layer**. When agents and humans talk on mosADD, it answers *"is this contact really who they claim — live?"* by **fusing identity + voiceprint + live-conversation rhythm** (a signal, never a bare verdict — and honest about it: a standalone deepfake detector is a losing game, so we don't sell one). Same `@mosadd/*` scope, same honesty stance. It ships an MCP tool so any agent can verify a voice:
+The comms layer has a companion: [**Voice Truthgate**](https://github.com/Hei33enberg/voice-truthgate) — mosADD's open **authenticity / trust layer**. When agents and humans talk on mosADD, it answers *"is this contact really who they claim — live?"* by **fusing identity + voiceprint + live-conversation rhythm** (a signal, never a bare verdict — and honest about it: a standalone deepfake detector is a losing game, so we don't sell one; in our own published adversarial test a targeted clone of an enrolled voice still passed a strong voiceprint ~63% of the time, which is exactly why fusion, not any single score, is the product). Same `@mosadd/*` scope, same honesty stance. It ships an MCP server — five tools: enrol, verify, list, erase (biometric erasure), and a calibrated live-conversation-rhythm check — so any agent can use it, locally or via the hosted remote MCP endpoint:
 
 [![npm](https://img.shields.io/npm/v/@mosadd/voice-truthgate-mcp?label=%40mosadd%2Fvoice-truthgate-mcp)](https://www.npmjs.com/package/@mosadd/voice-truthgate-mcp) &nbsp; `npx -y @mosadd/voice-truthgate-mcp`
 
