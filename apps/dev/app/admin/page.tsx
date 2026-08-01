@@ -346,8 +346,8 @@ export default function AdminPage() {
             <Stat label="Overage rev." value={`$${stats.overage_revenue_usd_month.toFixed(2)}`} sub="PAYG, this month" />
             <Stat label="MAT this month" value={stats.mat_total_month.toLocaleString()} sub="across all accounts" />
             <Stat label="PAYG on" value={stats.payg_enabled_count} sub="accounts opted in" />
-            <Stat label="Pro subs" value={subs.pro ?? 0} sub="$9/mo each" />
-            <Stat label="Team subs" value={subs.team ?? 0} sub="$29/mo each" />
+            <Stat label="Pro subs" value={subs.pro ?? 0} sub="$19/mo each" />
+            <Stat label="Team subs" value={subs.team ?? 0} sub="$49/mo each" />
           </div>
 
           {/* B5: consumer (mosadd.com) revenue alongside dev hub */}
@@ -370,7 +370,7 @@ export default function AdminPage() {
                 <Stat
                   label="Command subs"
                   value={stats.active_consumer_subs?.command ?? 0}
-                  sub="$89/mo each"
+                  sub="$199/mo each"
                 />
                 <Stat
                   label="Sovereign"

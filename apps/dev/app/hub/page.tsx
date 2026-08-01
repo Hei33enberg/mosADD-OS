@@ -517,15 +517,15 @@ export default function HubPage() {
             {currentPlan === 'free' ? (
               <div className="space-y-2">
                 <button onClick={() => upgrade('pro')} disabled={busy} className="w-full rounded-none bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60">
-                  Upgrade to Pro — $9/mo
+                  Upgrade to Pro — $19/mo
                 </button>
                 <button onClick={() => upgrade('team')} disabled={busy} className="w-full rounded-none border border-border px-4 py-2 text-sm text-foreground hover:border-primary/50 disabled:opacity-60">
-                  Team — $29/mo
+                  Team — $49/mo
                 </button>
               </div>
             ) : currentPlan === 'pro' ? (
               <button onClick={() => upgrade('team')} disabled={busy} className="w-full rounded-none border border-border px-4 py-2 text-sm text-foreground hover:border-primary/50 disabled:opacity-60">
-                Upgrade to Team — $29/mo
+                Upgrade to Team — $49/mo
               </button>
             ) : null}
             {checkoutErr && <p className="mt-2 text-xs text-destructive">{checkoutErr}</p>}

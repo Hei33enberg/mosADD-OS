@@ -7,8 +7,13 @@
  *
  * MAT = Monthly Active Thread-action: one delivered, end-to-end-encrypted,
  * threat-scored message/action, deduplicated per sender per calendar month.
- * Numbers match `report-mat-overage` (TIER_MAT_CAP) + the pricing page, the
- * pricing contract LOCKED 2026-06-03 / canonized in LINEAR-3102.
+ * Numbers match `report-mat-overage` (TIER_MAT_CAP) + the pricing page.
+ *
+ * REPRICED 2026-06-18 (LINEAR-3406, founder-approved): Pro 9→19, Team 29→49 —
+ * supersedes the 2026-06-03 lock (LINEAR-3102). This file drifted and kept
+ * displaying the OLD $9/$29 while billing charged $19/$49 — a charge-vs-display
+ * mismatch (audit LINEAR-5066 B-10). Founder decision 2026-08-01: $19/$49 is
+ * correct; display now mirrors `account-tiers.ts` exactly, quotas included.
  */
 
 export type PlanId = 'free' | 'pro' | 'team' | 'enterprise';
@@ -42,17 +47,17 @@ export const SPEND_CAP_MULTIPLIER = 2;
 export const PLANS: Record<PlanId, Plan> = {
   free: {
     id: 'free', label: 'Free', priceUsd: 0, price: '$0',
-    mat: 1_000, messages: 1_000, ragSearches: 0,
+    mat: 1_000, messages: 2_000, ragSearches: 50,
     embedKeys: 1, hubKeys: 1, whiteLabel: false,
   },
   pro: {
-    id: 'pro', label: 'Pro', priceUsd: 9, price: '$9/mo',
-    mat: 10_000, messages: 10_000, ragSearches: 1_000,
+    id: 'pro', label: 'Pro', priceUsd: 19, price: '$19/mo',
+    mat: 10_000, messages: 50_000, ragSearches: 1_000,
     embedKeys: 5, hubKeys: 5, whiteLabel: false,
   },
   team: {
-    id: 'team', label: 'Team', priceUsd: 29, price: '$29/mo',
-    mat: 100_000, messages: 100_000, ragSearches: 10_000,
+    id: 'team', label: 'Team', priceUsd: 49, price: '$49/mo',
+    mat: 100_000, messages: 500_000, ragSearches: 10_000,
     embedKeys: null, hubKeys: null, whiteLabel: true,
   },
   enterprise: {

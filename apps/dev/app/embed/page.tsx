@@ -152,7 +152,7 @@ export default function EmbedLandingPage() {
         <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
           <div>
             <h2 className="font-display text-3xl font-semibold">
-              Free to start. <span className="text-primary">$9/mo</span> when you grow.
+              Free to start. <span className="text-primary">$19/mo</span> when you grow.
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
               Free = 1,000 monthly chatters. Pro = 10,000 + full CSS. Team = 100,000 + white-label. One plan
