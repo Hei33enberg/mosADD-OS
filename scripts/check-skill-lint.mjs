@@ -5,10 +5,11 @@
  * Checks (all hard failures):
  *  1. Every skills/<dir>/SKILL.md has YAML frontmatter with `name` + `description`,
  *     and `name` matches `mosadd-<dir>`.
- *  2. skills/ dirs ↔ marketplace.json `skills[]` are in sync both ways
- *     (except `coordinate`, which is intentionally distributed with the agent runtime).
- *  3. Version triple-check: README badge/heading == marketplace.json == packages/mcp/package.json
- *     (packages/mcp/server.json checked too).
+ *  2. skills/ dirs ↔ the root `.claude-plugin/marketplace.json` plugin entry's `skills[]`
+ *     are in sync both ways (except `coordinate`, which is intentionally distributed with
+ *     the agent runtime), and `skills/.claude-plugin/plugin.json` exists.
+ *  3. Version triple-check: README badge/heading == skills/.claude-plugin/plugin.json ==
+ *     packages/mcp/package.json (packages/mcp/server.json checked too).
  *  4. Honesty-lint: banned claim phrases must not appear in prose files, and docs may
  *     not reference community surfaces that don't exist (community/surfaces.json).
  *
@@ -52,25 +53,54 @@ for (const dir of skillDirs) {
 }
 
 // ── 2. marketplace sync ──────────────────────────────────────────────────────
+// Layout (verified working against Claude Code 2.x, 2026-08-01):
+//   .claude-plugin/marketplace.json  — the marketplace; its `plugins[]` entry
+//     'mosadd' has source "./skills" and an explicit `skills[]` of "./<dir>" paths.
+//   skills/.claude-plugin/plugin.json — the plugin manifest (name, version).
+//   skills/.mcp.json                  — registers the @mosadd/mcp server.
 let marketplace;
+let pluginEntry;
 try {
-  marketplace = JSON.parse(read("skills/.claude-plugin/marketplace.json"));
+  marketplace = JSON.parse(read(".claude-plugin/marketplace.json"));
 } catch (e) {
-  fail(`skills/.claude-plugin/marketplace.json: invalid JSON — ${e.message}`);
+  fail(`.claude-plugin/marketplace.json: invalid JSON — ${e.message}`);
 }
 if (marketplace) {
-  const listed = new Set((marketplace.skills ?? []).map((s) => s.name));
-  for (const [dir, name] of skillNames) {
+  pluginEntry = (marketplace.plugins ?? []).find((p) => p.name === "mosadd");
+  if (!pluginEntry) fail(`.claude-plugin/marketplace.json: no plugins[] entry named 'mosadd'`);
+}
+if (pluginEntry) {
+  if (pluginEntry.source !== "./skills")
+    fail(`.claude-plugin/marketplace.json: plugin 'mosadd' source '${pluginEntry.source}' != './skills'`);
+  const listedDirs = new Set(
+    (pluginEntry.skills ?? []).map((s) => String(s).replace(/^\.\//, ""))
+  );
+  for (const [dir] of skillNames) {
     if (dir === "coordinate") continue; // distributed with the agent runtime, by design
-    if (!listed.has(name)) fail(`marketplace.json: skill '${name}' (skills/${dir}/) not listed`);
+    if (!listedDirs.has(dir))
+      fail(`.claude-plugin/marketplace.json: skill dir '${dir}' (skills/${dir}/) not listed in plugins[].skills`);
   }
-  for (const s of marketplace.skills ?? []) {
-    const rel = s.path?.replace(/^\.\.\//, "skills/");
-    if (!rel || !existsSync(join(ROOT, rel)))
-      fail(`marketplace.json: entry '${s.name}' points at missing file '${s.path}'`);
+  for (const s of pluginEntry.skills ?? []) {
+    const rel = `skills/${String(s).replace(/^\.\//, "")}`;
+    if (!existsSync(join(ROOT, rel, "SKILL.md")))
+      fail(`.claude-plugin/marketplace.json: plugins[].skills entry '${s}' has no ${rel}/SKILL.md`);
   }
-  if (listed.has("mosadd-coordinate"))
-    fail(`marketplace.json: 'mosadd-coordinate' must NOT be in the bundle (agent-runtime distribution)`);
+  if (listedDirs.has("coordinate"))
+    fail(`.claude-plugin/marketplace.json: 'coordinate' must NOT be in the bundle (agent-runtime distribution)`);
+}
+let pluginManifest;
+try {
+  pluginManifest = JSON.parse(read("skills/.claude-plugin/plugin.json"));
+  if (pluginManifest.name !== "mosadd")
+    fail(`skills/.claude-plugin/plugin.json: name '${pluginManifest.name}' != 'mosadd'`);
+} catch (e) {
+  fail(`skills/.claude-plugin/plugin.json: ${e.message}`);
+}
+try {
+  const mcpJson = JSON.parse(read("skills/.mcp.json"));
+  if (!mcpJson.mcpServers?.mosadd) fail(`skills/.mcp.json: no mcpServers.mosadd entry`);
+} catch (e) {
+  fail(`skills/.mcp.json: ${e.message}`);
 }
 
 // ── 3. version triple-check ──────────────────────────────────────────────────
@@ -83,8 +113,8 @@ for (const v of readmeVersions) {
   if (v !== mcpVersion)
     fail(`README.md mentions version '${v}' but packages/mcp/package.json is '${mcpVersion}'`);
 }
-if (marketplace && marketplace.version !== mcpVersion)
-  fail(`marketplace.json version '${marketplace.version}' != packages/mcp '${mcpVersion}'`);
+if (pluginManifest && pluginManifest.version !== mcpVersion)
+  fail(`skills/.claude-plugin/plugin.json version '${pluginManifest.version}' != packages/mcp '${mcpVersion}'`);
 try {
   const server = JSON.parse(read("packages/mcp/server.json"));
   if (server.version !== mcpVersion)

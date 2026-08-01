@@ -12,14 +12,14 @@ Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosa
 - [x] `@mosadd/mcp` — full MCP server (well past the `mDM_send` stub) ([LINEAR-2143](https://linear.app/ip-ra/issue/LINEAR-2143))
 - [x] Provider abstraction (`@mosadd/providers`) ([LINEAR-2144](https://linear.app/ip-ra/issue/LINEAR-2144))
 - [x] Control plane / data plane separation ([LINEAR-2145](https://linear.app/ip-ra/issue/LINEAR-2145))
-- [x] Fork LiveKit → `mosadd-fabric` ([LINEAR-2169](https://linear.app/ip-ra/issue/LINEAR-2169))
+- [ ] ~~Fork LiveKit → `mosadd-fabric`~~ — **descoped**: voice runs on the hosted LiveKit service; no fork was shipped and none exists in this repo ([LINEAR-2169](https://linear.app/ip-ra/issue/LINEAR-2169))
 - [ ] Anonymous identity recovery — descoped ([LINEAR-2170](https://linear.app/ip-ra/issue/LINEAR-2170))
 - [x] Anti-abuse PoW + rate limits ([LINEAR-2171](https://linear.app/ip-ra/issue/LINEAR-2171))
 - [ ] Messaging backbone: nwaku P2P ([LINEAR-2173](https://linear.app/ip-ra/issue/LINEAR-2173))
 - [x] Four comms modules live — mDM (1:1, E2EE-only), mIRC (in-app channels), mURL (open-web rooms), mAYL (email 3.0) — plus capabilities mTALK (voice/PTT), mRAG (agent memory), comms_ (action-links) ([LINEAR-2146](https://linear.app/ip-ra/issue/LINEAR-2146)-[2152](https://linear.app/ip-ra/issue/LINEAR-2152))
 - [x] SDK adapters: Vercel AI SDK + LangChain + OpenAI Agents + Anthropic Agents ([LINEAR-2153](https://linear.app/ip-ra/issue/LINEAR-2153))
 - [x] Claude Code plugin + Anthropic Skills bundle ([LINEAR-2154](https://linear.app/ip-ra/issue/LINEAR-2154))
-- [x] Example apps (6 shipped) ([LINEAR-2155](https://linear.app/ip-ra/issue/LINEAR-2155))
+- [x] Example apps (7 shipped) ([LINEAR-2155](https://linear.app/ip-ra/issue/LINEAR-2155))
 - [x] Community: CONTRIBUTING, GOVERNANCE, RFC (GitHub Discussions + the mosADD community room) ([LINEAR-2156](https://linear.app/ip-ra/issue/LINEAR-2156))
 - [ ] Submit to 5 MCP registries ([LINEAR-2157](https://linear.app/ip-ra/issue/LINEAR-2157))
 
@@ -27,9 +27,9 @@ Full plan + tickets: [Linear M5 milestone](https://linear.app/ip-ra/project/mosa
 
 Operated by mosadd commercial entity at [hub.mosadd.com](https://hub.mosadd.com).
 
-- [ ] Hosted MCP `mcp.mosadd.com` with OAuth ([LINEAR-2158](https://linear.app/ip-ra/issue/LINEAR-2158))
-- [ ] BYOK key brokerage ([LINEAR-2159](https://linear.app/ip-ra/issue/LINEAR-2159))
-- [ ] Optional on-device threat classification (security pillar, not the moat) ([LINEAR-2160](https://linear.app/ip-ra/issue/LINEAR-2160))
+- [x] Hosted MCP `mcp.mosadd.com` (Streamable HTTP; hub keys live, OAuth connector rolling out) ([LINEAR-2158](https://linear.app/ip-ra/issue/LINEAR-2158))
+- [x] BYOK key brokerage ([LINEAR-2159](https://linear.app/ip-ra/issue/LINEAR-2159))
+- [x] On-device threat classification — `threat_catalog` / `threat_classify` live (security pillar, not the moat) ([LINEAR-2160](https://linear.app/ip-ra/issue/LINEAR-2160))
 - [ ] Stripe pricing tiers ([LINEAR-2161](https://linear.app/ip-ra/issue/LINEAR-2161))
 - [ ] SaaS dashboard ([LINEAR-2162](https://linear.app/ip-ra/issue/LINEAR-2162))
 

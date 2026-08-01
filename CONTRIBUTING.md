@@ -41,17 +41,16 @@ This is a **major contribution**. Follow the RFC process:
 
 - **One concern per PR.** Don't mix refactors with features.
 - **Conventional commits** for messages: `feat(mDM): add multi-thread support`
-- **Changeset required.** Run `pnpm changeset` and pick the semver bump. PRs without changesets are blocked.
+- **Call out public-API changes** explicitly in the PR description. (A [Changesets](https://github.com/changesets/changesets) flow is planned; the tooling is not wired into this repo yet, so semver decisions are made by maintainers at release time.)
 - **DCO sign-off.** Add `Signed-off-by: Your Name <email>` to commits (use `git commit -s`).
-- **Tests required** for new code. Coverage threshold 90% on changed lines.
-- **Lint clean.** `pnpm lint` must pass.
-- **Type-check clean.** `pnpm typecheck` must pass.
+- **Tests required** for new code — cover the lines you changed. There is no automated coverage gate yet; reviewers check.
+- **Gates clean.** `pnpm -r build && pnpm -r typecheck && pnpm -r test --if-present && node scripts/check-skill-lint.mjs` must pass **locally**. The `.github/workflows/` files encode the same checks, but GitHub Actions is currently switched off for this repo (a cost decision) — maintainers run the gates locally on every PR before merging; don't wait for GitHub checks that will never run.
 
 ### Adding a provider
 
-Providers live in `packages/providers/`. Each provider implements one of the channel interfaces (`DmProvider`, `RoomProvider`, `CallProvider`, ...).
+Providers live in `packages/providers/`. Each provider implements one of the channel contracts shipped there today (`DmProvider`, `VoiceProvider`).
 
-See `packages/providers/README.md` for the contract and reference implementation.
+See `packages/providers/README.md` for the contracts and their honest status (interfaces only today; the default network implementations live in `@mosadd/mcp`).
 
 ## Architecture
 

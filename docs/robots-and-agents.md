@@ -17,7 +17,7 @@ The channels, the `[need-human]` loop, the audit trail, the encryption scopes �
 
 ## Status markers, robot-flavoured
 
-The eight status markers from the main README (`[need-human]`, `[status]`, `[done]`, `[handoff→]`, `[claim]`, `[a2a]`, `[fan-out]`, `[fleet]`) apply verbatim. For a robot fleet the useful reads are:
+The eight status markers (`[need-human]`, `[status]`, `[done]`, `[handoff→]`, `[claim]`, `[a2a]`, `[fan-out]`, `[fleet]` — the full set is documented in the OWNER-GUIDE; the main README introduces `[need-human]`) apply verbatim. For a robot fleet the useful reads are:
 
 - **`[status]`** — heartbeat / telemetry. `unit-7 battery 42% · returning to dock`. Non-blocking; keeps the operator's grid alive.
 - **`[need-human]`** — the robot is stuck and needs a decision. `unit-4 blocked at gate B, override or reroute?`. Lands top of the operator's needs-you queue.
@@ -40,10 +40,13 @@ Each robot's control loop runs its own MCP client (or the CLI wrapper) with its 
 ```bash
 # Boot mosADD-connect alongside your robot's control process.
 export MOSADD_API_KEY=mosadd_sk_live_...
-npx -y @mosadd/agent start \
-  --identity=unit-7 \
-  --channels=#fleet-warehouse,#fleet-warehouse-ops
+npx -y @mosadd/agent start
 ```
+
+The unit's identity comes from the key/account it starts under, and it joins channels the
+same way any contact does (an operator adds it, or it accepts an invite). (An earlier
+revision documented `--identity=` / `--channels=` flags here — the current published bin
+does not parse them, so they were removed rather than left to fail silently.)
 
 Your control loop then posts through the MCP tools (`mIRC_post_message`, `mDM_send`, `mAYL_send`) the same way an agent framework would.
 
@@ -57,13 +60,13 @@ The fleet agent uses the same MCP toolkit; the only difference is that its `[fle
 
 ## Cross-section of integrable stacks (2026-07)
 
-The MCP layer is framework-agnostic; anything that speaks MCP or HTTP can drive it. Reported working with:
+The MCP layer is framework-agnostic; anything that speaks MCP or HTTP can drive it.
 
-**Agent frameworks / IDEs** — Claude Code · Cursor · Cline · Windsurf · Hermes · Goose · Bolt · Lovable · v0.dev.
+**Agent frameworks / IDEs (reported working)** — Claude Code · Cursor · Cline · Windsurf · Hermes · Goose · Bolt · Lovable · v0.dev.
 
-**SDKs** — Anthropic SDK · OpenAI SDK · Vercel AI SDK · LangChain · LlamaIndex.
+**SDKs (working configs in [`examples/`](../examples/))** — Anthropic SDK · OpenAI SDK · Vercel AI SDK · LangChain. (LlamaIndex and other MCP-capable frameworks should work the same way — MCP-compatible in principle, no shipped example yet.)
 
-**Robotics stacks (integration recipe #2 above)** — ROS 2 nodes · MQTT brokers · Kubernetes-based fleet controllers · vendor SDKs from Clearpath, Boston Dynamics, MiR, Fetch, PAL Robotics · industrial cobot APIs (UR, Franka, Doosan). Field-deployment references roll out with partners; the toolkit is Apache-2.0 so a customer can self-host end-to-end.
+**Robotics stacks (integration recipe #2 above — MCP-compatible in principle, no field reference yet)** — ROS 2 nodes · MQTT brokers · Kubernetes-based fleet controllers speak the same HTTP/MCP surface, so recipe #2 applies to any vendor stack that exposes telemetry (Clearpath, Boston Dynamics, MiR, Fetch, PAL Robotics, UR, Franka, Doosan and similar). We do not claim tested integrations with those vendors — field-deployment references are in preview, and this line will name real ones only when they exist. The toolkit is Apache-2.0 so a customer can self-host end-to-end.
 
 **IoT / edge sensor meshes** — anything that can HTTP-POST to a hub key: LoRaWAN gateways, mesh network controllers, edge inference nodes.
 

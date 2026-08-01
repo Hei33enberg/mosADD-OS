@@ -13,60 +13,28 @@ This product includes code derived from third-party projects:
    Licensed under the MIT License.
    https://github.com/NousResearch/Hermes-Agent
 
-   The gateway/platforms/ adapters in `packages/bridges/` are
-   structurally derived from Hermes Agent's multi-platform gateway,
+   The multi-platform bridge pattern in `packages/bridges/src/`
+   (BridgeProvider interface, per-platform adapters) is structurally
+   derived from Hermes Agent's gateway/platforms/ module,
    reimplemented in TypeScript with significant modifications.
+   See `packages/bridges/NOTICE` for details.
 
-2. LiveKit
-   Copyright (c) LiveKit, Inc.
-   Licensed under the Apache License 2.0.
-   https://github.com/livekit/livekit
-
-   `forks/livekit-server/` is a vendored fork of livekit-server,
-   rebranded as `mosadd-fabric` for our use case, with custom
-   patches in `patches/` for threat radar primitives, anonymous
-   identity support, and multi-channel hub abstractions.
-
-3. mautrix
-   Copyright (c) Tulir Asokan
-   Licensed under the Apache License 2.0.
-   https://github.com/mautrix/
-
-   Matrix bridge protocol implementations in `packages/bridges/matrix/`
-   reference mautrix design patterns.
-
-4. Pion WebRTC
-   Copyright (c) the Pion Authors
-   Licensed under the MIT License.
-   https://github.com/pion/webrtc
-
-   Transitive dependency via LiveKit fork. Used as foundational
-   Go WebRTC implementation.
-
-5. nwaku / Waku
-   Copyright (c) the Waku Org
-   Licensed under the Apache License 2.0.
-   https://github.com/waku-org/nwaku
-
-   Adapted as messaging backbone for anonymous identity mode in
-   `packages/providers/nwaku/`.
-
-6. Dendrite (Matrix.org)
-   Copyright (c) The Matrix.org Foundation C.I.C.
-   Licensed under the Apache License 2.0.
-   https://github.com/matrix-org/dendrite
-
-   Optional Matrix homeserver integration in
-   `packages/providers/dendrite/`.
-
-7. Routr (Fonoster)
-   Copyright (c) Fonoster Inc.
-   Licensed under the Apache License 2.0.
-   https://github.com/fonoster/routr
-
-   SIP control plane for mCALL in `packages/providers/routr/`.
+2. BIP-39 English wordlist
+   `packages/crypto/src/bip39-english.txt` is the standard 2048-word
+   English wordlist from the BIP-0039 specification
+   (https://github.com/bitcoin/bips/tree/master/bip-0039).
 
 ---
+
+Notable direct dependencies (not vendored; each ships under its own
+license from its own package):
+
+- @noble/curves, @noble/ciphers, @noble/hashes (MIT, Paul Miller) —
+  the audited cryptographic primitives under `@mosadd/crypto`.
+- zod (MIT) — schema validation in `@mosadd/protocol` and `@mosadd/mcp`.
+- @modelcontextprotocol/sdk (MIT, Anthropic) — MCP server runtime
+  in `@mosadd/mcp`.
+- @supabase/supabase-js (MIT) — backend client in `@mosadd/mcp`.
 
 For a machine-readable manifest of every dependency and its license,
 generate one locally with `pnpm licenses list --json` from the repo root.

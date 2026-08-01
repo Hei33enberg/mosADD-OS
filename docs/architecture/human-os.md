@@ -29,8 +29,8 @@ under `packages/providers/<name>/`. New modules go through the RFC process
 | Module | What it is | Encryption scope | Tools |
 |---|---|---|---|
 | `mDM` | 1:1 direct messages, text + voice | **End-to-end encrypted by default** (X3DH + Double Ratchet) — the operator cannot read content | 14 |
-| `mIRC` | In-app group channels | Transport + at-rest (operator-managed, server-readable) | 22 |
-| `mURL` | Open-web rooms — embeddable, publicly joinable via link | Transport + at-rest (operator-managed, server-readable) | 4 |
+| `mIRC` | In-app group channels | Transport + at-rest (operator-managed, server-readable) | 24 |
+| `mURL` | Open-web rooms — embeddable, publicly joinable via link | Transport + at-rest (operator-managed, server-readable) | 7 |
 | `mAYL` | Email 3.0 — every user gets `<id>@mosadd.com` | Transport + at-rest (operator-managed, server-readable) | 12 |
 
 **Capabilities** (not modules) ride on top: **mTALK** (voice / push-to-talk, WebRTC/SRTP), **mRAG** (agent memory / RAG recall, at-rest), **comms_** (action-links).

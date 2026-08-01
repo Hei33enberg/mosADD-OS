@@ -13,7 +13,13 @@
   (this is the registry server name; it MUST start with `io.github.<github-username>/`
   because we'll auth via GitHub).
 - `packages/mcp/server.json` — the registry manifest, schema 2025-12-11, points at
-  npm `@mosadd/mcp@alpha.20`, stdio transport, requires env `MOSADD_API_KEY`.
+  npm `@mosadd/mcp` (version is lint-synced to `packages/mcp/package.json` — do NOT
+  trust the hardcoded numbers in this June doc; the repo is well past alpha.20/21),
+  stdio transport, requires env `MOSADD_API_KEY`.
+- ⚠ **Stale-pin warning (2026-08-01):** alpha.20 — the version this doc originally
+  pointed the registry at — is marked broken-on-install in the package CHANGELOG. If
+  the live registry entry still pins alpha.20, re-submit alongside the next npm
+  publish rather than leaving a known-broken pin public.
 - GitHub repo `Hei33enberg/mosADD-OS` description + 13 topics added 2026-06-22
   (helps Glama / Smithery auto-index even before this submission lands).
 
@@ -26,8 +32,8 @@ metadata, not from the repo. alpha.20 was built before we added `mcpName` → re
 
 ```bash
 cd C:\mosadd-os\packages\mcp
-npm version 3.0.0-alpha.21
-# also bump server.json: "version" and packages[0].version to 3.0.0-alpha.21
+npm version 3.0.0-alpha.<next>   # one above whatever npm currently serves
+# also bump server.json: "version" and packages[0].version to the same number
 npm run build
 npm publish --access public --tag alpha
 ```

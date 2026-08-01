@@ -13,7 +13,7 @@ Anyone who opens an issue, comments on a discussion, submits a PR, helps with do
 Contributors with merge rights. Two kinds:
 
 - **Core maintainers** — full repo access, can land changes to anything
-- **Channel maintainers** — merge rights for a specific `m*` module or area (e.g. `mTALK`, `mRAG`, `providers/livekit`)
+- **Channel maintainers** — merge rights for a specific `m*` module or area (e.g. `mTALK`, `mRAG`, `packages/providers`)
 
 Merge rights are **delegated authority** — granted by the Sovereign, revocable by the Sovereign, and exercised autonomously day-to-day within the maintainer's area.
 
@@ -55,7 +55,7 @@ Follow the RFC template in [`docs/rfcs/0000-template.md`](./docs/rfcs/0000-templ
 - **Minor releases** (`3.0.x` → `3.1.0`) — monthly
 - **Major releases** (`3.x.x` → `4.0.0`) — when breaking changes accumulate, typically annually
 
-Releases use [Changesets](https://github.com/changesets/changesets). Every PR with a public API change requires a changeset.
+Releases are cut by maintainers through the release pipeline; package versions are bumped in-repo. A [Changesets](https://github.com/changesets/changesets) flow is planned but not wired in yet — until it is, call out public-API changes explicitly in the PR description and maintainers make the semver call at release time.
 
 ## Security
 

@@ -37,7 +37,7 @@ Centralized infrastructure is a single point of pressure. Our direction is decen
 ## What we will never do
 
 - Sell or mine your message content for advertising.
-- Claim blanket encryption. Only mDM and private/password-channel text are end-to-end encrypted — and we label it per channel.
+- Claim blanket encryption. Only mDM 1:1 is end-to-end encrypted; private/password-channel text is group-key encrypted on supported clients (the toolkit posts server-readable today) — and we label it per channel.
 - Build content-scanning into mDM — under any law, in any market.
 - Take investor money that can outvote the mission.
 - Claim decentralization we have not shipped.

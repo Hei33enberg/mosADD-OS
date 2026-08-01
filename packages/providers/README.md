@@ -1,18 +1,20 @@
 # @mosadd/providers
 
-Vendor adapters. Pluggable. Choose your transport per channel, or let mosADD auto-route.
+Provider **contracts** — the transport-agnostic interfaces the `m*` modules
+plug their backends into. What ships in this package today:
 
-Planned adapters:
-- `supabase` — Phase 1 strangler-fig adapter pointing at the mosADD backend
-- `livekit-fork` — voice/PTT/rooms (our `mosadd-fabric` fork)
-- `routr` — SIP control plane for PSTN
-- `telnyx`, `twilio` — PSTN dumb pipes
-- `nwaku` — p2p messaging backbone
-- `dendrite` — Matrix federation
-- `resend` — email outbound
-- `elevenlabs` — voice (TTS, vocoder)
+- `VoiceProvider` (`src/voice.ts`) — the half-duplex mTALK floor-control
+  contract (who holds the walkie-talkie floor, join tickets, PTT
+  press/release). The default network implementation (LiveKit-service media +
+  an authoritative floor table) lives in [`@mosadd/mcp`](../mcp); a hardware
+  host can inject a radio-backed implementation instead.
+- `DmProvider` (`src/dm.ts`) — the DM delivery contract.
 
-Status: pre-alpha. Interfaces land in v3.0.0-alpha.1.
+**Honest status: interfaces only.** There are no vendor adapter
+implementations in this package yet — the mosADD backend today is the Supabase
+project that [`@mosadd/mcp`](../mcp) talks to (hosted, or your own via BYOK
+env). Additional pluggable backends are roadmap items, described only when
+they ship — see [docs/roadmap.md](../../docs/roadmap.md).
 
 ## License
 

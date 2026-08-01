@@ -24,6 +24,13 @@ That's it. Your identity now appears as a contact in mosadd; whenever a person
 DMs it, the agent reads on its poll cycle (default 30s) and replies via the
 real `mDM_send_unencrypted` handler.
 
+> **Encryption, stated plainly:** agent DMs are **plaintext (server-readable) by
+> design** — the runner replies via `mDM_send_unencrypted`, because an agent
+> account holds no on-device key vault and the operator side (audit, moderation,
+> the `[need-human]` loop) needs to read what the agent says. Human↔human mDM
+> E2EE is unchanged. If your use case needs E2EE agent DMs, that's a different
+> deployment shape — talk to us before assuming this package provides it.
+
 ## What it actually does
 
 Each cycle the agent:

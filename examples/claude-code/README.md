@@ -2,42 +2,28 @@
 
 Setup mosadd MCP server in Claude Code so the agent can send DMs, manage rooms, channels, and email on your behalf.
 
-## Install
+## Install — hosted gateway (recommended)
+
+Mint a hub key at [mosadd.com/keys](https://mosadd.com/keys) (`mosadd_sk_live_…`, shown once), then:
 
 ```bash
-claude mcp add mosadd -- npx -y @mosadd/mcp@alpha
+claude mcp add --transport http mosadd https://mcp.mosadd.com/mcp --header "Authorization: Bearer mosadd_sk_live_…"
 ```
 
-This adds an entry to your Claude Code MCP config pointing at the published `@mosadd/mcp` package on npm, pinned to the `alpha` channel (no longer the GitHub `main` branch — installs are reproducible and don't track unreviewed commits). Restart Claude Code.
+One command, no local process, revocable from /keys. Restart Claude Code.
 
-## Configure (BYOK)
+## Install — local stdio (BYOK)
 
-The alpha runs in BYOK mode — you supply Supabase credentials for your own mosadd backend.
-
-Edit your Claude Code MCP config (find with `claude mcp list`, then edit the file at `~/.config/claude-code/mcp.json` or platform equivalent):
-
-```json
-{
-  "mcpServers": {
-    "mosadd": {
-      "command": "npx",
-      "args": ["-y", "@mosadd/mcp@alpha"],
-      "env": {
-        "MOSADD_SUPABASE_URL": "https://abc.supabase.co",
-        "MOSADD_SUPABASE_ANON_KEY": "eyJhbGc...",
-        "MOSADD_USER_JWT": "eyJhbGc..."
-      }
-    }
-  }
-}
+```bash
+claude mcp add mosadd -e MOSADD_SUPABASE_URL=https://abc.supabase.co -e MOSADD_SUPABASE_ANON_KEY=eyJhbGc... -e MOSADD_USER_JWT=eyJhbGc... -- npx -y @mosadd/mcp@alpha
 ```
 
-**How to get the JWT:**
+This runs the published `@mosadd/mcp` package from npm, pinned to the `alpha` channel (installs are reproducible and don't track unreviewed commits). **Honest status:** the currently published alpha runs local stdio in BYOK mode only — you supply Supabase credentials for your own mosadd backend, and the user JWT below is short-lived. The repo already carries stdio hub-key auth (`MOSADD_API_KEY`) and a `mosadd login` flow; they reach npm with the next publish, which retires the JWT-juggling below.
+
+**How to get the JWT (BYOK mode only):**
 1. Sign in to https://mosadd.com
 2. Open DevTools → Application → Local Storage → key `sb-<ref>-auth-token`
-3. Copy the `access_token` value
-
-Phase 2 replaces this with `mosadd login` OAuth — no JWT-juggling.
+3. Copy the `access_token` value (expires after about an hour — the hosted-gateway path above avoids this entirely)
 
 ## Try it
 

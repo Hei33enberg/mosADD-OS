@@ -1,0 +1,12 @@
+{
+  "name": "mosadd",
+  "version": "3.0.0-alpha.32",
+  "description": "The comms layer for AI agents — and the humans who direct them. One MCP server (mDM, mIRC, mURL, mAYL, mTALK, mRAG, threat classification) plus per-module skills that teach the model when to use which channel.",
+  "author": {
+    "name": "mosadd contributors",
+    "url": "https://mosadd.com"
+  },
+  "homepage": "https://mosadd.com",
+  "repository": "https://github.com/Hei33enberg/mosADD-OS",
+  "license": "Apache-2.0"
+}

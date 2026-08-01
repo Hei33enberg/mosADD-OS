@@ -65,9 +65,8 @@ export default function MtalkPage() {
 
       <H2>Providers</H2>
       <Ul>
-        <li>LiveKit (forked as <code className="font-mono text-primary">mosadd-fabric</code>) — primary</li>
-        <li>Mediasoup — backup</li>
-        <li>Pion-based custom — fallback</li>
+        <li>LiveKit (hosted service) — primary today; floor control lives in <code className="font-mono text-primary">@mosadd/mcp</code></li>
+        <li>Alternative media backends (Mediasoup, Pion-based) — roadmap options, not shipped</li>
       </Ul>
 
       <H2>Threat radar hooks</H2>

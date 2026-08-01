@@ -4,7 +4,7 @@
 
 If you've found a security vulnerability in mosadd, **please do not open a public GitHub issue**. Instead:
 
-**Email:** `security@mosadd.com` (PGP key: TBD)
+**Email:** `security@mosadd.com` (no PGP key published yet — if your report needs encrypted transport, say so in a first plain email and we'll arrange a channel)
 
 Include:
 - Description of the vulnerability
@@ -34,8 +34,6 @@ We follow CVSS 3.1.
 
 In scope:
 - `@mosadd/*` packages on npm
-- `forks/livekit-server/` (our fork only — upstream issues go to LiveKit)
-- `forks/` other vendored OSS — upstream-first if applicable
 - mosadd MCP server
 - `mcp.mosadd.com` hosted endpoint
 - `hub.mosadd.com` dashboard

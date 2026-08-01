@@ -1,12 +1,13 @@
 /**
- * @mosadd/providers — vendor adapters for mosadd
+ * @mosadd/providers — provider contracts for mosadd
  *
- * Pluggable backends: forked LiveKit (mosadd-fabric), nwaku (p2p messaging),
- * Resend (email), ElevenLabs (voice), and a passthrough Supabase adapter for
- * the Phase 1 strangler-fig migration from the legacy mosadd consumer app.
+ * Transport-agnostic interfaces the m* modules plug their backends into.
+ * Interfaces only today (no vendor adapter implementations in this package);
+ * the default network implementations live in @mosadd/mcp.
  */
 
-export const VERSION = "3.0.0-alpha.0" as const;
+// Keep in lockstep with package.json.
+export const VERSION = "3.0.0-alpha.26" as const;
 
 // Transport-agnostic channel provider contracts. Hosts (e.g. cymru-os)
 // implement these to route channels over their own carriers. mosadd-os ships

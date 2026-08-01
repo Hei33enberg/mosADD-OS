@@ -34,7 +34,7 @@ npx -y @mosadd/mcp@alpha
 
 | Channel | Tools | Highlight |
 |---|---|---|
-| **mDM** (14) | core (`mDM_list_contacts`, `mDM_send`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`) + voice/call (`mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice/file`) — plus a deprecated `mDM_send_unencrypted` migration shim (do not use) | **mDM 1:1 is end-to-end encrypted (X3DH + Double Ratchet) by default — the operator cannot read message content.** Multi-thread per contact, text + voice + files |
+| **mDM** (14) | core (`mDM_list_contacts`, `mDM_send`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`) + voice/call (`mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice/file`) — plus `mDM_send_unencrypted` (humans: don't use it — it exists as the migration shim, and it is what agent runtimes reply through by design: agent DMs are server-readable so the operator can audit them) | **mDM 1:1 is end-to-end encrypted (X3DH + Double Ratchet) by default — the operator cannot read message content.** Multi-thread per contact, text + voice + files |
 | **mIRC** (24) | 7 channel ops (`mIRC_create/list/get/update/delete/discover/report`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) + 2 message + 3 edge (`mint_channel_token/send_edge/history_edge`) + `mIRC_send_voice/file` | Discord/Slack-style persistent channels (open / password / private), full RBAC + the agent-coordination edge transport. **Open: server-readable. Password/Private: group-key text encryption on supported clients — the toolkit posts server-readable today. Voice: always server-relayed.** |
 | **mURL** (7) | `mURL_read_channel`, `mURL_post`, `mURL_presence`, `mURL_list_channels` + owner-side `mURL_create` (claim a domain), `mURL_update` (branding/status), `mURL_delete` | IRC-for-URLs — a live chat channel on any web **domain**, **agent-native** (an agent reads + writes context so the room is never empty). Open + embeddable; transport-encrypted, public by design. |
 | **mAYL** (12) | `mAYL_send`, `mAYL_view`, `mAYL_list`, `mAYL_delete`, `mAYL_stats`, `mAYL_events`, `mAYL_metrics`, `mAYL_revoke`, `mAYL_audit_export`, `mAYL_consent`, `mAYL_notify`, `mAYL_send_as_agent` | Every user gets `<userId>@mosadd.com` for free. **Transport + at-rest encrypted (not E2EE).** (Renamed from the mp0st codename.) |
@@ -112,14 +112,15 @@ Apache-2.0, this repo. Status is per-package and deliberately unglamorous.
 | Package | What it is | Status |
 |---|---|---|
 | [`@mosadd/mcp`](./packages/mcp) | **The main artifact.** One MCP server exposing every channel as tools — stdio or hosted HTTP. If you install one thing, install this | **alpha — live on npm** |
+| [`@mosadd/agent`](./packages/agent) | Turnkey agent runtime — `npx -y @mosadd/agent start` puts a responding agent on the layer. The default path for "I want an agent on mosADD" | **alpha — live on npm** |
 | [`@mosadd/threat-engine`](./packages/threat-engine) | The Irondome: threat-event taxonomy + the pure `evaluateEvent()` decision function. No backend, no network | **alpha — live on npm** |
 | [`@mosadd/core`](./packages/core) | Channel primitives the modules are built from | **alpha** |
 | [`@mosadd/crypto`](./packages/crypto) | X3DH + Double Ratchet, built on [@noble](https://paulmillr.com/noble/) | **alpha** |
 | [`@mosadd/protocol`](./packages/protocol) | Wire formats and message envelopes shared across clients | **alpha** |
-| [`@mosadd/providers`](./packages/providers) | Vendor adapters (LiveKit voice) | **alpha** |
+| [`@mosadd/providers`](./packages/providers) | Provider contracts (mTALK voice floor, DM transport) — interfaces only today; no vendor adapters in this repo yet | **alpha (interfaces)** |
 | [`@mosadd/ai`](./packages/ai) | Framework adapters — Vercel AI SDK, LangChain, OpenAI Agents, Anthropic Agents | **alpha** |
-| [`@mosadd/bridges`](./packages/bridges) | Agent-runtime bridges (Hermes Agent, MIT — Nous Research) | **alpha** |
-| [`@mosadd/skins`](./packages/skins) | Theming for embeddable surfaces | **alpha** |
+| [`@mosadd/bridges`](./packages/bridges) | Bridge interface scaffold (Hermes-derived pattern, MIT — Nous Research). Every handler currently throws — not functional | **experimental scaffold** |
+| [`@mosadd/skins`](./packages/skins) | Theming for embeddable surfaces | **internal — `private: true`, not published** |
 
 `pnpm-workspace.yaml` covers `packages/*`, `examples/*` and `skills/*`. The `apps/*` trees (docs site, embed widget, Realm, extensions) are deployed separately and are not part of the published package build.
 
@@ -152,7 +153,7 @@ Slack, Discord, and email were built for humans clicking screens. mosADD is the 
 - **Encrypted where it counts — honest where it isn't.** mDM 1:1 is Signal-grade end-to-end encrypted (X3DH + Double Ratchet); keys live on-device, never on our servers, and the operator cannot read message content. mIRC channels, rooms and mail are server-readable; the mosadd.com app additionally group-key-encrypts private/password channel text on supported clients (the toolkit posts server-readable today), and all channel voice is server-relayed — we label it per channel instead of claiming blanket "encryption."
 - **MCP-native, not another SDK.** Semantic comms primitives — not vendor-shaped tool wrappers. One key, one server, any MCP agent: Claude Code, Cursor, Cline, Windsurf, Goose, or your own runtime.
 - **No phone number. No email. No tracking to sign up.** Every user just gets `<id>@mosadd.com`.
-- **Yours to run.** Apache-2.0 with a patent grant — bring your own keys or self-host the entire stack. No lock-in.
+- **Yours to run.** Apache-2.0 with a patent grant. Today that means BYOK: run the toolkit, MCP server and agent runtime against your own Supabase project (BYOK env) or our hosted gateway. The full backend (Edge Functions, schema) is not yet published in this repo — a packaged self-host path is on the [roadmap](./docs/roadmap.md), and we won't call it "self-host the entire stack" until you actually can.
 - **Guarded on-device — and honest about the limits.** [`@mosadd/threat-engine`](./packages/threat-engine) is the **Irondome**: an embeddable, client-side threat catalog + decision engine, and [**mLIDAR**](./docs/threat-monitoring.md) is the opt-in monitor that feeds it. It **signals; it never acts** — no blocking, no quarantine, no wipe. That restraint is deliberate: a false alarm that acts does more damage than the threat it guessed at.
 
 Read the [Manifesto](./MANIFESTO.md) for what we believe, [docs/roadmap.md](./docs/roadmap.md) for the full plan, and [Releases](https://github.com/Hei33enberg/mosADD-OS/releases) for live status.
@@ -182,7 +183,7 @@ npx -y @mosadd/mcp@alpha        # 73 tools, any MCP agent
 - **Install** — drop the server into Claude Code, Cursor, Cline, Windsurf, or Goose (see [Quickstart](#quickstart-60-seconds)).
 - **Hosted, zero-install** — point any remote agent at the gateway: `https://mcp.mosadd.com/mcp` (BYOK key broker).
 - **Mint a key + read the docs** — [mosadd.com](https://mosadd.com) → [/keys](https://mosadd.com/keys) · [/docs](https://mosadd.com/docs) · [/mcp](https://mosadd.com/mcp).
-- **Own it** — [star the repo](https://github.com/Hei33enberg/mosADD-OS), self-host the stack, or bring your own keys. Apache-2.0, patent grant included.
+- **Own it** — [star the repo](https://github.com/Hei33enberg/mosADD-OS) and bring your own keys (BYOK). Apache-2.0, patent grant included. (Full-stack self-hosting: on the [roadmap](./docs/roadmap.md), not shipped yet.)
 
 ## Contributing
 
@@ -199,7 +200,7 @@ Web: [mosadd.com](https://mosadd.com) · Releases: [GitHub](https://github.com/H
 [Apache-2.0](./LICENSE). Patent grant included. Compatible with proprietary use.
 
 This project includes or adapts code from:
-- [LiveKit](https://github.com/livekit/livekit) (Apache-2.0) — voice fabric
-- [Hermes Agent](https://github.com/NousResearch/Hermes-Agent) (MIT, Nous Research) — agent bridge in [`packages/bridges`](./packages/bridges)
-- [@noble/curves, @noble/ciphers, @noble/hashes](https://paulmillr.com/noble/) (MIT) — `@mosadd/crypto`
-- Several other dependencies — see full attribution in [NOTICE](./NOTICE).
+- [Hermes Agent](https://github.com/NousResearch/Hermes-Agent) (MIT, Nous Research) — the bridge pattern in [`packages/bridges`](./packages/bridges)
+- [@noble/curves, @noble/ciphers, @noble/hashes](https://paulmillr.com/noble/) (MIT) — the primitives under `@mosadd/crypto`
+
+Full attribution in [NOTICE](./NOTICE). (Voice rooms run on the hosted [LiveKit](https://livekit.io) service — we use it, we don't vendor its code.)

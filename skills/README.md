@@ -29,14 +29,15 @@ runtime instead.
 
 ## Plugin marketplace entry
 
-The [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) bundles the six module/capability skills into a single Claude Code plugin installable with:
+This directory is the Claude Code **plugin** (manifest: [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json), MCP server: [`.mcp.json`](.mcp.json)). The repo-root [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json) is the **marketplace** that lists it. Install (verified against Claude Code 2.x):
 
 ```bash
-claude plugin install https://github.com/Hei33enberg/mosadd-os.git
+claude plugin marketplace add Hei33enberg/mosADD-OS
+claude plugin install mosadd@mosADD-OS
 ```
 
-The plugin pulls the `@mosadd/mcp` server alongside, so users get one install for both the runtime and the skill descriptions.
+(Or the same two commands as `/plugin marketplace add …` + `/plugin install …` from inside a Claude Code session. The marketplace name is case-sensitive: `mosADD-OS`.)
+
+This installs the six module/capability skills above **and** registers the `@mosadd/mcp` server (`npx -y @mosadd/mcp@alpha`, which inherits your environment — set your auth env vars as described in the [root README](../README.md#quickstart-60-seconds)).
 
 RFC required to add a new skill; see [docs/rfcs/0001-module-naming.md](../docs/rfcs/0001-module-naming.md) for the bar.
-
-(Top-level `claude plugin install` is the legacy syntax; on current Claude Code use `/plugin marketplace add Hei33enberg/mosadd-os` then `/plugin install mosadd@mosadd-os`.)

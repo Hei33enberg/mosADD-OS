@@ -20,7 +20,8 @@
  * with no authority and no side-effects.
  */
 
-export const VERSION = "3.0.0-alpha.5" as const;
+// Keep in lockstep with package.json — a hardcoded skew here shipped before (alpha.5 vs alpha.26).
+export const VERSION = "3.0.0-alpha.26" as const;
 
 /**
  * The full canonical threat-event taxonomy (categories, default severities,

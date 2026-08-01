@@ -26,10 +26,10 @@ Install: `npx -y @mosadd/mcp@alpha`
 - mDM — 1:1 direct messages, the only end-to-end-encrypted module by default (X3DH + Double Ratchet; operator cannot read content), text + voice (14 tools)
 - mIRC — persistent channels; server-readable via the toolkit (the mosadd.com app group-key-encrypts private/password channel text on supported clients), voice server-relayed (24 tools)
 - mURL — open-web rooms on any domain, server-readable; read/post/presence/discovery + owner-side create/claim, update, delete (7 tools)
-- mAYL — email 3.0, every user gets <id>@mosadd.com, server-readable (11 tools)
+- mAYL — email 3.0, every user gets <id>@mosadd.com, server-readable (12 tools)
 
-Capabilities (not modules): mTALK — push-to-talk voice, half-duplex floor control (5 tools);
-mRAG — agent memory, RAG recall over your own data (4 tools); comms_ — action links + capabilities.
+Capabilities (not modules): mTALK — push-to-talk voice, half-duplex floor control + transcript ingest (6 tools);
+mRAG — agent memory, RAG recall over your own data (4 tools); comms_ — action links + capabilities + embed (4 tools).
 
 Plus Irondome — the on-device security pillar (`@mosadd/threat-engine`, embeddable):
 flags device-integrity + network anomalies and Pegasus-class spyware indicators locally.

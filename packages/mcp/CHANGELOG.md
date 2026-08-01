@@ -8,6 +8,16 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+### Added
+- **`mAYL_send_as_agent`** and **`mTALK_ingest_ptt`** re-registered (2026-07-29) after
+  their backends were proven on authenticated end-to-end calls — tool count **71 → 73**.
+- Stdio hub-key auth (`MOSADD_API_KEY`) in `src/bin/mcp.ts` — the local stdio server can
+  now exchange a hub key instead of requiring the BYOK env trio.
+
+> **Honesty note:** none of the above is on npm yet — the latest published version is
+> `3.0.0-alpha.32` (2026-07-19), which registers **71** tools and supports BYOK env only.
+> The next publish must bump the version (→ alpha.33) before `npm publish` will accept it.
+
 ## [3.0.0-alpha.32] — 2026-07-19
 
 ### Added

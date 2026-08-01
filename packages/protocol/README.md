@@ -12,20 +12,33 @@ npm install @mosadd/protocol@alpha
 
 ## Usage
 
-```ts
-import { Message, encodeMessage, decodeMessage } from "@mosadd/protocol";
+Verified against the built package (TypeScript shown; drop the two type annotations and it runs as-is under plain Node 18+):
 
-const msg: Message = {
-  id: "...",
-  kind: "text",
-  sender: "...",
-  recipient: "...",
-  payload: "hello",
-  timestamp: Date.now(),
+```ts
+import {
+  encodeChatMessage,
+  decodeChatMessage,
+  encodeEnvelope,
+  decodeEnvelope,
+  type ChatMessageV1,
+} from "@mosadd/protocol";
+
+const msg: ChatMessageV1 = {
+  protocol: "m0ssad.chat.v1", // wire constant — predates the mosADD rename, kept for compatibility
+  id: crypto.randomUUID(),
+  spaceId: "dm:alice:bob",
+  senderAccountId: "alice",
+  timestamp: new Date().toISOString(),
+  encryptedContent: "<base64 ciphertext>",
+  messageType: "TEXT",
 };
 
-const bytes = encodeMessage(msg);
-const restored = decodeMessage(bytes); // throws on invalid input
+const bytes = encodeChatMessage(msg); // Uint8Array (UTF-8 JSON)
+const restored = decodeChatMessage(bytes); // Zod-validated — throws on invalid input
+
+// Wrap in an envelope for the wire:
+const wire = encodeEnvelope({ protocol: "m0ssad.envelope.v1", message: msg });
+const envelope = decodeEnvelope(wire);
 ```
 
 ## License

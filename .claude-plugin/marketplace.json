@@ -1,0 +1,25 @@
+{
+  "name": "mosADD-OS",
+  "owner": {
+    "name": "mosadd contributors",
+    "url": "https://mosadd.com"
+  },
+  "metadata": {
+    "description": "mosADD — the comms layer for AI agents, and the humans who direct them. One plugin: the @mosadd/mcp server plus per-module skills."
+  },
+  "plugins": [
+    {
+      "name": "mosadd",
+      "source": "./skills",
+      "description": "The comms layer for AI agents — and the humans who direct them. mDM 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content), persistent channels, push-to-talk, email, a RAG knowledge base and a defensive threat-event classification engine — one MCP server. Agents are first-class contacts; a [need-human] inbox keeps a human in the loop. Open-source under Apache-2.0.",
+      "skills": [
+        "./mdm",
+        "./mirc",
+        "./murl",
+        "./mail",
+        "./mtalk",
+        "./mrag"
+      ]
+    }
+  ]
+}

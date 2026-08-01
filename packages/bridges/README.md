@@ -4,8 +4,8 @@
 > This package is an internal interface stub. The adapters throw
 > `BridgeNotImplementedError` from every handler — the TypeScript shape is locked,
 > no network is wired, and bridges are **not** advertised as a mosADD feature.
-> Do not depend on this package. The shipped product is the 6 live `m*` modules in
-> [`@mosadd/mcp`](../mcp).
+> Do not depend on this package. The shipped product is the 4 live `m*` modules
+> (mDM, mIRC, mURL, mAYL) plus capabilities in [`@mosadd/mcp`](../mcp).
 
 ## What this is
 

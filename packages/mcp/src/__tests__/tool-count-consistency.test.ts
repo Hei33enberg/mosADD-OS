@@ -41,6 +41,17 @@ const SURFACES: { file: string; re: RegExp; what: string }[] = [
   { file: "apps/realm/index.html", re: /#\s*(\d+)\s+tools/, what: "mosadd.dev Realm hero" },
   { file: "apps/dev/app/docs/mcp/page.tsx", re: /Total surface today:[\s\S]*?(\d+)\s+tools/, what: "dev docs /docs/mcp" },
   { file: "apps/dev/app/opengraph-image.tsx", re: /(\d+)\s+MCP tools/, what: "dev OG image" },
+  // Added 2026-08-01 (content-truth audit, LINEAR-5057 E-17): six surfaces the gate did
+  // not pin had silently drifted to 69/66/71/22/4 while TOOL_COUNT was 73. Every public
+  // file that hand-types a total is now listed here — if you add a surface with a
+  // number, add it to this array in the same PR.
+  { file: "docs/OWNER-GUIDE.md", re: /\*\*(\d+) mosADD tools\*\*/, what: "owner guide" },
+  { file: "packages/ai/README.md", re: /the (\d+) mosADD toolkit tools/, what: "@mosadd/ai README" },
+  { file: "docs/architecture/human-os.md", re: /exposing \*\*(\d+) tools\*\*/, what: "human-os architecture doc" },
+  { file: "examples/README.md", re: /\*\*(\d+) live MCP tools across/, what: "examples README header" },
+  { file: "packages/mcp/README.md", re: /One key, one server, (\d+) tools/, what: "@mosadd/mcp README intro" },
+  { file: "packages/mcp/README.md", re: /\*\*(\d+) callable tools\*\* in total/, what: "@mosadd/mcp README breakdown" },
+  { file: "apps/dev/public/llms.txt", re: /(\d+)\s+(?:MCP\s+)?tools/, what: "llms.txt (read by AI crawlers)" },
 ];
 
 describe("tool-count consistency (anti-drift gate)", () => {

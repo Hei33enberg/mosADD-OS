@@ -39,13 +39,14 @@ and you want it to ALSO drive mosadd:
 
 - **mDM** (14): list_contacts, publish_keys, send, send_unencrypted (DEPRECATED), edit, delete, list, respond_request + voice ops — 1:1 DMs end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content)
 - **mIRC** (24): create, list, get, update, delete, discover, report, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops
-- **mURL** (4): read_channel, post, presence, list_channels — open-web rooms, embeddable, publicly joinable via link (server-readable)
-- **mAYL** (12): send, view, list, delete, stats, events, metrics, revoke, audit_export, consent, notify — email 3.0 (mp0st_* remain as deprecated aliases)
+- **mURL** (7): read_channel, post, presence, list_channels + owner-side create, update, delete — open-web rooms, embeddable, publicly joinable via link (server-readable)
+- **mAYL** (12): send, view, list, delete, stats, events, metrics, revoke, audit_export, consent, notify, send_as_agent — email 3.0 (the `mp0st_*` aliases are retired — mAYL is the one name)
 
 Capabilities (not modules):
 
-- **mTALK** (5): open, join, press, release, state — half-duplex push-to-talk
+- **mTALK** (6): open, join, press, release, state, ingest_ptt — half-duplex push-to-talk + transcript ingest to mRAG
 - **mRAG** (4): ingest, search, list_sources, delete — RAG recall over your own data
-- **comms** (3): comms_action_create, comms_action_frame_get, comms_capabilities
+- **comms** (4): comms_action_create, comms_action_frame_get, comms_capabilities, comms_embed_create
+- **Irondome** (2): threat_catalog, threat_classify — offline, defensive classification only
 
 All names follow [RFC 0001](../docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>`. Full reference: [packages/mcp/README.md](../packages/mcp/README.md).

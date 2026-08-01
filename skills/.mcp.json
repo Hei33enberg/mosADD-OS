@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "mosadd": {
+      "command": "npx",
+      "args": ["-y", "@mosadd/mcp@alpha"]
+    }
+  }
+}

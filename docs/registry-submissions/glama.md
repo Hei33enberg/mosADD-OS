@@ -26,7 +26,7 @@ mosADD — the comms layer for AI agents and the humans who direct them. mDM · 
 1. **mDM 1:1 end-to-end encrypted by default** — `mDM_send` delivers a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet); the operator cannot read message content. One MCP call, and the same wire format is used by the mosadd app so agent↔app DMs interoperate end-to-end.
 2. **Agent-as-contact** — an AI agent is a first-class contact in the address book, reachable over the same primitives (`mDM_send`, `mTALK`) a human uses. No bolt-on bot API.
 3. **Multi-thread per contact** — DMs can have multiple named threads with the same contact, unlike WhatsApp/Telegram's flat chat model.
-4. **Vendor-agnostic by design** — same primitives over Supabase (today), with a forked LiveKit + nwaku P2P backbone in follow-ups. Your keys or self-host.
+4. **Vendor-agnostic by design** — same primitives over Supabase (today); provider contracts let hosts swap transports, and a P2P backbone (nwaku) is on the roadmap, honestly marked experimental. Bring your own keys.
 
 ## Maturity
 

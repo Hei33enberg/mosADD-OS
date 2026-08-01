@@ -1,6 +1,7 @@
 # Threat model — mosadd-os v3.0.0
 
 Last reviewed: 2026-05-27. Owner: AG (Hei33enberg).
+Partial correction 2026-08-01: removed references to components that do not exist in this repo (a LiveKit fork "mosadd-fabric", a `@mosadd/daemon` package) — voice media runs on the hosted LiveKit service. A full re-review (mURL revival, mAYL rename, mLIDAR) is overdue and tracked.
 
 STRIDE-derived threat model for the public Apache-2.0 layer of mosadd. Covers the MCP server and the per-channel m* modules. The proprietary hub (radar, BYOK broker, billing) has its own private threat model in a separate proprietary repo.
 
@@ -11,7 +12,7 @@ In scope:
 - `@mosadd/mcp` server (stdio + future HTTP/SSE)
 - `@mosadd/ai` framework adapters (Vercel, LangChain, OpenAI Agents, Anthropic)
 - `@mosadd/crypto`, `@mosadd/protocol`, `@mosadd/threat-engine` library code
-- LiveKit fork (`mosadd-fabric`) and PTT floor-control middleware
+- PTT floor-control (mTALK) — the floor logic in `@mosadd/mcp`; audio media runs on the hosted LiveKit service (no fork in this repo)
 
 Out of scope:
 
@@ -30,7 +31,7 @@ Out of scope:
 | Identity recovery seed / passphrase | Critical — account recovery | User local |
 | Threat-engine event taxonomy | Moderate — public catalog | repo |
 | Source code | Moderate — Apache-2.0 published | repo |
-| LiveKit fork API tokens | High | Operator |
+| LiveKit (hosted service) API tokens | High | Operator |
 
 ## Trust boundaries
 
@@ -38,7 +39,7 @@ Out of scope:
 ┌─────────────────────────────────────────────────────────────┐
 │  END USER ENVIRONMENT (laptop / hardware device)            │
 │  ┌────────────────────────────┐    ┌──────────────────────┐ │
-│  │  LLM client                │    │  @mosadd/daemon      │ │
+│  │  LLM client                │    │  voice client        │ │
 │  │  (Claude Code, Cursor, …)  │    │  (audio data plane)  │ │
 │  └─────────────┬──────────────┘    └──────────┬───────────┘ │
 └────────────────┼───────────────────────────────┼────────────┘
@@ -53,8 +54,8 @@ Out of scope:
 ┌────────────────┼───────────────────────────────┼────────────┐
 │  Backend (BYOK by user — or mosadd hub Phase 2)             │
 │  ┌──────────────┐  ┌──────────────┐  ┌─────────────────┐    │
-│  │  Supabase    │  │  Resend      │  │  LiveKit /      │    │
-│  │  Edge fns    │  │  ElevenLabs  │  │  mosadd-fabric  │    │
+│  │  Supabase    │  │  Resend      │  │  LiveKit        │    │
+│  │  Edge fns    │  │  ElevenLabs  │  │  (hosted svc)   │    │
 │  └──────────────┘  └──────────────┘  └─────────────────┘    │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -63,7 +64,7 @@ Boundaries:
 
 - **B1:** LLM client → MCP server (stdio): one-way trust. MCP server trusts the LLM that the stdin/stdout pipe is private.
 - **B2:** MCP server → backend (HTTP): two-way. Backend authenticates with the JWT or BYOK keys; MCP server trusts the TLS PKI.
-- **B3:** Daemon → LiveKit (WebRTC): daemon trusts the JWT issued by MCP; LiveKit trusts the daemon to enforce floor control client-side until the server-side check lands.
+- **B3:** Voice client → LiveKit (WebRTC): the client trusts the JWT issued by MCP; LiveKit trusts the client to enforce floor control client-side until the server-side check lands.
 
 ## STRIDE per component
 
@@ -75,7 +76,7 @@ Boundaries:
 | **T**ampering | Modified BYOK env var pointing to attacker backend | `env.MOSADD_*_URL` should be reviewed before deploy; future: pin known providers with allowlist |
 | **R**epudiation | User claims they didn't issue the tool call | Every tool invocation emits an audit event via `@mosadd/audit-core` (Phase 2 hub middleware) |
 | **I**nformation disclosure | Tool error message leaks API key | All error messages scrubbed via central error formatter; never echo `Authorization` |
-| **D**enial of service | Agent loops calling `mDM_send` 1000x | Rate limit middleware (Phase 2 hub), local stdio caps via daemon-side delay |
+| **D**enial of service | Agent loops calling `mDM_send` 1000x | Rate limit middleware (Phase 2 hub), local stdio caps via client-side delay |
 | **E**levation | Tool call bypasses RLS to read other users' rows | Always pass user JWT through to Supabase; never use service role in stdio mode |
 
 ### Identity recovery
@@ -87,7 +88,7 @@ Boundaries:
 | I | Passphrase exposed in client memory | Memory-zero after KDF; never logged; never sent to backend in plaintext |
 | D | Lockout via wrong-passphrase brute force | Server-side throttle 5 attempts/hour, exponential backoff |
 
-### LiveKit fork (mTALK voice)
+### LiveKit hosted service (mTALK voice)
 
 | Threat | Vector | Mitigation |
 |---|---|---|

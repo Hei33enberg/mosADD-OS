@@ -13,15 +13,15 @@ pnpm lint
 node scripts/check-skill-lint.mjs   # skills frontmatter + marketplace sync + version + honesty lint
 ```
 
-CI runs exactly this (see [.github/workflows/ci.yml](./.github/workflows/ci.yml)) plus an MCP smoke test. **Build before typecheck** — `@mosadd/ai` needs `@mosadd/mcp`'s built declarations.
+These are the local quality gates — run them before every PR. The workflow files in [.github/workflows/](./.github/workflows/) encode the same checks, but **GitHub Actions is currently switched off for this repo** (a deliberate cost decision), so a green GitHub page proves nothing either way: maintainers re-run the gates locally on every PR before merging. **Build before typecheck** — `@mosadd/ai` needs `@mosadd/mcp`'s built declarations.
 
-## Hard rules (CI-enforced or reviewer-enforced)
+## Hard rules (reviewer-enforced — run the local gates above)
 
-- **One concern per PR.** Conventional commits (`feat(mDM): …`). Changeset required for public-API changes (`pnpm changeset`). DCO sign-off (`git commit -s`). Tests for new code (90% on changed lines).
+- **One concern per PR.** Conventional commits (`feat(mDM): …`). DCO sign-off (`git commit -s`). Tests for new code — cover the lines you changed (there is no automated coverage gate yet; reviewers check). Public-API changes must be called out explicitly in the PR description (a Changesets flow is planned but the tooling is not in this repo yet).
 - **Tool naming:** `m<MODULE>_<operation>` snake_case per [RFC 0001](./docs/rfcs/0001-module-naming.md). New module or skill ⇒ RFC first ([CONTRIBUTING.md](./CONTRIBUTING.md)).
-- **Encryption honesty:** mDM 1:1 is E2EE; **open** channels/rooms/mail are server-readable, and the mosadd.com app group-key-encrypts **private/password** channel **text** on supported clients (the toolkit posts server-readable today); **all channel voice is server-relayed (never E2EE)**. Never claim blanket encryption, never call open channels or any channel voice end-to-end — check every claim against [docs/security/e2ee-posture.md](./docs/security/e2ee-posture.md) ("What copy is allowed to say"). The honesty-lint in CI will fail your PR on banned blanket phrases.
-- **Skills:** one directory per skill under `skills/`, `SKILL.md` with `name` + `description` frontmatter, registered in `skills/.claude-plugin/marketplace.json`. `skills/coordinate/SKILL.md` is canonical and vendored byte-identical into the `mosadd-agent` repo — don't edit it casually.
-- **Don't touch:** `pnpm-lock.yaml` by hand; `HALL_OF_FAME.md` between the `REALM:BEGIN/END` markers (generated); version strings (they're lint-synced across README ↔ marketplace.json ↔ packages/mcp).
+- **Encryption honesty:** mDM 1:1 is E2EE; **open** channels/rooms/mail are server-readable, and the mosadd.com app group-key-encrypts **private/password** channel **text** on supported clients (the toolkit posts server-readable today); **all channel voice is server-relayed (never E2EE)**. Never claim blanket encryption, never call open channels or any channel voice end-to-end — check every claim against [docs/security/e2ee-posture.md](./docs/security/e2ee-posture.md) ("What copy is allowed to say"). The honesty lint (`node scripts/check-skill-lint.mjs`) fails on banned blanket phrases — run it locally; maintainers run it on every PR.
+- **Skills:** one directory per skill under `skills/`, `SKILL.md` with `name` + `description` frontmatter, registered in the root `.claude-plugin/marketplace.json` (plugin entry `mosadd`, plugin manifest at `skills/.claude-plugin/plugin.json`). `skills/coordinate/SKILL.md` is canonical and vendored byte-identical into the `mosadd-agent` repo — don't edit it casually.
+- **Don't touch:** `pnpm-lock.yaml` by hand; `HALL_OF_FAME.md` between the `REALM:BEGIN/END` markers (generated); version strings (they're lint-synced across README ↔ skills/.claude-plugin/plugin.json ↔ packages/mcp).
 
 ## Spec-grade issues
 
@@ -35,4 +35,4 @@ This repo dogfoods its own layer. If your agent runs the [`mosadd-coordinate`](.
 
 - State in the PR description that it was authored with an agent, and which one (there's a field in the template). This is celebrated, not penalized — agent-assisted merges make the digest leaderboard.
 - Never fabricate benchmark numbers, test output, or links. Paste real command output.
-- If CI fails, read the log and fix forward — the workflows are written to give you deterministic feedback.
+- If a local gate fails, read the output and fix forward — the scripts are written to give you deterministic feedback. (GitHub Actions is off; don't wait for checks that will never run.)
