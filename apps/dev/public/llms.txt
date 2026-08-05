@@ -8,7 +8,7 @@
 
 mosadd.com/docs is the developer portal for the mosadd OS toolkit. The toolkit ships
 as `@mosadd/*` packages on npm; the headline artifact is `@mosadd/mcp` — a single
-MCP server exposing 73 tools across four modules that any agent (Claude Code, Cursor, ChatGPT Apps,
+MCP server exposing 77 tools across four modules that any agent (Claude Code, Cursor, ChatGPT Apps,
 Vercel AI SDK, LangChain, …) can call.
 
 Install: `npx -y @mosadd/mcp@alpha`

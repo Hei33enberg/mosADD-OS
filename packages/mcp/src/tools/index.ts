@@ -51,6 +51,7 @@ import { mircEdgeTools } from "./mirc-edge.js";
 import { mailTools } from "./mail.js";
 // import { mailAliasTools } from "./mail-aliases.js"; // mp0st_* aliases RETIRED 2026-07-15 (founder: unify on mAYL, drop the mp0st codename from every user-visible surface). Source kept for reference.
 import { mailProvenanceTools } from "./mail-provenance.js"; // mAYL_send_as_agent — RE-REGISTERED 2026-07-29, see the note at the registry below
+import { mailAgentboxTools } from "./mail-agentbox.js"; // mAYL_agentbox_*: agent mints/lists/releases its OWN two-way disposable inbox (backs mayl-agentbox EF). Added 2026-08-06 (LINEAR-5201 Part B)
 import { mtalkTools } from "./mtalk.js";
 import { attachmentTools } from "./attachments.js";
 import { pttIngestTools } from "./ptt-ingest.js"; // mTALK_ingest_ptt — RE-REGISTERED 2026-07-29, see the note at the registry below
@@ -89,6 +90,11 @@ const channelTools: MosaddTool[] = [
   //      put a real message in someone's inbox.
   // The diagnostic key was then REVOKED (revoked_at set, not deleted, so the audit trail lives).
   ...mailProvenanceTools,
+  // mAYL_agentbox_provision/list/release/extend — the agent mints/lists/releases/extends its OWN
+  // real, two-way, disposable inbox (agent-<hex>@mosadd.com). create_inbox parity with AgentMail,
+  // on our own stack + provenance. Backs the live mayl-agentbox EF; receive path landed 2026-08-06
+  // in mp0st-inbound-webhook (LINEAR-5201). Same requireUser auth as every other mAYL tool.
+  ...mailAgentboxTools,
   ...mtalkTools,
   ...attachmentTools,
   // ⭐ mTALK_ingest_ptt: RE-REGISTERED 2026-07-29 — the backend finally does what the tool promises.
