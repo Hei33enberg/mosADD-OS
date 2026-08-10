@@ -3,23 +3,43 @@
 Everything you need to copy/paste into the CWS Developer Dashboard, plus the
 permission justifications Google asks for under MV3 review.
 
-## One-time prerequisites (owner action)
+## ⭐ STATUS 2026-08-10 — THE BUILD IS DONE AND PACKAGED. ONLY OWNER STEPS REMAIN.
+
+The founder's words today: *"cała wtyczka Chrome była gotowa"* — and he is right. It has been
+finished since **2026-06-10** and nobody shipped it. Meanwhile `/murl` on the live site carries a
+large green **"Get the Chrome extension"** button that leads to `/extension`, where the store URL is
+an **empty string** — so a visitor is shown "coming soon" and the only real link is to our source
+code. We advertise an extension nobody can install.
+
+**Already done for you (2026-08-10):** built from current source and packaged as
+**`apps/channel0-ext/channel0-ext-v0.16.0.zip`** (40 KB, manifest v3, version 0.16.0).
+
+**What only you can do — three steps, roughly ten minutes:**
 
 - [ ] Pay the **$5 one-time CWS developer registration fee** at
   https://chrome.google.com/webstore/devconsole/register
-- [ ] Verify the publisher domain `mosadd.dev` (Search Console TXT record)
-- [ ] Create the listing draft (Add new item → upload the `.zip` from below)
+- [ ] Verify a publisher domain (Search Console TXT record).
+      ⚠️ **Use `mosadd.com`, not `mosadd.dev`.** The doc used to say mosadd.dev; that domain was
+      switched OFF on your order on 2026-08-09 and now 308-redirects. Verification is a DNS TXT
+      record so it would still pass — but naming a domain that redirects to another one on a store
+      listing invites a reviewer question we do not need.
+- [ ] Create the listing draft (Add new item → upload the zip above) and paste the fields below
 
-## Build the upload zip
+**When the listing is live**, send the URL: it goes into `CWS_URL` in
+`apps/web/src/pages/ExtensionLanding.tsx` (currently `""`, which is what triggers the "coming soon"
+state) and the green button starts working the same hour.
+
+## Rebuilding the zip (if the source changes)
 
 ```bash
 cd apps/channel0-ext
 npm run build
-cd dist
-zip -r ../channel0-ext-v0.5.0.zip .
+cd dist && zip -r ../channel0-ext-v<version>.zip .
 ```
 
-Upload `channel0-ext-v0.5.0.zip` as a fresh item.
+⚠️ Name the file after the version in `public/manifest.json`. This doc said `v0.5.0` while the
+manifest said `0.16.0` — eleven versions of drift, and uploading a zip named after a version the
+manifest does not contain is exactly the kind of mismatch that gets a submission bounced.
 
 ## Store listing fields
 
