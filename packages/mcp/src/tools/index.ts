@@ -12,12 +12,13 @@
  * defensive classification over the threat taxonomy — the surveillance-era
  * *marketing* was killed, the classification engine is real and wanted.
  *
- * 77 callable tools registered — the exact live count is exported as TOOL_COUNT
+ * 81 callable tools registered — the exact live count is exported as TOOL_COUNT
  * (= allTools.length) below; ALWAYS reference that, never re-hard-code a number that drifts.
  * Breakdown (2026-08-11, measured from a live tools/list on the built server):
- * modules mDM 14 · mIRC 24 · mURL 7 · mAYL 16 = 61; capabilities mTALK 6 · mRAG 4 ·
+ * modules mDM 14 · mIRC 24 · mURL 7 · mAYL 16 = 61; capabilities mTALK 6 · mRAG 8 ·
  * comms 4 (action_create/action_frame_get/embed_create/capabilities) · Irondome/threat 2
- * = 16. 61 + 16 = 77. (History of this line drifting: the 2026-07-17 breakdown ended "= 69"
+ * = 20. 61 + 20 = 81. (mRAG 8 = 4 search/ingest + 4 mRAG_graph_* traversal tools added 2026-08-11.)
+ * (History of this line drifting: the 2026-07-17 breakdown ended "= 69"
  * — wrong twice over, its own terms summed to 71; the 07-30 rewrite said 73 and still had
  * mAYL at 12 after mAYL_send_as_agent had been re-registered, so it stayed wrong through the
  * four mAYL_agentbox_* tools landing on 08-06. Arithmetic in comments drifts; TOOL_COUNT
@@ -61,6 +62,7 @@ import { attachmentTools } from "./attachments.js";
 import { pttIngestTools } from "./ptt-ingest.js"; // mTALK_ingest_ptt — RE-REGISTERED 2026-07-29, see the note at the registry below
 // import { mcallTools } from "./mcall.js"; // mCALL: carrier-pending — not registered (see header note)
 import { knowledgeTools } from "./knowledge.js";
+import { knowledgeGraphTools } from "./knowledge-graph.js"; // mRAG_graph_* — 2026-08-11: MCP door onto the kg_* graph RPCs (traverse people/threads, not just search text)
 import { actionTools } from "./actions.js";
 import { embedTools } from "./embed.js"; // comms_embed_create RE-REGISTERED 2026-07-17: embed.mosadd.com/v1.js is LIVE (served by the mosadd Vercel project) — the widget + embed-keys/mirc-embed-token backend were already complete.
 import { threatTools } from "./threat.js"; // threat_*: RE-REGISTERED 2026-07-15 (founder directive + LINEAR-3498). Pure/offline classification of the real Pegasus-class threat taxonomy — the engine DECIDES, the caller acts; no surveillance, no backend.
@@ -138,6 +140,7 @@ const channelTools: MosaddTool[] = [
   // gate will then force every doc surface to follow. (This session cannot mint a session
   // token, so it stops here rather than guess.)
   ...knowledgeTools,
+  ...knowledgeGraphTools,  // mRAG_graph_*: traverse the per-user knowledge graph (kg_* RPCs) — search finds text, this walks who/what/when
   ...actionTools,  // Action links (Tier 1): agent → user one-link browser action via action-create EF
   ...embedTools,    // comms_embed_create: RE-REGISTERED 2026-07-17 — embed.mosadd.com/v1.js live; mints an embed key + paste-in snippet (mURL→mIRC rework P3)
   ...threatTools,  // threat_catalog + threat_classify: RE-REGISTERED 2026-07-15 (founder directive + LINEAR-3498) — pure/offline, makes the Pegasus-class classification claim a live, callable capability

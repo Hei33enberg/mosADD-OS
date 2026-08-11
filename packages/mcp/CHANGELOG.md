@@ -26,12 +26,16 @@ package. This release makes the published artifact the thing the docs describe.
 - **`mAYL_agentbox_provision` / `_list` / `_extend` / `_release`** (2026-08-06,
   LINEAR-5201) — an agent mints, lists, extends and releases its OWN two-way disposable
   inbox (`agent-<hex>@mosadd.com`). `create_inbox` parity with AgentMail, on our stack.
+- **`mRAG_graph_refresh` / `_overview` / `_neighbors` / `_timeline`** (2026-08-11) — the MCP
+  door onto the per-user knowledge graph (`kg_*` RPCs). Search finds text; these walk who/what/
+  when (parties, connections, dated timelines), built from message METADATA only, never bodies.
 - Stdio hub-key auth (`MOSADD_API_KEY`) in `src/bin/mcp.ts` — the local stdio server can
   exchange a hub key instead of requiring the BYOK env trio.
 
-Tool count **71 → 77**. Those six tools existed in the repo but had **never been
-published**: an agent installing `@mosadd/mcp` got 71 while every doc surface promised
-77. `TOOL_COUNT` (`= allTools.length`) stays the single source of truth.
+Tool count **71 → 81**: six tools existed in the repo but had **never been published**
+(71 → 77 — an agent installing `@mosadd/mcp` got 71 while every doc surface promised 77),
+AND four new `mRAG_graph_*` knowledge-graph traversal tools were added 2026-08-11 (77 → 81).
+`TOOL_COUNT` (`= allTools.length`) stays the single source of truth.
 
 ### Changed
 - **`mRAG_search` can now filter on the source types the writers actually stamp.**

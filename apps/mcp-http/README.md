@@ -1,6 +1,6 @@
 # @mosadd/mcp-http — hosted MCP gateway (mcp.mosadd.com)
 
-Serves the full `@mosadd/mcp` tool surface (77 tools across 4 modules — mDM/mIRC/mURL/mAYL — plus capabilities) over
+Serves the full `@mosadd/mcp` tool surface (81 tools across 4 modules — mDM/mIRC/mURL/mAYL — plus capabilities) over
 **Streamable HTTP**, so remote / server-side agents (n8n, your own backend,
 hosted Claude, ChatGPT) can use mosadd without running the stdio binary locally.
 
@@ -9,7 +9,7 @@ hosted Claude, ChatGPT) can use mosadd without running the stdio binary locally.
 > Directory `apps/mcp-http`, and `apps/*` is deliberately NOT a member of
 > `pnpm-workspace.yaml`), so `npm install` pulls the tarball from npmjs.com. Whatever is
 > merged in `packages/mcp` reaches a caller only after `npm publish`. Measured 2026-08-11:
-> the repo registered **77** tools while npm's newest, `3.0.0-alpha.32` (published
+> the repo registered **81** tools while npm's newest, `3.0.0-alpha.32` (published
 > 2026-07-19), registered **71** — six tools existed in git for three weeks and had never
 > reached a single client. The number above tracks the SOURCE; the number a caller actually
 > gets tracks the version pinned in `package.json`. **After every publish, bump that pin and
@@ -48,7 +48,7 @@ curl -s http://localhost:3030/mcp \
 ```
 
 `tools/list` returns exactly what the PINNED `@mosadd/mcp` registers — 71 on the current
-pin `3.0.0-alpha.32`, 77 once `3.0.0-alpha.33` is published and the pin is bumped. Verified: `initialize` → 200,
+pin `3.0.0-alpha.32`, 81 once `3.0.0-alpha.33` is published and the pin is bumped. Verified: `initialize` → 200,
 `tools/list` → the module set (mDM/mIRC/mURL/mAYL + mTALK/mRAG capabilities + comms_* +
 threat_*; mCALL unregistered), `tools/call mIRC_list` → real backend response, bad key →
 401. Live probe 2026-08-11 against `https://mcp.mosadd.com/mcp` with no key → `401` +
@@ -90,7 +90,7 @@ This is a standalone Vercel project (Root Directory `apps/mcp-http`).
 
 1. ✅ Dependency is `@mosadd/mcp` pinned to an EXACT **published** version — currently
    `3.0.0-alpha.32` (the newest on npm as of 2026-08-11). The repo's `packages/mcp` is
-   already at `3.0.0-alpha.33` and registers 77 tools, but that version is NOT on npm yet,
+   already at `3.0.0-alpha.33` and registers 81 tools, but that version is NOT on npm yet,
    so the pin here stays at `.32` on purpose: pinning an unpublished version would make
    `npm install` fail with `ETARGET` and break any redeploy of this gateway. The order is
    fixed — **publish `@mosadd/mcp@3.0.0-alpha.33` FIRST (release / `publish.yml` dispatch),
