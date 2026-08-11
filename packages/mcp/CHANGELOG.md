@@ -8,15 +8,54 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
-### Added
-- **`mAYL_send_as_agent`** and **`mTALK_ingest_ptt`** re-registered (2026-07-29) after
-  their backends were proven on authenticated end-to-end calls — tool count **71 → 73**.
-- Stdio hub-key auth (`MOSADD_API_KEY`) in `src/bin/mcp.ts` — the local stdio server can
-  now exchange a hub key instead of requiring the BYOK env trio.
+_Nothing yet._
 
-> **Honesty note:** none of the above is on npm yet — the latest published version is
-> `3.0.0-alpha.32` (2026-07-19), which registers **71** tools and supports BYOK env only.
-> The next publish must bump the version (→ alpha.33) before `npm publish` will accept it.
+## [3.0.0-alpha.33] — 2026-08-11
+
+**The republish that closes a three-week gap between the repo and the client's disk.**
+`3.0.0-alpha.32` was published 2026-07-19 and every change since then lived only in git.
+Measured on the published tarball that day: it registers **71** tools while its own npm
+description advertises **69** and the website advertises **77**. Three numbers, one
+package. This release makes the published artifact the thing the docs describe.
+
+### Added
+- **`mAYL_send_as_agent`** re-registered (2026-07-29) after the hub-claim → mp0st-send
+  chain was proven on an authenticated call.
+- **`mTALK_ingest_ptt`** re-registered (2026-07-29) after the ingest path was repointed
+  at `rag-transcribe` and returned a real `200 {"queued":true}` on prod.
+- **`mAYL_agentbox_provision` / `_list` / `_extend` / `_release`** (2026-08-06,
+  LINEAR-5201) — an agent mints, lists, extends and releases its OWN two-way disposable
+  inbox (`agent-<hex>@mosadd.com`). `create_inbox` parity with AgentMail, on our stack.
+- Stdio hub-key auth (`MOSADD_API_KEY`) in `src/bin/mcp.ts` — the local stdio server can
+  exchange a hub key instead of requiring the BYOK env trio.
+
+Tool count **71 → 77**. Those six tools existed in the repo but had **never been
+published**: an agent installing `@mosadd/mcp` got 71 while every doc surface promised
+77. `TOOL_COUNT` (`= allTools.length`) stays the single source of truth.
+
+### Changed
+- **`mRAG_search` can now filter on the source types the writers actually stamp.**
+  The `source_types` enum was missing `file` and `ptt` — `file` is what `mRAG_ingest`
+  itself writes (its default, and where `note` ingests are mapped), `ptt` is what
+  `mTALK_ingest_ptt` writes. Measured on prod 2026-08-11: 63 indexed rows were
+  unreachable by any `source_types` filter. The tool advertised a filter that could not
+  see its own writes.
+- **`mURL_create` no longer promises a status it does not set.** `murl-manage` applies
+  `status` only on the INSERT of a new row; on an existing channel it writes owner +
+  branding and leaves status untouched. Since mURL rooms auto-create on first activity,
+  "already exists" is the COMMON case — so the old "set initial status" wording was
+  wrong nearly every time it was read. Schema + description now say so and point at
+  `mURL_update`.
+- **`mIRC_post_message` encryption wording.** It posts server-readable plaintext base64
+  on EVERY access mode, private and password channels included; the app's group-key
+  encryption is not something the toolkit holds a key for.
+
+### Fixed
+- Doc surfaces across the repo that hand-typed **73** while `TOOL_COUNT` was 77 (README
+  breakdown, `packages/mcp/README.md`, `apps/mcp-http/README.md`, dev docs, Realm,
+  examples). The anti-drift vitest gate pinned one regex per file, so a single corrected
+  line kept the gate green while the sentence around it stayed wrong — the gate now pins
+  the PER-MODULE numbers too, not just the total.
 
 ## [3.0.0-alpha.32] — 2026-07-19
 

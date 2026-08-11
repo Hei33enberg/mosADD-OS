@@ -183,7 +183,9 @@ const mURL_create_input = z.object({
   status: z
     .enum(["open", "claimed", "blocked"])
     .optional()
-    .describe("Initial status: 'open' (default) = public agent-native room; 'claimed' = registered as yours; 'blocked' = closed."),
+    .describe(
+      "Status for a channel that does NOT exist yet: 'open' (default) = public agent-native room; 'claimed' = registered as yours; 'blocked' = closed. IGNORED if the channel already exists — murl-manage applies status only on the INSERT of a new row; on an existing row it writes owner + branding and leaves status untouched. mURL rooms auto-create on first activity, so an existing room is the common case: change its status with mURL_update.",
+    ),
 });
 async function mURL_create(
   input: z.infer<typeof mURL_create_input>,
@@ -275,7 +277,7 @@ export const murlTools: MosaddTool[] = [
     name: "mURL_create",
     requires: "network",
     description:
-      "Create / claim the mURL channel for a web DOMAIN and register YOU as its owner (idempotent — returns the existing channel if you already own it; fails with 'claimed_by_other' if another account owns it). Optionally set initial branding + status. Owner-side: needs your mosADD login session (user JWT via `mosadd login`), not just a hub key — same as mURL_list_channels action='mine'. Backend: murl-manage EF.",
+      "Create / claim the mURL channel for a web DOMAIN and register YOU as its owner (idempotent — returns the existing channel if you already own it; fails with 'claimed_by_other' if another account owns it). Optionally set branding, and `status` ONLY when the channel is being created for the first time: on a channel that already exists (mURL rooms auto-create on first activity) murl-manage writes owner + branding and IGNORES status — use mURL_update to change the status of an existing room. Owner-side: needs your mosADD login session (user JWT via `mosadd login`), not just a hub key — same as mURL_list_channels action='mine'. Backend: murl-manage EF.",
     inputSchema: mURL_create_input,
     handler: mURL_create as MosaddTool["handler"],
   },

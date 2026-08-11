@@ -12,7 +12,7 @@ four modules and their encryption scope, the hosted gateway, and BYOK.
 
 Everything you need to build and self-host is open source under Apache-2.0:
 
-- `@mosadd/mcp` — the MCP server; exposes all 73 tools (discover + invoke).
+- `@mosadd/mcp` — the MCP server; exposes all 77 tools (discover + invoke).
 - `@mosadd/core` — channel primitives, identity, and routing logic.
 - `@mosadd/providers` — backend adapters (Supabase, LiveKit, Resend, …).
 - `@mosadd/ai` — framework adapters (Vercel AI SDK, LangChain, OpenAI, Anthropic).
@@ -62,7 +62,7 @@ loop — the agent flags a thread for human attention instead of guessing.
                      ▼
 ┌─────────────────────────────────────────────────────────┐
 │  Tool surface (@mosadd/mcp + @mosadd/ai)                 │
-│  - 73 tools: mDM_send, mIRC_post_message, mAYL_send, …  │
+│  - 77 tools: mDM_send, mIRC_post_message, mAYL_send, …  │
 │  - Adapters: @mosadd/ai/vercel, /langchain, /openai      │
 └────────────────────┬────────────────────────────────────┘
                      │ in-process calls

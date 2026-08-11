@@ -27,7 +27,7 @@ export default function ModulesPage() {
           [<Anchor key="mail" href="/docs/modules/mail">mAYL</Anchor>, 'server-readable', 'Mail — every user gets <userId>@mosadd.com; send/view/list/delete + open/click/forward tracking + inbound-mail notify', 'alpha'],
         ]}
       />
-      <P>73 tools across the toolkit.</P>
+      <P>77 tools across the toolkit.</P>
 
       <H2>Capabilities</H2>
       <P>Capabilities ride inside the modules — they are not modules themselves.</P>

@@ -6,12 +6,12 @@
     "url": "https://github.com/Hei33enberg/mosADD-OS",
     "source": "github"
   },
-  "version": "3.0.0-alpha.32",
+  "version": "3.0.0-alpha.33",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@mosadd/mcp",
-      "version": "3.0.0-alpha.32",
+      "version": "3.0.0-alpha.33",
       "transport": {
         "type": "stdio"
       },

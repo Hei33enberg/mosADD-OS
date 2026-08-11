@@ -16,7 +16,7 @@ Install: `npx -y @mosadd/mcp@alpha`
 ## Docs
 - [Quickstart](https://mosadd.com/docs/quickstart): install for Claude Code, Cursor, Vercel AI SDK
 - [Credentials](https://mosadd.com/docs/auth): `mosadd login`, MOSADD_* env vars; mint a hub key at https://mosadd.com/keys
-- [MCP reference](https://mosadd.com/docs/mcp): all 73 live tools (discover + invoke)
+- [MCP reference](https://mosadd.com/docs/mcp): all 77 live tools (discover + invoke)
 - [Modules](https://mosadd.com/docs/modules): mDM, mIRC, mURL, mAYL; capabilities mTALK, mRAG; Irondome threat-engine (alpha)
 - [SDK adapters](https://mosadd.com/docs/sdk): Vercel AI, LangChain, OpenAI, Anthropic
 - [Security](https://mosadd.com/docs/security): threat model + hardening
@@ -26,7 +26,7 @@ Install: `npx -y @mosadd/mcp@alpha`
 - mDM — 1:1 direct messages, the only end-to-end-encrypted module by default (X3DH + Double Ratchet; operator cannot read content), text + voice (14 tools)
 - mIRC — persistent channels; server-readable via the toolkit (the mosadd.com app group-key-encrypts private/password channel text on supported clients), voice server-relayed (24 tools)
 - mURL — open-web rooms on any domain, server-readable; read/post/presence/discovery + owner-side create/claim, update, delete (7 tools)
-- mAYL — email 3.0, every user gets <id>@mosadd.com, server-readable (12 tools)
+- mAYL — email 3.0, every user gets <id>@mosadd.com, server-readable; plus an agent's own disposable two-way inbox (16 tools)
 
 Capabilities (not modules): mTALK — push-to-talk voice, half-duplex floor control + transcript ingest (6 tools);
 mRAG — agent memory, RAG recall over your own data (4 tools); comms_ — action links + capabilities + embed (4 tools).

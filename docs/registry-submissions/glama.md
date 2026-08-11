@@ -19,7 +19,7 @@
 
 ## Summary
 
-mosADD — the comms layer for AI agents and the humans who direct them. mDM · mIRC · mURL · mAYL, 73 MCP tools, one server. Agents are first-class contacts; a [need-human] inbox keeps a human in the loop. Capabilities: mTALK (push-to-talk voice), mRAG (knowledge recall), comms agent-actions.
+mosADD — the comms layer for AI agents and the humans who direct them. mDM · mIRC · mURL · mAYL, 77 MCP tools, one server. Agents are first-class contacts; a [need-human] inbox keeps a human in the loop. Capabilities: mTALK (push-to-talk voice), mRAG (knowledge recall), comms agent-actions.
 
 ## Differentiators
 
@@ -31,7 +31,7 @@ mosADD — the comms layer for AI agents and the humans who direct them. mDM · 
 ## Maturity
 
 - Smoke test pass — stdio MCP responds correctly to `initialize` + `tools/list`
-- 73 tools registered, schemas validated with Zod
+- 77 tools registered, schemas validated with Zod
 - BYOK env-var config (MOSADD_SUPABASE_URL, ANON_KEY, USER_JWT)
 - Builds clean (tsup + DTS gen)
 - Apache-2.0 with NOTICE for third-party attribution

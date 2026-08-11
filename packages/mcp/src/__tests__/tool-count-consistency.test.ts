@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { TOOL_COUNT } from "../tools/index.js";
+import { TOOL_COUNT, allTools } from "../tools/index.js";
 
 // ── Anti-drift gate ──────────────────────────────────────────────────────────
 // The advertised tool count has drifted across surfaces repeatedly (68/69/65/61/
@@ -70,5 +70,95 @@ describe("tool-count consistency (anti-drift gate)", () => {
         `${s.file} says ${m![1]} tools but TOOL_COUNT is ${TOOL_COUNT} — sync the surface or the registry`,
       ).toBe(TOOL_COUNT);
     });
+  }
+});
+
+// ── Per-MODULE anti-drift gate ───────────────────────────────────────────────
+// WHY this exists (added 2026-08-11): the total-only gate above was GREEN while the
+// prose around every pinned line was wrong. Each SURFACES entry pins ONE regex per
+// file, so somebody could correct the single matched number and leave its own sentence
+// contradicting it. Measured that day, with TOOL_COUNT = 77:
+//   - packages/mcp/README.md ended a sentence "**77 callable tools** in total" (pinned,
+//     green) whose own terms — mDM 14 + mIRC 24 + mURL 7 + mAYL 12 = 57, +16 — summed
+//     to 73, because mAYL had grown by the four mAYL_agentbox_* tools and nobody
+//     re-added the addends.
+//   - src/tools/index.ts said the same thing in its header comment.
+// A breakdown that contradicts its own total is worse than no breakdown: it looks
+// audited. So the addends are now derived from allTools and pinned too.
+const liveByModule: Record<string, number> = (() => {
+  const by: Record<string, number> = {};
+  for (const t of allTools) {
+    // Prefix = everything before the first "_", except comms_*/threat_* which are
+    // capability groups rather than m* modules and are labelled as such in the docs.
+    const prefix = t.name.startsWith("comms_")
+      ? "comms"
+      : t.name.startsWith("threat_")
+        ? "threat"
+        : t.name.split("_")[0];
+    by[prefix] = (by[prefix] ?? 0) + 1;
+  }
+  return by;
+})();
+
+/** Doc label → the registry prefix it describes. "Irondome" is the brand name for threat_*. */
+const MODULE_LABELS: { label: string; prefix: string }[] = [
+  { label: "mDM", prefix: "mDM" },
+  { label: "mIRC", prefix: "mIRC" },
+  { label: "mURL", prefix: "mURL" },
+  { label: "mAYL", prefix: "mAYL" },
+  { label: "mTALK", prefix: "mTALK" },
+  { label: "mRAG", prefix: "mRAG" },
+];
+
+const MODULE_SURFACES: { file: string; what: string; re: (label: string) => RegExp }[] = [
+  {
+    file: "packages/mcp/src/tools/index.ts",
+    what: "registry header breakdown",
+    // "modules mDM 14 · mIRC 24 · mURL 7 · mAYL 16 = 61; capabilities mTALK 6 · mRAG 4 …"
+    re: (label) => new RegExp(`\\b${label}\\s+(\\d+)\\s*[·=]`),
+  },
+  {
+    file: "packages/mcp/README.md",
+    what: "README module table row",
+    // "| **mDM** (14) | `mDM_list_contacts`, …"
+    re: (label) => new RegExp(`\\|\\s*\\*\\*${label}\\*\\*\\s*\\((\\d+)\\)`),
+  },
+  {
+    file: "packages/mcp/README.md",
+    what: "README breakdown addends",
+    // "mDM (14) + mIRC (24) + … ; capabilities: mTALK (6) + mRAG (4) + …"
+    re: (label) => new RegExp(`\\b${label}_?\\s*\\((\\d+)\\)\\s*[+=;]`),
+  },
+];
+
+describe("per-module tool-count consistency", () => {
+  it("every registered tool falls into a known module/capability prefix", () => {
+    const known = new Set([...MODULE_LABELS.map((m) => m.prefix), "comms", "threat"]);
+    const strays = Object.keys(liveByModule).filter((p) => !known.has(p));
+    expect(
+      strays,
+      `unknown tool prefix(es) ${strays.join(", ")} — a new module shipped without a doc breakdown; ` +
+        `add it to MODULE_LABELS and to every surface listed in MODULE_SURFACES`,
+    ).toEqual([]);
+  });
+
+  it("the per-module numbers add up to TOOL_COUNT", () => {
+    const sum = Object.values(liveByModule).reduce((a, b) => a + b, 0);
+    expect(sum).toBe(TOOL_COUNT);
+  });
+
+  for (const s of MODULE_SURFACES) {
+    for (const { label, prefix } of MODULE_LABELS) {
+      it(`${s.what} (${s.file}) says ${label} = ${liveByModule[prefix]}`, () => {
+        const txt = readFileSync(resolve(repoRoot, s.file), "utf8");
+        const m = txt.match(s.re(label));
+        expect(m, `no "${label} <n>" breakdown found in ${s.file} — did the surface change shape?`).toBeTruthy();
+        expect(
+          Number(m![1]),
+          `${s.file} says ${label} has ${m![1]} tools but the registry has ${liveByModule[prefix]} — ` +
+            `sync the surface or the registry`,
+        ).toBe(liveByModule[prefix]);
+      });
+    }
   }
 });

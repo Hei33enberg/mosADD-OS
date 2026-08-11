@@ -1,6 +1,6 @@
 # `@mosadd/hub` — self-serve hub portal
 
-The dashboard where a developer signs up, gets a `mosadd_sk_live_…` key, and starts using the 73 live MCP tools. Stripe TEST checkout for Pro/Team. Lives at `hub.mosadd.com` (DNS in Vercel — see deploy section).
+The dashboard where a developer signs up, gets a `mosadd_sk_live_…` key, and starts using the 77 live MCP tools. Stripe TEST checkout for Pro/Team. Lives at `hub.mosadd.com` (DNS in Vercel — see deploy section).
 
 ## Architecture (MVP — LINEAR-2603)
 - **Auth:** Supabase magic-link (no password). User signs in → cookie session via `@supabase/ssr`.

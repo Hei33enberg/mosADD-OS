@@ -12,13 +12,17 @@
  * defensive classification over the threat taxonomy — the surveillance-era
  * *marketing* was killed, the classification engine is real and wanted.
  *
- * 73 callable tools registered — the exact live count is exported as TOOL_COUNT
+ * 77 callable tools registered — the exact live count is exported as TOOL_COUNT
  * (= allTools.length) below; ALWAYS reference that, never re-hard-code a number that drifts.
- * Breakdown (2026-07-30, measured from allTools): mDM 14 · mIRC 24 · mAYL 12 · mURL 7 ·
- * mTALK 6 · mRAG 4 · comms 3 (action_create/frame_get/embed_create) · Irondome/threat 2 +
- * comms_capabilities discovery 1 = 73. (The 2026-07-17 breakdown ended "= 69" — wrong twice
- * over: its own terms summed to 71, and the 07-29 re-registrations of mAYL_send_as_agent +
- * mTALK_ingest_ptt moved the real total to 73. Arithmetic in comments drifts; TOOL_COUNT doesn't.)
+ * Breakdown (2026-08-11, measured from a live tools/list on the built server):
+ * modules mDM 14 · mIRC 24 · mURL 7 · mAYL 16 = 61; capabilities mTALK 6 · mRAG 4 ·
+ * comms 4 (action_create/action_frame_get/embed_create/capabilities) · Irondome/threat 2
+ * = 16. 61 + 16 = 77. (History of this line drifting: the 2026-07-17 breakdown ended "= 69"
+ * — wrong twice over, its own terms summed to 71; the 07-30 rewrite said 73 and still had
+ * mAYL at 12 after mAYL_send_as_agent had been re-registered, so it stayed wrong through the
+ * four mAYL_agentbox_* tools landing on 08-06. Arithmetic in comments drifts; TOOL_COUNT
+ * doesn't — and since 08-11 the anti-drift gate checks the PER-MODULE numbers too, not just
+ * the total, so this comment cannot rot alone any more.)
  * (mDM/mIRC each include their 2 attachment tools from attachments.ts.)
  * Modules (4): mDM, mIRC, mURL, mAYL. Capabilities: mTALK (voice/PTT), mRAG, comms_, Irondome (threat_*).
  * mp0st_* stay as DEPRECATED back-compat aliases for mAYL_* (removed in a later alpha).

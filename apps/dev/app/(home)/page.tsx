@@ -12,7 +12,7 @@ const modules = [
   { name: 'mIRC', desc: 'In-app channels, Discord/Slack ergonomics — topic-scoped, moderated. Server-readable.', badge: 'server-readable', url: '/docs/modules/mirc' },
   { name: 'mURL', desc: 'Open-web rooms. Drop a live chat onto any website or share one link — anyone joins, no account. Server-readable.', badge: 'server-readable', url: '/docs/modules/murl' },
   { name: 'mAYL', desc: 'Email 3.0. Mailboxes for people, agents and robots at <id>@mosadd.com or your domain. Server-readable.', badge: 'server-readable', url: '/docs/modules/mail' },
-  { name: '@mosadd/mcp', desc: 'The open toolkit: 73 MCP tools, BYOK, one install.', badge: 'Apache-2.0', url: '/docs/mcp' },
+  { name: '@mosadd/mcp', desc: 'The open toolkit: 77 MCP tools, BYOK, one install.', badge: 'Apache-2.0', url: '/docs/mcp' },
 ];
 
 const threats = [
@@ -33,7 +33,7 @@ const threats = [
 const steps = [
   { n: '1', t: 'Install the MCP server', d: "Add the mosADD MCP server to your agent's tool config. One command — npm pulls everything it needs, nothing else to wire up.", c: 'claude mcp add mosadd -- npx -y @mosadd/mcp@alpha' },
   { n: '2', t: 'Add your keys — or go hosted', d: 'Supply your own keys and self-host the relay, or point at the hosted endpoint. Switch modes without changing tool signatures.', c: 'mosadd login' },
-  { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mIRC_post_message, mAYL_send — any of the 73 tools. Encryption and routing happen below the call.', c: 'mDM_send  ·  mIRC_post_message' },
+  { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mIRC_post_message, mAYL_send — any of the 77 tools. Encryption and routing happen below the call.', c: 'mDM_send  ·  mIRC_post_message' },
 ];
 
 /** Tiny monospace section index, e.g. §01. */

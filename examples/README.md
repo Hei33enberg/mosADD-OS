@@ -40,7 +40,7 @@ and you want it to ALSO drive mosadd:
 - **mDM** (14): list_contacts, publish_keys, send, send_unencrypted (DEPRECATED), edit, delete, list, respond_request + voice ops — 1:1 DMs end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content)
 - **mIRC** (24): create, list, get, update, delete, discover, report, join, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops
 - **mURL** (7): read_channel, post, presence, list_channels + owner-side create, update, delete — open-web rooms, embeddable, publicly joinable via link (server-readable)
-- **mAYL** (12): send, view, list, delete, stats, events, metrics, revoke, audit_export, consent, notify, send_as_agent — email 3.0 (the `mp0st_*` aliases are retired — mAYL is the one name)
+- **mAYL** (16): send, view, list, delete, stats, events, metrics, revoke, audit_export, consent, notify, send_as_agent + agentbox_provision/list/extend/release (an agent's own disposable two-way inbox) — email 3.0 (the `mp0st_*` aliases are retired — mAYL is the one name)
 
 Capabilities (not modules):
 

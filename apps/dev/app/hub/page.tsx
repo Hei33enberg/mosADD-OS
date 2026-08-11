@@ -538,7 +538,7 @@ export default function HubPage() {
               <QuickLink href="/docs/quickstart" label="Quickstart" desc="Connect your first agent" />
               <QuickLink href="/embed/new" label="Embed widget" desc="Add chat to your site" />
               <QuickLink href="/domains" label="Domain verification" desc="mURL owner analytics" />
-              <QuickLink href="/docs/mcp" label="MCP reference" desc="73 live tools" />
+              <QuickLink href="/docs/mcp" label="MCP reference" desc="77 live tools" />
               <QuickLink href="/pricing" label="Pricing" desc="Plans and limits" />
             </div>
           </div>
@@ -547,7 +547,7 @@ export default function HubPage() {
           <div className="border border-border p-5">
             <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">Products</div>
             <div className="space-y-2 text-sm">
-              <QuickLink href="/docs/mcp" label="MCP toolkit" desc="73 tools, one server" />
+              <QuickLink href="/docs/mcp" label="MCP toolkit" desc="77 tools, one server" />
               <QuickLink href="/embed" label="mIRC embed" desc="Chat widget for any site" />
             </div>
           </div>

@@ -35,9 +35,19 @@ const mRAG_search_input = z.object({
     .optional()
     .describe("Max number of source chunks to retrieve and ground the answer in. Default 8."),
   source_types: z
-    .array(z.enum(["message", "email", "call", "note", "contact"]))
+    // ⚠ MUST stay a superset of everything that can REACH the index, or a filter
+    // silently hides data the user owns. Until 2026-08-11 this enum was missing
+    // "file" and "ptt" while the index held both — `file` is what mRAG_ingest itself
+    // writes (it is the DEFAULT source_type, and "note" is mapped onto it), and `ptt`
+    // is what mTALK_ingest_ptt writes once a push-to-talk transcript lands. Measured
+    // on prod that day: email 4098 · call 233 · note 187 · message 86 · file 49 · ptt 14
+    // — i.e. 63 rows were unreachable by any source_types filter. Add a value HERE
+    // whenever a new writer starts stamping a new source_type.
+    .array(z.enum(["message", "email", "call", "note", "contact", "file", "ptt"]))
     .optional()
-    .describe("Restrict retrieval to these source types. Omit to search everything."),
+    .describe(
+      "Restrict retrieval to these source types. Omit to search everything. 'file' covers anything added with mRAG_ingest (its default, and where 'note' ingests land); 'ptt' covers push-to-talk transcripts ingested by mTALK_ingest_ptt.",
+    ),
   thread_id: z
     .string()
     .optional()
