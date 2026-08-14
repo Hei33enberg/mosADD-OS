@@ -12,12 +12,14 @@
  * defensive classification over the threat taxonomy — the surveillance-era
  * *marketing* was killed, the classification engine is real and wanted.
  *
- * 81 callable tools registered — the exact live count is exported as TOOL_COUNT
+ * 82 callable tools registered — the exact live count is exported as TOOL_COUNT
  * (= allTools.length) below; ALWAYS reference that, never re-hard-code a number that drifts.
- * Breakdown (2026-08-11, measured from a live tools/list on the built server):
+ * Breakdown (2026-08-14, measured from a live tools/list on the built server):
  * modules mDM 14 · mIRC 24 · mURL 7 · mAYL 16 = 61; capabilities mTALK 6 · mRAG 8 ·
- * comms 4 (action_create/action_frame_get/embed_create/capabilities) · Irondome/threat 2
- * = 20. 61 + 20 = 81. (mRAG 8 = 4 search/ingest + 4 mRAG_graph_* traversal tools added 2026-08-11.)
+ * comms 5 (action_create/action_frame_get/embed_create/capabilities/session_attach) · Irondome/threat 2
+ * = 21. 61 + 21 = 82. (mRAG 8 = 4 search/ingest + 4 mRAG_graph_* traversal tools added 2026-08-11.
+ * comms_session_attach added 2026-08-14: a live agent session claims the account's reply lane so
+ * the cloud stand-in defers to it — the front door that used to be a script on one PC.)
  * (History of this line drifting: the 2026-07-17 breakdown ended "= 69"
  * — wrong twice over, its own terms summed to 71; the 07-30 rewrite said 73 and still had
  * mAYL at 12 after mAYL_send_as_agent had been re-registered, so it stayed wrong through the
@@ -64,6 +66,7 @@ import { pttIngestTools } from "./ptt-ingest.js"; // mTALK_ingest_ptt — RE-REG
 import { knowledgeTools } from "./knowledge.js";
 import { knowledgeGraphTools } from "./knowledge-graph.js"; // mRAG_graph_* — 2026-08-11: MCP door onto the kg_* graph RPCs (traverse people/threads, not just search text)
 import { actionTools } from "./actions.js";
+import { presenceTools } from "./presence.js"; // comms_session_attach — 2026-08-14: a live agent session claims the account's reply lane (agent_bridge_heartbeat), so the cloud stand-in defers to it. Replaces the PC-only bridge script as the ONLY writer of that signal.
 import { embedTools } from "./embed.js"; // comms_embed_create RE-REGISTERED 2026-07-17: embed.mosadd.com/v1.js is LIVE (served by the mosadd Vercel project) — the widget + embed-keys/mirc-embed-token backend were already complete.
 import { threatTools } from "./threat.js"; // threat_*: RE-REGISTERED 2026-07-15 (founder directive + LINEAR-3498). Pure/offline classification of the real Pegasus-class threat taxonomy — the engine DECIDES, the caller acts; no surveillance, no backend.
 import { murlTools } from "./murl.js"; // mURL: REGISTERED — revived as a full dev module (founder 2026-06-27, re-arch). IRC-for-URLs, agent-native; backends live (mosadd-edge + murl-channels EF).
@@ -142,6 +145,7 @@ const channelTools: MosaddTool[] = [
   ...knowledgeTools,
   ...knowledgeGraphTools,  // mRAG_graph_*: traverse the per-user knowledge graph (kg_* RPCs) — search finds text, this walks who/what/when
   ...actionTools,  // Action links (Tier 1): agent → user one-link browser action via action-create EF
+  ...presenceTools,  // comms_session_attach: THIS session owns the account's reply lane while it runs; the 24/7 cloud stand-in defers. Any session, any machine — no bespoke bridge on one PC.
   ...embedTools,    // comms_embed_create: RE-REGISTERED 2026-07-17 — embed.mosadd.com/v1.js live; mints an embed key + paste-in snippet (mURL→mIRC rework P3)
   ...threatTools,  // threat_catalog + threat_classify: RE-REGISTERED 2026-07-15 (founder directive + LINEAR-3498) — pure/offline, makes the Pegasus-class classification claim a live, callable capability
   ...murlTools,  // mURL: revived as a full module (founder 2026-06-27) — read/post/presence/list_channels over live domain channels

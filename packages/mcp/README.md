@@ -2,13 +2,13 @@
 
 **They're apps. We're the layer.** The MCP server for [mosADD](https://mosadd.com) — the omnichannel comms layer for humans, agents, and robots. It exposes the OS modules (m\*) — **mDM (1:1 E2EE), mIRC (in-app channels), mURL (open/embeddable rooms), and mAYL (email 3.0)** — as Model Context Protocol tools, so any agent runtime becomes a first-class contact your team can message and direct: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, or your own.
 
-One key, one server, 81 tools — MCP-native, no SDK to wire up. **Encrypted where it counts, honest where it isn't:** only mDM is end-to-end (Signal X3DH + Double Ratchet, keys on-device, never on our servers); every other channel is server-readable and labeled as such.
+One key, one server, 82 tools — MCP-native, no SDK to wire up. **Encrypted where it counts, honest where it isn't:** only mDM is end-to-end (Signal X3DH + Double Ratchet, keys on-device, never on our servers); every other channel is server-readable and labeled as such.
 
-> **81 tools** across **4 modules** (mDM, mIRC, mURL, mAYL) + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com`.
+> **82 tools** across **4 modules** (mDM, mIRC, mURL, mAYL) + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com`.
 
 ## Connect your agent
 
-Three ways to authenticate, friendliest first — all three end with the same 81 tools.
+Three ways to authenticate, friendliest first — all three end with the same 82 tools.
 
 ### 1. `mosadd login` — recommended (one command, stays logged in)
 
@@ -67,7 +67,7 @@ In Phase 2 the hosted gateway at `mcp.mosadd.com` removes even this — add a UR
 
 ## Tools shipped in alpha
 
-**81 tools** — 4 modules (mDM, mIRC, mURL, mAYL) + capabilities (mTALK voice, mRAG search + knowledge-graph traversal, comms agent-actions) + the `comms_capabilities` discovery tool. Highlights per module:
+**82 tools** — 4 modules (mDM, mIRC, mURL, mAYL) + capabilities (mTALK voice, mRAG search + knowledge-graph traversal, comms agent-actions) + the `comms_capabilities` discovery tool. Highlights per module:
 
 | Module | Tools | What it does |
 |---|---|---|
@@ -80,7 +80,7 @@ In Phase 2 the hosted gateway at `mcp.mosadd.com` removes even this — add a UR
 | **comms_** (4) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities`, `comms_embed_create` | `comms_action_create` mints an agent→user one-link browser action (Tier 1); `comms_action_frame_get` fetches a framed action; `comms_capabilities` is one-call discovery of every tool's transport `requires` flag; `comms_embed_create` mints a publishable embed key + a paste-in `<script>` snippet that drops a live mIRC channel into any website (`embed.mosadd.com/v1.js`, skins + sidebar/launcher modes) |
 | **Irondome** (2) | `threat_catalog`, `threat_classify` | On-device defensive classification over the 193-event threat taxonomy — pure, offline, no backend and no surveillance. The engine decides, the caller acts. A taxonomy entry is a classifiable event, [not a detector](../threat-engine/README.md#read-this-first-a-taxonomy-entry-is-not-a-detector) |
 
-Module tools: mDM (14) + mIRC (24) + mURL (7) + mAYL (16) = 61; capabilities: mTALK (6) + mRAG (8) + comms_ (4, incl. the `comms_capabilities` discovery tool and `comms_embed_create` — re-registered 2026-07-17 now that `embed.mosadd.com/v1.js` is live) + Irondome (2) = 20 — **81 callable tools** in total. The mRAG capability now bundles 4 search/ingest tools plus the 4 `mRAG_graph_*` knowledge-graph traversal tools (added 2026-08-11). The exact live number is exported as `TOOL_COUNT` (`= allTools.length`) — reference that, never a hand-typed figure. mDM and mIRC each include their two attachment tools (`*_send_voice` / `*_send_file`); mAYL includes `mAYL_send_as_agent` and mTALK includes `mTALK_ingest_ptt` — both proven end-to-end and registered 2026-07-29. Not registered (so agents only ever see tools that actually work): `mCALL` (telephony, carrier-pending), `mROOM` (folded into ephemeral private mIRC), and the retired `mp0st_*` mAYL aliases.
+Module tools: mDM (14) + mIRC (24) + mURL (7) + mAYL (16) = 61; capabilities: mTALK (6) + mRAG (8) + comms_ (5, incl. the `comms_capabilities` discovery tool, `comms_embed_create` — re-registered 2026-07-17 now that `embed.mosadd.com/v1.js` is live — and `comms_session_attach`, added 2026-08-14) + Irondome (2) = 21 — **82 callable tools** in total. The mRAG capability now bundles 4 search/ingest tools plus the 4 `mRAG_graph_*` knowledge-graph traversal tools (added 2026-08-11). The exact live number is exported as `TOOL_COUNT` (`= allTools.length`) — reference that, never a hand-typed figure. mDM and mIRC each include their two attachment tools (`*_send_voice` / `*_send_file`); mAYL includes `mAYL_send_as_agent` and mTALK includes `mTALK_ingest_ptt` — both proven end-to-end and registered 2026-07-29. Not registered (so agents only ever see tools that actually work): `mCALL` (telephony, carrier-pending), `mROOM` (folded into ephemeral private mIRC), and the retired `mp0st_*` mAYL aliases.
 
 All tool names follow [RFC 0001](https://github.com/Hei33enberg/mosadd-os/blob/main/docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
