@@ -40,14 +40,12 @@ export default function QuickstartPage() {
 
       <H2>Hosted (Phase 2)</H2>
       <P>
-        For ChatGPT Apps, Lovable, Bolt, or any client that prefers HTTP/SSE — use the hosted endpoint:
+        For ChatGPT Apps, Lovable, Bolt, or any client that speaks Streamable HTTP — use the hosted endpoint:
       </P>
-      <Pre>{`https://mcp.mosadd.com`}</Pre>
+      <Pre>{`https://mcp.mosadd.com/mcp`}</Pre>
       <P>
         Free tier: 1,000 msg/month, 30 min PTT. Mint your key now at{' '}
-        <Anchor href="https://mosadd.com/keys">mosadd.com/keys</Anchor> (live). The hosted HTTP/SSE
-        endpoint above (<code className="font-mono">mcp.mosadd.com/mcp</code>, Bearer your hub key) is rolling out in Phase 2 —
-        until then, use the local stdio server (<code className="font-mono">npx @mosadd/mcp@alpha</code>) with your hub key.
+        <Anchor href="https://mosadd.com/keys">mosadd.com/keys</Anchor> (live). The hosted endpoint above is LIVE (Streamable HTTP at <code className="font-mono">/mcp</code> — the path is required; the bare host serves a landing page). Sign in via OAuth when your client asks, or send Bearer your hub key. The local stdio server (<code className="font-mono">npx @mosadd/mcp@alpha</code>) remains the option for Claude Code, Cursor and friends.
       </P>
 
       <H2 id="byok-config">Auth config</H2>

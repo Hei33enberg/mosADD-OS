@@ -49,7 +49,7 @@ export default function McpPage() {
           <strong>stdio</strong> (default) — <code className="font-mono text-primary">npx @mosadd/mcp@alpha</code>. For Claude Code, Cursor, Cline, Windsurf, Goose, custom local agents.
         </li>
         <li>
-          <strong>HTTP/SSE</strong> — hosted at <code className="font-mono text-primary">https://mcp.mosadd.com</code> (Phase 2). For ChatGPT Apps, Lovable, Bolt.
+          <strong>Streamable HTTP</strong> — hosted at <code className="font-mono text-primary">https://mcp.mosadd.com/mcp</code> (LIVE; the /mcp path is required). For ChatGPT Apps, Lovable, Bolt.
         </li>
       </Ul>
 
