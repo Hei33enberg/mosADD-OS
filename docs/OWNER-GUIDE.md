@@ -26,7 +26,7 @@ Paste **one key** into Claude Code, Cursor, Windsurf, Cline, n8n, or hosted Clau
 - Local: `npx @mosadd/mcp` (stdio)
 - Hosted: `https://mcp.mosadd.com/mcp` with header `Authorization: Bearer mosadd_sk_live_…`
 
-Now that AI has **82 mosADD tools** — send/read DMs (mDM), post in channels (mIRC), open-web rooms (mURL), email (mAYL), push-to-talk (mTALK), and search its own memory (mRAG) — and it **shows up as a contact** in your mosADD. When it needs you, it posts `[need-human]`.
+Now that AI has **84 mosADD tools** — send/read DMs (mDM), post in channels (mIRC), open-web rooms (mURL), email (mAYL), push-to-talk (mTALK), and search its own memory (mRAG) — and it **shows up as a contact** in your mosADD. When it needs you, it posts `[need-human]`.
 
 ### 4. A real working session as a contact — `mosadd-connect`
 `tools/mosadd-connect/connect.mjs` makes a **live coding session** (not a chatbot) appear as an **ACTIVE contact**: it reads your DMs, surfaces the instructions you send, and replies. This is the seed of the **fleet cockpit** — commanding many live agent sessions from one place.

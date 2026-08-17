@@ -12,12 +12,14 @@
  * defensive classification over the threat taxonomy — the surveillance-era
  * *marketing* was killed, the classification engine is real and wanted.
  *
- * 82 callable tools registered — the exact live count is exported as TOOL_COUNT
+ * 84 callable tools registered — the exact live count is exported as TOOL_COUNT
  * (= allTools.length) below; ALWAYS reference that, never re-hard-code a number that drifts.
- * Breakdown (2026-08-14, measured from a live tools/list on the built server):
- * modules mDM 14 · mIRC 24 · mURL 7 · mAYL 16 = 61; capabilities mTALK 6 · mRAG 8 ·
+ * Breakdown (2026-08-17, measured from a live tools/list on the built server):
+ * modules mDM 16 · mIRC 24 · mURL 7 · mAYL 16 = 63; capabilities mTALK 6 · mRAG 8 ·
  * comms 5 (action_create/action_frame_get/embed_create/capabilities/session_attach) · Irondome/threat 2
- * = 21. 61 + 21 = 82. (mRAG 8 = 4 search/ingest + 4 mRAG_graph_* traversal tools added 2026-08-11.
+ * = 21. 63 + 21 = 84. (mDM 16 = 14 + mDM_send_as_agent/mDM_list_my_agents added 2026-08-17: an MCP key
+ * is bound to a USER, so an agent runtime wired up with its owner's key spoke AS THE OWNER — these
+ * let it speak as an agent it OWNS instead, checked server-side. mRAG 8 = 4 search/ingest + 4 mRAG_graph_* traversal tools added 2026-08-11.
  * comms_session_attach added 2026-08-14: a live agent session claims the account's reply lane so
  * the cloud stand-in defers to it — the front door that used to be a script on one PC.)
  * (History of this line drifting: the 2026-07-17 breakdown ended "= 69"
@@ -48,6 +50,7 @@
 
 import type { MosaddTool } from "../types.js";
 import { mdmTools } from "./mdm.js";
+import { mdmAsAgentTools } from "./mdm-as-agent.js"; // mDM_send_as_agent + mDM_list_my_agents — 2026-08-17 (LINEAR-5620): a key is bound to a USER, so an agent runtime connected with its owner's key spoke AS THE OWNER and had no thread with him. These let that session speak as an agent it OWNS (verified server-side in mdm-send-as-agent).
 import { mdmVoiceTools } from "./mdm-voice.js";
 import { mircTools } from "./mirc.js";
 import { mircMembersTools } from "./mirc-members.js";
@@ -75,6 +78,7 @@ import { makeCapabilitiesTool } from "./capabilities.js";
 /** The m* channel tools (everything except the meta discovery tool). */
 const channelTools: MosaddTool[] = [
   ...mdmTools,
+  ...mdmAsAgentTools,
   ...mdmVoiceTools,
   ...mircTools,
   ...mircMembersTools,

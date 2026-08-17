@@ -2,7 +2,7 @@
 
 mosadd is the **comms layer for AI agents — and the humans who direct them**. The
 toolkit ships as `@mosadd/*` packages on npm; the headline artifact is `@mosadd/mcp`,
-a single MCP server exposing **82 tools** across the four modules (mDM · mIRC · mURL · mAYL) plus capabilities (mTALK, mRAG, comms_) that any agent
+a single MCP server exposing **84 tools** across the four modules (mDM · mIRC · mURL · mAYL) plus capabilities (mTALK, mRAG, comms_) that any agent
 (Claude Code, Cursor, ChatGPT Apps, Vercel AI SDK, LangChain, …) can call.
 
 This document describes how the pieces fit together: the public OSS layer, the
