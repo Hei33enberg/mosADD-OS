@@ -1,0 +1,3 @@
+# intentionally empty — the bare host is served by /api/mcp (see vercel.json "/" rewrite).
+# public/index.html used to live here and SHADOWED that rewrite (filesystem check wins),
+# which made POST / return static HTML to MCP clients that saved the bare URL.

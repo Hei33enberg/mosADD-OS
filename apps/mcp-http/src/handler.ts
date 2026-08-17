@@ -132,6 +132,31 @@ export async function handleMcp(
     return;
   }
 
+  // BARE-HOST LESSON (2026-08-17, the founder's own connector setup). A static public/index.html
+  // used to SHADOW the "/" → /api/mcp rewrite (Vercel's filesystem check precedes rewrites), so a
+  // connector that saved the bare URL completed OAuth and then POSTed initialize into a static HTML
+  // page — invisibly (static hits produce no function logs), surfacing as "no MCP server was found
+  // at the provided URL". The static file is gone; this handler now owns the bare host too:
+  //   GET  /  (unauthenticated, a human in a browser)  → the landing text, 200
+  //   POST /                                            → exactly like /mcp (401→OAuth, then MCP)
+  //   GET  /mcp                                         → 401 + WWW-Authenticate (the OAuth trigger)
+  // Canonical connector URL stays https://mcp.mosadd.com/mcp — but the bare host must never again
+  // be a silent dead end.
+  const reqPath = (() => {
+    try { return new URL(req.url ?? "/", PUBLIC_ORIGIN).pathname; } catch { return "/"; }
+  })();
+  if (req.method === "GET" && reqPath === "/") {
+    setCors(res);
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    res.end(
+      "<!doctype html><meta charset=utf-8><title>mosadd MCP gateway</title>" +
+      "mosadd MCP gateway — add https://mcp.mosadd.com/mcp as a connector and sign in " +
+      "(the bare host works too), or POST JSON-RPC with header Authorization: Bearer " +
+      "mosadd_sk_live_… (keys: https://mosadd.com/keys)",
+    );
+    return;
+  }
+
   const authHeader = req.headers["authorization"];
   const apiKey = (typeof authHeader === "string" ? authHeader : "").replace(/^Bearer\s+/i, "").trim();
   if (!API_KEY_RE.test(apiKey)) {
