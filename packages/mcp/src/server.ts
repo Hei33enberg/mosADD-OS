@@ -4,6 +4,7 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { allTools } from "./tools/index.js";
+import { PKG_VERSION } from "./version.js";
 import { SupabaseDmProvider } from "./providers/supabase-dm.js";
 import { SupabaseVoiceProvider } from "./providers/supabase-voice.js";
 import { InMemoryMdmKeyStore, publishOwnPrekeys } from "./crypto/mdm-session.js";
@@ -60,7 +61,7 @@ export function createMosaddServer(options: MosaddServerOptions = {}) {
   const server = new McpServer(
     {
       name: "mosadd",
-      version: "3.0.0-alpha.32",
+      version: PKG_VERSION,
     },
     {
       capabilities: {
