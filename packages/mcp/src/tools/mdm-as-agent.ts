@@ -23,7 +23,7 @@
  * in, agent-attributed message out). Its AUTH model was deliberately not copied:
  * measured 2026-08-17, `hub-claim-mint` accepts any `agent_id` string and never
  * compares it to an owner, so the agent name in a mAYL provenance stamp is
- * caller-asserted text. That gap is filed as LINEAR-5621; this tool does not
+ * caller-asserted text. That gap is filed as LINEAR-5625; this tool does not
  * reproduce it.
  *
  * Auth transport also differs on purpose: mAYL_send_as_agent reads
