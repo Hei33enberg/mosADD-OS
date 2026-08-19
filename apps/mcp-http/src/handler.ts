@@ -197,7 +197,7 @@ export async function handleMcp(
   const method = (parsedBody as { method?: unknown } | null)?.method;
   if (method === "tools/call") {
     const tool = String((parsedBody as { params?: { name?: unknown } }).params?.name ?? "unknown");
-    void fetch(`${env.url.replace(/\/$/, "")}/rest/v1/mcp_tool_calls`, {
+    void fetch(`${env.url.replace(/\/$/, "")}/rest/v1/mosadd_mcp_tool_calls`, {
       method: "POST",
       headers: {
         apikey: env.anonKey,
