@@ -149,8 +149,14 @@ export async function handleMcp(
     setCors(res);
     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
     res.end(
-      "<!doctype html><meta charset=utf-8><title>mosadd MCP gateway</title>" +
-      "mosadd MCP gateway — add https://mcp.mosadd.com/mcp as a connector and sign in " +
+      // ⛔ FAVICON = CONNECTOR ICON (founder 2026-08-19: the connector showed an old/default glyph).
+      // Claude derives a custom connector's icon from the origin's favicon, and this gateway served
+      // none — so it fell back to a stale default. public/favicon.svg|.ico now carry the live mosADD
+      // brand mark (copied from mosadd.com), and this <link> points at them. A connector already
+      // added may keep its cached icon until it is removed and re-added.
+      "<!doctype html><meta charset=utf-8><title>mosADD MCP gateway</title>" +
+      '<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="32x32">' +
+      "mosADD MCP gateway — add https://mcp.mosadd.com/mcp as a connector and sign in " +
       "(the bare host works too), or POST JSON-RPC with header Authorization: Bearer " +
       "mosadd_sk_live_… (keys: https://mosadd.com/keys)",
     );
