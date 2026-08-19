@@ -189,6 +189,26 @@ export async function handleMcp(
   // EFs), where "this call produced N outbound messages / M PTT minutes" is actually known.
   // The exchange already returns user_id for exactly that attribution.
 
+  // ── Per-call OBSERVABILITY (epic 5409; deliberately NOT the quota TODO above) ──
+  // One row per tools/call into public.mcp_tool_calls via PostgREST under the caller's own
+  // short-lived session: RLS insert-own with `user_id default auth.uid()`, so no id crosses the
+  // wire and one tenant can never write another's row. Fire-and-forget — telemetry must never
+  // add latency to (or fail) the actual tool call. Read-only listing/initialize is not logged.
+  const method = (parsedBody as { method?: unknown } | null)?.method;
+  if (method === "tools/call") {
+    const tool = String((parsedBody as { params?: { name?: unknown } }).params?.name ?? "unknown");
+    void fetch(`${env.url.replace(/\/$/, "")}/rest/v1/mcp_tool_calls`, {
+      method: "POST",
+      headers: {
+        apikey: env.anonKey,
+        Authorization: `Bearer ${env.userJwt}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({ tool }),
+    }).catch(() => { /* telemetry only — never surface */ });
+  }
+
   // Stateless: a fresh server + transport per request (no session store), and
   // JSON responses (not SSE) so the gateway works behind any serverless host.
   const server = createMosaddServer({ apiKey, mode: "cloud" });
