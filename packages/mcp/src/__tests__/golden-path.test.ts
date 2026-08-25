@@ -111,8 +111,10 @@ describe("golden path — host injects transport under mDM", () => {
     expect(result.message_id).toBe("radio-1");
 
     // The payload is opaque to the provider but carries our text under the hood.
-    const decoded = JSON.parse(Buffer.from(radio.sent[0]!.payload).toString("utf8"));
-    expect(decoded.text).toBe("rendezvous at grid 4471, 0600");
+    // 2026-08-25: plaintext lane is RAW utf8 text (native app format), not a JSON
+    // envelope — packPlaintextPayload change, unpack tolerates both shapes.
+    const decoded = Buffer.from(radio.sent[0]!.payload).toString("utf8");
+    expect(decoded).toBe("rendezvous at grid 4471, 0600");
   });
 
   it("step 5: mDM_list round-trips the message back through the same provider", async () => {

@@ -150,7 +150,9 @@ async function mDM_send(
   const selfId = await dm.selfId();
   const threadId = dmThreadId(selfId, input.to, input.thread_label);
 
-  const inner = packPlaintextPayload(input.text, input.reply_to_id);
+  // reply-linkage jedzie w dm.send({replyToId}) — surowy tekst nie ma koperty, w którą
+  // można by go wpakować (zmiana formatu 2026-08-25, patrz packPlaintextPayload).
+  const inner = packPlaintextPayload(input.text);
   const sealed = await encryptForPeer(ctx.providers.keys, dm, input.to, inner);
 
   ctx.log("debug", "mDM_send E2EE via DmProvider", { thread_id: threadId, bytes: sealed.byteLength });
@@ -187,7 +189,7 @@ async function mDM_send_unencrypted(
   const dm = ctx.providers.dm;
   const selfId = await dm.selfId();
   const threadId = dmThreadId(selfId, input.to, input.thread_label);
-  const payload = packPlaintextPayload(input.text, input.reply_to_id);
+  const payload = packPlaintextPayload(input.text);
 
   ctx.log("warn", "mDM_send_unencrypted (deprecated, plaintext) via DmProvider", {
     thread_id: threadId,
