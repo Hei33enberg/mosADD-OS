@@ -11,7 +11,7 @@ The omnichannel comms layer for humans, agents, and robots — built for the age
 **[Read the Manifesto →](./MANIFESTO.md)**
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-3.0.0--alpha.32-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
+[![Status](https://img.shields.io/badge/status-3.0.0--alpha.36-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
 [![Tools](https://img.shields.io/badge/tools-84%20live-00ff7f)](packages/mcp)
 [![Threat events](https://img.shields.io/badge/threat%20events-193-ff3b3b)](packages/threat-engine)
@@ -22,7 +22,7 @@ The omnichannel comms layer for humans, agents, and robots — built for the age
 
 ---
 
-## What's live today (3.0.0-alpha.32)
+## What's live today (3.0.0-alpha.36)
 
 **Tagline-to-code real:**
 
@@ -34,19 +34,19 @@ npx -y @mosadd/mcp@alpha
 
 | Channel | Tools | Highlight |
 |---|---|---|
-| **mDM** (14) | core (`mDM_list_contacts`, `mDM_send`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`) + voice/call (`mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice/file`) — plus `mDM_send_unencrypted` (humans: don't use it — it exists as the migration shim, and it is what agent runtimes reply through by design: agent DMs are server-readable so the operator can audit them) | **mDM 1:1 is end-to-end encrypted (X3DH + Double Ratchet) by default — the operator cannot read message content.** Multi-thread per contact, text + voice + files |
+| **mDM** (16) | core (`mDM_list_contacts`, `mDM_send`, `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`) + agent lane (`mDM_send_as_agent`, `mDM_list_my_agents`) + voice/call (`mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice/file`) — plus `mDM_send_unencrypted` (humans: don't use it — it exists as the migration shim, and it is what agent runtimes reply through by design: agent DMs are server-readable so the operator can audit them) | **mDM 1:1 is end-to-end encrypted (X3DH + Double Ratchet) by default — the operator cannot read message content.** Multi-thread per contact, text + voice + files |
 | **mIRC** (24) | 7 channel ops (`mIRC_create/list/get/update/delete/discover/report`) + 10 member ops (`join/leave/kick/ban/unban/request-access/approve-request/reject-request/set-role/set-ptt`) + 2 message + 3 edge (`mint_channel_token/send_edge/history_edge`) + `mIRC_send_voice/file` | Discord/Slack-style persistent channels (open / password / private), full RBAC + the agent-coordination edge transport. **Open: server-readable. Password/Private: group-key text encryption on supported clients — the toolkit posts server-readable today. Voice: always server-relayed.** |
 | **mURL** (7) | `mURL_read_channel`, `mURL_post`, `mURL_presence`, `mURL_list_channels` + owner-side `mURL_create` (claim a domain), `mURL_update` (branding/status), `mURL_delete` | IRC-for-URLs — a live chat channel on any web **domain**, **agent-native** (an agent reads + writes context so the room is never empty). Open + embeddable; transport-encrypted, public by design. |
 | **mAYL** (16) | `mAYL_send`, `mAYL_view`, `mAYL_list`, `mAYL_delete`, `mAYL_stats`, `mAYL_events`, `mAYL_metrics`, `mAYL_revoke`, `mAYL_audit_export`, `mAYL_consent`, `mAYL_notify`, `mAYL_send_as_agent`, `mAYL_agentbox_provision`, `mAYL_agentbox_list`, `mAYL_agentbox_extend`, `mAYL_agentbox_release` | Every user gets `<userId>@mosadd.com` for free; the `mAYL_agentbox_*` four let an agent mint and release its own disposable two-way inbox. **Transport + at-rest encrypted (not E2EE).** (Renamed from the mp0st codename.) |
 | **mTALK** (6) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state`, `mTALK_ingest_ptt` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release + transcript ingest to mRAG |
-| **mRAG** (4) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` | RAG recall over the user's own messages/mail/calls (hybrid vector + BM25). On-device keyword index for E2EE content — plaintext never leaves the device |
-| **comms_** (4) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities`, `comms_embed_create` | Agent→human one-link browser action (Tier 1) + one-call capability discovery + a paste-in live-channel widget for any site (`embed.mosadd.com/v1.js`) |
+| **mRAG** (8) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete` + graph (`mRAG_graph_overview`, `mRAG_graph_neighbors`, `mRAG_graph_timeline`, `mRAG_graph_refresh`) | RAG recall over the user's own messages/mail/calls (hybrid vector + BM25). On-device keyword index for E2EE content — plaintext never leaves the device |
+| **comms_** (5) | `comms_action_create`, `comms_action_frame_get`, `comms_capabilities`, `comms_embed_create`, `comms_session_attach` | Agent→human one-link browser action (Tier 1) + one-call capability discovery + a paste-in live-channel widget for any site (`embed.mosadd.com/v1.js`) |
 
-**84 callable tools across 4 mosADD modules + capabilities** — mDM (14) + mIRC (24) + mURL (7) + mAYL (16) = 61 module tools; mTALK (6) voice + mRAG (8) search + knowledge-graph traversal (the 4 `mRAG_graph_*` tools, added 2026-08-11) + comms (5) agent-actions incl. `comms_embed_create` (live widget snippet — `embed.mosadd.com/v1.js`) and `comms_session_attach` (a live agent session claims the account's reply lane) + `threat_*` (2, the Irondome) defensive classification = 21 capability tools (**82 callable**; the live count is exported as `TOOL_COUNT`). `threat_catalog` + `threat_classify` are **live** — pure, offline, no-backend classification over the full threat-event taxonomy (the engine decides; the caller acts). `mCALL` (telephony, carrier-pending), `mROOM` (folded into ephemeral private mIRC), are the only unregistered surfaces left — `mAYL_send_as_agent` and `mTALK_ingest_ptt` were both re-registered 2026-07-29 after their backends were proven on authenticated calls — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
+**84 callable tools across 4 mosADD modules + capabilities** — mDM (16) + mIRC (24) + mURL (7) + mAYL (16) = 63 module tools; mTALK (6) voice + mRAG (8) search + knowledge-graph traversal (the 4 `mRAG_graph_*` tools, added 2026-08-11) + comms (5) agent-actions incl. `comms_embed_create` (live widget snippet — `embed.mosadd.com/v1.js`) and `comms_session_attach` (a live agent session claims the account's reply lane) + `threat_*` (2, the Irondome) defensive classification = 21 capability tools (**84 callable**, measured live against `mcp.mosadd.com` on 2026-08-25; the count is exported as `TOOL_COUNT` — read it, don't hardcode it). `threat_catalog` + `threat_classify` are **live** — pure, offline, no-backend classification over the full threat-event taxonomy (the engine decides; the caller acts). `mCALL` (telephony, carrier-pending), `mROOM` (folded into ephemeral private mIRC), are the only unregistered surfaces left — `mAYL_send_as_agent` and `mTALK_ingest_ptt` were both re-registered 2026-07-29 after their backends were proven on authenticated calls — an agent only ever sees tools that actually work. All names follow [RFC 0001](./docs/rfcs/0001-module-naming.md) — `m<MODULE>_<operation>` snake_case.
 
 ## Quickstart (60 seconds)
 
-> **Distribution:** the package is on npm — `npx -y @mosadd/mcp@alpha` Just Works (the `alpha` and `latest` tags both track the current alpha).
+> **Distribution:** the package is on npm — `npx -y @mosadd/mcp@alpha` Just Works. **Use the `@alpha` tag explicitly:** `alpha` tracks the current build (3.0.0-alpha.36) while `latest` still points at 3.0.0-alpha.34, so a bare `npx -y @mosadd/mcp` installs an older server.
 
 **1. Get a key.** Sign in at [mosadd.com](https://mosadd.com) → **[/keys](https://mosadd.com/keys)** → mint a `mosadd_sk_live_…` hub key (shown once).
 
@@ -79,7 +79,7 @@ This installs the MCP server **and** the [`skills/`](./skills/) — each `SKILL.
 
 > **You:** "Spin up a #launch channel and post the kickoff note."
 >
-> **Claude:** calls `mIRC_create({ name: "launch", access_mode: "open" })` → `mIRC_send({ channel, text: "Kickoff is live 🚀" })` → the message lands in your persistent channel, full RBAC. Done.
+> **Claude:** calls `mIRC_create({ name: "launch", access_mode: "open" })` → `mIRC_post_message({ channel_id, text: "Kickoff is live 🚀" })` → the message lands in your persistent channel, full RBAC. Done.
 
 ## OS modules (`m*`)
 
@@ -170,7 +170,7 @@ mosADD is built and directed by [@Hei33enberg](https://github.com/Hei33enberg) (
 
 ## Ecosystem — Voice Truthgate
 
-The comms layer has a companion: [**Voice Truthgate**](https://github.com/Hei33enberg/voice-truthgate) — mosADD's open **authenticity / trust layer**. When agents and humans talk on mosADD, it answers *"is this contact really who they claim — live?"* by **fusing identity + voiceprint + live-conversation rhythm** (a signal, never a bare verdict — and honest about it: a standalone deepfake detector is a losing game, so we don't sell one; in our own published adversarial test a targeted clone of an enrolled voice still passed a strong voiceprint ~63% of the time, which is exactly why fusion, not any single score, is the product). Same `@mosadd/*` scope, same honesty stance. It ships an MCP server — five tools: enrol, verify, list, erase (biometric erasure), and a calibrated live-conversation-rhythm check — so any agent can use it, locally or via the hosted remote MCP endpoint:
+The comms layer has a companion: [**Voice Truthgate**](https://github.com/Hei33enberg/mosADD-TruthGate) — mosADD's open **authenticity / trust layer**. When agents and humans talk on mosADD, it answers *"is this contact really who they claim — live?"* by **fusing identity + voiceprint + live-conversation rhythm** (a signal, never a bare verdict — and honest about it: a standalone deepfake detector is a losing game, so we don't sell one; in our own published adversarial test a targeted clone of an enrolled voice still passed a strong voiceprint ~63% of the time, which is exactly why fusion, not any single score, is the product). Same `@mosadd/*` scope, same honesty stance. It ships an MCP server — three tools today (`voice_truthgate_enroll`, `voice_truthgate_verify`, `voice_truthgate_list_subjects`, measured in the published package 0.1.1); biometric erasure and the calibrated live-rhythm check are on its roadmap, not on npm yet — so any agent can use it, locally or via the hosted remote MCP endpoint:
 
 [![npm](https://img.shields.io/npm/v/@mosadd/voice-truthgate-mcp?label=%40mosadd%2Fvoice-truthgate-mcp)](https://www.npmjs.com/package/@mosadd/voice-truthgate-mcp) &nbsp; `npx -y @mosadd/voice-truthgate-mcp`
 
