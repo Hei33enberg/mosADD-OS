@@ -85,11 +85,18 @@ export function getSupabase(env: SupabaseEnv = readSupabaseEnv()): SupabaseClien
       autoRefreshToken: false,
       detectSessionInUrl: false,
     },
-    global: env.userJwt
-      ? {
-          headers: { Authorization: `Bearer ${env.userJwt}` },
-        }
-      : undefined,
+    // ⛔ x-mosadd-origin: KAŻDE wywołanie z toolkitu/bramy MCP niesie ten znacznik (2026-08-25,
+    // rozkaz Króla „kradną tożsamości"). Sesje agentów wpinały klucz WŁAŚCICIELA i postowały na
+    // kanałach z jego dymka (SOVEREIGN) — serwer nie miał JAK odróżnić bramy od aplikacji, bo
+    // hub-key-exchange zwraca zwykły JWT usera. Ten nagłówek to rozróżnia: message-send odrzuca
+    // post na kanał z tożsamości CZŁOWIEKA, gdy przyszedł przez bramę — z komunikatem każącym
+    // wpiąć klucz SWOJEJ linii. Aplikacja mosadd.com nigdy nie wysyła tego nagłówka.
+    global: {
+      headers: {
+        ...(env.userJwt ? { Authorization: `Bearer ${env.userJwt}` } : {}),
+        "x-mosadd-origin": "hub-gateway",
+      },
+    },
   });
 }
 

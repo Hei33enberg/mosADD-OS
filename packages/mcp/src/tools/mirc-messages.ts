@@ -24,6 +24,19 @@ const mIRC_post_message_input = z.object({
     .string()
     .optional()
     .describe("Optional backing space id. Resolved automatically from the channel if omitted."),
+  agent: z
+    .string()
+    .max(200)
+    .optional()
+    .describe(
+      "Post AS ONE OF YOUR OWN AGENTS instead of as the key's owner — its mosADD address " +
+        "(marocain@mosadd.com), its identity id, or its display name. An API key is bound to a USER, " +
+        "so without this every message from an agent runtime is attributed to the owner: a whole fleet " +
+        "reporting in one channel shows up as one person. Same field name and same ownership rule as " +
+        "mDM_send_as_agent. The server verifies you OWN that agent and that it is an active member of " +
+        "the channel; naming an agent you do not own is refused, never silently downgraded to you. " +
+        "Omit it and attribution is unchanged.",
+    ),
 });
 
 const mIRC_list_messages_input = z.object({
@@ -76,26 +89,39 @@ async function resolveLinkedSpaceId(channelId: string): Promise<string> {
   return spaceId;
 }
 
+type SentAs = { identity_id: string; address: string | null; display_name: string | null };
+
 async function mIRC_post_message(
   input: z.infer<typeof mIRC_post_message_input>,
   ctx: MosaddToolContext,
-): Promise<{ message_id: string; delivered_at: string; thread_id: string }> {
+): Promise<{ message_id: string; delivered_at: string; thread_id: string; sent_as?: SentAs }> {
   readSupabaseEnv();
   const space_id = input.space_id ?? (await resolveLinkedSpaceId(input.channel_id));
   const thread_id = `chat:${input.channel_id}`;
-  ctx.log("debug", "mIRC_post_message", { thread_id, space_id });
+  ctx.log("debug", "mIRC_post_message", { thread_id, space_id, agent: input.agent });
 
-  const data = await invokeFunction<{ message?: { id: string; created_at: string } }>("message-send", {
+  const data = await invokeFunction<{ message?: { id: string; created_at: string }; sent_as?: SentAs }>("message-send", {
     space_id,
     thread_id,
     encrypted_payload: packPlaintextPayload(input.text, input.reply_to_id),
     message_type: "txt",
     protocol_version: PROTOCOL_VERSION,
     reply_to_id: input.reply_to_id ?? null,
+    // Attribution is decided SERVER-SIDE (message-send → _shared/ownedAgent.ts): you may sign only
+    // as an agent you own. Sent only when asked for, so the wire shape is unchanged for every
+    // existing caller — and an unresolvable agent comes back 403 rather than posting as the owner.
+    ...(input.agent ? { agent: input.agent } : {}),
   });
 
   if (!data?.message?.id) throw new Error("message-send returned no message id");
-  return { message_id: data.message.id, delivered_at: data.message.created_at ?? new Date().toISOString(), thread_id };
+  return {
+    message_id: data.message.id,
+    delivered_at: data.message.created_at ?? new Date().toISOString(),
+    thread_id,
+    // Echo back WHO the message was signed as, so a caller can verify the attribution landed
+    // instead of assuming it did.
+    ...(data.sent_as ? { sent_as: data.sent_as } : {}),
+  };
 }
 
 async function mIRC_list_messages(
@@ -140,7 +166,7 @@ export const mircMessagesTools: MosaddTool[] = [
     name: "mIRC_post_message",
     requires: "network",
     description:
-      "Post a text message into a persistent channel (mIRC). Pass channel_id from mIRC_create / mIRC_list; the backing space is resolved automatically. This is how an agent actually talks in a channel — the other mIRC_* tools only manage it. ACCESS: banned/blocked users are refused on ALL access modes (including open); open channels accept anyone not banned; password channels require joining with the password; private channels require request-access + approval. ENCRYPTION: this tool posts SERVER-READABLE plaintext base64 on EVERY access mode — private and password channels included; it is never end-to-end encrypted. Open channels: app clients CAN read toolkit-posted messages. Password/private channels: the mosadd.com app group-key-encrypts channel text on supported clients, but the toolkit does not hold that group key — the message still lands server-readable and app clients cannot decrypt it as channel text (group-key parity is not yet wired).",
+      "Post a text message into a persistent channel (mIRC). Pass channel_id from mIRC_create / mIRC_list; the backing space is resolved automatically. This is how an agent actually talks in a channel — the other mIRC_* tools only manage it. ACCESS: banned/blocked users are refused on ALL access modes (including open); open channels accept anyone not banned; password channels require joining with the password; private channels require request-access + approval. ATTRIBUTION: by default the message is signed with the identity behind the API key — and a key belongs to a USER, so an agent runtime using its owner's key posts as the OWNER. Pass `agent` to sign as one of your own agents instead; the server verifies you own it and that it is in the channel. ENCRYPTION: this tool posts SERVER-READABLE plaintext base64 on EVERY access mode — private and password channels included; it is never end-to-end encrypted. Open channels: app clients CAN read toolkit-posted messages. Password/private channels: the mosadd.com app group-key-encrypts channel text on supported clients, but the toolkit does not hold that group key — the message still lands server-readable and app clients cannot decrypt it as channel text (group-key parity is not yet wired).",
     inputSchema: mIRC_post_message_input,
     handler: mIRC_post_message as MosaddTool["handler"],
   },

@@ -115,24 +115,21 @@ async function resolveSelfIdentityId(): Promise<string> {
  *        Receivers in the mosadd consumer app understand this `mosadd.chat.v1` shape.
  * V0.2:  replace with @mosadd/crypto Double Ratchet wrap.
  */
-function packPlaintextPayload(text: string, replyToId?: string): Uint8Array {
-  const envelope = {
-    v: PROTOCOL_VERSION,
-    type: "text",
-    text,
-    reply_to: replyToId ?? null,
-    sent_at: new Date().toISOString(),
-  };
-  // OPAQUE bytes handed to the DmProvider — the provider does not interpret
-  // them. Today: utf8 JSON. V0.2: @mosadd/crypto Double Ratchet ciphertext.
-  return new Uint8Array(Buffer.from(JSON.stringify(envelope), "utf8"));
+function packPlaintextPayload(text: string): Uint8Array {
+  // Pure text bytes so the consumer app displays clean message text directly
+  return new Uint8Array(Buffer.from(text, "utf8"));
 }
 
 function unpackPayload(payload: Uint8Array): { text: string; sent_at?: string; reply_to?: string | null } {
   try {
-    const json = Buffer.from(payload).toString("utf8");
-    const obj = JSON.parse(json);
-    if (typeof obj?.text === "string") return obj;
+    const raw = Buffer.from(payload).toString("utf8");
+    try {
+      const obj = JSON.parse(raw);
+      if (typeof obj?.text === "string") return obj;
+    } catch {
+      return { text: raw };
+    }
+    return { text: raw };
   } catch {
     /* fall through */
   }
