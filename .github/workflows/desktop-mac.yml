@@ -1,0 +1,106 @@
+# desktop-mac — buduje macOS .dmg na DARMOWYM runnerze macOS tego PUBLICZNEGO repo
+# i publikuje go do naszych własnych Releases (mosADD-OS), tam gdzie już leżą
+# instalatory Windows i skąd czyta electron-updater.
+#
+# ⛔ PO CO TO ISTNIEJE — I CZEMU TUTAJ, A NIE W REPO APLIKACJI.
+# Job `desktop-mac` stoi w prywatnym repo aplikacji (.github/workflows/dist-desktop.yml)
+# od dawna i jest POPRAWNY — nigdy nie wystartował, bo Actions w tamtym repo kończą się
+# `startup_failure` (blokada rozliczeniowa, zmierzone: każdy push 2026-08-26 → 0 s).
+# Build macOS wymaga hosta macOS: electron-builder z Windowsa odmawia wprost —
+# „Build for macOS is supported only on macOS" (zmierzone 2026-08-26). Właściciel nie ma
+# i nie będzie mieć Maca, więc runner GitHuba jest JEDYNĄ drogą do .dmg.
+# Dla repozytoriów PUBLICZNYCH runnery GitHuba są darmowe — łącznie z macOS. To repo
+# jest publiczne, więc tu build przechodzi, a tam nie.
+#
+# ŹRÓDŁO APLIKACJI JEST PRYWATNE i takie zostaje: pobieramy je KLUCZEM WDROŻENIOWYM
+# TYLKO-DO-ODCZYTU (deploy key wystawiony na repo aplikacji, sekret MOSADD_APP_DEPLOY_KEY).
+# Klucz nie daje zapisu nigdzie i działa wyłącznie na tamto jedno repo. Kod źródłowy
+# żyje wyłącznie w efemerycznym katalogu runnera i NIE trafia do artefaktów — publikujemy
+# tylko zbudowany .dmg. Sekrety NIE są wydawane workflowom z forków (zasada GitHuba),
+# a ten workflow i tak startuje WYŁĄCZNIE ręcznie (workflow_dispatch).
+#
+# Jeśli zmieniasz kroki tutaj — zmień też job `desktop-mac` w repo aplikacji. Dwie kopie
+# jednego przepisu to sposób, w jaki jedna z nich cichnie i staje się nieprawdą.
+name: desktop-mac
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_ref:
+        description: "Gałąź/tag repo aplikacji do zbudowania"
+        required: false
+        default: "main"
+
+concurrency:
+  group: desktop-mac
+  cancel-in-progress: false
+
+permissions:
+  contents: write # publikacja assetu .dmg do Releases TEGO repo
+
+jobs:
+  dmg:
+    name: macOS .dmg → mosADD-OS releases
+    runs-on: macos-14
+    steps:
+      - name: Klucz tylko-do-odczytu do repo aplikacji
+        env:
+          DEPLOY_KEY: ${{ secrets.MOSADD_APP_DEPLOY_KEY }}
+        run: |
+          if [ -z "$DEPLOY_KEY" ]; then
+            echo "STOP: brak sekretu MOSADD_APP_DEPLOY_KEY — bez niego nie ma jak pobrać źródła aplikacji."
+            exit 1
+          fi
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/app_key
+          chmod 600 ~/.ssh/app_key
+          # Odcisk hosta pobrany i PRZYPIĘTY, nie akceptowany w ciemno.
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Pobierz źródło aplikacji (prywatne, read-only)
+        run: |
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/app_key -o IdentitiesOnly=yes" \
+            git clone --depth 1 --branch "${{ inputs.app_ref || 'main' }}" \
+            git@github.com:Hei33enberg/mosADD.git app
+          echo "commit: $(git -C app rev-parse --short HEAD)"
+          echo "wersja desktopu: $(node -p "require('./app/apps/desktop/package.json').version")"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Zależności (root workspace)
+        working-directory: app
+        run: npm ci
+
+      # apps/desktop NIE jest workspace'em roota, a jego lockfile jest w .gitignore —
+      # `npm ci` nie ma tu czego czytać, więc instalacja rozwiązuje zależności świeżo.
+      - name: Zależności (powłoka Electrona)
+        working-directory: app
+        run: npm --prefix apps/desktop install --no-audit --no-fund
+
+      - name: Zbuduj web w trybie electron
+        working-directory: app
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: npm run build:electron --workspace @m0ssad/web
+
+      # ⛔ NIEPODPISANY .dmg — świadomie i JAWNIE. Gatekeeper pokaże ostrzeżenie
+      # „niezidentyfikowany deweloper"; otwiera się przez prawy klik → Otwórz. Dokładnie
+      # ta sama uczciwa uwaga, którą /install niesie dla niepodpisanego Windowsa.
+      # Podpis i notaryzacja są plug-and-play, gdy WŁAŚCICIEL doda sekrety Apple:
+      # CSC_LINK (Developer ID .p12 w base64) + CSC_KEY_PASSWORD, a do notaryzacji
+      # APPLE_ID + APPLE_APP_SPECIFIC_PASSWORD + APPLE_TEAM_ID oraz `notarize: true`
+      # pod `mac:` w electron-builder.yml. Zero zmian w tym pliku.
+      - name: Zbuduj i opublikuj .dmg
+        working-directory: app
+        env:
+          # Publikujemy do TEGO repo, więc wbudowany token wystarczy — żaden PAT nie jest
+          # potrzebny i żaden nie jest tu przechowywany.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm --prefix apps/desktop run dist -- --mac --publish always
+
+      - name: Co powstało
+        if: always()
+        run: ls -la app/releases/ 2>/dev/null || echo "(brak katalogu releases — build nie doszedł do artefaktu)"
