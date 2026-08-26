@@ -145,6 +145,8 @@ async function mRAG_graph_timeline(
 export const knowledgeGraphTools: MosaddTool[] = [
   {
     name: "mRAG_graph_refresh",
+    title: "Rebuild knowledge graph",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "(Re)build the USER'S OWN knowledge graph from their indexed data, then return what it found (counts of parties/mentions/edges). Run this first, or after new data has been ingested, so mRAG_graph_overview/neighbors/timeline reflect the latest. Built from METADATA only (who-sent-to-whom, thread membership) — never message bodies, so it does not weaken E2EE. Owner-scoped.",
@@ -153,6 +155,8 @@ export const knowledgeGraphTools: MosaddTool[] = [
   },
   {
     name: "mRAG_graph_overview",
+    title: "Knowledge graph overview",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "List the parties (people / companies / services) in the user's knowledge graph, busiest first, each with its party_id, kind, aliases, appearance count, connection count and first/last-seen dates. This is the entry point: use a returned party_id with mRAG_graph_neighbors or mRAG_graph_timeline. Owner-scoped.",
@@ -161,6 +165,8 @@ export const knowledgeGraphTools: MosaddTool[] = [
   },
   {
     name: "mRAG_graph_neighbors",
+    title: "Explore graph neighbors",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Walk the connections of one party (from mRAG_graph_overview) — who/what it is linked to, with the edge type, how many times observed, and when. Answers 'who is connected to X, and how'. Depth is hard-clamped to 2 hops and breadth to 200 server-side. Owner-scoped.",
@@ -169,6 +175,8 @@ export const knowledgeGraphTools: MosaddTool[] = [
   },
   {
     name: "mRAG_graph_timeline",
+    title: "Knowledge graph timeline",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Return the dated appearance timeline of one party (from mRAG_graph_overview) — each source (email/message/call/…), its thread, the party's role, and when it occurred, newest first. Answers 'when and where did X show up'. Owner-scoped.",

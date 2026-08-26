@@ -145,6 +145,8 @@ export const actionTools: MosaddTool[] = [
     // lives in the `comms_` namespace rather than a channel `m<MODULE>_` prefix.
     // A dedicated `mACT` module (create/get/status) is a possible RFC follow-up.
     name: "comms_action_create",
+    title: "Create one-click action link",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Mint a single-use, expiring action link (https://mosadd.com/do/<token>) that asks a human to DO something in their browser, with explicit consent. action_type: 'confirm' (yes/no) | 'file_request' (recipient picks a file from their computer) | 'form' (recipient fills fields you define) | 'open_url' (recipient opens a vetted https URL). Returns { action_id, token, link, expires_at }. Send the `link` to the person via mDM/mIRC/mp0st; they open it, consent, and the browser performs the action in its sandbox (no install, no OS access). The action is owned by you (the calling user). HONEST LIMITS: this is browser-sandbox only — it cannot click other apps, run programs, or read files the user didn't pick; and file_request payloads are not yet end-to-end encrypted (don't request sensitive files until Tier 1.1).",
@@ -153,6 +155,8 @@ export const actionTools: MosaddTool[] = [
   },
   {
     name: "comms_action_frame_get",
+    title: "View shared screen frame",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "See the LATEST screen frame from a 'screen_share' action you created (pass the action_id from comms_action_create). Returns the current screenshot AS AN IMAGE you can look at, plus how old it is. The recipient must have opened the link and clicked 'share screen' first. Poll this every few seconds to watch live. VIEW ONLY — you cannot click or control their screen. Returns a 'no frame yet' note until they start sharing.",

@@ -99,6 +99,8 @@ async function embed_create(
 export const embedTools: MosaddTool[] = [
   {
     name: "comms_embed_create",
+    title: "Create website embed",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Embed a LIVE mosadd chat channel into an app/site you're building (great for builder-agents on Lovable/Bolt/Cursor/v0). Mints a publishable embed key scoped to a channel + the app's domain(s) and returns a ready-to-paste HTML snippet (a <div> + <script src=embed.mosadd.com/v1.js data-key=…>). Visitors of the host page chat in real time (anonymous nick or mosadd login). REQUIRES `allowed_origins` — the domain(s) the app is served from (the key only works there). The publishable key is browser-safe (mints only channel-scoped JWTs); your hub key never leaves the server. Returns { embed_key, channel, allowed_origins, snippet }.",

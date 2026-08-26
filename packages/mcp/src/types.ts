@@ -77,11 +77,38 @@ export interface MosaddToolContext {
  */
 export type CapabilityRequirement = "any" | "radio" | "network";
 
+/**
+ * MCP tool annotations (spec `ToolAnnotations`, minus `title` which lives on the
+ * tool itself). Connector UIs — Claude's included — group and gate tools by these
+ * hints: `readOnlyHint: true` lands the tool in the read-only bucket (bulk-approvable),
+ * `destructiveHint: true` marks it as destroying/overwriting user data at approval
+ * time, and tools with NO annotations all fall into one flat "Other tools" bucket —
+ * which is exactly how the mosADD connector looked until 2026-08-26 (84 tools, one
+ * undifferentiated list; founder order: fix it).
+ */
+export interface MosaddToolAnnotations {
+  /** Tool does not mutate anything. list/get/search/state/metrics class. */
+  readOnlyHint?: boolean;
+  /** Tool destroys or irreversibly overwrites data (delete/ban/revoke/edit-in-place). */
+  destructiveHint?: boolean;
+  /** Calling twice with the same args has no additional effect. */
+  idempotentHint?: boolean;
+  /** Tool reaches outside the mosADD closed world (e.g. sends external email). */
+  openWorldHint?: boolean;
+}
+
 export interface MosaddTool<TInput = unknown, TOutput = unknown> {
   /** Tool name. MUST follow the m{MODULE}_{operation} convention. */
   name: string;
+  /**
+   * Human title for connector UIs (e.g. "Send encrypted DM"). The `name` stays the
+   * model-facing handle; this is what a PERSON sees in the permissions list.
+   */
+  title?: string;
   /** Short human-readable description. Shown to the model. */
   description: string;
+  /** MCP annotations; see MosaddToolAnnotations. Every registered tool SHOULD set them. */
+  annotations?: MosaddToolAnnotations;
   /**
    * Transport this tool requires. Consuming hosts read this to gate tools by
    * available carriers. Every tool MUST declare it explicitly.

@@ -237,6 +237,8 @@ async function mIRC_send_file(input: z.infer<typeof mIRC_send_file_input>, ctx: 
 export const attachmentTools: MosaddTool[] = [
   {
     name: "mDM_send_voice",
+    title: "Send a voice message",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Send a VOICE note to a contact as a first-class mDM `voice` message (not a URL stub). Pass audio bytes as base64; the tool uploads to Storage and posts via message-send with the voice attachment descriptor. SCAFFOLD: mDM is client-encrypted — until the seal step ships, bytes are uploaded unsealed (TODO Lane A).",
@@ -245,6 +247,8 @@ export const attachmentTools: MosaddTool[] = [
   },
   {
     name: "mDM_send_file",
+    title: "Send a file in DM",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Send a FILE to a contact as a first-class mDM `file` message. Base64 bytes → Storage → message-send file attachment. SCAFFOLD: mDM E2EE seal is TODO (Lane A).",
@@ -253,6 +257,8 @@ export const attachmentTools: MosaddTool[] = [
   },
   {
     name: "mIRC_send_voice",
+    title: "Send voice note to channel",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description: "Send a VOICE note into a persistent channel as a first-class `voice` message. Base64 audio → Storage → message-send (backing space resolved automatically).",
     inputSchema: mIRC_send_voice_input,
@@ -260,6 +266,8 @@ export const attachmentTools: MosaddTool[] = [
   },
   {
     name: "mIRC_send_file",
+    title: "Send file to channel",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description: "Send a FILE into a persistent channel as a first-class `file` message. Base64 bytes → Storage → message-send.",
     inputSchema: mIRC_send_file_input,

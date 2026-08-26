@@ -293,6 +293,8 @@ async function mp0st_notify(
 export const mailTools: MosaddTool[] = [
   {
     name: "mAYL_list",
+    title: "List emails",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "List the user's mailbox (their <userId>@mosadd.com inbox/outbox) newest-first, with sender, subject, status and a short snippet. Filter by direction ('inbound' = received, 'outbound' = sent). Use the returned next_cursor with `before` to page through older mail. Call mAYL_view to read a full message body.",
@@ -301,6 +303,8 @@ export const mailTools: MosaddTool[] = [
   },
   {
     name: "mAYL_send",
+    title: "Send email",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Send an email from the user's mosadd address (<userId>@mosadd.com). Pass body_text or body_html (or both). Supports cc, bcc, reply_to. Monitoring/legal options: tracking (open+click, default on; set false for no tracking), force_reader (stub email → recipient opens in mosadd's secure reader, unlocking print/copy/time-on-read tracking + revoke), watermark (recipient watermark visible in screenshots/prints), disclose_tracking (GDPR footer), auto_destruct ('1h'|'24h'|'7d').",
@@ -309,6 +313,8 @@ export const mailTools: MosaddTool[] = [
   },
   {
     name: "mAYL_view",
+    title: "Read an email",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description: "Read the full body and metadata of an email by message_id.",
     inputSchema: mp0st_view_input,
@@ -316,6 +322,8 @@ export const mailTools: MosaddTool[] = [
   },
   {
     name: "mAYL_delete",
+    title: "Delete email",
+    annotations: { destructiveHint: true },
     requires: "network",
     description:
       "Delete one of the user's emails by message_id (from mAYL_list). Soft-delete — it stops showing in mAYL_list. Owner-scoped: only your own mail.",
@@ -324,6 +332,8 @@ export const mailTools: MosaddTool[] = [
   },
   {
     name: "mAYL_stats",
+    title: "Email delivery stats",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Engagement summary for one sent email (by message_id): open_count, unique_opens, click_count, whether it was likely forwarded, first/last opened time, and a breakdown of tracked event types. Opens/clicks are real (tracking pixel + link-wrap); forward detection is best-effort (IP-subnet diversity). Owner-scoped.",
@@ -332,6 +342,8 @@ export const mailTools: MosaddTool[] = [
   },
   {
     name: "mAYL_events",
+    title: "Email event trail",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Raw engagement timeline for one email (by message_id): every tracked event (pixel_open, link_click, forwarded, page_view, copy/print/focus signals) with timestamp, device type and link URL. Use mAYL_stats for the rollup; use this for the per-event detail. Owner-scoped.",
@@ -340,6 +352,8 @@ export const mailTools: MosaddTool[] = [
   },
   {
     name: "mAYL_metrics",
+    title: "Email engagement metrics",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Mailbox-wide engagement aggregate across the user's sent mail: total_sent, opened_emails, open_rate_pct, total_opens, total_clicks, forwarded_emails. Owner-scoped.",
@@ -348,6 +362,8 @@ export const mailTools: MosaddTool[] = [
   },
   {
     name: "mAYL_revoke",
+    title: "Revoke a sent email",
+    annotations: { destructiveHint: true },
     requires: "network",
     description:
       "Revoke (recall) a sent email's secure-reader access by message_id — the recipient can no longer open the full message via the mosadd reader link (Virtru-style recall, immediate). Pass restore:true to re-enable. HONEST LIMIT: cannot un-send or claw back content the recipient already read, copied, or screenshotted — only disables future reader access. Owner-scoped.",
@@ -356,6 +372,8 @@ export const mailTools: MosaddTool[] = [
   },
   {
     name: "mAYL_audit_export",
+    title: "Export signed audit report",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Export a tamper-evident engagement audit report for one sent email (RMail-style): full event trail (opens, clicks, reader print/copy/forward signals) + totals, plus an HMAC-SHA256 signature over the canonical JSON so the report can be proven unaltered. For legal/compliance use. HONEST LIMIT: proves what mosadd observed; it is not a qualified delivery receipt (ERDS). Owner-scoped.",
@@ -364,6 +382,8 @@ export const mailTools: MosaddTool[] = [
   },
   {
     name: "mAYL_consent",
+    title: "Manage tracking opt-outs",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Manage recipient tracking opt-outs (GDPR/ePrivacy). action 'list' = recipients who opted out of your tracking; 'check' {recipient} = whether one opted out; 'optin' {recipient} = re-enable. Recipients self-opt-out via the footer link in your tracked emails; mAYL_send then automatically sends them with NO pixel/link-wrap. Owner-scoped.",
@@ -372,6 +392,8 @@ export const mailTools: MosaddTool[] = [
   },
   {
     name: "mAYL_notify",
+    title: "Engagement notifications feed",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Recent engagement feed across ALL your sent mail — the 'who just opened/clicked my mail' notifications stream (opens, clicks, forwards, reader print/copy signals), newest first, each with the email subject + recipient. Poll: pass the returned `cursor` back as `since` to get only new activity. Owner-scoped.",

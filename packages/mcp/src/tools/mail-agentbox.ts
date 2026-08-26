@@ -114,6 +114,8 @@ async function agentbox_extend(
 export const mailAgentboxTools: MosaddTool[] = [
   {
     name: "mAYL_agentbox_provision",
+    title: "Provision disposable inbox",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Mint the agent its OWN real, disposable email inbox at agent-<hex>@mosadd.com that can SEND and RECEIVE. Default ephemeral with a 10-minute TTL (auto-expires + is reaped); pass kind:'persistent' for a permanent box, or ttl_seconds (max 86400) for a custom lifetime. Optional display_name + agent_id. Returns the box {id, address, expires_at}. Use the address to catch signup/verification codes or replies, then mAYL_list (filter by the box address) + mAYL_view to read what arrived. Owner-scoped; max 25 active boxes per account.",
@@ -122,6 +124,8 @@ export const mailAgentboxTools: MosaddTool[] = [
   },
   {
     name: "mAYL_agentbox_list",
+    title: "List disposable inboxes",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "List your active agent inboxes (address, display_name, kind, agent_id, expires_at), newest first. Owner-scoped.",
@@ -130,6 +134,8 @@ export const mailAgentboxTools: MosaddTool[] = [
   },
   {
     name: "mAYL_agentbox_release",
+    title: "Release disposable inbox",
+    annotations: { destructiveHint: true },
     requires: "network",
     description:
       "Release (delete) one of your agent inboxes by id — frees the address immediately so it stops receiving. Owner-scoped.",
@@ -138,6 +144,8 @@ export const mailAgentboxTools: MosaddTool[] = [
   },
   {
     name: "mAYL_agentbox_extend",
+    title: "Extend disposable inbox",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Extend an EPHEMERAL agent inbox's lifetime by id (ttl_seconds counted from NOW, max 24 h). Persistent boxes never expire and cannot be extended. Owner-scoped.",

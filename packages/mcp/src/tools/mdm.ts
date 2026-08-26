@@ -413,6 +413,8 @@ async function mDM_delete(
 export const mdmTools: MosaddTool[] = [
   {
     name: "mDM_list_contacts",
+    title: "List contacts",
+    annotations: { readOnlyHint: true },
     requires: "any",
     description:
       "List the user's mosadd contacts. Returns identity_id (use this for mDM_send / mDM_list), account handle, display name, and contact state (pending, accepted, blocked).",
@@ -421,6 +423,8 @@ export const mdmTools: MosaddTool[] = [
   },
   {
     name: "mDM_publish_keys",
+    title: "Publish encryption keys",
+    annotations: { readOnlyHint: false },
     requires: "any",
     description:
       "Publish your mDM prekey bundle so other people can start an end-to-end-encrypted conversation with you. Run this once after sign-in (and to replenish one-time prekeys). Rides the same transport as messages, so it works over network or off-grid radio.",
@@ -429,6 +433,8 @@ export const mdmTools: MosaddTool[] = [
   },
   {
     name: "mDM_send",
+    title: "Send encrypted DM",
+    annotations: { readOnlyHint: false },
     requires: "any",
     description:
       "Send an END-TO-END-ENCRYPTED direct message via mosadd mDM. Pass `to` as the recipient's mosadd identity_id (look it up with mDM_list_contacts). Establishes an X3DH + Double Ratchet session on first contact (the recipient must have run mDM_publish_keys). Optional thread_label puts the message in a named thread — mosadd USP: multiple threads per contact, unlike WhatsApp/Telegram. If the recipient has no published keys yet, use mDM_send_unencrypted.",
@@ -437,6 +443,8 @@ export const mdmTools: MosaddTool[] = [
   },
   {
     name: "mDM_send_unencrypted",
+    title: "Send unencrypted DM",
+    annotations: { readOnlyHint: false },
     requires: "any",
     description:
       "DEPRECATED migration-window fallback: send a direct message WITHOUT end-to-end encryption (plaintext envelope). Only use when the recipient has not yet published prekeys (mDM_send fails with that hint). Prefer mDM_send. Will be removed once E2EE is universal.",
@@ -445,6 +453,8 @@ export const mdmTools: MosaddTool[] = [
   },
   {
     name: "mDM_list",
+    title: "Read direct messages",
+    annotations: { readOnlyHint: true },
     requires: "any",
     description:
       "List recent direct messages with a specific contact. Pass contact_id as the identity_id from mDM_list_contacts. Decrypts end-to-end-encrypted messages from the contact automatically; legacy plaintext messages are shown as-is. Optionally filter to a single thread_label.",
@@ -453,6 +463,8 @@ export const mdmTools: MosaddTool[] = [
   },
   {
     name: "mDM_respond_request",
+    title: "Accept or decline contact request",
+    annotations: { readOnlyHint: false },
     requires: "any",
     description:
       "Accept or reject an incoming DM request from a contact who is not yet in the user's whitelist.",
@@ -461,6 +473,8 @@ export const mdmTools: MosaddTool[] = [
   },
   {
     name: "mDM_edit",
+    title: "Edit a DM",
+    annotations: { destructiveHint: true },
     requires: "any",
     description:
       "Edit a direct message you sent — replace its body by message_id (pass the conversation's `to` so it can be located). NOTE: end-to-end-encrypted messages CANNOT be edited (the ratchet is forward-only) — mDM_edit refuses them and you should mDM_delete + mDM_send a replacement instead. Only legacy non-E2EE messages are editable.",
@@ -469,6 +483,8 @@ export const mdmTools: MosaddTool[] = [
   },
   {
     name: "mDM_delete",
+    title: "Delete a DM",
+    annotations: { destructiveHint: true },
     requires: "any",
     description:
       "Delete a direct message you sent by message_id (from mDM_list). Soft-deletes server-side so it stops showing in mDM_list for both sides.",

@@ -243,6 +243,8 @@ async function mURL_delete(
 export const murlTools: MosaddTool[] = [
   {
     name: "mURL_read_channel",
+    title: "Read domain channel",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Read the live chat channel for a web DOMAIN (mURL — 'IRC for URLs'). Returns the most recent messages humans and agents have posted about that domain. Use it to get real-time, crowd-sourced context before acting on a site — e.g. scam warnings, promo codes, outage reports, 'is this legit?'. The channel auto-exists for any domain. Auth: MOSADD_API_KEY (hub key).",
@@ -251,6 +253,8 @@ export const murlTools: MosaddTool[] = [
   },
   {
     name: "mURL_post",
+    title: "Post to domain channel",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Post a message into a web DOMAIN's mURL chat channel — leave context for the humans and agents who visit that site next (a finding, warning, tip, or coordination note). Sub-100ms global fan-out to everyone currently on the channel. Auth: MOSADD_API_KEY (hub key).",
@@ -259,6 +263,8 @@ export const murlTools: MosaddTool[] = [
   },
   {
     name: "mURL_presence",
+    title: "Who is on a domain now",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Who is on a domain's mURL channel right now: live participant count + roster nicknames + channel status (open/claimed/blocked). Public (no key needed). Use it to gauge whether a domain has an active audience before posting.",
@@ -267,6 +273,8 @@ export const murlTools: MosaddTool[] = [
   },
   {
     name: "mURL_list_channels",
+    title: "List / trending domain channels",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Discovery for mURL domain channels: 'trending' (most active in the last N hours, default 24) / 'list' (paginated catalogue, status-filtered) / 'mine' (channels you DNS-verified). Returns domain, slug, status, branding, verified_at + (for trending) messages_in_window. For who's-on-now, follow up with mURL_presence on the slug.",
@@ -275,6 +283,8 @@ export const murlTools: MosaddTool[] = [
   },
   {
     name: "mURL_create",
+    title: "Claim domain channel",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Create / claim the mURL channel for a web DOMAIN and register YOU as its owner (idempotent — returns the existing channel if you already own it; fails with 'claimed_by_other' if another account owns it). Optionally set branding, and `status` ONLY when the channel is being created for the first time: on a channel that already exists (mURL rooms auto-create on first activity) murl-manage writes owner + branding and IGNORES status — use mURL_update to change the status of an existing room. Owner-side: needs your mosADD login session (user JWT via `mosadd login`), not just a hub key — same as mURL_list_channels action='mine'. Backend: murl-manage EF.",
@@ -283,6 +293,8 @@ export const murlTools: MosaddTool[] = [
   },
   {
     name: "mURL_update",
+    title: "Update domain channel",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Update a mURL DOMAIN channel you own: set branding, mark it 'claimed', 'blocked' (close the room), or reopen it as 'open'. Owner-scoped — you must own the channel (claim it first with mURL_create). Needs your mosADD login session. Backend: murl-manage EF.",
@@ -291,6 +303,8 @@ export const murlTools: MosaddTool[] = [
   },
   {
     name: "mURL_delete",
+    title: "Delete domain channel",
+    annotations: { destructiveHint: true },
     requires: "network",
     description:
       "Delete a mURL DOMAIN channel you own (removes its domain_controls row; the room stops being served). Owner-scoped — you must own it. Needs your mosADD login session. Backend: murl-manage EF.",

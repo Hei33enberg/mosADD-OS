@@ -17,6 +17,21 @@
  * VPS, the legal dispatcher, a cloud runner — attaches with one call and the stand-in defers to it
  * for as long as that session's process lives.
  *
+ * ⭐ AS_AGENT (2026-08-26, founder order: "wpinanie agentów ma działać co sesję i w różnych
+ * kontach Claude"). Fleet sessions usually hold the OWNER's key (identity kind=human), so a bare
+ * attach claims the OWNER's lane — and every channel post they made either landed in the owner's
+ * bubble (identity theft) or, after the v146 guard, got a 403 unless the model remembered a
+ * per-post `agent` field. `as_agent` fixes this at the ROOT: the session declares ONCE whose line
+ * it speaks for. That does two things server-side:
+ *   1. upserts `mosadd_gateway_agent_binding` — message-send then signs the session's channel
+ *      posts as that agent automatically (explicit `agent` field still wins; ownership is
+ *      re-validated server-side on every post);
+ *   2. beats the AGENT line's heartbeat (RLS additionally allows the owner to claim lines of
+ *      agents they own — migration 20260826210000), so the agent's cloud stand-in defers to
+ *      this session, exactly as if the agent's own key were plugged in.
+ * Binding is per OWNER (one row) — the last attach wins, which is visible and recoverable,
+ * unlike a silent mis-signed post.
+ *
  * ⭐ THE BEAT IS NOT THE MODEL'S JOB. The heartbeat window is minutes wide, and a model cannot be
  * relied on to call a tool on a timer — it answers prompts, it does not hold a clock. So attaching
  * starts an internal keep-alive interval inside THIS process. The signal is therefore "the session
@@ -30,9 +45,10 @@
  * tenant's env or throw. The env is captured at attach time and passed explicitly to
  * `getSupabase(env)` on every beat, and attachments are tracked per identity, not per process.
  *
- * Security: the write is plain RLS, no privileged path. The policy on agent_bridge_heartbeat is
- * `identity_id IN (SELECT id FROM identities WHERE user_id = auth.uid())` for ALL commands
- * (verified on prod), so a session can only ever claim the account whose key it holds.
+ * Security: the write is plain RLS, no privileged path. agent_bridge_heartbeat allows a session
+ * to claim the account whose key it holds OR a line of an agent that account OWNS (kind='agent',
+ * retired IS NULL); mosadd_gateway_agent_binding enforces the same ownership in its CHECK. A key
+ * can never claim or speak for a stranger's line.
  */
 
 import { hostname } from "node:os";
@@ -52,6 +68,8 @@ const BEAT_MS = 60_000;
 /** Advertised to the caller so it knows how long an attachment survives without this process. */
 const HOLD_SECONDS = 300;
 
+const UUID_RE = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
 interface Attachment {
   timer: ReturnType<typeof setInterval>;
   env: SupabaseEnv;
@@ -59,6 +77,13 @@ interface Attachment {
 
 /** identity_id → its keep-alive. Keyed per identity so one gateway process can hold many. */
 const attachments = new Map<string, Attachment>();
+
+/**
+ * owner user_id → agent identity this PROCESS bound via as_agent. Needed so a plain
+ * `release:true` from the same session also hands back the agent line it took, without
+ * a releasing session ever touching a binding some OTHER process created.
+ */
+const processBindings = new Map<string, string>();
 
 /** One upsert of the liveness row. Best-effort by design: a missed beat must never throw into a timer. */
 async function beat(env: SupabaseEnv, identityId: string, host: string, mode: string): Promise<void> {
@@ -77,7 +102,9 @@ async function beat(env: SupabaseEnv, identityId: string, host: string, mode: st
  * that one is private to mDM and this file must not reach into another module's internals.
  * The identity id is NOT the auth user id; the heartbeat table is keyed on the identity.
  */
-async function resolveSelf(env: SupabaseEnv): Promise<{ id: string; display_name: string | null }> {
+async function resolveSelf(
+  env: SupabaseEnv,
+): Promise<{ id: string; display_name: string | null; user_id: string }> {
   const sb = getSupabase(env);
   const { data: u, error: ue } = await sb.auth.getUser();
   if (ue || !u?.user) {
@@ -93,7 +120,56 @@ async function resolveSelf(env: SupabaseEnv): Promise<{ id: string; display_name
   if (error || !data) {
     throw new Error("This account has no mosadd identity row yet — sign in to mosadd.com once to create it.");
   }
-  return { id: data.id as string, display_name: (data.display_name as string | null) ?? null };
+  return { id: data.id as string, display_name: (data.display_name as string | null) ?? null, user_id: u.user.id };
+}
+
+/**
+ * Resolve ONE agent OWNED by the caller from what they typed: identity uuid, mosADD address
+ * (dispatcher@mosadd.com) or display name. Mirrors the server-side ownership rule
+ * (m0ssad-3 `_shared/ownedAgent.ts`): kind='agent' AND owner_user_id = caller AND not retired.
+ * Ownership is part of the QUERY — a stranger's agent resolves to nothing, never to a row we
+ * would then have to remember to reject.
+ */
+async function resolveOwnedAgentLine(
+  env: SupabaseEnv,
+  ownerUserId: string,
+  ref: string,
+): Promise<{ id: string; m0ssad_email: string | null; display_name: string | null } | null> {
+  const value = ref.trim();
+  if (!value || /[(),]/.test(value)) return null;
+  let q = getSupabase(env)
+    .from("identities")
+    .select("id, m0ssad_email, display_name")
+    .eq("kind", "agent")
+    .eq("owner_user_id", ownerUserId)
+    .is("retired_at", null);
+  q = UUID_RE.test(value)
+    ? q.or(`id.eq.${value},m0ssad_email.eq.${value}`)
+    : q.or(`m0ssad_email.eq.${value},display_name.eq.${value}`);
+  const { data, error } = await q.limit(2);
+  if (error || !data || data.length !== 1) return null;
+  return data[0] as { id: string; m0ssad_email: string | null; display_name: string | null };
+}
+
+function stopAttachment(identityId: string): void {
+  const existing = attachments.get(identityId);
+  if (existing) {
+    clearInterval(existing.timer);
+    attachments.delete(identityId);
+  }
+}
+
+function startAttachment(env: SupabaseEnv, identityId: string, host: string, mode: string, ctx: MosaddToolContext): void {
+  const timer = setInterval(() => {
+    void beat(env, identityId, host, mode).catch((e) => {
+      // A single missed beat is survivable (3 min of cover remain) and must not kill the interval:
+      // a transient network blip would otherwise silently un-attach the session for good.
+      ctx.log("warn", "comms_session_attach: beat failed", { identity_id: identityId, error: String(e) });
+    });
+  }, BEAT_MS);
+  // Never hold the process open on account of the beat — when the session ends, it ends.
+  timer.unref?.();
+  attachments.set(identityId, { timer, env });
 }
 
 const comms_session_attach_input = z.object({
@@ -104,11 +180,18 @@ const comms_session_attach_input = z.object({
     .describe(
       "Short name for THIS session, shown to the owner as who is holding the line (e.g. 'CTO — Claude Code', 'dispatcher — Cowork'). Defaults to the machine name.",
     ),
+  as_agent: z
+    .string()
+    .max(200)
+    .optional()
+    .describe(
+      "Speak as ONE OF THE OWNER'S AGENT LINES while holding the owner's key — its mosADD address (dispatcher@mosadd.com), identity id, or display name. Declares ONCE per session whose line this session speaks for: the gateway then signs your CHANNEL posts as that agent automatically (no per-post `agent` field needed), and that agent's cloud stand-in defers to you. The server verifies you OWN the agent; a stranger's agent is refused. Omit to claim the key's own line, exactly as before.",
+    ),
   release: z
     .boolean()
     .optional()
     .describe(
-      "Hand the line back immediately instead of claiming it: stops this session's keep-alive and clears the liveness row, so the 24/7 cloud stand-in resumes answering at once rather than after the hold expires. Call this when the session is finishing.",
+      "Hand the line back immediately instead of claiming it: stops this session's keep-alive, clears the liveness row (and any as_agent declaration this session made), so the 24/7 cloud stand-in resumes answering at once rather than after the hold expires. Call this when the session is finishing.",
     ),
 });
 
@@ -116,6 +199,8 @@ interface AttachResult {
   attached: boolean;
   identity_id: string;
   display_name: string | null;
+  /** Set when as_agent bound this session to an agent line — whose voice channel posts use. */
+  speaking_as?: { identity_id: string; address: string | null; display_name: string | null };
   /** Where the beat says it is coming from — the owner sees this. */
   host?: string;
   /** Seconds a beat stays trusted if this process stops beating. */
@@ -131,71 +216,110 @@ async function comms_session_attach(
   // note in the file header. Everything after this (including timer callbacks) uses this value.
   const env = readSupabaseEnv();
   const self = await resolveSelf(env);
-
-  // Whether attaching or releasing, any previous keep-alive for this identity is stale: a second
-  // attach replaces the first rather than doubling the beat rate.
-  const existing = attachments.get(self.id);
-  if (existing) {
-    clearInterval(existing.timer);
-    attachments.delete(self.id);
-  }
+  const sb = getSupabase(env);
 
   if (input.release) {
-    ctx.log("info", "comms_session_attach: releasing line", { identity_id: self.id });
-    // DELETE, not a backdated timestamp. "No row" is the truthful representation of "nobody is on
-    // this line"; writing a fake past `last_seen_at` would put a lie in a table other code reads.
-    const { error } = await getSupabase(env).from("agent_bridge_heartbeat").delete().eq("identity_id", self.id);
-    if (error) throw new Error(`Could not release the line: ${error.message}`);
+    // Hand back everything THIS process (or this call, via as_agent) holds for the account:
+    // the key's own line, plus the agent line it declared with as_agent, plus that binding row.
+    // DELETE, not a backdated timestamp. "No row" is the truthful representation of "nobody is
+    // on this line"; writing a fake past `last_seen_at` would put a lie in a table other code reads.
+    const toRelease = new Set<string>([self.id]);
+    const bound = processBindings.get(self.user_id);
+    if (bound) toRelease.add(bound);
+    if (input.as_agent) {
+      const agent = await resolveOwnedAgentLine(env, self.user_id, input.as_agent);
+      if (agent) toRelease.add(agent.id);
+    }
+    for (const id of toRelease) {
+      stopAttachment(id);
+      const { error } = await sb.from("agent_bridge_heartbeat").delete().eq("identity_id", id);
+      if (error) throw new Error(`Could not release the line: ${error.message}`);
+    }
+    await sb.from("mosadd_gateway_agent_binding").delete().eq("user_id", self.user_id);
+    processBindings.delete(self.user_id);
+    ctx.log("info", "comms_session_attach: released", { identity_ids: [...toRelease] });
     return {
       attached: false,
       identity_id: self.id,
       display_name: self.display_name,
-      note: "Line released. The 24/7 cloud stand-in answers this account from now on.",
+      note: "Line released (agent declaration cleared too). The 24/7 cloud stand-in answers from now on.",
     };
   }
 
   const host = input.label?.trim() || `mcp:${hostname()}`;
   const mode = "mcp-session";
 
+  // Which line does this session claim? Without as_agent: the key's own line — bit-for-bit the
+  // old behaviour. With as_agent: the OWNED agent's line + the gateway signing declaration.
+  let lineId = self.id;
+  let speakingAs: AttachResult["speaking_as"];
+  if (input.as_agent) {
+    const agent = await resolveOwnedAgentLine(env, self.user_id, input.as_agent);
+    if (!agent) {
+      throw new Error(
+        `No LIVE agent of yours matches "${input.as_agent}". You may only speak as an agent you OWN ` +
+          "(its mosADD address, identity id, or display name) — never as someone else's agent or another human.",
+      );
+    }
+    lineId = agent.id;
+    speakingAs = { identity_id: agent.id, address: agent.m0ssad_email, display_name: agent.display_name };
+
+    // The signing declaration message-send reads (migration 20260826210000). RLS re-checks
+    // ownership in its WITH CHECK; message-send re-validates AGAIN per post (defence in depth).
+    const { error: bindError } = await sb.from("mosadd_gateway_agent_binding").upsert(
+      {
+        user_id: self.user_id,
+        agent_identity_id: agent.id,
+        agent_address: agent.m0ssad_email,
+        bound_at: new Date().toISOString(),
+        bound_by_host: host,
+      },
+      { onConflict: "user_id" },
+    );
+    if (bindError) throw new Error(`Could not declare the agent line: ${bindError.message}`);
+    processBindings.set(self.user_id, agent.id);
+  }
+
+  // Whether attaching or re-attaching, any previous keep-alive for this line is stale: a second
+  // attach replaces the first rather than doubling the beat rate.
+  stopAttachment(lineId);
+
   // First beat is awaited so the caller learns immediately if RLS refuses (wrong account / no
   // identity) instead of failing silently in a timer nobody watches.
   try {
-    await beat(env, self.id, host, mode);
+    await beat(env, lineId, host, mode);
   } catch (e) {
     throw new Error(`Could not claim the line: ${e instanceof Error ? e.message : String(e)}`);
   }
+  startAttachment(env, lineId, host, mode, ctx);
 
-  const timer = setInterval(() => {
-    void beat(env, self.id, host, mode).catch((e) => {
-      // A single missed beat is survivable (3 min of cover remain) and must not kill the interval:
-      // a transient network blip would otherwise silently un-attach the session for good.
-      ctx.log("warn", "comms_session_attach: beat failed", { identity_id: self.id, error: String(e) });
-    });
-  }, BEAT_MS);
-  // Never hold the process open on account of the beat — when the session ends, it ends.
-  timer.unref?.();
-  attachments.set(self.id, { timer, env });
-
-  ctx.log("info", "comms_session_attach: line claimed", { identity_id: self.id, host });
+  ctx.log("info", "comms_session_attach: line claimed", { identity_id: lineId, host, as_agent: speakingAs?.address });
   return {
     attached: true,
-    identity_id: self.id,
-    display_name: self.display_name,
+    identity_id: lineId,
+    display_name: speakingAs ? speakingAs.display_name : self.display_name,
+    ...(speakingAs ? { speaking_as: speakingAs } : {}),
     host,
     holds_for_seconds: HOLD_SECONDS,
-    note:
-      "This session now owns the account's reply lane; the cloud stand-in will not answer while it is held. " +
-      "The hold renews itself for as long as this process runs and lapses on its own if the session dies. " +
-      "Call again with release:true to hand it back immediately.",
+    note: speakingAs
+      ? `This session now speaks for ${speakingAs.address ?? speakingAs.identity_id}: channel posts sent ` +
+        "through this gateway are signed as that agent automatically (an explicit `agent` field still wins), " +
+        "and the agent's cloud stand-in defers to you while the session runs. " +
+        "Call again with release:true to hand it back."
+      : "This session now owns the account's reply lane; the cloud stand-in will not answer while it is held. " +
+        "The hold renews itself for as long as this process runs and lapses on its own if the session dies. " +
+        "Call again with release:true to hand it back immediately.",
   };
 }
 
 export const presenceTools: MosaddTool[] = [
   {
     name: "comms_session_attach",
+    title: "Attach session to a line",
+    annotations: { destructiveHint: false, idempotentHint: true },
     requires: "network",
     description:
-      "Claim this mosADD account's reply lane for the CURRENT agent session, so the 24/7 cloud stand-in stops answering in your place and the owner talks to you instead. Call it once at the start of a session that will answer the owner's messages; the hold renews itself while the session runs and lapses on its own if the session dies, so the account is never left looking alive when nobody is there. Pass release:true when finishing to hand the line back immediately. Owner-scoped: a session can only claim the account whose key it holds.",
+      "Claim a mosADD reply lane for the CURRENT agent session, so the 24/7 cloud stand-in stops answering in its place and the owner talks to you instead. Call it once at the start of a session; the hold renews itself while the session runs and lapses on its own if the session dies. Holding the OWNER's key while working as one of their agent lines? Pass as_agent:'<address of YOUR line>' (e.g. dispatcher@mosadd.com) — the gateway then signs your channel posts as that agent automatically for the whole session and silences that agent's stand-in; ownership is verified server-side. Pass release:true when finishing to hand everything back immediately. Owner-scoped: a session can only claim the account whose key it holds, or a line of an agent that account owns.",
     inputSchema: comms_session_attach_input,
     handler: comms_session_attach as MosaddTool["handler"],
   },
@@ -205,4 +329,5 @@ export const presenceTools: MosaddTool[] = [
 export function __clearAttachmentsForTest(): void {
   for (const a of attachments.values()) clearInterval(a.timer);
   attachments.clear();
+  processBindings.clear();
 }

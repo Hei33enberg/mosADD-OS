@@ -126,6 +126,8 @@ async function mAYL_send_as_agent(
 export const mailProvenanceTools: MosaddTool[] = [
   {
     name: "mAYL_send_as_agent",
+    title: "Send email as your agent",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Send an email ATTRIBUTED TO THE AGENT (provenance-stamped). Unlike mAYL_send (sends as the user), this stamps sent_by='agent' plus your agent_id and optional task_id onto the email record and audit trail — so recipients and compliance can see the mail was agent-originated. Auth: presents a hub-claim JWT (needs MOSADD_API_KEY). The mp0st-send EF verifies the claim with HUB_JWT_SECRET; body trust is never granted for provenance.",

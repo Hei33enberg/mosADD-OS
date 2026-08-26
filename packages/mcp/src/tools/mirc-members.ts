@@ -120,6 +120,8 @@ async function invokeChannelMembers(
 export const mircMembersTools: MosaddTool[] = [
   {
     name: "mIRC_join",
+    title: "Join channel",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Join a channel as the current user. Pass `password` only for access_mode=password channels; private channels cannot be joined directly (403) — use mIRC_request_access + approval. Idempotent: an existing active member gets their membership row back (200, no 409).",
@@ -128,6 +130,8 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_request_access",
+    title: "Request channel access",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Request access to a password/private channel (your membership goes to state=requested for an admin to approve).",
@@ -136,6 +140,8 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_leave",
+    title: "Leave channel",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description: "Leave a channel as the current user. Owner cannot leave without transferring ownership first.",
     inputSchema: mIRC_leave_input,
@@ -143,6 +149,8 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_approve_request",
+    title: "Approve access request",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Approve a pending access request (state=requested → active). Admins / moderators / owner only. Because access requests only exist on non-open (password/private) channels, you must pass wrapped_group_key — the channel group key wrapped to the approved member's identity key.",
@@ -151,6 +159,8 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_reject_request",
+    title: "Reject access request",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description: "Reject a pending access request. Admins / moderators / owner only.",
     inputSchema: mIRC_reject_request_input,
@@ -158,6 +168,8 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_kick",
+    title: "Kick a member",
+    annotations: { destructiveHint: true },
     requires: "network",
     description:
       "Remove a member from the channel. They can rejoin if not banned. Requires moderator+.",
@@ -166,6 +178,8 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_ban",
+    title: "Ban a member",
+    annotations: { destructiveHint: true },
     requires: "network",
     description:
       "Ban a member from the channel. The ban is permanent until you call mIRC_unban. Requires admin+.",
@@ -174,6 +188,8 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_unban",
+    title: "Lift a ban",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description: "Lift a ban. Requires admin+.",
     inputSchema: mIRC_unban_input,
@@ -181,6 +197,8 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_set_role",
+    title: "Set member role",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Promote / demote a member. Roles: owner(100) > superadmin(90) > admin(80) > moderator(70) > member(10). No 'guest'. An actor may assign any role below their own tier — so a superadmin (not only the owner) can promote to admin.",
@@ -189,6 +207,8 @@ export const mircMembersTools: MosaddTool[] = [
   },
   {
     name: "mIRC_set_ptt",
+    title: "Set push-to-talk permission",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Grant or revoke PTT floor permission for a member in voice-capable channels (capabilities.ptt=true). Requires moderator+.",

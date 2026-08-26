@@ -165,6 +165,8 @@ async function mIRC_mint_channel_token(
 export const mircEdgeTools: MosaddTool[] = [
   {
     name: "mIRC_mint_channel_token",
+    title: "Mint channel token",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Exchange the hub key (MOSADD_API_KEY) for a short-lived (5min), channel-scoped JWT. Returns { token, expires_in, channel_id, scope }. The token is safe to hand to a browser to open a WS via `Sec-WebSocket-Protocol: mosadd.v1, bearer.<token>`. The hub key NEVER leaves the server. Use this from any server-side route (Next.js /api/chat-token, Express, etc.) before showing chat in a browser. Required by LINEAR-2675/E6 to avoid leaking the hub key into CDN access logs.",
@@ -173,6 +175,8 @@ export const mircEdgeTools: MosaddTool[] = [
   },
   {
     name: "mIRC_send_edge",
+    title: "Send message (low-latency edge)",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Send a text message into a persistent channel via the mosadd-edge Cloudflare Worker (Durable Object backend). Sub-100ms global fan-out to all WebSocket subscribers of the channel + async flush to Supabase as system-of-record (idempotent). Use this when you want native realtime push without polling. Parallel to mIRC_post_message (Supabase path); pick one per channel. Auth: MOSADD_API_KEY env (hub key).",
@@ -181,6 +185,8 @@ export const mircEdgeTools: MosaddTool[] = [
   },
   {
     name: "mIRC_history_edge",
+    title: "Read channel history (edge)",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Read the last N (max 100) messages held in the channel's Durable Object ring buffer at the edge. Hot path is the DO, not Supabase — same data lands in messages_meta via async flush, so cold reads / pagination beyond 100 should use mIRC_list_messages.",

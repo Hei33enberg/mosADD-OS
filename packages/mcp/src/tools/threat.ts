@@ -102,6 +102,8 @@ async function threat_classify(
 export const threatTools: MosaddTool[] = [
   {
     name: "threat_catalog",
+    title: "Threat taxonomy catalog",
+    annotations: { readOnlyHint: true },
     requires: "any",
     description:
       "List the canonical mosadd threat-event taxonomy (the full radar catalog: id, category, default severity, auto-actions, per-platform availability). Filter by category or platform. Pure/offline — returns { count, total, events }. Use to discover what the defensive engine recognises.",
@@ -110,6 +112,8 @@ export const threatTools: MosaddTool[] = [
   },
   {
     name: "threat_classify",
+    title: "Classify threat event",
+    annotations: { readOnlyHint: true },
     requires: "any",
     description:
       "Classify a single telemetry event against the mosadd threat taxonomy + DECK engine. For a known event type (e.g. PROCESS_INJECTION, STINGRAY_DETECT, IMSI_CATCHER_SCAN, MEMORY_INJECTION) it returns that event's real severity (info|warning|elevated|critical|killswitch) with action=\"monitor\" — Pegasus-class events surface as critical immediately, but the engine NEVER auto-acts (it tells you, it never disconnects/locks). Unknown strings fall back to the pure DECK decision (log_only|revoke_sessions|lock_account|suspend_did). Returns { action, severity, reason, known_event, category, label }. Deterministic, offline, no backend.",

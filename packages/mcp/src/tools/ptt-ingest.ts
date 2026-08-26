@@ -88,6 +88,8 @@ async function mTALK_ingest_ptt(
 export const pttIngestTools: MosaddTool[] = [
   {
     name: "mTALK_ingest_ptt",
+    title: "Transcribe PTT audio into memory",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Submit a finished PTT 'over' (push-to-talk audio segment) for transcription into the caller's RAG index — so 'what did X say on PTT?' is searchable later. The PERSISTENCE of the voice message itself (the message_meta row + fan-out) is handled by mDM_send_voice / mIRC_send_voice; this tool is the transcription bridge only. Honors per-user RAG opt-in: opted-out callers get status='skipped_optout' (no transcript stored). Auth: Supabase session JWT.",

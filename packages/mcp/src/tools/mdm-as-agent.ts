@@ -98,6 +98,8 @@ async function mDM_list_my_agents(
 export const mdmAsAgentTools: MosaddTool[] = [
   {
     name: "mDM_send_as_agent",
+    title: "Send DM as your agent",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Send a direct message AS ONE OF YOUR OWN AGENTS instead of as yourself. Use this when you are an " +
@@ -111,6 +113,8 @@ export const mdmAsAgentTools: MosaddTool[] = [
   },
   {
     name: "mDM_list_my_agents",
+    title: "List your agents",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "List the agents you are allowed to speak as with mDM_send_as_agent — every live agent owned by " +

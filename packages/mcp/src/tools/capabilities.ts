@@ -58,6 +58,8 @@ export function buildCapabilityManifest(tools: MosaddTool[]): CapabilityManifest
 export function makeCapabilitiesTool(channelTools: MosaddTool[]): MosaddTool {
   const tool: MosaddTool = {
     name: "comms_capabilities",
+    title: "List tool capabilities",
+    annotations: { readOnlyHint: true },
     requires: "any",
     description:
       "Discover which mosadd tools are available and what transport each requires (any | radio | network). Carrier-aware hosts (e.g. off-grid radio devices) call this once to gate the tool list to what the current carrier supports. Returns a manifest with per-tool requirements grouped by transport.",

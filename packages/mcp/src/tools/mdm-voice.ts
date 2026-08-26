@@ -179,6 +179,8 @@ async function mDM_voice_note(
 export const mdmVoiceTools: MosaddTool[] = [
   {
     name: "mDM_call_start",
+    title: "Start a voice call",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Start a 1:1 real-time voice (or video) call with a contact — the ordinary full-duplex phone-style call (NOT walkie-talkie mTALK, NOT PSTN mCALL). Creates a room, returns join credentials (token + media url), and drops a `call_invite` control message in the DM thread so the contact can answer. Set video:true for video.",
@@ -187,6 +189,8 @@ export const mdmVoiceTools: MosaddTool[] = [
   },
   {
     name: "mDM_call_answer",
+    title: "Answer a voice call",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Answer an incoming 1:1 call by its room_id (from the call_invite seen via mDM_list). Returns join credentials (token + media url) for the same room.",
@@ -195,6 +199,8 @@ export const mdmVoiceTools: MosaddTool[] = [
   },
   {
     name: "mDM_call_end",
+    title: "End a voice call",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "End a 1:1 call. The audio leg ends when clients disconnect; pass `to` to also drop a `call_end` (hangup) control message in the contact's DM thread.",
@@ -203,6 +209,8 @@ export const mdmVoiceTools: MosaddTool[] = [
   },
   {
     name: "mDM_voice_note",
+    title: "Leave a voice note",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Send an asynchronous voice note to a contact: references an already-uploaded audio clip (audio_url) and posts it as a `voice_note` message in the DM thread. Use for fire-and-forget voice instead of a live call.",

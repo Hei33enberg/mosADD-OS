@@ -80,6 +80,8 @@ async function mTALK_state(
 export const mtalkTools: MosaddTool[] = [
   {
     name: "mTALK_open",
+    title: "Open push-to-talk room",
+    annotations: { readOnlyHint: false },
     requires: "any",
     description:
       "Open (or get) a push-to-talk room. Returns a stable room_id. Pass an optional label to share a named room (e.g. 'ops'); omit it for a personal room. Works over network (LiveKit) or off-grid radio depending on the host.",
@@ -88,6 +90,8 @@ export const mtalkTools: MosaddTool[] = [
   },
   {
     name: "mTALK_join",
+    title: "Get PTT join credentials",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Get credentials (token + media URL) to join a PTT room's audio transport. Hand these to a human or bot client to connect. The agent itself drives the floor with mTALK_press / mTALK_release.",
@@ -96,6 +100,8 @@ export const mtalkTools: MosaddTool[] = [
   },
   {
     name: "mTALK_press",
+    title: "Press to talk (request floor)",
+    annotations: { readOnlyHint: false },
     requires: "any",
     description:
       "Press push-to-talk: request the floor in a room. Half-duplex — if no one is transmitting you are GRANTED the floor (granted=true) and may speak; otherwise you are queued FIFO and `position` tells you where you are. Call mTALK_release when done. A holder who never releases is auto-bumped after the anti-hog timeout.",
@@ -104,6 +110,8 @@ export const mtalkTools: MosaddTool[] = [
   },
   {
     name: "mTALK_release",
+    title: "Release the floor",
+    annotations: { readOnlyHint: false },
     requires: "any",
     description:
       "Release push-to-talk: give up the floor (or cancel your queued request). If you held the floor, the next participant in the queue is promoted automatically. Returns the new holder and queue.",
@@ -112,6 +120,8 @@ export const mtalkTools: MosaddTool[] = [
   },
   {
     name: "mTALK_state",
+    title: "Read PTT floor state",
+    annotations: { readOnlyHint: true },
     requires: "any",
     description:
       "Read a PTT room's floor state without changing it: who is currently transmitting (holder), since when, and the waiting queue.",

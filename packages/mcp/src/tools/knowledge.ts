@@ -286,6 +286,8 @@ async function mRAG_delete(
 export const knowledgeTools: MosaddTool[] = [
   {
     name: "mRAG_ingest",
+    title: "Ingest into memory",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Add text to the USER'S OWN private knowledge base so mRAG_search can recall it later. Pass content_text (a note, document, transcript, pasted page); it is semantically chunked, embedded (1536-d) and stored in the per-user vector index mRAG_search reads. Returns how many chunks were indexed. ⚠ IF YOU ARE INDEXING A CORPUS you want to TRAVERSE (who is connected to whom, when), also pass sender / recipient / occurred_at: the knowledge graph builds its nodes from those fields alone, so documents ingested without them are searchable but contribute NOTHING to mRAG_graph_overview / _neighbors / _timeline — the graph comes back empty however many documents you loaded. Reuse the same party `ref` across documents to merge them into one node. NOTE: indexed content and metadata are stored server-side in plaintext — NOT covered by the zero-knowledge / E2EE guarantee. Only ingest what the user opted to make searchable.",
@@ -294,6 +296,8 @@ export const knowledgeTools: MosaddTool[] = [
   },
   {
     name: "mRAG_search",
+    title: "Search memory",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Search and answer questions over the USER'S OWN mosadd data (messages, emails, calls, notes) with a private per-user RAG index — hybrid vector + keyword retrieval, reranked, grounded in cited sources (no fabrication). Use it to recall 'what did X say about Y', summarize a thread, or pull facts the user has received. Returns an answer plus the source snippets it used. This is agent memory (mRAG = RAG over your own data) over the user's communications, available outside the mosadd app. NOTE: RAG requires content to be indexed server-side in plaintext, so anything searchable here is NOT covered by the zero-knowledge / E2EE guarantee — only data the user has explicitly opted into indexing is searchable. See docs/security/e2ee-posture.md.",
@@ -302,6 +306,8 @@ export const knowledgeTools: MosaddTool[] = [
   },
   {
     name: "mRAG_list_sources",
+    title: "List memory sources",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "List what is currently indexed in the user's private knowledge base, grouped by source (source_type, source_id, thread_id, title) with per-source chunk counts and first/last indexed timestamps. Use it to see what mRAG_search can recall, and to find a source_id to remove with mRAG_delete. Owner-scoped.",
@@ -310,6 +316,8 @@ export const knowledgeTools: MosaddTool[] = [
   },
   {
     name: "mRAG_delete",
+    title: "Delete memory source",
+    annotations: { destructiveHint: true },
     requires: "network",
     description:
       "Remove indexed content from the user's knowledge base by source_id or thread_id (from mRAG_list_sources). Deletes every embedded chunk for that source so mRAG_search can no longer recall it. Requires source_id or thread_id (will not purge the whole index). Returns the number of chunks deleted. Owner-scoped.",

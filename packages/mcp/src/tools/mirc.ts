@@ -196,6 +196,8 @@ async function mIRC_report(
 export const mircTools: MosaddTool[] = [
   {
     name: "mIRC_create",
+    title: "Create channel",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Create a new persistent channel (Discord/Slack-style). Set access_mode to open (anyone joins), password (shared-password gated), or private (invite-only). capabilities controls modes (txt/voice/files/ptt/live; voice/ptt/live are server-relayed via LiveKit, NOT E2EE). Set discoverable:true (open channels only) to list it in the public directory. NOTE: password/private channels are provisioned for group-key TEXT encryption — supply wrapped_group_key (the group key wrapped to your identity key); open channels do not need it. The mosadd.com app encrypts/decrypts channel text with that key on supported clients; the toolkit's own mIRC_post_message posts server-readable text today (group-key parity is the next milestone). Channel voice is never E2EE.",
@@ -204,6 +206,8 @@ export const mircTools: MosaddTool[] = [
   },
   {
     name: "mIRC_list",
+    title: "List your channels",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "List channels available to the current user.",
@@ -212,6 +216,8 @@ export const mircTools: MosaddTool[] = [
   },
   {
     name: "mIRC_get",
+    title: "Get channel details",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description: "Get full details of a single channel by id.",
     inputSchema: mIRC_get_input,
@@ -219,6 +225,8 @@ export const mircTools: MosaddTool[] = [
   },
   {
     name: "mIRC_update",
+    title: "Update channel settings",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description: "Update channel metadata (name, topic, capabilities). Owner only. Access mode is fixed at creation — recreate the channel to change it.",
     inputSchema: mIRC_update_input,
@@ -226,6 +234,8 @@ export const mircTools: MosaddTool[] = [
   },
   {
     name: "mIRC_delete",
+    title: "Delete channel",
+    annotations: { destructiveHint: true },
     requires: "network",
     description: "Delete a channel and cascade-remove its members. Owner only.",
     inputSchema: mIRC_delete_input,
@@ -233,6 +243,8 @@ export const mircTools: MosaddTool[] = [
   },
   {
     name: "mIRC_discover",
+    title: "Discover public channels",
+    annotations: { readOnlyHint: true },
     requires: "network",
     description:
       "Browse the PUBLIC channel DIRECTORY — open channels whose owners opted in (discoverable=true). Returns {id, channel_key, name, description, capabilities, member_count, is_member}. Filter by name with q; paginated. Join a result with mIRC_join (open = one-click). Private/password/partner channels never appear.",
@@ -241,6 +253,8 @@ export const mircTools: MosaddTool[] = [
   },
   {
     name: "mIRC_report",
+    title: "Report abuse",
+    annotations: { readOnlyHint: false },
     requires: "network",
     description:
       "Report a channel for abuse (spam/harassment/illegal/etc). Metadata + reason only — never message content. The reported party is the channel owner (server-derived). Use for public-directory moderation.",
