@@ -4,6 +4,7 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { allTools } from "./tools/index.js";
+import { autoBeatFromActivity } from "./tools/presence.js";
 import { PKG_VERSION } from "./version.js";
 import { SupabaseDmProvider } from "./providers/supabase-dm.js";
 import { SupabaseVoiceProvider } from "./providers/supabase-voice.js";
@@ -103,6 +104,11 @@ export function createMosaddServer(options: MosaddServerOptions = {}) {
         const parsed = tool.inputSchema.parse(input);
         try {
           const result = await tool.handler(parsed as never, ctx);
+          // AUTO-PAROWANIE (08-26): a LIVE session that is actually WORKING holds its line —
+          // the founder spent a week talking to cloud stand-ins because models never
+          // remembered the attach handshake. Fire-and-forget, throttled inside, never blocks
+          // the tool's own response; see autoBeatFromActivity for which line gets the beat.
+          void autoBeatFromActivity(ctx);
           // A tool may return rich MCP content (e.g. an image frame from
           // comms_action_frame_get) via `mcpContent`; pass it through verbatim.
           const rich = result as { mcpContent?: unknown[] } | null;

@@ -104,7 +104,7 @@ async function beat(env: SupabaseEnv, identityId: string, host: string, mode: st
  */
 async function resolveSelf(
   env: SupabaseEnv,
-): Promise<{ id: string; display_name: string | null; user_id: string }> {
+): Promise<{ id: string; display_name: string | null; user_id: string; kind: string | null }> {
   const sb = getSupabase(env);
   const { data: u, error: ue } = await sb.auth.getUser();
   if (ue || !u?.user) {
@@ -114,13 +114,18 @@ async function resolveSelf(
   }
   const { data, error } = await sb
     .from("identities")
-    .select("id, display_name")
+    .select("id, display_name, kind")
     .eq("user_id", u.user.id)
     .maybeSingle();
   if (error || !data) {
     throw new Error("This account has no mosadd identity row yet — sign in to mosadd.com once to create it.");
   }
-  return { id: data.id as string, display_name: (data.display_name as string | null) ?? null, user_id: u.user.id };
+  return {
+    id: data.id as string,
+    display_name: (data.display_name as string | null) ?? null,
+    user_id: u.user.id,
+    kind: (data.kind as string | null) ?? null,
+  };
 }
 
 /**
@@ -325,9 +330,70 @@ export const presenceTools: MosaddTool[] = [
   },
 ];
 
+/**
+ * AUTO-PAROWANIE (2026-08-26, rozkaz Króla po tygodniu „żywa sesja Dyspozytora nie jest
+ * podpięta"): the founder kept talking to cloud stand-ins because LIVE sessions never
+ * remembered to call comms_session_attach. A model cannot be relied on to remember a
+ * handshake — so the handshake stops being the model's job: the server calls THIS after
+ * every successful tool call. Any session that is actually DOING something on an agent
+ * line thereby holds that line, and the stand-in defers, with zero cooperation from the
+ * model.
+ *
+ * Which line gets the beat:
+ *   · key's identity kind='agent'  → its own line (the dispatcher's own key working = paired);
+ *   · kind='human' WITH an as_agent declaration (processBindings, i.e. made by THIS
+ *     process) → the declared agent's line;
+ *   · kind='human' without a declaration → NOTHING. Guessing which of the owner's nine
+ *     lines a session speaks for would be a new identity bug, and auto-claiming the
+ *     OWNER's line would silence his own stand-in every time any tool runs.
+ *
+ * Throttled to one DB write per identity per BEAT_MS; failures are swallowed — presence
+ * is best-effort and must never break the tool call it rides on. Fire-and-forget by the
+ * caller (void), so it adds zero latency to the tool's own response.
+ */
+const lastAutoBeat = new Map<string, number>();
+const lastBindingCheck = new Map<string, number>();
+export async function autoBeatFromActivity(ctx: MosaddToolContext): Promise<void> {
+  try {
+    const env = readSupabaseEnv();
+    const self = await resolveSelf(env);
+    let lineId: string | null = null;
+    if (self.kind === "agent") {
+      lineId = self.id;
+    } else if (processBindings.has(self.user_id)) {
+      lineId = processBindings.get(self.user_id)!;
+    } else {
+      // Hosted gateway is serverless: a declaration made in ANOTHER invocation lives only in
+      // the DB. One throttled read per user per BEAT_MS keeps the cost of that honest.
+      const now = Date.now();
+      if (now - (lastBindingCheck.get(self.user_id) ?? 0) >= BEAT_MS) {
+        lastBindingCheck.set(self.user_id, now);
+        const { data } = await getSupabase(env)
+          .from("mosadd_gateway_agent_binding")
+          .select("agent_identity_id, bound_at")
+          .eq("user_id", self.user_id)
+          .maybeSingle();
+        if (data && Date.now() - new Date(data.bound_at as string).getTime() <= 24 * 60 * 60 * 1000) {
+          lineId = data.agent_identity_id as string;
+          processBindings.set(self.user_id, lineId);
+        }
+      }
+    }
+    if (!lineId) return;
+    const now = Date.now();
+    const last = lastAutoBeat.get(lineId) ?? 0;
+    if (now - last < BEAT_MS) return;
+    lastAutoBeat.set(lineId, now);
+    await beat(env, lineId, `mcp:auto (${hostname()})`, "mcp-activity");
+  } catch (e) {
+    ctx.log("debug", "autoBeatFromActivity skipped", { error: String(e) });
+  }
+}
+
 /** Test-only: stop every keep-alive so a suite does not leak timers between cases. */
 export function __clearAttachmentsForTest(): void {
   for (const a of attachments.values()) clearInterval(a.timer);
   attachments.clear();
   processBindings.clear();
+  lastAutoBeat.clear();
 }
