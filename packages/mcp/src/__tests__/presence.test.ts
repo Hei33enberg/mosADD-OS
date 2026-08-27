@@ -17,6 +17,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 const IDENTITY_ID = "b228b6ae-dda6-4823-9882-40ea91ed1530";
 const USER_ID = "b1b6c60a-f5c5-47bd-8772-9e4e387994ad";
+const TEST_SESSION = "test-host:11111111-2222-3333-4444-555555555555";
 const AGENT_ID = "0489d4c6-8727-442f-bf83-68747a469492";
 
 /** Calls recorded by the fake Supabase client, so assertions read like the wire traffic. */
@@ -45,10 +46,16 @@ function makeBuilder(table: string) {
       pendingDelete = true;
       return builder;
     },
+    // ⛔ KASOWANIE MA TERAZ DWA WARUNKI: (konto, sesja). Atrapa musi dać się złożyć w łańcuch
+    // `.delete().eq(user).eq(session)`, więc zwracany obiekt jest JEDNOCZEŚNIE budowniczym i
+    // obietnicą — inaczej test przechodziłby tylko dlatego, że atrapa nie umie tego, co produkcja.
     eq: (_col: string, val: string) => {
       if (pendingDelete) {
         calls.deletes.push(val);
-        return Promise.resolve({ error: null });
+        return Object.assign(
+          { eq: (_c2: string, v2: string) => { calls.deletes.push(v2); return Promise.resolve({ error: null }); } },
+          { then: (res: (v: { error: null }) => unknown) => Promise.resolve({ error: null }).then(res) },
+        );
       }
       return builder;
     },
@@ -65,6 +72,9 @@ function makeBuilder(table: string) {
 
 vi.mock("../providers/supabase.js", () => ({
   readSupabaseEnv: () => ({ url: "https://example.supabase.co", anonKey: "anon", userJwt: "jwt" }),
+  // Stała tożsamość sesji — deklaracja linii jest odtąd kluczowana po (konto, sesja), żeby
+  // generałowie wpięci tym samym kluczem nie odbierali sobie linii nawzajem.
+  sessionId: () => TEST_SESSION,
   getSupabase: () => ({
     auth: { getUser: () => Promise.resolve({ data: { user: { id: USER_ID } }, error: null }) },
     from: (table: string) => makeBuilder(table),
@@ -145,7 +155,9 @@ describe("comms_session_attach", () => {
     // Two deletes since 2026-08-26: the heartbeat row (by identity) AND the as_agent
     // declaration in mosadd_gateway_agent_binding (by user) — a finishing session hands
     // back EVERYTHING it could hold, so no stale declaration keeps signing later posts.
-    expect(calls.deletes).toEqual([IDENTITY_ID, USER_ID]);
+    // Zwolnienie kasuje: puls linii + deklarację TEJ sesji (konto ORAZ sesja). Trzeci element to
+    // dowód, że nie kasujemy po samym koncie — bo to zabierało linię wszystkim innym generałom.
+    expect(calls.deletes).toEqual([IDENTITY_ID, USER_ID, TEST_SESSION]);
     calls.upserts = [];
     await vi.advanceTimersByTimeAsync(180_000);
     expect(calls.upserts).toHaveLength(0);

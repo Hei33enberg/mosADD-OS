@@ -10,8 +10,27 @@
  */
 
 import { AsyncLocalStorage } from "node:async_hooks";
+import { randomUUID } from "node:crypto";
+import { hostname } from "node:os";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { loadSession, isSessionExpired } from "../config.js";
+
+/**
+ * Tożsamość TEGO procesu — stała przez całe życie sesji, nowa przy każdym starcie.
+ *
+ * ⛔ NIE MOŻE być pochodną konta ani hosta. Dwie sesje generałów potrafią stać na tej samej
+ * maszynie i pod tym samym kontem (box floty), więc identyfikator z hosta zlepiłby je z powrotem
+ * w jedną — czyli odtworzył dokładnie ten błąd, który to naprawia. Nazwa hosta zostaje tylko jako
+ * czytelny przedrostek do diagnostyki; o rozróżnieniu decyduje losowy ogon.
+ */
+let cachedSessionId: string | null = null;
+export function sessionId(): string {
+  if (cachedSessionId) return cachedSessionId;
+  let host = "mcp";
+  try { host = (hostname() || "mcp").slice(0, 24); } catch { /* bez nazwy hosta też działa */ }
+  cachedSessionId = `${host}:${randomUUID()}`;
+  return cachedSessionId;
+}
 
 export interface SupabaseEnv {
   url: string;
@@ -95,6 +114,13 @@ export function getSupabase(env: SupabaseEnv = readSupabaseEnv()): SupabaseClien
       headers: {
         ...(env.userJwt ? { Authorization: `Bearer ${env.userJwt}` } : {}),
         "x-mosadd-origin": "hub-gateway",
+        // ⛔ KTÓRA TO SESJA (2026-08-27, „każdy generał co chwilę gubi mózg"). Wszyscy generałowie
+        // wpinają się kluczem hub TEGO SAMEGO właściciela, więc dla serwera ich wywołania były
+        // nieodróżnialne — a deklaracja linii (`comms_session_attach as_agent`) trzymała JEDEN
+        // wiersz na konto. Skutek: kto wpiął się ostatni, odbierał linię wszystkim pozostałym, a
+        // ich posty na kanałach zaczynały wracać z 403. Ten nagłówek daje każdemu PROCESOWI własną
+        // tożsamość sesji, dzięki czemu dziewięć linii na jednym koncie nie depcze sobie po piętach.
+        "x-mosadd-session": sessionId(),
       },
     },
   });

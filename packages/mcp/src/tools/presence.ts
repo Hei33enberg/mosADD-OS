@@ -54,7 +54,7 @@
 import { hostname } from "node:os";
 import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
-import { getSupabase, readSupabaseEnv, type SupabaseEnv } from "../providers/supabase.js";
+import { getSupabase, readSupabaseEnv, sessionId, type SupabaseEnv } from "../providers/supabase.js";
 
 /**
  * How often we re-stamp the row. The consumer (`agent-dm-responder`, BRIDGE_FRESH_MS) trusts a beat
@@ -240,7 +240,10 @@ async function comms_session_attach(
       const { error } = await sb.from("agent_bridge_heartbeat").delete().eq("identity_id", id);
       if (error) throw new Error(`Could not release the line: ${error.message}`);
     }
-    await sb.from("mosadd_gateway_agent_binding").delete().eq("user_id", self.user_id);
+    // Zwalniamy WYŁĄCZNIE deklarację TEJ sesji — kasowanie po samym koncie zabierało linię
+    // wszystkim pozostałym generałom wpiętym tym samym kluczem.
+    await sb.from("mosadd_gateway_agent_binding").delete()
+      .eq("user_id", self.user_id).eq("session_id", sessionId());
     processBindings.delete(self.user_id);
     ctx.log("info", "comms_session_attach: released", { identity_ids: [...toRelease] });
     return {
@@ -274,12 +277,17 @@ async function comms_session_attach(
     const { error: bindError } = await sb.from("mosadd_gateway_agent_binding").upsert(
       {
         user_id: self.user_id,
+        // ⛔ DEKLARACJA NALEŻY DO SESJI, NIE DO KONTA (2026-08-27). Wszyscy generałowie wpinają się
+        // kluczem tego samego właściciela, więc klucz na samym `user_id` znaczył „kto ostatni, ten
+        // zabiera linię wszystkim" — i realnie zabierał: Dyspozytor tracił prawo głosu na kanałach
+        // w chwili, gdy wpinał się kolejny generał, a jego posty wracały z 403.
+        session_id: sessionId(),
         agent_identity_id: agent.id,
         agent_address: agent.m0ssad_email,
         bound_at: new Date().toISOString(),
         bound_by_host: host,
       },
-      { onConflict: "user_id" },
+      { onConflict: "user_id,session_id" },
     );
     if (bindError) throw new Error(`Could not declare the agent line: ${bindError.message}`);
     processBindings.set(self.user_id, agent.id);
@@ -368,10 +376,15 @@ export async function autoBeatFromActivity(ctx: MosaddToolContext): Promise<void
       const now = Date.now();
       if (now - (lastBindingCheck.get(self.user_id) ?? 0) >= BEAT_MS) {
         lastBindingCheck.set(self.user_id, now);
+        // ⛔ ZAWĘŻONE DO TEJ SESJI. Po 2026-08-27 na jedno konto przypada tyle wierszy, ilu
+        // generałów jest wpiętych — zapytanie o sam `user_id` z `maybeSingle()` nie tylko
+        // zwróciłoby BŁĄD przy dwóch sesjach, ale przy jednej trafiłoby w CUDZĄ deklarację i
+        // biło pulsem w nie swoją linię.
         const { data } = await getSupabase(env)
           .from("mosadd_gateway_agent_binding")
           .select("agent_identity_id, bound_at")
           .eq("user_id", self.user_id)
+          .eq("session_id", sessionId())
           .maybeSingle();
         if (data && Date.now() - new Date(data.bound_at as string).getTime() <= 24 * 60 * 60 * 1000) {
           lineId = data.agent_identity_id as string;
