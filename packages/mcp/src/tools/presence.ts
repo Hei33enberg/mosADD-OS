@@ -277,17 +277,19 @@ async function comms_session_attach(
     const { error: bindError } = await sb.from("mosadd_gateway_agent_binding").upsert(
       {
         user_id: self.user_id,
-        // ⛔ DEKLARACJA NALEŻY DO SESJI, NIE DO KONTA (2026-08-27). Wszyscy generałowie wpinają się
-        // kluczem tego samego właściciela, więc klucz na samym `user_id` znaczył „kto ostatni, ten
-        // zabiera linię wszystkim" — i realnie zabierał: Dyspozytor tracił prawo głosu na kanałach
-        // w chwili, gdy wpinał się kolejny generał, a jego posty wracały z 403.
+        // ⛔ CZYJA TO DEKLARACJA (2026-08-27). Wiersz jest nadal JEDEN na konto — pełna izolacja
+        // wymaga, by żaden żywy klient nie zapisywał już przez ON CONFLICT (user_id), a takie
+        // klienty jeszcze chodzą (próba zdjęcia tej unikalności zablokowała im wpinanie
+        // całkowicie, więc została natychmiast cofnięta). Zapisany `session_id` pozwala jednak
+        // bramie ROZPOZNAĆ, że deklarację przejęła inna sesja, i powiedzieć to wprost zamiast po
+        // cichu podpisywać posty cudzą linią.
         session_id: sessionId(),
         agent_identity_id: agent.id,
         agent_address: agent.m0ssad_email,
         bound_at: new Date().toISOString(),
         bound_by_host: host,
       },
-      { onConflict: "user_id,session_id" },
+      { onConflict: "user_id" },
     );
     if (bindError) throw new Error(`Could not declare the agent line: ${bindError.message}`);
     processBindings.set(self.user_id, agent.id);

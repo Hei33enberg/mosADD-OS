@@ -25,6 +25,14 @@ import { loadSession, isSessionExpired } from "../config.js";
  */
 let cachedSessionId: string | null = null;
 export function sessionId(): string {
+  // ⛔ BRAMA HOSTOWANA ≠ PROCES (audyt 2026-08-27). Na mcp.mosadd.com jeden proces lambdy obsługuje
+  // WIELU najemców, a kolejne wywołania tej samej rozmowy potrafią trafić w RÓŻNE procesy — więc
+  // tożsamość per-proces byłaby tam jednocześnie wspólna (wyciek między najemcami) i niestała
+  // (fałszywe 409 przy każdym przełączeniu instancji). W kontekście bramy prawda żyje w ALS:
+  // brama wyznacza stabilny `sessionKey` per klucz API; brak klucza = puste "" (semantyka legacy,
+  // zero roszczeń per-sesja). Losowy identyfikator per-proces zostaje TYLKO dla stdio.
+  const perRequest = requestEnv.getStore();
+  if (perRequest) return perRequest.sessionKey ?? "";
   if (cachedSessionId) return cachedSessionId;
   let host = "mcp";
   try { host = (hostname() || "mcp").slice(0, 24); } catch { /* bez nazwy hosta też działa */ }
@@ -36,6 +44,8 @@ export interface SupabaseEnv {
   url: string;
   anonKey: string;
   userJwt?: string;
+  /** Stabilna tożsamość sesji dla bramy hostowanej (per klucz API) — patrz sessionId(). */
+  sessionKey?: string;
 }
 
 /**
@@ -114,13 +124,15 @@ export function getSupabase(env: SupabaseEnv = readSupabaseEnv()): SupabaseClien
       headers: {
         ...(env.userJwt ? { Authorization: `Bearer ${env.userJwt}` } : {}),
         "x-mosadd-origin": "hub-gateway",
+        // Nagłówek tylko, gdy sesja MA tożsamość — puste "" (brama bez sessionKey) nie wysyła nic,
+        // więc serwerowy strażnik 409 nie widzi fałszywych roszczeń.
+        ...(sessionId() ? { "x-mosadd-session": sessionId() } : {}),
         // ⛔ KTÓRA TO SESJA (2026-08-27, „każdy generał co chwilę gubi mózg"). Wszyscy generałowie
         // wpinają się kluczem hub TEGO SAMEGO właściciela, więc dla serwera ich wywołania były
         // nieodróżnialne — a deklaracja linii (`comms_session_attach as_agent`) trzymała JEDEN
         // wiersz na konto. Skutek: kto wpiął się ostatni, odbierał linię wszystkim pozostałym, a
-        // ich posty na kanałach zaczynały wracać z 403. Ten nagłówek daje każdemu PROCESOWI własną
-        // tożsamość sesji, dzięki czemu dziewięć linii na jednym koncie nie depcze sobie po piętach.
-        "x-mosadd-session": sessionId(),
+        // ich posty na kanałach zaczynały wracać z 403. Tożsamość sesji (stdio: per proces,
+        // brama: per klucz API) pozwala dziewięciu liniom na jednym koncie nie deptać sobie po piętach.
       },
     },
   });

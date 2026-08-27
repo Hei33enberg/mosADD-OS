@@ -162,10 +162,13 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
       clientInfo: { name: "vitest", version: "1.0" },
     });
 
-    // mDM_send needs MOSADD_SUPABASE_URL etc. — in test env we don't have them,
-    // so the handler will throw MissingSupabaseEnvError. The MCP layer must wrap
-    // that in a normal `isError: true` content block, not a JSON-RPC error
-    // (that would crash the agent loop).
+    // mDM_send to a nonexistent peer MUST fail — but as a normal `isError: true`
+    // content block, not a JSON-RPC error (that would crash the agent loop).
+    // The exact message depends on the machine: without credentials it's
+    // MissingSupabaseEnvError, with a logged-in `mosadd login` session the call
+    // reaches the real server and fails on the peer's missing prekey bundle.
+    // Both are the correct envelope; asserting one exact message made the test
+    // red on any machine with a live session (audyt 2026-08-27).
     const resp = await client.send("tools/call", {
       name: "mDM_send",
       arguments: { to: "11111111-1111-1111-1111-111111111111", text: "hi" },
@@ -174,6 +177,6 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
     expect(resp.error).toBeUndefined(); // JSON-RPC level OK
     const result = resp.result as { isError?: boolean; content?: Array<{ text?: string }> };
     expect(result.isError).toBe(true);
-    expect(result.content?.[0]?.text).toContain("Missing");
+    expect(result.content?.[0]?.text ?? "").toMatch(/Missing|error/i);
   });
 });

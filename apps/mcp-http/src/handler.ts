@@ -9,6 +9,7 @@
 //   4. run the request inside that session's AsyncLocalStorage context, so every
 //      tool call resolves the CALLER's credentials (never a shared/global env) —
 //      this is what makes one process safe to serve many tenants concurrently.
+import { createHash } from "node:crypto";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { createMosaddServer, runWithSupabaseEnv, type SupabaseEnv } from "@mosadd/mcp";
@@ -177,6 +178,11 @@ export async function handleMcp(
   let env: SupabaseEnv;
   try {
     env = await exchangeKey(apiKey, clientNameFrom(parsedBody));
+    // Tożsamość sesji dla bezstanowej bramy: stabilna per KLUCZ API (hash, nigdy goły klucz),
+    // identyczna między procesami lambd — więc deklaracja linii (comms_session_attach) przeżywa
+    // przełączenia instancji, a strażnik 409 w message-send odróżnia dwie różne bramy/klucze
+    // zamiast strzelać fałszywymi odmowami przy każdym routingu. Patrz sessionId() w @mosadd/mcp.
+    env.sessionKey = `gw:${createHash("sha256").update(apiKey).digest("hex").slice(0, 16)}`;
   } catch (e) {
     const msg = (e as Error).message === "invalid_key" ? "Invalid or revoked API key" : "Key exchange failed";
     // A revoked key must also advertise how to get a new one — this is the path a connector takes
