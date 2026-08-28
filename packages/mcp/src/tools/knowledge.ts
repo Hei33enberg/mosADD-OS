@@ -275,10 +275,27 @@ async function mRAG_delete(
   ctx: MosaddToolContext,
 ): Promise<{ ok: true; deleted: number; source_id: string | null; thread_id: string | null }> {
   readSupabaseEnv();
-  ctx.log("debug", "mRAG_delete via rag-sources", { source_id: input.source_id, thread_id: input.thread_id });
+  // ⛔ TĘ SAMĄ FUNKCJĘ MUSI PRZEJŚĆ KASOWANIE, CO INDEKSOWANIE (2026-08-28).
+  //
+  // `mRAG_ingest` foldował nie-UUID przez `uuidV5`, a `mRAG_delete` wysyłał SUROWY napis prosto do
+  // kolumny UUID — więc `rag-sources` odpowiadał `500: invalid input syntax for type uuid`.
+  // Skutek: dokument zaindeksowany pod naturalnym kluczem (numer sprawy, ścieżka pliku, threadId
+  // Gmaila) dawało się dodać, ale **NIGDY nie dawało się go usunąć tym samym identyfikatorem**.
+  // Dwie połowy tej samej rury nie zgadzały się ze sobą.
+  //
+  // I nie jest to niedopatrzenie w cieniu: komentarz przy foldowaniu (linie 30-37) obiecuje wprost
+  // „so grouping and mRAG_delete keep working on natural keys", a opis narzędzia mówi userowi
+  // „can later be removed with mRAG_delete". Obietnica była w dwóch miejscach, implementacja
+  // w jednym. Zmierzone na żywo: ingest `DIAG-…-a1b2c3` → indexed 1; delete tego samego id → 500.
+  //
+  // Boli to najbardziej przy korpusie, bo tam naturalne klucze są jedynym sposobem na dedup przy
+  // ponownym wczytaniu — a Dyspozytor mieli akta właśnie tak.
+  const rawId = input.source_id?.trim() || null;
+  const sourceId = rawId && !UUID_RE.test(rawId) ? uuidV5(rawId, SOURCE_ID_NAMESPACE) : rawId;
+  ctx.log("debug", "mRAG_delete via rag-sources", { source_id: sourceId, source_ref: rawId, thread_id: input.thread_id });
   return await invokeFunction("rag-sources", {
     action: "delete",
-    source_id: input.source_id ?? null,
+    source_id: sourceId,
     thread_id: input.thread_id ?? null,
   });
 }
