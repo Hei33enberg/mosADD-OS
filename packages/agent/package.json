@@ -1,6 +1,6 @@
 {
   "name": "@mosadd/agent",
-  "version": "3.0.0-alpha.3",
+  "version": "3.0.0-alpha.4",
   "description": "The mosadd agent runner — turn a Supabase identity + an LLM key into a live mosadd contact that reads and replies to DMs. One command, your brand, no Hermes branding on the user's first install. Wraps the @mosadd/mcp tool handlers directly (no MCP-protocol hallucination); LLM only writes the reply text.",
   "homepage": "https://github.com/Hei33enberg/mosADD-OS/tree/main/packages/agent",
   "repository": {
