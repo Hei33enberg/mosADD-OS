@@ -121,6 +121,41 @@ async function invoke(name: string, input: unknown, ctx: Ctx): Promise<unknown> 
   return t.handler(t.inputSchema.parse(input), ctx);
 }
 
+/**
+ * MOZG PLATFORMY — PIERWSZA SCIEZKA ODPOWIEDZI.
+ *
+ * ⛔ CO TO KONCZY. Do dzis ta paczka umiala WYLACZNIE OpenRouter i twardo odmawiala startu bez
+ * `OPENROUTER_API_KEY`. Dla klienta znaczylo to: zeby uruchomic wlasnego agenta, zaloz najpierw
+ * konto u obcego dostawcy AI i wklej jego klucz do terminala. Wlasciciel produktu, 2026-09-01:
+ * „klient ma nic nie ogarniac, tylko odpalic elektrona i moc zarzadzac komputerem z telefonu —
+ * to byla podstawa tego projektu". Tamten warunek byl dokladnie tym ogarnianiem.
+ *
+ * `mosadd-agent-brain` potrzebuje WYLACZNIE klucza huba, ktory agent i tak juz ma (bez niego nie
+ * zalogowalby sie do niczego). Mozg ma kaskade dostawcow, bezpiecznik wydatku liczony z konta
+ * wlasciciela i zapytania nazwane — czyli WIECEJ, niz dawal goly OpenRouter.
+ *
+ * OpenRouter ZOSTAJE jako zapas: gdy klient poda swoj klucz, agent ma druga noge na wypadek
+ * niedostepnosci mozgu. Jego BRAK to teraz zapas mniej, a nie martwy agent.
+ */
+async function brainReply(
+  supabaseUrl: string,
+  anonKey: string,
+  hubKey: string,
+  contactName: string | null,
+  convo: string,
+): Promise<string> {
+  const naglowek = `Rozmowa z ${contactName || "kontaktem"} (chronologicznie, ostatnia na koncu):`;
+  const r = await fetch(`${supabaseUrl}/functions/v1/mosadd-agent-brain`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${hubKey}`, apikey: anonKey, "Content-Type": "application/json" },
+    body: JSON.stringify({ convo: naglowek + String.fromCharCode(10) + convo }),
+  });
+  const j = (await r.json().catch(() => ({}))) as { ok?: boolean; text?: string; error?: string };
+  const txt = j?.text?.trim();
+  if (!txt) throw new Error("brain no content: " + (j?.error ?? JSON.stringify(j).slice(0, 200)));
+  return txt;
+}
+
 async function llmReply(
   contactName: string | null,
   convo: string,
@@ -184,15 +219,17 @@ export async function startResponder(opts: ResponderOptions = {}): Promise<() =>
   const supabaseUrl = opts.supabaseUrl ?? process.env.MOSADD_SUPABASE_URL!;
   const anonKey = opts.supabaseAnonKey ?? process.env.MOSADD_SUPABASE_ANON_KEY!;
   const hubKey = opts.hubKey ?? process.env.MOSADD_API_KEY!;
-  const openRouterKey = opts.openRouterKey ?? process.env.OPENROUTER_API_KEY!;
+  const openRouterKey = opts.openRouterKey ?? process.env.OPENROUTER_API_KEY ?? "";
   const model = opts.model ?? process.env.MOSADD_AGENT_MODEL ?? "anthropic/claude-sonnet-4";
   const pollMs = opts.pollMs ?? Number(process.env.RESPONDER_POLL_MS ?? 30000);
   const statePath = opts.statePath ?? process.env.RESPONDER_STATE ?? "/tmp/responder-state.json";
   const systemPrompt = opts.systemPrompt ?? DEFAULT_SYSTEM;
 
-  if (!supabaseUrl || !anonKey || !hubKey || !openRouterKey) {
+  // ⛔ `OPENROUTER_API_KEY` NIE JEST JUZ WARUNKIEM STARTU — patrz nota przy `brainReply`.
+  // Agent startuje na tym, co dostaje z samego wpiecia do mosADD.
+  if (!supabaseUrl || !anonKey || !hubKey) {
     throw new Error(
-      "[mosadd/agent] missing required env: MOSADD_SUPABASE_URL, MOSADD_SUPABASE_ANON_KEY, MOSADD_API_KEY, OPENROUTER_API_KEY",
+      "[mosadd/agent] missing required env: MOSADD_SUPABASE_URL, MOSADD_SUPABASE_ANON_KEY, MOSADD_API_KEY",
     );
   }
 
@@ -252,7 +289,19 @@ export async function startResponder(opts: ResponderOptions = {}): Promise<() =>
             .join("\n");
           let reply: string;
           try {
-            reply = await llmReply(c.display_name, convo, openRouterKey, model, systemPrompt + DECISION_GUIDE);
+            // ⛔ KOLEJNOSC JEST DECYZJA: najpierw MOZG PLATFORMY (jedzie na samym kluczu huba),
+            // dopiero potem wlasny OpenRouter klienta, jesli go w ogole podal. Odwrotna kolejnosc
+            // znaczylaby, ze klient placi obcemu dostawcy za cos, co ma w abonamencie.
+            try {
+              reply = await brainReply(supabaseUrl, anonKey, hubKey, c.display_name, convo);
+            } catch (be) {
+              process.stderr.write("[mosadd/agent] brain err: " + (be as Error).message + String.fromCharCode(10));
+              // Bez wlasnego klucza nie ma czym probowac dalej — niech zewnetrzny catch uciszy ten
+              // obieg. Agent MILCZY Z POWODU zamiast zgadywac; odpowiedz bez mozgu byla juz raz
+              // przyczyna nocy, w ktorej linie potwierdzaly sobie nawzajem zmyslone meldunki.
+              if (!openRouterKey) throw be;
+              reply = await llmReply(c.display_name, convo, openRouterKey, model, systemPrompt + DECISION_GUIDE);
+            }
           } catch (e) {
             process.stderr.write(`[mosadd/agent] LLM err: ${(e as Error).message}\n`);
             continue;
