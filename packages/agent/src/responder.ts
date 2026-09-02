@@ -9,6 +9,7 @@
  */
 
 import { allTools, defaultProviders } from "@mosadd/mcp";
+import { narzedziaLokalne } from "./local-tools.js";
 import {
   DECISION_TYPE,
   parseDecision,
@@ -115,6 +116,12 @@ function buildCtx(): Ctx {
 }
 
 async function invoke(name: string, input: unknown, ctx: Ctx): Promise<unknown> {
+  // ⛔ NAJPIERW NARZEDZIA KOMPUTERA. Agent stoi na MASZYNIE wlasciciela i to jest cala roznica
+  // miedzy nim a agentem w chmurze — patrz local-tools.ts. Katalog `@mosadd/mcp` jest wspolny
+  // dla obu, wiec narzedzia maszyny nie moga tam mieszkac: agent w chmurze oglaszalby modelowi,
+  // ze potrafi czytac pliki, i obiecywalby wlascicielowi rzeczy niewykonalne.
+  const lokalne = narzedziaLokalne.find((x) => x.name === name);
+  if (lokalne) return lokalne.handler(lokalne.parse(input));
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const t = (allTools as any[]).find((x) => x.name === name);
   if (!t) throw new Error("unknown tool " + name);
@@ -137,6 +144,69 @@ async function invoke(name: string, input: unknown, ctx: Ctx): Promise<unknown> 
  * OpenRouter ZOSTAJE jako zapas: gdy klient poda swoj klucz, agent ma druga noge na wypadek
  * niedostepnosci mozgu. Jego BRAK to teraz zapas mniej, a nie martwy agent.
  */
+/**
+ * ⛔ PETLA REKI NA MASZYNIE. To jest to, dla czego Elektron istnieje.
+ *
+ * Do dzis ta funkcja robila JEDNO wolanie mozgu i oddawala tekst. Zadnej petli narzedzi — wiec
+ * agent stojacy na komputerze wlasciciela nie mogl na tym komputerze zrobic NIC. Na „pokaz, co
+ * jest w tym katalogu" umial wylacznie opowiedziec, co by zrobil.
+ *
+ * Teraz: podajemy mozgowi opis naszych narzedzi maszyny, a gdy model po nie siegnie, mozg oddaje
+ * prosbe (`needs_local`) zamiast ja wykonywac — bo nie ma dostepu do tego dysku i miec nie powinien.
+ * Wykonujemy TU, u siebie, i wracamy z wynikiem. Mozg zostaje mozgiem, reka zostaje reka.
+ *
+ * ⛔ SUFIT OKRAZEN. Model, ktory prosi o narzedzie w kolko, bez tego kreciłby sie w nieskonczonosc
+ * na koszt wlasciciela. Trzy okrazenia wystarczaja na „sprawdz stan, wypisz katalog, przeczytaj
+ * plik"; po nich pytamy o odpowiedz koncowa BEZ narzedzi.
+ */
+const MAX_OKRAZEN_MASZYNY = 3;
+
+/** Opis narzedzi dla modelu — nazwa, opis i schemat wejscia. Bez tego model ich nie zobaczy. */
+function opisNarzedziMaszyny() {
+  return narzedziaLokalne.map((t) => ({
+    name: t.name,
+    description: t.description,
+    parameters: schematWejscia(t.name),
+  }));
+}
+
+/**
+ * Schematy wejscia wypisane RECZNIE, a nie generowane z zod.
+ * ⛔ Powod: konwerter zod→JSON Schema to kolejna zaleznosc w paczce, ktora klient instaluje
+ * jednym `npx`, a schematy sa cztery i zmieniaja sie rzadko. Reczne = zero zaleznosci i zero
+ * niespodzianek przy podbiciu wersji zod.
+ */
+function schematWejscia(nazwa: string): Record<string, unknown> {
+  switch (nazwa) {
+    case "komputer_pliki":
+      return {
+        type: "object",
+        properties: { sciezka: { type: "string", description: "Katalog do wypisania. Domyslnie katalog roboczy agenta." } },
+      };
+    case "komputer_czytaj":
+      return {
+        type: "object",
+        properties: {
+          sciezka: { type: "string", description: "Sciezka do pliku." },
+          od_linii: { type: "integer", description: "Numer pierwszej linii (od 1)." },
+          linii: { type: "integer", description: "Ile linii oddac." },
+        },
+        required: ["sciezka"],
+      };
+    case "komputer_uruchom":
+      return {
+        type: "object",
+        properties: {
+          polecenie: { type: "string", description: "Polecenie do uruchomienia." },
+          katalog: { type: "string", description: "Katalog roboczy. Domyslnie katalog roboczy agenta." },
+        },
+        required: ["polecenie"],
+      };
+    default:
+      return { type: "object", properties: {} };
+  }
+}
+
 async function brainReply(
   supabaseUrl: string,
   anonKey: string,
@@ -145,15 +215,65 @@ async function brainReply(
   convo: string,
 ): Promise<string> {
   const naglowek = `Rozmowa z ${contactName || "kontaktem"} (chronologicznie, ostatnia na koncu):`;
+  void naglowek;
+  const ctx = buildCtx();
+  let wyniki: Array<{ name: string; result?: unknown; error?: string }> = [];
+
+  for (let okrazenie = 0; okrazenie <= MAX_OKRAZEN_MASZYNY; okrazenie++) {
+    const odp = await wolajMozg(supabaseUrl, anonKey, hubKey, contactName, convo, wyniki, okrazenie < MAX_OKRAZEN_MASZYNY);
+    if (odp.text) return odp.text;
+    if (!odp.needs_local?.length) throw new Error("brain: ani tekstu, ani prosby o narzedzie");
+
+    // Model chce reki na maszynie — wykonujemy U SIEBIE i wracamy z wynikiem.
+    wyniki = [];
+    for (const p of odp.needs_local) {
+      let args: unknown = {};
+      try { args = JSON.parse(p.arguments || "{}"); } catch { /* model bywa niechlujny */ }
+      try {
+        const wynik = await invoke(p.name, args, ctx);
+        wyniki.push({ name: p.name, result: wynik });
+        process.stderr.write(JSON.stringify({ lvl: "info", msg: "komputer: wykonano", extra: { narzedzie: p.name } }) + "\n");
+      } catch (e) {
+        // Blad narzedzia NIE jest koncem rozmowy — model ma sie o nim dowiedziec i odpowiedziec
+        // czlowiekowi, co poszlo nie tak. Cisza po nieudanym narzedziu wyglada jak awaria agenta.
+        wyniki.push({ name: p.name, error: String((e as Error)?.message ?? e).slice(0, 500) });
+        process.stderr.write(JSON.stringify({ lvl: "warn", msg: "komputer: odmowa/blad", extra: { narzedzie: p.name, blad: String((e as Error)?.message ?? e) } }) + "\n");
+      }
+    }
+  }
+  throw new Error("brain: wyczerpane okrazenia narzedzi maszyny");
+}
+
+/** Jedno wolanie mozgu. `zNarzedziami=false` na ostatnim okrazeniu wymusza odpowiedz koncowa. */
+async function wolajMozg(
+  supabaseUrl: string,
+  anonKey: string,
+  hubKey: string,
+  contactName: string | null,
+  convo: string,
+  wyniki: Array<{ name: string; result?: unknown; error?: string }>,
+  zNarzedziami: boolean,
+): Promise<{ text?: string; needs_local?: Array<{ id: string; name: string; arguments: string }> }> {
   const r = await fetch(`${supabaseUrl}/functions/v1/mosadd-agent-brain`, {
     method: "POST",
     headers: { Authorization: `Bearer ${hubKey}`, apikey: anonKey, "Content-Type": "application/json" },
-    body: JSON.stringify({ convo: naglowek + String.fromCharCode(10) + convo }),
+    body: JSON.stringify({
+      convo,
+      name: contactName ?? undefined,
+      // Reka na maszynie: podajemy OPIS, nigdy wykonanie. Na ostatnim okrazeniu nie podajemy ich
+      // wcale — model ma wtedy odpowiedziec z tego, co juz zebral, zamiast prosic o kolejne.
+      ...(zNarzedziami ? { local_tools: opisNarzedziMaszyny() } : {}),
+      ...(wyniki.length ? { local_results: wyniki } : {}),
+    }),
   });
-  const j = (await r.json().catch(() => ({}))) as { ok?: boolean; text?: string; error?: string };
+  const j = (await r.json().catch(() => ({}))) as {
+    ok?: boolean; text?: string; error?: string;
+    needs_local?: Array<{ id: string; name: string; arguments: string }>;
+  };
+  if (j?.needs_local?.length) return { needs_local: j.needs_local };
   const txt = j?.text?.trim();
   if (!txt) throw new Error("brain no content: " + (j?.error ?? JSON.stringify(j).slice(0, 200)));
-  return txt;
+  return { text: txt };
 }
 
 async function llmReply(
