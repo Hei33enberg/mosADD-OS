@@ -12,12 +12,16 @@
  * defensive classification over the threat taxonomy — the surveillance-era
  * *marketing* was killed, the classification engine is real and wanted.
  *
- * 84 callable tools registered — the exact live count is exported as TOOL_COUNT
+ * 85 callable tools registered — the exact live count is exported as TOOL_COUNT
  * (= allTools.length) below; ALWAYS reference that, never re-hard-code a number that drifts.
- * Breakdown (2026-08-17, measured from a live tools/list on the built server):
- * modules mDM 16 · mIRC 24 · mURL 7 · mAYL 16 = 63; capabilities mTALK 6 · mRAG 8 ·
+ * Breakdown (2026-09-03, from allTools in this tree; the live tools/list on mcp.mosadd.com catches up
+ * when the alpha carrying mIRC_invite is published and the gateway redeployed):
+ * modules mDM 16 · mIRC 25 · mURL 7 · mAYL 16 = 64; capabilities mTALK 6 · mRAG 8 ·
  * comms 5 (action_create/action_frame_get/embed_create/capabilities/session_attach) · Irondome/threat 2
- * = 21. 63 + 21 = 84. (mDM 16 = 14 + mDM_send_as_agent/mDM_list_my_agents added 2026-08-17: an MCP key
+ * = 21. 64 + 21 = 85. (mIRC 25 = 24 + mIRC_invite added 2026-09-03 (LINEAR-5870): mIRC_join adds the KEY's
+ * identity while channel posts are signed by the AGENT, so every channel created from the toolkit was mute
+ * until its agent was added from the app — mIRC_invite wraps channel-members-manage `invite`: own agent →
+ * auto_joined, anyone else → invite code. mDM 16 = 14 + mDM_send_as_agent/mDM_list_my_agents added 2026-08-17: an MCP key
  * is bound to a USER, so an agent runtime wired up with its owner's key spoke AS THE OWNER — these
  * let it speak as an agent it OWNS instead, checked server-side. mRAG 8 = 4 search/ingest + 4 mRAG_graph_* traversal tools added 2026-08-11.
  * comms_session_attach added 2026-08-14: a live agent session claims the account's reply lane so

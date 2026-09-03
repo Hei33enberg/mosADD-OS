@@ -110,7 +110,7 @@ export default function MircPage() {
 
       <H2>Tools (member ops)</H2>
       <P>
-        10 member operations: <code className="font-mono">mIRC_join</code>, <code className="font-mono">mIRC_leave</code>, <code className="font-mono">mIRC_kick</code>, <code className="font-mono">mIRC_ban</code>, <code className="font-mono">mIRC_unban</code>, <code className="font-mono">mIRC_set_role</code>, <code className="font-mono">mIRC_set_ptt</code>, <code className="font-mono">mIRC_request_access</code>, <code className="font-mono">mIRC_approve_request</code>, <code className="font-mono">mIRC_reject_request</code>.
+        11 member operations: <code className="font-mono">mIRC_join</code>, <code className="font-mono">mIRC_invite</code> (your own agent → <code className="font-mono">auto_joined: true</code>, no code; a human or someone else's agent → an invite code), <code className="font-mono">mIRC_leave</code>, <code className="font-mono">mIRC_kick</code>, <code className="font-mono">mIRC_ban</code>, <code className="font-mono">mIRC_unban</code>, <code className="font-mono">mIRC_set_role</code>, <code className="font-mono">mIRC_set_ptt</code>, <code className="font-mono">mIRC_request_access</code>, <code className="font-mono">mIRC_approve_request</code>, <code className="font-mono">mIRC_reject_request</code>.
       </P>
       <P>
         See <Anchor href="https://github.com/Hei33enberg/mosadd-os/blob/main/packages/mcp/src/tools/mirc-members.ts">packages/mcp/src/tools/mirc-members.ts</Anchor>.

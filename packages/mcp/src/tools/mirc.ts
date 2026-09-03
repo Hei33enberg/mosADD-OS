@@ -14,6 +14,7 @@
 import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
 import { invokeFunction, readSupabaseEnv } from "../providers/supabase.js";
+import { inviteToChannel, type MircInviteResult } from "./mirc-members.js";
 
 // ---- Schemas ----
 
@@ -53,6 +54,13 @@ const mIRC_create_input = z.object({
     .optional()
     .describe(
       "Required for access_mode=password|private (these channels are provisioned for group-key text encryption on supported clients): the channel's group key wrapped to the creator's identity key. Open channels ignore it. If omitted on a non-open channel the backend rejects the call with a 'wrapped_group_key required' error.",
+    ),
+  invite_agents: z
+    .array(z.string().min(1))
+    .max(20)
+    .optional()
+    .describe(
+      "Identity ids (UUID) of YOUR agents/robots to add right after the channel is created (mDM_list_my_agents → agents[].identity_id). Each is fanned out to mIRC_invite: your own agents auto-join (auto_joined:true); anything else gets an invite code. Per-agent failures are reported in invites[] — the channel itself is still created. Max 20 per call (the invite mint is rate-limited to 20/min). On password/private channels the fan-out cannot carry a per-agent wrapped_group_key — use mIRC_invite per agent there.",
     ),
 });
 
@@ -97,20 +105,56 @@ const mIRC_delete_input = z.object({
 
 // ---- Handlers ----
 
+/** One row per agent in mIRC_create's `invite_agents` — a refusal is DATA, never a thrown create. */
+export type InviteFanout =
+  | { identity_id: string; ok: true; auto_joined: boolean; result: MircInviteResult }
+  | { identity_id: string; ok: false; error: string };
+
 async function mIRC_create(
   input: z.infer<typeof mIRC_create_input>,
   ctx: MosaddToolContext,
-): Promise<{ channel: unknown }> {
+): Promise<{ channel: unknown; invites?: InviteFanout[] }> {
   readSupabaseEnv();
   ctx.log("debug", "mIRC_create invoking channel-manage", { name: input.name });
   // channel-manage reads `description`, not `topic` — map it so the channel
   // topic isn't silently dropped on create (the update handler does the same).
-  const { topic, ...rest } = input as typeof input & { topic?: string };
+  // `invite_agents` is TOOLKIT-side composition (the fan-out below) — it must not
+  // reach channel-manage, which knows nothing about it.
+  const { topic, invite_agents, ...rest } = input as typeof input & { topic?: string };
   const payload = topic !== undefined ? { ...rest, description: topic } : { ...rest };
-  return await invokeFunction<{ channel: unknown }>("channel-manage", {
+  const created = await invokeFunction<{ channel: unknown }>("channel-manage", {
     action: "create",
     ...payload,
   });
+  if (!invite_agents?.length) return created;
+
+  const channelId = (created.channel as { id?: unknown } | null)?.id;
+  if (typeof channelId !== "string" || !channelId) {
+    // The channel exists; only the fan-out is impossible. Report, don't throw — a throw here
+    // would tell the model the CREATE failed while the row is already there.
+    return {
+      ...created,
+      invites: invite_agents.map((identity_id) => ({
+        identity_id,
+        ok: false as const,
+        error: "channel created but its id was missing from the reply — call mIRC_invite with the id from mIRC_list",
+      })),
+    };
+  }
+  // Sequential on purpose: channel-members-manage rate-limits the invite mint per caller
+  // (20/min, fail-closed); a parallel burst would trip it for the tail of the list.
+  const invites: InviteFanout[] = [];
+  for (const identity_id of invite_agents) {
+    try {
+      const result = await inviteToChannel({ channel_id: channelId, identity_id }, ctx);
+      invites.push({ identity_id, ok: true, auto_joined: "auto_joined" in result && result.auto_joined === true, result });
+    } catch (e) {
+      // One agent's refusal (banned, already a member, not yours, encrypted channel without a
+      // wrapped key) must not undo the others or mask the channel that was just created.
+      invites.push({ identity_id, ok: false, error: e instanceof Error ? e.message : String(e) });
+    }
+  }
+  return { ...created, invites };
 }
 
 async function mIRC_list(
@@ -200,7 +244,7 @@ export const mircTools: MosaddTool[] = [
     annotations: { readOnlyHint: false },
     requires: "network",
     description:
-      "Create a new persistent channel (Discord/Slack-style). Set access_mode to open (anyone joins), password (shared-password gated), or private (invite-only). capabilities controls modes (txt/voice/files/ptt/live; voice/ptt/live are server-relayed via LiveKit, NOT E2EE). Set discoverable:true (open channels only) to list it in the public directory. NOTE: password/private channels are provisioned for group-key TEXT encryption — supply wrapped_group_key (the group key wrapped to your identity key); open channels do not need it. The mosadd.com app encrypts/decrypts channel text with that key on supported clients; the toolkit's own mIRC_post_message posts server-readable text today (group-key parity is the next milestone). Channel voice is never E2EE.",
+      "Create a new persistent channel (Discord/Slack-style). Set access_mode to open (anyone joins), password (shared-password gated), or private (invite-only). capabilities controls modes (txt/voice/files/ptt/live; voice/ptt/live are server-relayed via LiveKit, NOT E2EE). Set discoverable:true (open channels only) to list it in the public directory. NOTE: password/private channels are provisioned for group-key TEXT encryption — supply wrapped_group_key (the group key wrapped to your identity key); open channels do not need it. The mosadd.com app encrypts/decrypts channel text with that key on supported clients; the toolkit's own mIRC_post_message posts server-readable text today (group-key parity is the next milestone). Channel voice is never E2EE. A channel WITHOUT its agent is a silent room — pass invite_agents (identity ids of your own agents, from mDM_list_my_agents) to add them in the same call, or call mIRC_invite afterwards.",
     inputSchema: mIRC_create_input,
     handler: mIRC_create as MosaddTool["handler"],
   },

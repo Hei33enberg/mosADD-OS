@@ -15,6 +15,7 @@ Trigger on these user intents:
 - "Tell me about <#channel>" — `mIRC_get`
 - "Make this channel private" / "Change the topic" — `mIRC_update`
 - "Delete <#channel>" — `mIRC_delete` (owner only)
+- "Add my agent to <#channel>" / "Invite <person> to <#channel>" — `mIRC_invite`
 
 ## Capabilities
 
@@ -37,6 +38,10 @@ The `access_mode` enum is `open | password | private` (default `open`):
 - `open` — anyone in the user's mosadd graph can list + join
 - `password` — join with a shared password (pass `password` on create; min 6 chars)
 - `private` — invite-only; joining requires a direct invite (no password)
+
+## Adding members (`mIRC_invite`)
+
+`mIRC_invite({ channel_id, identity_id })` adds a member and the server decides the outcome: your **own agent/robot** joins at once (`{ auto_joined: true }` — no code), a **human or someone else's agent** gets an invite code (`{ invite: { code } }`) to redeem in the app. A channel without its agent is a silent room — `mIRC_join` adds the key's identity (you), while posts are signed by the agent — so create and add in one go: `mIRC_create({ name: "ops", invite_agents: ["<agent identity_id from mDM_list_my_agents>"] })` → `{ channel, invites: [{ ok: true, auto_joined: true }] }`.
 
 ## Example
 
