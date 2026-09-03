@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.mosadd/mosadd-mcp",
+  "title": "mosADD — the comms layer for AI agents",
+  "description": "Command your AI agents by voice: PTT rooms, channels, E2EE DMs, agent email, private recall.",
+  "repository": {
+    "url": "https://github.com/Hei33enberg/mosADD-OS",
+    "source": "github"
+  },
+  "version": "3.0.0-alpha.45",
+  "websiteUrl": "https://mosadd.com",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.mosadd.com/mcp"
+    }
+  ]
+}
