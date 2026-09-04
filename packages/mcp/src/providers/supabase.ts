@@ -168,17 +168,55 @@ export async function invokeFunction<T = unknown>(
         const raw = await res.text();
         if (raw) {
           let detail = raw;
+          let recipe = "";
           try {
-            const parsed = JSON.parse(raw) as { error?: unknown; message?: unknown };
+            const parsed = JSON.parse(raw) as {
+              error?: unknown;
+              message?: unknown;
+              code?: unknown;
+              message_en?: unknown;
+              next_steps?: unknown;
+            };
             detail =
               (typeof parsed.error === "string" && parsed.error) ||
               (typeof parsed.message === "string" && parsed.message) ||
               raw;
+            // ⛔ The refusal CONTRACT (supabase/functions/_shared/errors.ts) travels as
+            // { code, message_en, message_pl, next_steps[] }. Until 2026-09-04 this block read
+            // `error` alone and threw the rest away — so the server said "here is exactly what to
+            // do next" and the agent received one flat sentence. The recipe is the whole point of
+            // the contract: it is written FOR a machine to act on. Measured on production the same
+            // day: mIRC_post_message with someone else's agent returned only
+            // "message-send (403): agent_not_owned" — code, both messages and 2 next_steps dropped.
+            // Rendered below as plain text because that is what an MCP tool error carries.
+            const steps = Array.isArray(parsed.next_steps) ? parsed.next_steps : [];
+            const lines: string[] = [];
+            if (typeof parsed.code === "string" && parsed.code) lines.push(`code: ${parsed.code}`);
+            if (typeof parsed.message_en === "string" && parsed.message_en && parsed.message_en !== detail) {
+              lines.push(parsed.message_en);
+            }
+            for (const raw_step of steps) {
+              const step = raw_step as { actor?: unknown; tool?: unknown; ui?: unknown; args?: unknown; why?: unknown };
+              const who = typeof step.actor === "string" ? step.actor : "?";
+              const what =
+                (typeof step.tool === "string" && step.tool) ||
+                (typeof step.ui === "string" && step.ui) ||
+                "";
+              if (!what) continue;
+              const why = typeof step.why === "string" ? ` — ${step.why}` : "";
+              const args =
+                step.args && typeof step.args === "object"
+                  ? ` ${JSON.stringify(step.args)}`
+                  : "";
+              lines.push(`next (${who}): ${what}${args}${why}`);
+            }
+            if (lines.length) recipe = "\n" + lines.join("\n");
           } catch {
             // non-JSON body — use the raw text as-is
           }
           const status = typeof res.status === "number" ? res.status : undefined;
-          msg = status ? `${fn} (${status}): ${detail}` : `${fn}: ${detail}`;
+          // First line stays byte-for-byte what callers have always matched on; the recipe follows.
+          msg = (status ? `${fn} (${status}): ${detail}` : `${fn}: ${detail}`) + recipe;
         }
       } catch {
         // body already consumed or unreadable — keep the generic message
