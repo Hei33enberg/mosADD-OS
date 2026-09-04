@@ -1,5 +1,21 @@
 # MCP registry submissions
 
+> **STAN 2026-09-04.** Kanał podstawowy jest ZAŁATWIONY: mosADD siedzi w **oficjalnym rejestrze MCP**
+> jako `com.mosadd/mosadd-mcp` (status `active`, `remotes: https://mcp.mosadd.com/mcp`) — jak i dlaczego,
+> patrz [PUBLISHED-official-registry.md](./PUBLISHED-official-registry.md).
+>
+> Glama, mcp.so, Smithery, PulseMCP i mcpservers.org **indeksują się z tego rejestru same**, więc szkice
+> w tym folderze są od dziś **awaryjne**: użyj ich tylko dla katalogu, którego po ~24 h od publikacji
+> nadal w nim nie ma. Zmierzone 04.09 11:00 UTC (11 h po publikacji): żaden jeszcze nie zassał —
+> to jest normalne, ich indeksery chodzą własnym rytmem. Sprawdź ponownie, zanim zaczniesz wypełniać
+> formularze.
+>
+> ⛔ Szkice niosą liczby z sierpnia (69–77 narzędzi, alpha.20). Dziś jest **85** i **alpha.47**.
+> Każdy ma o tym baner na górze — przelicz przed wysyłką.
+>
+> ⛔ Katalog konektorów w samym Claude to ODDZIELNA sprawa, która NIE czyta rejestru MCP:
+> [claude-connectors-directory.md](./claude-connectors-directory.md). Blokuje ją plan konta, nie kod.
+
 `@mosadd/mcp` is on npm at **`@mosadd/mcp@alpha.20`** (live, no longer waiting on a publish token); submit it to the major MCP registries so people can discover it. GitHub repo `Hei33enberg/mosADD-OS` is now indexable (description rewritten post-pivot + 13 topics added 2026-06-22 incl. `mcp`, `model-context-protocol`, `e2ee`, `ai-agents`, `claude`, `anthropic`, `cursor`) — Glama auto-indexes from GitHub when MCP-compatible metadata is present, so this materially helps discovery before any explicit submission.
 
 | Registry | URL | Method | Status |

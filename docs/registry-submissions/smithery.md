@@ -1,5 +1,15 @@
 # Smithery (smithery.ai) — submission draft
 
+> ⛔ **NIEAKTUALNE LICZBY — 2026-09-04.** Ten szkic powstał 2026-08-11 i mówi o 69–77 narzędziach,
+> wersji `3.0.0-alpha.20` i o zdalnej bramie jako „fazie 2". Stan na dziś: **85 narzędzi**,
+> `@mosadd/mcp@3.0.0-alpha.47` (dist-tag `latest`), a brama **`https://mcp.mosadd.com/mcp` ŻYJE**
+> i to ona jest tym, co katalogi dodają jednym kliknięciem. Aktualne liczby bierz z
+> [PUBLISHED-official-registry.md](./PUBLISHED-official-registry.md) i z `packages/mcp/server.registry.json`,
+> nie stąd. Nie wysyłaj tego szkicu bez przeliczenia — katalog, który dostanie od nas zaniżoną
+> liczbę, opublikuje ją i sam jej nie poprawi.
+
+
+
 **Target:** https://smithery.ai
 **Method:** Connect GitHub via Smithery dashboard. Smithery auto-detects MCP servers from repo metadata. Optionally claim/customize the listing via `smithery.yaml`.
 
