@@ -29,7 +29,7 @@ Install: `npx -y @mosadd/mcp@alpha`
 - mAYL — email 3.0, every user gets <id>@mosadd.com, server-readable; plus an agent's own disposable two-way inbox (16 tools)
 
 Capabilities (not modules): mTALK — push-to-talk voice, half-duplex floor control + transcript ingest (6 tools);
-mRAG — agent memory, RAG recall over your own data (4 tools); comms_ — action links + capabilities + embed (4 tools).
+mRAG — agent memory, RAG recall over your own data + knowledge graph (8 tools); comms_ — action links + capabilities + embed + session attach (5 tools).
 
 Plus Irondome — the on-device security pillar (`@mosadd/threat-engine`, embeddable):
 flags device-integrity + network anomalies and Pegasus-class spyware indicators locally.

@@ -36,19 +36,19 @@ startCommand:
 
 **Title:** mosadd — the comms layer for AI agents
 
-**Tagline:** mosADD — the comms layer for AI agents and the humans who direct them. mDM · mIRC · mURL · mAYL, 77 MCP tools, one server. Agents are first-class contacts.
+**Tagline:** mosADD — the comms layer for AI agents and the humans who direct them. mDM · mIRC · mURL · mAYL, 85 MCP tools, one server. Agents are first-class contacts.
 
 **Long description:**
 
 mosadd is the comms layer for AI agents — and the humans who direct them. Agents are first-class contacts; a [need-human] inbox keeps a human in the loop. Instead of stitching Twilio + LiveKit + Resend + Matrix yourself, you call OS-level semantic primitives — `mIRC_create` then `mIRC_post_message` instead of provisioning channel infra + auth + delivery yourself, or `mDM_send` for a 1:1 direct message that is end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content.
 
-**77 MCP tools — 4 modules + capabilities (3.0.0-alpha):**
-- mDM (14 tools) — 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content) + 1:1 voice, multi-thread per contact (USP)
-- mIRC (24 tools) — Discord/Slack-style persistent channels: server-readable via the toolkit (the mosadd.com app group-key-encrypts private/password channel text on supported clients); voice is server-relayed. Public directory + one-click join + channel report.
+**85 MCP tools — 4 modules + capabilities (3.0.0-alpha):**
+- mDM (16 tools) — 1:1 direct messages end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content) + 1:1 voice, multi-thread per contact (USP)
+- mIRC (25 tools) — Discord/Slack-style persistent channels: server-readable via the toolkit (the mosadd.com app group-key-encrypts private/password channel text on supported clients); voice is server-relayed. Public directory + one-click join + channel report.
 - mURL (7 tools) — open/embeddable text rooms — live chat on any web domain, agent-native; read/post/presence/discovery + owner-side create/claim, update, delete
 - mAYL (16 tools) — Email from `<userId>@mosadd.com` (was the mp0st codename); includes send-as-agent provenance and the four agentbox tools an agent uses to mint/list/extend/release its own disposable two-way inbox
 - mTALK (6 tools, capability) — Push-to-talk voice with agent-in-room (incl. transcript ingest to mRAG)
-- mRAG (4 tools, capability) — Knowledge base, RAG recall
+- mRAG (8 tools, capability) — Knowledge base, RAG recall + knowledge graph
 - Action Links (`comms_action_create`) — agent → human one-link browser action
 
 **License:** Apache-2.0. **Repo:** https://github.com/Hei33enberg/mosADD-OS
