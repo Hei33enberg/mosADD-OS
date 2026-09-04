@@ -72,6 +72,27 @@ mcp-publisher login http --domain mosadd.com --private-key "$PRIV"
 file. Measured 2026-09-03: Vercel took ~3 minutes; until then the path still returned the SPA
 `index.html`, and a login against that fails.
 
+## ⛔ CZWARTA MINA, ZMIERZONA 2026-09-04: ZEGAR MASZYNY
+
+`mcp-publisher login http` podpisuje żądanie znacznikiem czasu i rejestr odrzuca podpis spoza okna
+**±15 sekund**:
+
+```
+401 HTTP authentication failed — "timestamp outside valid window (±15 seconds)"
+```
+
+Zmierzone na tej maszynie 04.09 04:50 UTC: lokalny zegar **spóźnia się 21 s** wobec rejestru i 17 s
+wobec `api.github.com` (nagłówek `Date` z obu). Publikacja o 23:57 przeszła, kolejna po godzinie już nie —
+odchyłka rośnie, bo **usługa `W32Time` jest ZATRZYMANA** i nie startuje bez uprawnień administratora
+(`0x80070426`).
+
+Skutek szerszy niż ten rejestr: każdy protokół z podpisem czasowym (TOTP, część weryfikacji
+certyfikatów, podpisy webhooków) jest na tej maszynie na krawędzi. **To naprawia właściciel** —
+uruchomienie usługi systemowej i `w32tm /resync /force` z podniesionymi uprawnieniami.
+
+Jak rozpoznać, że to TO: `date -u` obok nagłówka `Date` z dowolnego HTTPS. Różnica > 15 s = publikacja
+padnie, choć klucz i plik `.well-known` są w porządku.
+
 ## What this unlocks downstream
 
 The official registry is the source that Glama, mcp.so, Smithery, PulseMCP and mcpservers.org
