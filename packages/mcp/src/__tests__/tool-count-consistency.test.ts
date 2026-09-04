@@ -52,6 +52,13 @@ const SURFACES: { file: string; re: RegExp; what: string }[] = [
   { file: "packages/mcp/README.md", re: /One key, one server, (\d+) tools/, what: "@mosadd/mcp README intro" },
   { file: "packages/mcp/README.md", re: /\*\*(\d+) callable tools\*\* in total/, what: "@mosadd/mcp README breakdown" },
   { file: "apps/dev/public/llms.txt", re: /(\d+)\s+(?:MCP\s+)?tools/, what: "llms.txt (read by AI crawlers)" },
+  // Added 2026-09-04 (kanon 1.1 review, LINEAR-5870): three more public files hand-typed a total
+  // and had sat at 77 through two bumps (82, 84) because nothing pinned them. Both realm llms.txt
+  // lines are pinned separately — a single /(\d+) tools/ would only ever see the first.
+  { file: "apps/realm/llms.txt", re: /@mosadd\/mcp — (\d+) tools, Apache-2\.0/, what: "mosadd.dev Realm llms.txt intro" },
+  { file: "apps/realm/llms.txt", re: /## Toolkit \(@mosadd\/mcp — (\d+) tools\)/, what: "mosadd.dev Realm llms.txt toolkit heading" },
+  { file: "docs/registry-submissions/smithery.md", re: /mAYL, (\d+) MCP tools, one server/, what: "Smithery listing tagline" },
+  { file: "docs/registry-submissions/smithery.md", re: /\*\*(\d+) MCP tools — 4 modules/, what: "Smithery long description" },
 ];
 
 describe("tool-count consistency (anti-drift gate)", () => {
@@ -128,6 +135,34 @@ const MODULE_SURFACES: { file: string; what: string; re: (label: string) => RegE
     what: "README breakdown addends",
     // "mDM (14) + mIRC (24) + … ; capabilities: mTALK (6) + mRAG (4) + …"
     re: (label) => new RegExp(`\\b${label}_?\\s*\\((\\d+)\\)\\s*[+=;]`),
+  },
+  // Added 2026-09-04 (kanon 1.1 review, LINEAR-5870). Measured that day: examples/README.md had
+  // its header bumped to 85 while its own addends still read mDM (14) / mRAG (4) / comms (4) — a
+  // breakdown summing to 78 under a headline of 85, the exact shape this gate exists for. The
+  // realm llms.txt and the Smithery copy carried mDM 14 / mIRC 24 / mRAG 4 from alpha.33.
+  {
+    file: "examples/README.md",
+    what: "examples README per-module list",
+    // "- **mDM** (16): list_contacts, …"
+    re: (label) => new RegExp(`\\*\\*${label}\\*\\*\\s*\\((\\d+)\\)`),
+  },
+  {
+    file: "apps/realm/llms.txt",
+    what: "mosadd.dev Realm llms.txt per-module list",
+    // "- mDM (16): E2EE 1:1 messaging …" — one bullet per module, mTALK and mRAG included.
+    re: (label) => new RegExp(`^- ${label} \\((\\d+)\\):`, "m"),
+  },
+  {
+    file: "docs/registry-submissions/smithery.md",
+    what: "Smithery long-description per-module list",
+    // "- mDM (16 tools) — …"
+    re: (label) => new RegExp(`^- ${label} \\((\\d+) tools`, "m"),
+  },
+  {
+    file: "apps/dev/public/llms.txt",
+    what: "dev llms.txt per-module list",
+    // "- mDM — 1:1 direct messages … (16 tools)" / "mRAG — agent memory … (8 tools);"
+    re: (label) => new RegExp(`\\b${label} — [^\\n]*?\\((\\d+) tools\\)`),
   },
 ];
 
