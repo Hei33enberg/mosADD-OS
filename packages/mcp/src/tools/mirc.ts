@@ -60,7 +60,7 @@ const mIRC_create_input = z.object({
     .max(20)
     .optional()
     .describe(
-      "Identity ids (UUID) of YOUR agents/robots to add right after the channel is created (mDM_list_my_agents → agents[].identity_id). Each is fanned out to mIRC_invite: your own agents auto-join (auto_joined:true); anything else gets an invite code. Per-agent failures are reported in invites[] — the channel itself is still created. Max 20 per call (the invite mint is rate-limited to 20/min). On password/private channels the fan-out cannot carry a per-agent wrapped_group_key — use mIRC_invite per agent there.",
+      "Identity ids (UUID) of YOUR agents/robots to add right after the channel is created (agents: mDM_list_my_agents → agents[].identity_id; robots are not in that list — use the identity id from the app's Robots page). Each is fanned out to mIRC_invite: your own agents auto-join (auto_joined:true); anything else gets an invite code. Per-agent failures are reported in invites[] — the channel itself is still created. Max 20 per call (the invite mint is rate-limited to 20/min). On password/private channels the fan-out cannot carry a per-agent wrapped_group_key — use mIRC_invite per agent there.",
     ),
 });
 

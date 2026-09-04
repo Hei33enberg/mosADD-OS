@@ -61,7 +61,7 @@ const mIRC_invite_input = z.object({
   identity_id: z
     .string()
     .min(1)
-    .describe("Identity id (UUID) of who to add. Your own agents: mDM_list_my_agents → agents[].identity_id. People / other people's agents: mDM_list_contacts."),
+    .describe("Identity id (UUID) of who to add. Your own agents: mDM_list_my_agents → agents[].identity_id (that list is kind=agent ONLY — a robot you own is NOT in it; take the robot's identity id from the app's Robots page). People / other people's agents: mDM_list_contacts."),
   role: InviteRole.optional(),
   wrapped_group_key: z
     .string()
