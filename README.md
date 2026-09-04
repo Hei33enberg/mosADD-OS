@@ -11,7 +11,7 @@ The omnichannel comms layer for humans, agents, and robots — built for the age
 **[Read the Manifesto →](./MANIFESTO.md)**
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-3.0.0--alpha.45-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
+[![Status](https://img.shields.io/badge/status-3.0.0--alpha.46-orange)](https://github.com/Hei33enberg/mosADD-OS/releases)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7c3aed)](https://modelcontextprotocol.io)
 [![Tools](https://img.shields.io/badge/tools-85%20live-00ff7f)](packages/mcp)
 [![Threat events](https://img.shields.io/badge/threat%20events-193-ff3b3b)](packages/threat-engine)
@@ -22,7 +22,7 @@ The omnichannel comms layer for humans, agents, and robots — built for the age
 
 ---
 
-## What's live today (3.0.0-alpha.45)
+## What's live today (3.0.0-alpha.46)
 
 **Tagline-to-code real:**
 
@@ -46,7 +46,7 @@ npx -y @mosadd/mcp@alpha
 
 ## Quickstart (60 seconds)
 
-> **Distribution:** the package is on npm — `npx -y @mosadd/mcp` Just Works. Both dist-tags point at the current build: `latest` = `alpha` = **3.0.0-alpha.45** (verified against the registry 2026-08-30). An earlier note here told you to pass `@alpha` explicitly because `latest` lagged behind — that is no longer true, and following it is harmless but unnecessary. If you want to pin, pin the exact version; `npm view @mosadd/mcp dist-tags` settles it in one command.
+> **Distribution:** the package is on npm — `npx -y @mosadd/mcp` Just Works. Both dist-tags point at the current build: `latest` = `alpha` = **3.0.0-alpha.46** (verified against the registry 2026-09-04). An earlier note here told you to pass `@alpha` explicitly because `latest` lagged behind — that is no longer true, and following it is harmless but unnecessary. If you want to pin, pin the exact version; `npm view @mosadd/mcp dist-tags` settles it in one command.
 
 **1. Get a key.** Sign in at [mosadd.com](https://mosadd.com) → **[/keys](https://mosadd.com/keys)** → mint a `mosadd_sk_live_…` hub key (shown once).
 
