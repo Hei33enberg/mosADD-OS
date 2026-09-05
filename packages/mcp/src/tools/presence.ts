@@ -210,6 +210,15 @@ interface AttachResult {
   host?: string;
   /** Seconds a beat stays trusted if this process stops beating. */
   holds_for_seconds?: number;
+  /**
+   * ⛔ CZY TA SESJA ODEBRAŁA LINIĘ INNEJ. Arbiter w SQL wie to, bo sam kasuje cudzy wiersz —
+   * i do 2026-09-06 ta wiedza GINĘŁA, bo klient robił surowy upsert. Nikt nigdy nie zobaczył,
+   * że ktoś przejął podpis. Właśnie ta cisza kosztowała 30 h awarii: dwie sesje na jednym kluczu
+   * podpisywały się nawzajem, a obie meldowały sukces.
+   */
+  took_over?: boolean;
+  /** Sesja, której linię odebrano — do meldunku dla człowieka, nie do sterowania. */
+  previous_session_id?: string | null;
   note: string;
 }
 
@@ -242,8 +251,18 @@ async function comms_session_attach(
     }
     // Zwalniamy WYŁĄCZNIE deklarację TEJ sesji — kasowanie po samym koncie zabierało linię
     // wszystkim pozostałym generałom wpiętym tym samym kluczem.
-    await sb.from("mosadd_gateway_agent_binding").delete()
-      .eq("user_id", self.user_id).eq("session_id", sessionId());
+    // ⛔ TĄ SAMĄ DROGĄ CO CLAIM — inaczej zwolnienie i zajęcie chodziłyby dwoma różnymi
+    // mechanizmami i pierwsza zmiana reguły w SQL ominęłaby jeden z nich.
+    const { error: relError } = await sb.rpc("mosadd_gateway_binding_release", {
+      p_session_id: sessionId(),
+    });
+    if (relError) {
+      // Nieudane zwolnienie NIE może wywrócić odpięcia: linia i tak wygaśnie sama po HOLD_SECONDS,
+      // a użytkownik, który prosi o zwolnienie, ma dostać potwierdzenie, nie wyjątek.
+      ctx.log("warn", "comms_session_attach: release RPC failed, line will lapse on its own", {
+        error: relError.message,
+      });
+    }
     processBindings.delete(self.user_id);
     ctx.log("info", "comms_session_attach: released", { identity_ids: [...toRelease] });
     return {
@@ -261,6 +280,8 @@ async function comms_session_attach(
   // old behaviour. With as_agent: the OWNED agent's line + the gateway signing declaration.
   let lineId = self.id;
   let speakingAs: AttachResult["speaking_as"];
+  /** Ustawiane WYŁĄCZNIE gdy arbiter zgłosił przejęcie — patrz `took_over` w AttachResult. */
+  let przejeteOd: string | null | undefined;
   if (input.as_agent) {
     const agent = await resolveOwnedAgentLine(env, self.user_id, input.as_agent);
     if (!agent) {
@@ -274,24 +295,30 @@ async function comms_session_attach(
 
     // The signing declaration message-send reads (migration 20260826210000). RLS re-checks
     // ownership in its WITH CHECK; message-send re-validates AGAIN per post (defence in depth).
-    const { error: bindError } = await sb.from("mosadd_gateway_agent_binding").upsert(
-      {
-        user_id: self.user_id,
-        // ⛔ CZYJA TO DEKLARACJA (2026-08-27). Wiersz jest nadal JEDEN na konto — pełna izolacja
-        // wymaga, by żaden żywy klient nie zapisywał już przez ON CONFLICT (user_id), a takie
-        // klienty jeszcze chodzą (próba zdjęcia tej unikalności zablokowała im wpinanie
-        // całkowicie, więc została natychmiast cofnięta). Zapisany `session_id` pozwala jednak
-        // bramie ROZPOZNAĆ, że deklarację przejęła inna sesja, i powiedzieć to wprost zamiast po
-        // cichu podpisywać posty cudzą linią.
-        session_id: sessionId(),
-        agent_identity_id: agent.id,
-        agent_address: agent.m0ssad_email,
-        bound_at: new Date().toISOString(),
-        bound_by_host: host,
-      },
-      { onConflict: "user_id" },
-    );
+    // ⛔ ARBITER W SQL, NIE SUROWY UPSERT (LINEAR-5879 · LINEAR-5895 B1). Migracja założyła
+    // `mosadd_gateway_binding_claim` 05.09, ale NIC jej nie wołało — połowa roboty leżała martwa
+    // w bazie, a klient dalej pisał wiersz ręcznie. Różnica NIE jest kosmetyczna:
+    //   · funkcja SPRAWDZA, że linia jest TWOJA, żywa i typu `agent` (`not_your_agent_line`),
+    //     zamiast polegać wyłącznie na RLS w WITH CHECK;
+    //   · funkcja WIE, że odebrała linię innej sesji, i mówi to w `took_over` — surowy upsert
+    //     robił dokładnie to samo PO CICHU. To jest ta cisza, przez którą dwie sesje na jednym
+    //     kluczu podpisywały się nawzajem przez 30 godzin, a obie meldowały sukces.
+    const { data: claim, error: bindError } = await sb.rpc("mosadd_gateway_binding_claim", {
+      p_session_id: sessionId(),
+      p_agent_identity_id: agent.id,
+      p_agent_address: agent.m0ssad_email,
+      p_host: host,
+    });
     if (bindError) throw new Error(`Could not declare the agent line: ${bindError.message}`);
+    const wynik = (claim ?? {}) as { took_over?: boolean; previous_session_id?: string | null };
+    przejeteOd = wynik.took_over ? (wynik.previous_session_id ?? null) : undefined;
+    if (wynik.took_over) {
+      // ⛔ GŁOŚNO, NIE W DEBUGU. Przejęcie podpisu jest zdarzeniem, o którym właściciel MUSI
+      // wiedzieć — bez tego „nie odpisuje mi generał" wygląda jak awaria, a jest przejęciem.
+      ctx.log("warn", "comms_session_attach: TOOK OVER the line from another session", {
+        previous_session_id: wynik.previous_session_id ?? null,
+      });
+    }
     processBindings.set(self.user_id, agent.id);
   }
 
@@ -316,6 +343,7 @@ async function comms_session_attach(
     ...(speakingAs ? { speaking_as: speakingAs } : {}),
     host,
     holds_for_seconds: HOLD_SECONDS,
+    ...(przejeteOd !== undefined ? { took_over: true, previous_session_id: przejeteOd } : {}),
     note: speakingAs
       ? `This session now speaks for ${speakingAs.address ?? speakingAs.identity_id}: channel posts sent ` +
         "through this gateway are signed as that agent automatically (an explicit `agent` field still wins), " +
