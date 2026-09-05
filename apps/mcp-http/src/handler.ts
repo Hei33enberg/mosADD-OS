@@ -182,7 +182,25 @@ export async function handleMcp(
     // identyczna między procesami lambd — więc deklaracja linii (comms_session_attach) przeżywa
     // przełączenia instancji, a strażnik 409 w message-send odróżnia dwie różne bramy/klucze
     // zamiast strzelać fałszywymi odmowami przy każdym routingu. Patrz sessionId() w @mosadd/mcp.
-    env.sessionKey = `gw:${createHash("sha256").update(apiKey).digest("hex").slice(0, 16)}`;
+    // ⛔ `Mcp-Session-Id` DOKŁADA SIĘ DO HASZA, GDY KLIENT GO PRZYŚLE — i to jest cała poprawka.
+    //
+    // Powód, dla którego NIE zmieniam tego na czystą tożsamość per połączenie: powyższy akapit
+    // opisuje ŚWIADOMĄ decyzję, nie przeoczenie. Stabilność per KLUCZ jest tym, co pozwala
+    // deklaracji linii przeżyć przełączenie instancji lambdy i co chroni strażnik 409 w
+    // message-send przed strzelaniem fałszywymi odmowami przy każdym routingu. Zerwanie tego
+    // naprawiłoby jeden problem i odtworzyło dwa starsze.
+    //
+    // ⛔ ALE BEZ ROZRÓŻNIENIA SESJI ARBITER JEST ŚLEPY. `mosadd_gateway_binding_claim` porównuje
+    // `session_id` i zgłasza `took_over`, gdy linię odebrała INNA sesja. Dopóki dwie sesje na tym
+    // samym kluczu mają IDENTYCZNY `session_id`, ten warunek nie ma jak się zapalić — więc
+    // przejęcie podpisu, które kosztowało 30 h awarii, dalej byłoby ciche.
+    //
+    // Rozwiązanie jest addytywne: nagłówek jest częścią tożsamości TYLKO wtedy, gdy klient
+    // naprawdę prowadzi własną sesję MCP i go przysyła. Konektor bezstanowy, który go nie wysyła,
+    // dostaje BIT W BIT dotychczasowy klucz — więc nic nie może się zepsuć u tych, którzy działają.
+    const mcpSessionId = String(req.headers["mcp-session-id"] ?? "").trim();
+    const ziarno = mcpSessionId ? `${apiKey}|${mcpSessionId}` : apiKey;
+    env.sessionKey = `gw:${createHash("sha256").update(ziarno).digest("hex").slice(0, 16)}`;
   } catch (e) {
     const msg = (e as Error).message === "invalid_key" ? "Invalid or revoked API key" : "Key exchange failed";
     // A revoked key must also advertise how to get a new one — this is the path a connector takes
