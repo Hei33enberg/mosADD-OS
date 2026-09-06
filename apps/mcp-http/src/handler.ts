@@ -74,17 +74,22 @@ const MAX_CACHED_SESSIONS = 1000; // hard cap — evict oldest, never grow unbou
 type CachedSession = { env: SupabaseEnv; expiresAtMs: number };
 const sessionCache = new Map<string, CachedSession>();
 
-async function exchangeKey(apiKey: string, clientName?: string): Promise<SupabaseEnv> {
-  const cached = sessionCache.get(apiKey);
+async function exchangeKey(apiKey: string, clientName?: string, mcpSessionId?: string): Promise<SupabaseEnv> {
+  const cacheKey = mcpSessionId ? `${apiKey}:${mcpSessionId}` : apiKey;
+  const cached = sessionCache.get(cacheKey);
   if (cached && cached.expiresAtMs > Date.now()) return cached.env;
-  sessionCache.delete(apiKey);
+  sessionCache.delete(cacheKey);
 
   const res = await fetch(exchangeEndpoint(), {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     // client_name (from MCP initialize clientInfo, when this request carries it) lets
     // hub-key-exchange stamp agent_name on its per-exchange mcp_sessions telemetry row.
-    body: JSON.stringify(clientName ? { client_name: clientName } : {}),
+    // mcp_session_id lets hub-key-exchange stamp mcpSessionId in capabilities telemetry.
+    body: JSON.stringify({
+      ...(clientName ? { client_name: clientName } : {}),
+      ...(mcpSessionId ? { mcp_session_id: mcpSessionId } : {}),
+    }),
   });
   if (!res.ok) {
     throw new Error(res.status === 401 ? "invalid_key" : `exchange_failed_${res.status}`);
@@ -105,7 +110,7 @@ async function exchangeKey(apiKey: string, clientName?: string): Promise<Supabas
     const oldest = sessionCache.keys().next().value;
     if (oldest !== undefined) sessionCache.delete(oldest);
   }
-  sessionCache.set(apiKey, { env, expiresAtMs: Date.now() + ttlS * 1000 });
+  sessionCache.set(cacheKey, { env, expiresAtMs: Date.now() + ttlS * 1000 });
   return env;
 }
 
@@ -175,9 +180,11 @@ export async function handleMcp(
     return;
   }
 
+  const mcpSessionId = String(req.headers["mcp-session-id"] ?? "").trim() || undefined;
+
   let env: SupabaseEnv;
   try {
-    env = await exchangeKey(apiKey, clientNameFrom(parsedBody));
+    env = await exchangeKey(apiKey, clientNameFrom(parsedBody), mcpSessionId);
     // Tożsamość sesji dla bezstanowej bramy: stabilna per KLUCZ API (hash, nigdy goły klucz),
     // identyczna między procesami lambd — więc deklaracja linii (comms_session_attach) przeżywa
     // przełączenia instancji, a strażnik 409 w message-send odróżnia dwie różne bramy/klucze
@@ -198,7 +205,6 @@ export async function handleMcp(
     // Rozwiązanie jest addytywne: nagłówek jest częścią tożsamości TYLKO wtedy, gdy klient
     // naprawdę prowadzi własną sesję MCP i go przysyła. Konektor bezstanowy, który go nie wysyła,
     // dostaje BIT W BIT dotychczasowy klucz — więc nic nie może się zepsuć u tych, którzy działają.
-    const mcpSessionId = String(req.headers["mcp-session-id"] ?? "").trim();
     const ziarno = mcpSessionId ? `${apiKey}|${mcpSessionId}` : apiKey;
     env.sessionKey = `gw:${createHash("sha256").update(ziarno).digest("hex").slice(0, 16)}`;
   } catch (e) {
