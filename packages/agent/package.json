@@ -35,7 +35,8 @@
     "build": "tsup src/index.ts src/bin/agent.ts --format esm --dts --clean --shims",
     "dev": "tsx src/bin/agent.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "clean": "rm -rf dist .turbo"
+    "clean": "rm -rf dist .turbo",
+    "test": "vitest run"
   },
   "dependencies": {
     "@mosadd/mcp": "workspace:*"
@@ -43,7 +44,8 @@
   "devDependencies": {
     "tsup": "^8.3.5",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   },
   "keywords": [
     "mosadd",

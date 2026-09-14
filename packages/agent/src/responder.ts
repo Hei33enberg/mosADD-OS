@@ -10,6 +10,7 @@
 
 import { allTools, defaultProviders } from "@mosadd/mcp";
 import { narzedziaLokalne } from "./local-tools.js";
+import { wolnoRozmawiac } from "./granicaZaufania.js";
 import {
   DECISION_TYPE,
   parseDecision,
@@ -385,6 +386,18 @@ export async function startResponder(opts: ResponderOptions = {}): Promise<() =>
           const last = msgs[msgs.length - 1];
           if (last.sender_identity_id === selfId) continue;
           if (replied.has(last.id)) continue;
+          // ⛔ GRANICA ZAUFANIA PRZED KAZDA SCIEZKA MODELU — dokladnie ta kolejnosc, co w chmurze.
+          // Postawiona TU, a nie przy doborze narzedzi, bo obcy nie ma dostac ani odpowiedzi, ani
+          // reki na maszynie. Odpowiadamy CISZA (nie zdaniem): ta linia stoi na prywatnym
+          // komputerze i sam fakt, ze cos tam odpowiada, jest informacja dla obcego.
+          if (!(await wolnoRozmawiac(supabaseUrl, anonKey, process.env.MOSADD_USER_JWT || "", selfId, c.identity_id))) {
+            replied.add(last.id);
+            process.stderr.write(
+              `[mosadd/agent] pominieto: rozmowca ${c.identity_id} poza granica zaufania wlasciciela
+`,
+            );
+            continue;
+          }
           if (last.text === "<undecryptable>" || last.text === "<encrypted · sent by you>") {
             replied.add(last.id);
             continue;
