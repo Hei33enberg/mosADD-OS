@@ -69,7 +69,31 @@ podpisywać „jako" — Hermes już JEST linią.
 | Wątek nie widać wiadomości E2EE | nie ten klucz / nie ten contact_id | sprawdzić identity_id w `mDM_list_contacts` |
 | 403 na kanałach | brak deklaracji linii / guard v146 | attach + pisać przez narzędzia linii, nigdy kluczem właściciela |
 
-## 5. Czego NIE robić
+## 6. Keep-alive na PC — kto trzyma linię między turami rozmowy
+
+`C:\Users\PRP ABDO\AppData\Local\hermes\mosadd-keepalive.py` — proces w tle, który co 60 s
+bije puls w `agent_bridge_heartbeat` (host `hermes-keepalive (PC Krola)`, mode
+`mcp-session`). Zamyka lukę, którą zmierzono 2026-09-14 05:45/06:15: puls z
+`comms_session_attach` żyje tylko między wywołaniami narzędzi JEDNEJ tury, więc między
+wiadomościami Króla (11–21 min ciszy) zastępca chmurowy się budził.
+
+Jak działa:
+- czyta hub key (`mosadd_sk_live_…`) z magazynu OAuth Hermesa
+  `AppData\Local\hermes\mcp-tokens\mosadd.json` — ten sam klucz, co brama MCP; sekret nie
+  opuszcza dysku, nie trafia do logów ani do repo;
+- wymienia klucz na krótką sesję przez `hub-key-exchange` (odświeża co 45 min) i pisze puls
+  przez PostgREST RLS — owner może trzymać linię swojego agenta (migracja 20260826210000);
+- 10 kolejnych niepowodzeń = wyjście → linia legalnie wraca do chmury (fail-open jak
+  każdy puls);
+- start z Autostartu: `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\mosadd-keepalive.bat`
+  (pythonw z venv Hermesa, bez okna). Rejestracja w Task Scheduler wymagała zgody admina —
+  jeśli kiedyś będzie uprawnienie, przenieść na ScheduledTask.
+
+Semantyka nie zmienia się kłamliwie: PC uśpiony/wyłączony = puls starzeje się po 5 min i
+zastępca przejmuje (to jego legalna rola). Klucz rotowany/zrywany = keep-alive umiera po
+~10 min i chmura wraca — nie ma „martwego” roszczenia do linii.
+
+## 7. Czego NIE robić
 
 - Nie pisać mDM-ów „jako SOVEREIGN" — z tym kluczem to niemożliwe (kind=agent), ale gdyby
   ktoś kiedyś wpiął klucz ludzki: to zbrodnia tożsamości, patrz komentarz w
