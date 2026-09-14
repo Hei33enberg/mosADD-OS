@@ -331,13 +331,57 @@ const komputer_uruchom: NarzedzieLokalne = {
 };
 
 /**
+ * ⛔⛔ RĘKA NA MASZYNIE JEST WYŁĄCZONA DO ZERA — TYMCZASOWO, NA CZAS WYDANIA 0.2.42.
+ *
+ * ═══ CZYTAJ TO, ZANIM WŁĄCZYSZ Z POWROTEM ═══
+ *
+ * DLACZEGO WYŁĄCZONA. Do 14.09 wbudowany agent w Elektronie NIE WSTAWAŁ — powłoka podawała mu
+ * jedną zmienną z trzech wymaganych, więc proces ginął ułamek sekundy po starcie. Brak smyczy nic
+ * nie kosztował, bo nie było czego trzymać na smyczy. Wydanie 0.2.42 naprawia start i tę arytmetykę
+ * ODWRACA: od chwili, gdy agent naprawdę wstaje, każdy zaakceptowany kontakt właściciela mógłby
+ * kazać jego maszynie wypisać katalog, przeczytać plik i zrobić ZRZUT CAŁEGO EKRANU.
+ *
+ * ⛔ ZAWĘŻENIE KORZENIA KATALOGU NIE WYSTARCZYŁO i to jest sedno tej decyzji. Powłoka wskazuje
+ * agentowi własny katalog roboczy (`MOSADD_AGENT_ROOT`), co zamyka `komputer_pliki` i
+ * `komputer_czytaj` — ale `komputer_stan` oddaje nazwę hosta i użytkownika NIEZALEŻNIE od korzenia,
+ * a `komputer_zrzut` fotografuje CAŁY EKRAN i tylko zapisuje wynik wewnątrz korzenia. Zdjęcie
+ * ekranu właściciela nie jest mniej groźne dlatego, że plik wylądował w piaskownicy.
+ *
+ * REGUŁA, KTÓRA STĄD ZOSTAJE (dowodzący wydaniem, 14.09): poprawka, która budzi coś do życia,
+ * wychodzi razem z ograniczeniem tego czegoś — albo z ograniczeniem ustawionym na ZERO. Nigdy sama.
+ * Zawężenie uprawnień nie wymaga niczyjej zgody; rozszerzenie wymaga.
+ *
+ * ⛔ KIEDY WOLNO WŁĄCZYĆ Z POWROTEM. Wyłącznie razem z KOMPLETNĄ smyczą, czyli gdy istnieją
+ * WSZYSTKIE CZTERY:
+ *   1. bramka nadawcy — kto może wydawać polecenia tej maszynie (`granicaZaufania.ts` to początek,
+ *      ale ona przepuszcza rodzeństwo i dopuszczonych przez politykę; ręka wymaga OSTRZEJSZEGO
+ *      pytania „czy to WŁAŚCICIEL", a takiej funkcji w bazie jeszcze nie ma);
+ *   2. korzeń katalogu wybrany świadomie przez właściciela (dziś domyślnie pusty katalog roboczy);
+ *   3. lista poleceń zakazanych napisana pod SYSTEM, na którym stoi — obecna jest pisana pod bash
+ *      i na Windowsie przepuszcza natywne odpowiedniki tego, co nazywa;
+ *   4. zgoda przed wykonaniem i trwały dziennik tego, co agent zrobił.
+ * Włączenie tego bez którejkolwiek z czterech jest cofnięciem decyzji, nie naprawą.
+ *
+ * ⛔ KIERUNEK AWARII. Właczenie wymaga DOKŁADNEJ wartości `"1"`. Literówka w nazwie zmiennej,
+ * pusta wartość, `"true"`, `"yes"`, usunięcie flagi z konfiguracji — wszystko to daje pustą listę.
+ * Awaria konfiguracji idzie w stronę CISZY, nigdy w stronę otwartej ręki.
+ */
+export function receWlaczone(): boolean {
+  return process.env.MOSADD_AGENT_RECE === "1";
+}
+
+/**
  * Narzędzia widoczne dla modelu. ⛔ `komputer_uruchom` jest DOKŁADANY dopiero po włączeniu:
  * narzędzie widoczne, ale zawsze odmawiające, uczy model obiecywać rzeczy, których nie zrobi.
+ * Ta sama zasada rządzi całą listą: gdy ręka jest wyłączona, model nie widzi ŻADNEGO narzędzia
+ * maszyny i nie obiecuje właścicielowi niczego, czego nie dowiezie.
  */
-export const narzedziaLokalne: NarzedzieLokalne[] = [
-  komputer_stan,
-  komputer_pliki,
-  komputer_czytaj,
-  komputer_zrzut,
-  ...(poleceniaWlaczone() ? [komputer_uruchom] : []),
-];
+export const narzedziaLokalne: NarzedzieLokalne[] = receWlaczone()
+  ? [
+      komputer_stan,
+      komputer_pliki,
+      komputer_czytaj,
+      komputer_zrzut,
+      ...(poleceniaWlaczone() ? [komputer_uruchom] : []),
+    ]
+  : [];
