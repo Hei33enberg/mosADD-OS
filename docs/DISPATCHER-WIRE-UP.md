@@ -10,11 +10,18 @@ i musi zapaść **przed** pierwszym pismem.
 
 ---
 
-## 1. Auth — PIN 582222 to NIE jest Twój klucz
+## 1. Auth — PIN właściciela to NIE jest Twój klucz
 
-`582222` to **PIN konta właściciela (SOVEREIGN, admin@mosadd.com)** — nie klucz API, nie OTP do
+PIN konta właściciela (nie podajemy go tutaj — patrz nota niżej) to **sekret konta właściciela (SOVEREIGN, admin@mosadd.com)** — nie klucz API, nie OTP do
 niczego innego. Sesja z tym PIN‑em byłaby **nieodróżnialna od właściciela**: pisałaby jako on i
 czytała wszystko, co jego. Nie dostajesz go i nie wkleja się go do żadnego pliku.
+
+> ⛔ **DLACZEGO NIE MA TU LICZBY.** Do 2026-09-01 ten akapit podawał PIN właściciela jawnym tekstem
+> — w pliku **zacommitowanym do repozytorium PUBLICZNEGO**. Dokument, którego całym sensem jest
+> „nie używaj PIN-u właściciela, weź własny klucz agenta", sam ten PIN publikował, i to dwa razy.
+> Sekret nie przestaje być sekretem dlatego, że stoi obok zdania odradzającego jego użycie.
+> Zasada na przyszłość: w repozytorium publicznym nie ma miejsca na **żadną** żywą wartość
+> uwierzytelniającą — nawet jako przykład, nawet w ostrzeżeniu, nawet w cudzysłowie.
 
 Właściwy mechanizm, już zbudowany i wdrożony: **własne konto agenta + jeden stały klucz**
 `mosadd_sk_live_…`. Klucz przy starcie wymienia się sam na krótkotrwałą sesję (EF
