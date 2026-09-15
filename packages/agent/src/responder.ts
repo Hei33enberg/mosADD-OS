@@ -343,7 +343,14 @@ export async function startResponder(opts: ResponderOptions = {}): Promise<() =>
   const openRouterKey = opts.openRouterKey ?? process.env.OPENROUTER_API_KEY ?? "";
   const model = opts.model ?? process.env.MOSADD_AGENT_MODEL ?? "anthropic/claude-sonnet-4";
   const pollMs = opts.pollMs ?? Number(process.env.RESPONDER_POLL_MS ?? 30000);
-  const statePath = opts.statePath ?? process.env.RESPONDER_STATE ?? "/tmp/responder-state.json";
+  // ⛔ FALA 4 (15.09 — sellable-agent-state-in-tmp): stary fallback "/tmp/responder-state.json"
+  // znikał przy KAŻDYM restarcie maszyny → po rebootcie agent klienta odpowiadał DRUGI raz na te
+  // same wiadomości (ten sam defekt, który box naprawił w sierpniu). HOME żyje na każdej maszynie;
+  // provision i tak ustawia jawną ścieżkę (RESPONDER_STATE=/var/lib/mosadd-agent/responder-state.json).
+  const statePath = opts.statePath ?? process.env.RESPONDER_STATE ?? (() => {
+    const home = process.env.HOME || process.env.USERPROFILE || "/root";
+    return `${home}/.mosadd/responder-state.json`;
+  })();
   const systemPrompt = opts.systemPrompt ?? DEFAULT_SYSTEM;
 
   // ⛔ `OPENROUTER_API_KEY` NIE JEST JUZ WARUNKIEM STARTU — patrz nota przy `brainReply`.
