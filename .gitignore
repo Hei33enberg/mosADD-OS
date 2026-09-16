@@ -75,3 +75,6 @@ packages/agent/dist-bundle/
 # vendor-drop: verbatim kopia mDM E2EE z PRYWATNEGO Hei33enberg/mosADD (drop dla CYMRU).
 # Nie publikujemy kodu wlasciwosciowego do repo publicznego; miejsce na drop = repo CYMRU.
 vendor-drop/
+
+# sekrety lokalne (general3, 16.09)
+.env.local.txt
