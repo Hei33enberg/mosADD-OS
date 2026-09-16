@@ -6,6 +6,7 @@
   "rewrites": [
     { "source": "/mcp", "destination": "/api/mcp" },
     { "source": "/", "destination": "/api/mcp" },
+    { "source": "/health", "destination": "/api/health" },
     { "source": "/.well-known/oauth-authorization-server", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/metadata" },
     { "source": "/.well-known/oauth-authorization-server/mcp", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/metadata" },
     { "source": "/.well-known/oauth-protected-resource", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/resource" },
