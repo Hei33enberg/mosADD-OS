@@ -24,6 +24,7 @@ const AGENT_ID = "0489d4c6-8727-442f-bf83-68747a469492";
 const calls = {
   upserts: [] as Record<string, unknown>[],
   deletes: [] as string[],
+  rpcs: [] as { name: string; args: Record<string, unknown> }[],
 };
 
 /**
@@ -78,6 +79,12 @@ vi.mock("../providers/supabase.js", () => ({
   getSupabase: () => ({
     auth: { getUser: () => Promise.resolve({ data: { user: { id: USER_ID } }, error: null }) },
     from: (table: string) => makeBuilder(table),
+    // release/as_agent path: presence.ts woła mosadd_gateway_binding_release/claim przez rpc —
+    // atrapa nagrywa wywołania, żeby asercje czytały się jak prawdziwy wire.
+    rpc: (name: string, args: Record<string, unknown>) => {
+      calls.rpcs.push({ name, args });
+      return Promise.resolve({ error: null, data: { took_over: false, previous_session_id: null } });
+    },
   }),
 }));
 
@@ -152,12 +159,11 @@ describe("comms_session_attach", () => {
     await call({});
     const out = await call({ release: true });
     expect(out.attached).toBe(false);
-    // Two deletes since 2026-08-26: the heartbeat row (by identity) AND the as_agent
-    // declaration in mosadd_gateway_agent_binding (by user) — a finishing session hands
-    // back EVERYTHING it could hold, so no stale declaration keeps signing later posts.
-    // Zwolnienie kasuje: puls linii + deklarację TEJ sesji (konto ORAZ sesja). Trzeci element to
-    // dowód, że nie kasujemy po samym koncie — bo to zabierało linię wszystkim innym generałom.
-    expect(calls.deletes).toEqual([IDENTITY_ID, USER_ID, TEST_SESSION]);
+    // Zwolnienie kasuje puls linii (po identity) i puszcza deklarację TEJ sesji RPC-em
+    // (konto ORAZ sesja po stronie SQL — nie kasujemy po samym koncie, bo to zabierało
+    // linię wszystkim innym generałom na tym samym kluczu).
+    expect(calls.deletes).toEqual([IDENTITY_ID]);
+    expect(calls.rpcs).toEqual([{ name: "mosadd_gateway_binding_release", args: { p_session_id: TEST_SESSION } }]);
     calls.upserts = [];
     await vi.advanceTimersByTimeAsync(180_000);
     expect(calls.upserts).toHaveLength(0);
@@ -168,14 +174,17 @@ describe("comms_session_attach", () => {
     expect(out.attached).toBe(true);
     expect(out.identity_id).toBe(AGENT_ID);
     expect((out.speaking_as as { address: string }).address).toBe("dispatcher@mosadd.com");
-    // The signing declaration message-send reads (migration 20260826210000)…
-    expect(calls.upserts).toContainEqual(
-      expect.objectContaining({
-        table: "mosadd_gateway_agent_binding",
-        user_id: USER_ID,
-        agent_identity_id: AGENT_ID,
-      }),
-    );
+    // The signing declaration message-send reads — arbitrowana w SQL (LINEAR-5879):
+    // claim RPC-em, nie surowym upsertem.
+    expect(calls.rpcs).toContainEqual({
+      name: "mosadd_gateway_binding_claim",
+      args: {
+        p_session_id: TEST_SESSION,
+        p_agent_identity_id: AGENT_ID,
+        p_agent_address: "dispatcher@mosadd.com",
+        p_host: "dispatcher — Cowork",
+      },
+    });
     // …and the AGENT's liveness row, so ITS cloud stand-in defers to this session.
     expect(calls.upserts).toContainEqual(
       expect.objectContaining({

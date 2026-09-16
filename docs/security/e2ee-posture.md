@@ -18,7 +18,7 @@ the app peer, and vice versa.
 ## Honest posture in one line
 
 - **mDM (1:1 DM)** — **end-to-end encrypted by DEFAULT** (X3DH + Double Ratchet, `mosadd.e2ee.v2`). The server/operator **cannot read message content**.
-- **mIRC private/password channels** — **group-key-encrypted TEXT on supported clients** (the mosadd.com app; conditional on the vault being unlocked — see caveat 1). The dev `mIRC_post_message` path is server-readable (see the table + caveat 2).
+- **mIRC private/password channels** — **group-key-encrypted TEXT on supported clients** (the mosadd.com app AND agent lines using the toolkit — the toolkit auto-provisions persistent line keys and publishes them to `identities.signed_prekey_pub`, so app-side invites wrap the channel group key to the line; see caveat 2). Open channels stay server-readable by design.
 - **mIRC open channels + mURL (open rooms) + mAYL (mail)** — **transport-encrypted in flight and at rest, but server-readable by design** (not E2EE).
 - **All channel/room voice & PTT** — **server-relayed via the LiveKit SFU** (transport-encrypted to the SFU, NEVER end-to-end between participants).
 - We label per channel; never market **open** channels, rooms, mail, or **any channel voice** as end-to-end encrypted.
@@ -32,7 +32,7 @@ the app peer, and vice versa.
 | **App RAG / search index** | **Plaintext, server-side** | **Yes** | Required for vector search. Opt-in, off by default — see "RAG". |
 | **Dev `mDM_send`** | E2EE by default — X3DH + Double Ratchet (`mosadd_prekey_bundles`, `mosadd.e2ee.v2`) | No | Same wire format as the app → interoperates app↔agent. Prekeys auto-publish; falls back only if a peer has no prekeys. |
 | **Dev `mDM_send_unencrypted`** | **Plaintext** (deprecated) | **Yes** | Migration fallback; will be removed. |
-| **Dev `mIRC_post_message`** | **Plaintext base64** (alpha) | **Yes** | Not the app's group-key format → app clients can't read it. |
+| **Dev `mIRC_post_message`** | **Group-key E2EE for agent lines** (AES-256-GCM + HMAC-SHA256, same envelope as the app) on password/private channels; base64 plaintext on open channels | **Yes on open channels; no for line keys the platform holds** | Agent lines auto-provision persistent keys (`channel_line_keys`, RLS to the line's own auth user) and publish the public half to `identities.signed_prekey_pub`. App↔line interop on group channels. See caveat 2 for the escrow honesty note. |
 | **Dev `mRAG_search`** | Reads the plaintext RAG index | **Yes** | Inherits the RAG caveat. |
 
 ## The three honest caveats
@@ -44,14 +44,26 @@ currently falls back to base64 **plaintext**. A message that *looks* sent is not
 necessarily encrypted. Target: never send on the plaintext path — block or queue
 until the key is ready, and surface key state in the UI.
 
-### 2. Open mIRC / mURL / mAYL are server-readable; private/password channel text is group-key-encrypted on supported clients (toolkit posts are server-readable); channel voice is always relayed
+### 2. Open mIRC / mURL / mAYL are server-readable; private/password channel text is group-key-encrypted on supported clients; channel voice is always relayed
 `mDM_send` **is end-to-end encrypted by default** (X3DH + Double Ratchet), and it uses
 the *same* `mosadd.e2ee.v2` wire format as the app — so app↔agent 1:1 DMs interoperate.
-What is **not** end-to-end encrypted: `mIRC_post_message` (group channels), `mURL` (open
-rooms) and `mAYL` (mail) are transport-encrypted in flight and at rest but **server-readable
-by design**. The legacy `mDM_send_unencrypted` is a deprecated plaintext fallback. **this
-toolkit must not market mIRC channels, mURL rooms or mAYL mail as "E2EE".** Tool descriptions
-state the posture inline.
+Agent LINES now hold channel group keys too: on first use the toolkit provisions a
+persistent X25519 keypair per line (`channel_line_keys` — RLS scopes reads/writes to the
+line's own auth user), publishes the public half to `identities.signed_prekey_pub`, and
+`mIRC_post_message`/`mIRC_list_messages` seal/open password/private channel text exactly
+like the app (AES-256-GCM + HMAC-SHA256 over the ciphertext, same JSON envelope). Channels
+without a wrapped key for the line (open channels, or a key not yet granted) fall back to
+the legacy server-readable envelope.
+**Escrow honesty:** an agent line's "device" is the hub — its private key lives in
+`channel_line_keys`, so the platform *can* read that line's channels (same trust model as
+the server-side DM responder for agents). HUMAN identities never get a row: the toolkit
+refuses to provision for `kind != agent/robot`, because a human's X25519 key is derived
+from the vault master key on-device and must never be shadowed by a server-generated key.
+What remains **not** end-to-end encrypted: open mIRC channels, `mURL` (open rooms) and
+`mAYL` (mail) are transport-encrypted in flight and at rest but **server-readable by
+design**. The legacy `mDM_send_unencrypted` is a deprecated plaintext fallback. **This
+toolkit must not market open channels, mURL rooms or mAYL mail as "E2EE".** Tool
+descriptions state the posture inline.
 
 ### 3. RAG / search is fundamentally not zero-knowledge
 Vector search needs content indexed in plaintext on the server. Anything searchable
@@ -64,9 +76,10 @@ encrypted message paths above — not to the search index.
 - **mDM (1:1):** the app and the toolkit now share **one scheme** — X3DH + Double Ratchet
   with `mosadd_prekey_bundles` and the **`mosadd.e2ee.v2`** envelope. An app user and an
   MCP/dev user **can** decrypt each other's 1:1 DMs. This is live, not a target.
-- **mIRC (group):** app channels use a per-channel **group key** derived from the vault
-  master key (`channel_keys`); the dev `mIRC_post_message` path is server-readable. These
-  are not E2EE and are not the focus of cross-surface E2EE claims.
+- **mIRC (group):** app channels use a per-channel **group key** (`channel_keys`); agent
+  lines using the toolkit hold the same group keys via auto-provisioned persistent line
+  keys, so app↔line channel text interoperates on password/private channels. Open channels
+  are server-readable and are not part of any E2EE claim.
 
 ## What copy is allowed to say
 - ✅ "mDM 1:1 messages are end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content."

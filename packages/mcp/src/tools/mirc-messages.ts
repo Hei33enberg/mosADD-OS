@@ -12,6 +12,7 @@ import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
 import { invokeFunction, readSupabaseEnv } from "../providers/supabase.js";
 import { formatVoiceIfAny } from "./voice-format.js";
+import { decryptChannelPayload, encryptChannelPayload, unwrapEnvelopeText } from "../crypto/channel-e2ee.js";
 
 const PROTOCOL_VERSION = "mosadd.chat.v1";
 
@@ -47,12 +48,12 @@ const mIRC_list_messages_input = z.object({
   space_id: z.string().optional().describe("Optional backing space id. Resolved automatically if omitted."),
 });
 
-// ALPHA: channel messages are NOT end-to-end encrypted here — the body is wrapped
-// in a JSON envelope and base64-encoded (server-readable). The mosadd.com app
-// encrypts channel messages with a per-channel group key, so app clients cannot
-// decrypt these dev-posted plaintext payloads (and vice-versa) until the toolkit
-// adopts the same group-key scheme. See docs/security/e2ee-posture.md.
-function packPlaintextPayload(text: string, replyToId?: string): string {
+// Channel messages on password/private channels are group-key encrypted when the
+// line holds the channel's group key (channel_keys row wrapped to the line's
+// identity — F4/LINEAR-5934). Open channels have no key → the legacy server-readable
+// envelope below. The envelope JSON is the PLAINTEXT inside the group-key seal, so
+// the app unwraps toolkit posts into the same bubble shape as before.
+function buildPlaintextEnvelope(text: string, replyToId?: string): string {
   const envelope = {
     v: PROTOCOL_VERSION,
     type: "text",
@@ -60,7 +61,7 @@ function packPlaintextPayload(text: string, replyToId?: string): string {
     reply_to: replyToId ?? null,
     sent_at: new Date().toISOString(),
   };
-  return Buffer.from(JSON.stringify(envelope), "utf8").toString("base64");
+  return JSON.stringify(envelope);
 }
 
 function unpackPayload(payload: string): { text: string } {
@@ -71,6 +72,13 @@ function unpackPayload(payload: string): { text: string } {
     /* fall through */
   }
   return { text: "<ciphertext>" };
+}
+
+/** Stored payload → readable text. Group-key decrypt first; legacy base64 envelope second. */
+async function payloadToText(channelId: string, payload: string): Promise<string> {
+  const decrypted = await decryptChannelPayload(channelId, payload);
+  if (decrypted !== null) return unwrapEnvelopeText(decrypted);
+  return unpackPayload(payload).text;
 }
 
 /** Resolve a channel's backing space id (metadata.linked_space_id) via channel-manage. */
@@ -101,10 +109,16 @@ async function mIRC_post_message(
   const thread_id = `chat:${input.channel_id}`;
   ctx.log("debug", "mIRC_post_message", { thread_id, space_id, agent: input.agent });
 
+  // Group-key seal when the line holds the channel's key (password/private channels).
+  // Fallback = legacy server-readable envelope (open channels / no key yet).
+  const envelope = buildPlaintextEnvelope(input.text, input.reply_to_id);
+  const encrypted = await encryptChannelPayload(input.channel_id, envelope);
+  const payload = encrypted ?? Buffer.from(envelope, "utf8").toString("base64");
+
   const data = await invokeFunction<{ message?: { id: string; created_at: string }; sent_as?: SentAs }>("message-send", {
     space_id,
     thread_id,
-    encrypted_payload: packPlaintextPayload(input.text, input.reply_to_id),
+    encrypted_payload: payload,
     message_type: "txt",
     protocol_version: PROTOCOL_VERSION,
     reply_to_id: input.reply_to_id ?? null,
@@ -151,13 +165,18 @@ async function mIRC_list_messages(
     before: input.cursor,
   });
 
-  return {
-    messages: (data?.messages ?? []).map((m) => ({
+  const messages: Array<{ id: string; sender_identity_id: string; text: string; timestamp: string }> = [];
+  for (const m of data?.messages ?? []) {
+    messages.push({
       id: m.id,
       sender_identity_id: m.sender_identity_id,
-      text: formatVoiceIfAny(unpackPayload(m.encrypted_payload).text),
+      text: formatVoiceIfAny(await payloadToText(input.channel_id, m.encrypted_payload)),
       timestamp: m.created_at,
-    })),
+    });
+  }
+
+  return {
+    messages,
     next_cursor: data?.next_before ?? data?.cursor ?? null,
   };
 }
@@ -169,7 +188,7 @@ export const mircMessagesTools: MosaddTool[] = [
     annotations: { readOnlyHint: false },
     requires: "network",
     description:
-      "Post a text message into a persistent channel (mIRC). Pass channel_id from mIRC_create / mIRC_list; the backing space is resolved automatically. This is how an agent actually talks in a channel — the other mIRC_* tools only manage it. ACCESS: banned/blocked users are refused on ALL access modes (including open); open channels accept anyone not banned; password channels require joining with the password; private channels require request-access + approval. ATTRIBUTION: by default the message is signed with the identity behind the API key — and a key belongs to a USER, so an agent runtime using its owner's key posts as the OWNER. Pass `agent` to sign as one of your own agents instead; the server verifies you own it and that it is in the channel. ENCRYPTION: this tool posts SERVER-READABLE plaintext base64 on EVERY access mode — private and password channels included; it is never end-to-end encrypted. Open channels: app clients CAN read toolkit-posted messages. Password/private channels: the mosadd.com app group-key-encrypts channel text on supported clients, but the toolkit does not hold that group key — the message still lands server-readable and app clients cannot decrypt it as channel text (group-key parity is not yet wired).",
+      "Post a text message into a persistent channel (mIRC). Pass channel_id from mIRC_create / mIRC_list; the backing space is resolved automatically. This is how an agent actually talks in a channel — the other mIRC_* tools only manage it. ACCESS: banned/blocked users are refused on ALL access modes (including open); open channels accept anyone not banned; password channels require joining with the password; private channels require request-access + approval. ATTRIBUTION: by default the message is signed with the identity behind the API key — and a key belongs to a USER, so an agent runtime using its owner's key posts as the OWNER. Pass `agent` to sign as one of your own agents instead; the server verifies you own it and that it is in the channel. ENCRYPTION: when your line holds the channel's group key (password/private channels where a wrapped key row exists for your identity — it is auto-provisioned on first use), the message is sealed AES-256-GCM + HMAC exactly like the app, so members read it as normal channel text. Open channels and channels without a wrapped key for your line fall back to the legacy server-readable envelope.",
     inputSchema: mIRC_post_message_input,
     handler: mIRC_post_message as MosaddTool["handler"],
   },
@@ -179,7 +198,7 @@ export const mircMessagesTools: MosaddTool[] = [
     annotations: { readOnlyHint: true },
     requires: "network",
     description:
-      "List recent text messages in a persistent channel (mIRC), newest first, cursor-paginated. Pass channel_id; the backing space is resolved automatically.",
+      "List recent text messages in a persistent channel (mIRC), newest first, cursor-paginated. Pass channel_id; the backing space is resolved automatically. ENCRYPTION: messages your line can decrypt (group-key channels — auto-provisioned key material) come back as readable text; anything else falls back to the legacy envelope/plaintext decode.",
     inputSchema: mIRC_list_messages_input,
     handler: mIRC_list_messages as MosaddTool["handler"],
   },
