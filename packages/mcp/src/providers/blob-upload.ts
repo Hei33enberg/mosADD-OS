@@ -12,8 +12,11 @@
  * STATUS: scaffold. The Storage upload path below is real (supabase-js
  * `storage.from(bucket).upload`), but two things are TODO and gated on the
  * Lane A / CTO backend contract:
- *   - TODO(Lane A): confirm bucket names (`voice-blobs` for voice/ptt) and the
- *     RLS/policy that lets an agent JWT or hub-claim JWT write to them.
+ *   - DONE 2026-09-16: bucket names + write policy CONFIRMED against the live
+ *     project (see defaultBucket()/ownerFolder()). The old defaults
+ *     ('file-blobs', 'voice-blobs') did not exist in the project, so EVERY
+ *     file/voice send from MCP died with `Bucket not found` — reproduced on
+ *     mDM_send_file, mIRC_send_file and mDM_send_voice before the fix.
  *   - TODO(Lane A): mDM voice is CLIENT-ENCRYPTED — the bytes must be sealed
  *     (per-recipient, via @mosadd/crypto) before upload and `key_ref` must point
  *     at the wrapped content key. Today this helper uploads the bytes as-is and
@@ -54,8 +57,48 @@ export interface UploadBlobArgs {
 }
 
 function defaultBucket(kind: AttachmentKind): string {
-  // TODO(Lane A): confirm canonical bucket names + write policy for agent JWTs.
-  return kind === "file" ? "file-blobs" : "voice-blobs";
+  // ⛔ TYLKO BUCKETY, KTÓRE ISTNIEJĄ I PRZYJMĄ TEN JWT (potwierdzone na żywym
+  // projekcie rooffhgbxafyjcwmwpsy, 16.09):
+  //   chat-files     → bucket istnieje (limit 100 MB). INSERT policy
+  //                    "Users upload chat files": (storage.foldername(name))[1] = auth.uid()
+  //                    SELECT policy dopuszcza też członka wątku: is_thread_member(auth.uid(), foldername[2])
+  //   voice-messages → bucket istnieje. INSERT policy
+  //                    "Users can upload voice messages": foldername(name)[1] = auth.uid()
+  // Poprzednie domyślne ('file-blobs' dla file, 'voice-blobs' dla voice/ptt) NIE
+  // ISTNIEJĄ w projekcie — stąd "Bucket not found" na mDM_send_file, mIRC_send_file
+  // i mDM_send_voice. Nazwy są tu jednym źródłem prawdy: gdy bucket zniknie,
+  // zawodzi JAWNIE, a nie po cichu ląduje w innym miejscu.
+  return kind === "file" ? "chat-files" : "voice-messages";
+}
+
+/** `sub` z JWT tej sesji, czyli `auth.uid()` — PIERWSZY segment ścieżki.
+ *
+ * ⛔ NIE OZDOBA I NIE OPCJA. Jedyny segment, który sprawdzają polityki INSERT obu
+ * bucketów: `(storage.foldername(name))[1] = auth.uid()`. Ścieżka bez segmentu
+ * użytkownika (`<thread>/<uuid>.ext`, jak było) przechodzi upload do momentu,
+ * w którym baza odrzuca wiersz — czyli wysyłka pliku jest ZAWSZE martwa, i to
+ * komunikatem, który nie mówi dlaczego. Ta sama konwencja co w aplikacji:
+ * `apps/web/src/lib/ircApi.ts: uploadChatFile()` → `<user.id>/<thread>/<ts>_<nazwa>`.
+ */
+function jwtSub(jwt: string): string | null {
+  const part = jwt.split(".")[1];
+  if (!part) return null;
+  try {
+    const json = JSON.parse(Buffer.from(part.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8"));
+    return typeof json?.sub === "string" && json.sub ? json.sub : null;
+  } catch {
+    return null;
+  }
+}
+
+function ownerFolder(userJwt: string | undefined): string {
+  const sub = userJwt ? jwtSub(userJwt) : null;
+  if (!sub) {
+    throw new Error(
+      "blob upload refused: no user id in the session JWT — bucket policy requires foldername[1] = auth.uid(); run `mosadd login` (or set MOSADD_USER_JWT) and retry",
+    );
+  }
+  return sub;
 }
 
 function randomId(): string {
@@ -68,11 +111,14 @@ function randomId(): string {
  * in `message-send`'s `attachments[]`.
  */
 export async function uploadBlob(args: UploadBlobArgs): Promise<AttachmentDescriptor> {
-  readSupabaseEnv();
+  const env = readSupabaseEnv();
   const sb = getSupabase();
   const bucket = args.bucket ?? defaultBucket(args.kind);
   const ext = args.filename?.split(".").pop() ?? mimeExt(args.mime);
-  const path = `${args.prefix ? args.prefix.replace(/[^a-zA-Z0-9._/-]/g, "-") + "/" : ""}${randomId()}${ext ? "." + ext : ""}`;
+  // ⛔ KOLEJNOŚĆ SEGMENTÓW JEST CZĘŚCIĄ KONTRAKTU Z POLITYKĄ: <auth.uid()>/<wątek>/<uuid>.<ext>.
+  const folder = args.prefix ? args.prefix.replace(/[^a-zA-Z0-9._/-]/g, "-").replace(/^\/+|\/+$/g, "") : "";
+  const path = [ownerFolder(env.userJwt), folder, `${randomId()}${ext ? "." + ext : ""}`]
+    .filter(Boolean).join("/");
 
   const { error } = await sb.storage.from(bucket).upload(path, args.bytes, {
     contentType: args.mime,
