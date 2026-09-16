@@ -16,6 +16,7 @@
 
 import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
+import { formatVoiceIfAny } from "./voice-format.js";
 import { invokeFunction, getSupabase, readSupabaseEnv } from "../providers/supabase.js";
 import {
   encryptForPeer,
@@ -255,7 +256,7 @@ async function mDM_list(
       };
       // Legacy plaintext envelope (deprecated path) — unpack directly.
       if (!isE2eeEnvelope(m.payload)) {
-        return { ...base, text: unpackPayload(m.payload).text, encrypted: false };
+        return { ...base, text: formatVoiceIfAny(unpackPayload(m.payload).text), encrypted: false };
       }
       // Our own outgoing ratchet messages aren't decryptable from our own
       // ratchet on read. Recover the plaintext from the local sent-items cache
@@ -264,13 +265,13 @@ async function mDM_list(
       if (m.senderId === selfId) {
         const cached = await ctx.providers.keys.getSentMessage?.(m.id);
         if (cached) {
-          return { ...base, text: unpackPayload(cached).text, encrypted: true };
+          return { ...base, text: formatVoiceIfAny(unpackPayload(cached).text), encrypted: true };
         }
         return { ...base, text: "<encrypted · sent by you>", encrypted: true };
       }
       try {
         const inner = await decryptFromPeer(ctx.providers.keys, m.senderId, m.payload);
-        return { ...base, text: unpackPayload(inner).text, encrypted: true };
+        return { ...base, text: formatVoiceIfAny(unpackPayload(inner).text), encrypted: true };
       } catch (err) {
         ctx.log("warn", "mDM_list failed to decrypt a message", { id: m.id, error: String(err) });
         return { ...base, text: "<undecryptable>", encrypted: true };

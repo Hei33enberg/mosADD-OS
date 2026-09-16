@@ -11,6 +11,7 @@
 import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
 import { invokeFunction, readSupabaseEnv } from "../providers/supabase.js";
+import { formatVoiceIfAny } from "./voice-format.js";
 
 const PROTOCOL_VERSION = "mosadd.chat.v1";
 
@@ -154,7 +155,7 @@ async function mIRC_list_messages(
     messages: (data?.messages ?? []).map((m) => ({
       id: m.id,
       sender_identity_id: m.sender_identity_id,
-      text: unpackPayload(m.encrypted_payload).text,
+      text: formatVoiceIfAny(unpackPayload(m.encrypted_payload).text),
       timestamp: m.created_at,
     })),
     next_cursor: data?.next_before ?? data?.cursor ?? null,
