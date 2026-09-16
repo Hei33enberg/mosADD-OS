@@ -10,7 +10,7 @@
  *
  * This module gives a LINE the same parity:
  *   1. ensureLineChannelKey() — resolves the key's identity (identities.user_id),
- *      provisions a PERSISTENT X25519 keypair in `channel_line_keys` (RLS: only the
+ *      provisions a PERSISTENT X25519 keypair in `mosadd_channel_line_keys` (RLS: only the
  *      line's own auth user) and publishes the public half to
  *      identities.signed_prekey_pub, so app-side invites wrap the group key to it.
  *      Provisioning is REFUSED for human identities — their X25519 key is derived
@@ -168,7 +168,7 @@ export async function ensureLineChannelKey(): Promise<LineChannelKey | null> {
 
       const sb = getSupabase();
       const { data: row, error: readErr } = await sb
-        .from("channel_line_keys")
+        .from("mosadd_channel_line_keys")
         .select("public_key, private_key")
         .eq("identity_id", identity.id)
         .maybeSingle();
@@ -189,13 +189,13 @@ export async function ensureLineChannelKey(): Promise<LineChannelKey | null> {
       const userId = u?.user?.id;
       if (!userId) return null;
       await sb
-        .from("channel_line_keys")
+        .from("mosadd_channel_line_keys")
         .upsert(
           { identity_id: identity.id, user_id: userId, public_key: exported.publicKey, private_key: exported.privateKey, key_version: 1 },
           { onConflict: "identity_id", ignoreDuplicates: true },
         );
       const { data: winner, error: winnerErr } = await sb
-        .from("channel_line_keys")
+        .from("mosadd_channel_line_keys")
         .select("public_key, private_key")
         .eq("identity_id", identity.id)
         .maybeSingle();

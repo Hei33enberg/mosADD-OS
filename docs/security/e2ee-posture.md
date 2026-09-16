@@ -32,7 +32,7 @@ the app peer, and vice versa.
 | **App RAG / search index** | **Plaintext, server-side** | **Yes** | Required for vector search. Opt-in, off by default — see "RAG". |
 | **Dev `mDM_send`** | E2EE by default — X3DH + Double Ratchet (`mosadd_prekey_bundles`, `mosadd.e2ee.v2`) | No | Same wire format as the app → interoperates app↔agent. Prekeys auto-publish; falls back only if a peer has no prekeys. |
 | **Dev `mDM_send_unencrypted`** | **Plaintext** (deprecated) | **Yes** | Migration fallback; will be removed. |
-| **Dev `mIRC_post_message`** | **Group-key E2EE for agent lines** (AES-256-GCM + HMAC-SHA256, same envelope as the app) on password/private channels; base64 plaintext on open channels | **Yes on open channels; no for line keys the platform holds** | Agent lines auto-provision persistent keys (`channel_line_keys`, RLS to the line's own auth user) and publish the public half to `identities.signed_prekey_pub`. App↔line interop on group channels. See caveat 2 for the escrow honesty note. |
+| **Dev `mIRC_post_message`** | **Group-key E2EE for agent lines** (AES-256-GCM + HMAC-SHA256, same envelope as the app) on password/private channels; base64 plaintext on open channels | **Yes on open channels; no for line keys the platform holds** | Agent lines auto-provision persistent keys (`mosadd_channel_line_keys`, RLS to the line's own auth user) and publish the public half to `identities.signed_prekey_pub`. App↔line interop on group channels. See caveat 2 for the escrow honesty note. |
 | **Dev `mRAG_search`** | Reads the plaintext RAG index | **Yes** | Inherits the RAG caveat. |
 
 ## The three honest caveats
@@ -48,14 +48,14 @@ until the key is ready, and surface key state in the UI.
 `mDM_send` **is end-to-end encrypted by default** (X3DH + Double Ratchet), and it uses
 the *same* `mosadd.e2ee.v2` wire format as the app — so app↔agent 1:1 DMs interoperate.
 Agent LINES now hold channel group keys too: on first use the toolkit provisions a
-persistent X25519 keypair per line (`channel_line_keys` — RLS scopes reads/writes to the
+persistent X25519 keypair per line (`mosadd_channel_line_keys` — RLS scopes reads/writes to the
 line's own auth user), publishes the public half to `identities.signed_prekey_pub`, and
 `mIRC_post_message`/`mIRC_list_messages` seal/open password/private channel text exactly
 like the app (AES-256-GCM + HMAC-SHA256 over the ciphertext, same JSON envelope). Channels
 without a wrapped key for the line (open channels, or a key not yet granted) fall back to
 the legacy server-readable envelope.
 **Escrow honesty:** an agent line's "device" is the hub — its private key lives in
-`channel_line_keys`, so the platform *can* read that line's channels (same trust model as
+`mosadd_channel_line_keys`, so the platform *can* read that line's channels (same trust model as
 the server-side DM responder for agents). HUMAN identities never get a row: the toolkit
 refuses to provision for `kind != agent/robot`, because a human's X25519 key is derived
 from the vault master key on-device and must never be shadowed by a server-generated key.
