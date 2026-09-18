@@ -10,7 +10,7 @@
 
 import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
-import { invokeFunction, readSupabaseEnv } from "../providers/supabase.js";
+import { invokeFunction, getSupabase, readSupabaseEnv } from "../providers/supabase.js";
 import { formatVoiceIfAny } from "./voice-format.js";
 import { decryptChannelPayload, encryptChannelPayload, unwrapEnvelopeText } from "../crypto/channel-e2ee.js";
 
@@ -165,7 +165,7 @@ async function mIRC_list_messages(
     before: input.cursor,
   });
 
-  const messages: Array<{ id: string; sender_identity_id: string; text: string; timestamp: string }> = [];
+  const messages: Array<{ id: string; sender_identity_id: string; text: string; timestamp: string; transcript?: string }> = [];
   for (const m of data?.messages ?? []) {
     messages.push({
       id: m.id,
@@ -173,6 +173,30 @@ async function mIRC_list_messages(
       text: formatVoiceIfAny(await payloadToText(input.channel_id, m.encrypted_payload)),
       timestamp: m.created_at,
     });
+  }
+
+  // H0 (18.09): GŁOS MUSI MIEĆ SŁOWA, NIE ZNACZNIK. Transkrypty nagrań powstają przy nadaniu
+  // (message-send → rag-transcribe → `ptt_transcripts`); tutaj dokładamy je jednym zapytaniem na
+  // stronę wyników, więc agent czytający kanał dostaje treść wypowiedzi, a nie „[voice]". Pusty
+  // transkrypt albo brak wiersza = zachowanie jak dotąd (pole się nie pojawia).
+  const ids = messages.map((m) => m.id);
+  if (ids.length) {
+    const sb = getSupabase();
+    const { data: trs } = await sb
+      .from("ptt_transcripts")
+      .select("message_id, transcript")
+      .in("message_id", ids)
+      .eq("status", "done");
+    const byId = new Map<string, string>();
+    for (const t of (trs ?? []) as Array<{ message_id: string; transcript: string | null }>) {
+      if (t.transcript) byId.set(t.message_id, t.transcript);
+    }
+    if (byId.size) {
+      for (const m of messages) {
+        const spoken = byId.get(m.id);
+        if (spoken) m.transcript = spoken;
+      }
+    }
   }
 
   return {

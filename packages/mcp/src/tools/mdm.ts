@@ -234,6 +234,7 @@ async function mDM_list(
     timestamp: string;
     thread_id: string;
     encrypted: boolean;
+    transcript?: string;
   }>;
   next_cursor: string | null;
   threads: string[];
@@ -246,7 +247,15 @@ async function mDM_list(
 
   const result = await dm.list({ threadId, limit: input.limit ?? 50, cursor: input.cursor });
 
-  const messages = await Promise.all(
+  const messages: Array<{
+    id: string;
+    sender_identity_id: string;
+    text: string;
+    timestamp: string;
+    thread_id: string;
+    encrypted: boolean;
+    transcript?: string;
+  }> = await Promise.all(
     result.messages.map(async (m) => {
       const base = {
         id: m.id,
@@ -278,6 +287,31 @@ async function mDM_list(
       }
     }),
   );
+
+  // H0 (18.09): GŁOS W mDM MA BYĆ SŁYSZALNY, NIE ZNACZNIKOWY. Transkrypt nagrania (voice/PTT)
+  // powstaje po stronie serwera przy nadaniu i leży w `ptt_transcripts`; dokładamy go tutaj jednym
+  // zapytaniem na stronę wyników. Brak wiersza / pusty transkrypt = pole się nie pojawia, czyli
+  // odpowiedź jest bit w bit jak dotąd dla całej reszty typów wiadomości.
+  const trIds = messages.map((m) => m.id);
+  if (trIds.length) {
+    readSupabaseEnv();
+    const sb = getSupabase();
+    const { data: trs } = await sb
+      .from("ptt_transcripts")
+      .select("message_id, transcript")
+      .in("message_id", trIds)
+      .eq("status", "done");
+    const byId = new Map<string, string>();
+    for (const t of (trs ?? []) as Array<{ message_id: string; transcript: string | null }>) {
+      if (t.transcript) byId.set(t.message_id, t.transcript);
+    }
+    if (byId.size) {
+      for (const m of messages) {
+        const spoken = byId.get(m.id);
+        if (spoken) m.transcript = spoken;
+      }
+    }
+  }
 
   return {
     messages,
