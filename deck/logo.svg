@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#000000"/>
+  <defs>
+    <radialGradient id="s0" cx="38%" cy="34%" r="78%">
+      <stop offset="0%" stop-color="hsl(258 81% 58%)" stop-opacity="0.95"/>
+      <stop offset="45%" stop-color="hsl(288 55% 56%)" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="hsl(308 48% 52%)" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="p0" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="hsl(288 55% 56%)" stop-opacity="0.5"/>
+      <stop offset="60%" stop-color="hsl(288 55% 56%)" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="hsl(288 55% 56%)" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="55%" stop-color="rgba(255,255,255,0.92)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.72)"/>
+    </linearGradient>
+  </defs>
+
+  <!-- slonce (bryla-slonce) -->
+  <circle cx="256" cy="268" r="190" fill="url(#s0)"/>
+  <circle cx="256" cy="268" r="78" fill="url(#p0)"/>
+
+  <!-- PIramida (bryla) -->
+  <g stroke="url(#frame)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M256 54 L164 243"/>
+    <path d="M256 54 L348 243"/>
+    <path d="M256 54 L256 296"/>
+    <path d="M164 243 L256 296 L348 243"/>
+    <!-- wewnetrzna krawedz -->
+    <path d="M256 54 L256 243" stroke="rgba(255,255,255,0.45)"/>
+  </g>
+
+  <!-- VAULT (szescian) -->
+  <g stroke="url(#frame)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- gorny romb -->
+    <path d="M132 339 L256 410 L380 339 L256 268 Z"/>
+    <!-- pionowe krawedzie -->
+    <path d="M132 339 L132 404"/>
+    <path d="M380 339 L380 404"/>
+    <!-- przednie sciany -->
+    <path d="M132 404 L256 475 L380 404"/>
+    <path d="M256 410 L256 475"/>
+    <!-- wewnetrzne krawedzie scian -->
+    <path d="M256 268 L132 339" stroke="rgba(255,255,255,0.45)"/>
+    <path d="M256 268 L380 339" stroke="rgba(255,255,255,0.45)"/>
+  </g>
+
+  <!-- klucz (keyhole) na przedniej scianie vaulta -->
+  <g fill="#ffffff" stroke="none">
+    <circle cx="256" cy="428" r="10"/>
+    <path d="M256 434 L256 452" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>
