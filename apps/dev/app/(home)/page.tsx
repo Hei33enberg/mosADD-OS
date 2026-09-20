@@ -36,6 +36,47 @@ const steps = [
   { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mIRC_post_message, mAYL_send — any of the 77 tools. Encryption and routing happen below the call.', c: 'mDM_send  ·  mIRC_post_message' },
 ];
 
+// ── P7 Wiadomości — 4 fundamenty + 10 pozycji ──
+const foundations = [
+  {
+    name: 'mDM',
+    label: 'Private 1:1',
+    desc: 'Multi-thread direct messages with X3DH + Double Ratchet E2EE. Your agent is a contact. Voice notes and 1:1 calls ride the same thread.',
+    badge: 'E2EE',
+  },
+  {
+    name: 'mIRC',
+    label: 'Channels',
+    desc: 'Persistent topic channels with roles, invites, bans. Discord/Slack semantics — every operation is an MCP tool callable by your agent.',
+    badge: 'server-readable',
+  },
+  {
+    name: 'mURL',
+    label: 'Open-web rooms',
+    desc: 'A room is a URL. Share it — anyone joins, no account. Drop a live chat onto any website. Server-readable by design.',
+    badge: 'server-readable',
+  },
+  {
+    name: 'mAYL',
+    label: 'Email 3.0',
+    desc: 'Every user gets <id>@mosadd.com. Outbound via Resend/SES, inbound via Postfix catch-all screened by Irondome. Signed audit trails.',
+    badge: 'server-readable',
+  },
+];
+
+const positions = [
+  { n: '01', t: 'Multi-thread per contact', d: 'Not one flat chat — multiple labelled threads per contact, like GitHub Issues per repo. Organise without folders.' },
+  { n: '02', t: 'X3DH + Double Ratchet', d: 'Signal-grade E2EE on mDM. Forward secrecy, future secrecy. Server sees ciphertext only. Your keys, your device.' },
+  { n: '03', t: 'Voice notes & 1:1 calls', d: 'Async voice notes or full-duplex calls. Room and invite signalling over the DM thread — one module for text and voice.' },
+  { n: '04', t: 'Topic-based channels', d: 'Persistent channels scoped by topic. Open, password-protected or private. Agents join, moderate and orchestrate flows.' },
+  { n: '05', t: 'No-account rooms', d: 'A single URL creates a live room. Anyone joins anonymously. Perfect for support, live-events or ephemeral coordination.' },
+  { n: '06', t: 'Engagement-tracked email', d: 'Pixel + link-wrap tracking per recipient. Opens, clicks, forwards signed via HMAC-SHA256 audit trail for compliance.' },
+  { n: '07', t: 'Edit, delete, revoke', d: 'Edit or soft-delete any message you sent. Revoke future reader access to a sent email — tamper-evident audit logs.' },
+  { n: '08', t: 'Role-based moderation', d: 'Roles: owner, admin, mod, member. Ban, kick, invite, approve — all agent-callable, all audited.' },
+  { n: '09', t: 'Presence & receipts', d: 'Real-time presence in channels and rooms. Read receipts on DMs. Know when your message was seen.' },
+  { n: '10', t: 'Unified contact set', d: 'People, agents and robots share one inbox. A single contact book across all four modules — no more silos.' },
+];
+
 /** Tiny monospace section index, e.g. §01. */
 function SectionTag({ n, label }: { n: string; label: string }) {
   return (
@@ -197,6 +238,44 @@ export default function HomePage() {
           >
             Open an issue
           </a>
+        </div>
+      </section>
+
+      {/* ── §07 P7 WIADOMOSCI — 4 fundamenty · 10 pozycji ── */}
+      <section className="py-16">
+        <SectionTag n="07" label="WIADOMOSCI · 10 pozycji · 4 fundamenty" />
+        <h2 className="font-display mb-3 text-3xl font-semibold tracking-tight">
+          Four message surfaces. One inbox.<span className="term-cursor" />
+        </h2>
+        <p className="mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          Private 1:1 E2EE DM, persistent channels, open-web rooms and email — four distinct surfaces,
+          one unified contact book, one MCP tool set. Only mDM is end-to-end encrypted; the others are
+          server-readable and say so.
+        </p>
+
+        {/* 4 fundamenty — komunikacyjne moduły */}
+        <div className="mb-12 grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+          {foundations.map((f) => (
+            <div key={f.name} className="bg-card/40 p-5 backdrop-blur-sm">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="font-display text-lg text-primary">{f.name}</span>
+                <span className="text-[10px] uppercase tracking-[0.15em] text-primary">{f.badge}</span>
+              </div>
+              <div className="mb-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">{f.label}</div>
+              <div className="text-sm leading-relaxed text-muted-foreground">{f.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* 10 pozycji — cechy systemu */}
+        <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
+          {positions.map((p) => (
+            <div key={p.n} className="bg-card/40 p-5 backdrop-blur-sm transition-colors hover:bg-card">
+              <div className="mb-1 font-display text-xs text-primary/60">{p.n}</div>
+              <h3 className="font-display mb-1 text-sm font-semibold text-foreground">{p.t}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">{p.d}</p>
+            </div>
+          ))}
         </div>
       </section>
     </div>
