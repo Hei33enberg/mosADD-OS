@@ -363,6 +363,62 @@ export default function HomePage() {
                 ))}
               </div>
             </section>
-          </div>
+
+                        {/* ── §11 P11 SEGREGACJA — 34 pozycje ── */}
+                        <section className="py-16">
+                          <SectionTag n="11" label="SEGREGACJA · 34 pozycje" />
+                          <h2 className="font-display mb-3 text-3xl font-semibold tracking-tight">
+                            Every layer is isolated by design.<span className="term-cursor" />
+                          </h2>
+                          <p className="mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                            Segregation at every tier: data, access, identity, network, storage, billing, and threat —
+                            multi-tenant by default, hardened by architecture.
+                          </p>
+                          <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
+                            {([
+                              { n: '01', t: 'Multi-tenant data isolation', d: 'Every user&#8217;s messages, keys and files live in a separate partition. No cross-tenant leakage by design.' },
+                              { n: '02', t: 'Channel access modes', d: 'Open, password, private. Three access tiers per channel — enforced server-side, not client-side.' },
+                              { n: '03', t: 'Role-based access control', d: 'Owner > Admin > Mod > Member. Granular permissions: invite, kick, ban, set roles, change channel config.' },
+                              { n: '04', t: 'Thread-level segregation', d: 'Every contact has N labelled threads — each thread is an isolated conversation space. No flat inbox.' },
+                              { n: '05', t: 'Module posture segregation', d: 'E2EE on mDM (server cannot read). Server-readable on mIRC/mURL/mAYL. Honest labelling, not blanket claims.' },
+                              { n: '06', t: 'Key segregation per provider', d: 'BYOK: every provider key (LiveKit, Resend, Supabase) is stored and used independently. Compromise one ≠ all.' },
+                              { n: '07', t: 'Storage per-user buckets', d: 'File attachments live in user-scoped storage paths. <auth.uid()>/<thread>/<file> — no cross-contamination.' },
+                              { n: '08', t: 'Message retention policies', d: 'Per-channel retention window: 24h, 7d, 30d, forever. Purged server-side after expiry.' },
+                              { n: '09', t: 'Self-destruct messages', d: 'Set a TTL on any mDM message. The server deletes ciphertext after expiry — no recovery.' },
+                              { n: '10', t: 'Zero-retention mode', d: 'For high-sensitivity channels: messages relayed but not persisted. No history, no search, no audit.' },
+                              { n: '11', t: 'Session isolation per device', d: 'Each device gets its own session JWT. Revoke one device without affecting others.' },
+                              { n: '12', t: 'Agent identity segregation', d: 'Every agent is a separate mosADD identity with its own keys, prekey bundle and contact list.' },
+                              { n: '13', t: 'Space isolation', d: 'Spaces group channels, contacts and agents into org-scoped containers. No org sees another&#8217;s data.' },
+                              { n: '14', t: 'Audit log segregation', d: 'Audit events are scoped to the user/space/channel. No global audit feed — your logs are yours.' },
+                              { n: '15', t: 'Environment segregation', d: 'Dev / staging / prod relays operate on separate Supabase projects and provider keys. No cross-talk.' },
+                              { n: '16', t: 'Network-level segregation', d: 'Relay traffic vs peer-to-peer paths vs edge cache. Each network path has its own auth and rate limits.' },
+                              { n: '17', t: 'Data residency controls', d: 'Choose your relay region: EU (Switzerland), US, or APAC. Data never leaves the chosen region.' },
+                              { n: '18', t: 'Compliance segregation', d: 'GDPR/ePrivacy opt-out per recipient. Tracking pixel and link-wrap disabled for opted-out contacts.' },
+                              { n: '19', t: 'Threat intelligence per tenant', d: 'Irondome findings are scoped to your identity. Other tenants never see your C2 matches or integrity signals.' },
+                              { n: '20', t: 'Prekey bundle isolation', d: 'Each identity has an independent X3DH prekey bundle. No shared ratchet state across identities.' },
+                              { n: '21', t: 'Channel membership isolation', d: 'Membership lists are per-channel. A member in one channel has zero information about other channels.' },
+                              { n: '22', t: 'Contact list segregation', d: 'Your contact list is private. Agents you own have independent contact lists — no automatic sharing.' },
+                              { n: '23', t: 'Message history per channel', d: 'mIRC_list_messages and mDM_list only return data for the specific channel or thread requested.' },
+                              { n: '24', t: 'File attachment ACLs', d: 'Uploaded files are access-controlled by storage bucket RLS. Only participants in the thread can read them.' },
+                              { n: '25', t: 'Presence visibility segregation', d: 'Granular per-contact presence visibility. Appear offline to specific contacts while online to others.' },
+                              { n: '26', t: 'Ban/kick isolation', d: 'Banned users cannot rejoin. Kick removes with optional rejoin window. Both scoped to the channel.' },
+                              { n: '27', t: 'Rate-limit per key', d: 'API keys have independent rate limits. A flood on one key does not starve the others.' },
+                              { n: '28', t: 'Billing usage per account', d: 'Message/voice/RAG usage is metered per account. No pooling across different billing entities.' },
+                              { n: '29', t: 'Invite code segregation', d: 'Channel invite codes are single-use or multi-use with independent revocation. Codes are channel-scoped.' },
+                              { n: '30', t: 'Webhook isolation per channel', d: 'Channels can emit webhooks to independent endpoints. Webhook secrets per channel, not global.' },
+                              { n: '31', t: 'RAG index per user', d: 'The mRAG module indexes per-user data. No cross-user search — your agents only retrieve your content.' },
+                              { n: '32', t: 'PTT room segregation', d: 'mTALK rooms are isolated by room_id. No eavesdropping across rooms — audio transport is per-room.' },
+                              { n: '33', t: 'Embed widget per-domain', d: 'Embedded chat widgets are domain-scoped. The widget on site A cannot read traffic on site B.' },
+                              { n: '34', t: 'mURL room per-domain', d: 'Every domain has its own mURL room. Domain A&#8217;s live chat is invisible from domain B.' },
+                            ] as const).map((p) => (
+                              <div key={p.n} className="bg-card/40 p-5 backdrop-blur-sm transition-colors hover:bg-card">
+                                <div className="mb-1 font-display text-xs text-primary/60">{p.n}</div>
+                                <h3 className="font-display mb-1 text-sm font-semibold text-foreground">{p.t}</h3>
+                                <p className="text-sm leading-relaxed text-muted-foreground">{p.d}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </section>
+                      </div>
   );
 }
