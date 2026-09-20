@@ -295,42 +295,74 @@ export default function HomePage() {
       </section>
 
       {/* ── §09 P9 ORB-KONTO-OBECNOSC-USB — 14 pozycji ── */}
-      <section className="py-16">
-        <SectionTag n="09" label="ORB · KONTO · OBECNOSC · USB · 14 pozycji" />
-        <h2 className="font-display mb-3 text-3xl font-semibold tracking-tight">
-          Your identity, your account, your presence, your key.<span className="term-cursor" />
-        </h2>
-        <p className="mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          Four pillars of the user model: <strong className="text-primary">ORB</strong> (your visual identity and
-          key material), <strong className="text-primary">KONTO</strong> (account tiers, billing, API keys),
-          <strong className="text-primary">OBECNOSC</strong> (presence, visibility, last-seen),
-          and <strong className="text-primary">USB</strong> (hardware-anchored authentication and device trust).
-        </p>
-        <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
-          {([
-            { n: '01', t: 'Identity orb', d: 'A visual avatar unique to your mosADD identity — cryptographic fingerprint as a glyph. Your agents inherit your orb.' },
-            { n: '02', t: 'Prekey bundles', d: 'X3DH prekey material published to mosadd_prekey_bundles. mDM_publish_keys makes you reachable E2EE.' },
-            { n: '03', t: 'Profile & display name', d: 'Human-readable handle + display name on top of the cryptographic identity_id. Change at will.' },
-            { n: '04', t: 'Account tiers', d: 'Free ($0), Commander ($19), Sovereign ($49). Usage caps, key limits, add-on modules per tier.' },
-            { n: '05', t: 'API key hub', d: 'Hub.mosadd.com — self-serve key issuance, rotation, revocation. One dashboard for all MCP tool access.' },
-            { n: '06', t: 'Usage & billing', d: 'Real-time message/voice/RAG usage counters. No surprise bills — hard caps per tier.' },
-            { n: '07', t: 'BYOK — your keys', d: 'Bring your own provider keys (LiveKit, Resend, Supabase). No vendor lock-in, no data residency concerns.' },
-            { n: '08', t: 'Multi-identity linking', d: 'Link multiple identities (personal, work, agency) under one account. Switch without re-auth.' },
-            { n: '09', t: 'Real-time presence', d: 'Online / away / busy / invisible. Broadcast across channels and DM contacts. Your agents reflect your state.' },
-            { n: '10', t: 'Last-seen & visibility', d: 'Per-contact last-seen precision. Granular visibility controls — who can see your online status.' },
-            { n: '11', t: 'Device trust signals', d: 'Irondome integrity checks reported on your account. Rooted/tampered devices flagged to your contacts.' },
-            { n: '12', t: 'USB / FIDO2 auth', d: 'Hardware security key support (WebAuthn). Sign in, sign messages, prove your identity with a physical key.' },
-            { n: '13', t: 'Session management', d: 'View and revoke active sessions. Force sign-out on all devices from one place.' },
-            { n: '14', t: 'Audit log', d: 'Every auth event, key rotation, tier change, and presence toggle logged. Tamper-evident, exportable.' },
-          ] as const).map((p) => (
-            <div key={p.n} className="bg-card/40 p-5 backdrop-blur-sm transition-colors hover:bg-card">
-              <div className="mb-1 font-display text-xs text-primary/60">{p.n}</div>
-              <h3 className="font-display mb-1 text-sm font-semibold text-foreground">{p.t}</h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">{p.d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-    </div>
+            <section className="py-16">
+              <SectionTag n="09" label="ORB · KONTO · OBECNOSC · USB · 14 pozycji" />
+              <h2 className="font-display mb-3 text-3xl font-semibold tracking-tight">
+                Your identity, your account, your presence, your key.<span className="term-cursor" />
+              </h2>
+              <p className="mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                Four pillars of the user model: <strong className="text-primary">ORB</strong> (your visual identity and
+                key material), <strong className="text-primary">KONTO</strong> (account tiers, billing, API keys),
+                <strong className="text-primary">OBECNOSC</strong> (presence, visibility, last-seen),
+                and <strong className="text-primary">USB</strong> (hardware-anchored authentication and device trust).
+              </p>
+              <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
+                {([
+                  { n: '01', t: 'Identity orb', d: 'A visual avatar unique to your mosADD identity — cryptographic fingerprint as a glyph. Your agents inherit your orb.' },
+                  { n: '02', t: 'Prekey bundles', d: 'X3DH prekey material published to mosadd_prekey_bundles. mDM_publish_keys makes you reachable E2EE.' },
+                  { n: '03', t: 'Profile & display name', d: 'Human-readable handle + display name on top of the cryptographic identity_id. Change at will.' },
+                  { n: '04', t: 'Account tiers', d: 'Free ($0), Commander ($19), Sovereign ($49). Usage caps, key limits, add-on modules per tier.' },
+                  { n: '05', t: 'API key hub', d: 'Hub.mosadd.com — self-serve key issuance, rotation, revocation. One dashboard for all MCP tool access.' },
+                  { n: '06', t: 'Usage & billing', d: 'Real-time message/voice/RAG usage counters. No surprise bills — hard caps per tier.' },
+                  { n: '07', t: 'BYOK — your keys', d: 'Bring your own provider keys (LiveKit, Resend, Supabase). No vendor lock-in, no data residency concerns.' },
+                  { n: '08', t: 'Multi-identity linking', d: 'Link multiple identities (personal, work, agency) under one account. Switch without re-auth.' },
+                  { n: '09', t: 'Real-time presence', d: 'Online / away / busy / invisible. Broadcast across channels and DM contacts. Your agents reflect your state.' },
+                  { n: '10', t: 'Last-seen & visibility', d: 'Per-contact last-seen precision. Granular visibility controls — who can see your online status.' },
+                  { n: '11', t: 'Device trust signals', d: 'Irondome integrity checks reported on your account. Rooted/tampered devices flagged to your contacts.' },
+                  { n: '12', t: 'USB / FIDO2 auth', d: 'Hardware security key support (WebAuthn). Sign in, sign messages, prove your identity with a physical key.' },
+                  { n: '13', t: 'Session management', d: 'View and revoke active sessions. Force sign-out on all devices from one place.' },
+                  { n: '14', t: 'Audit log', d: 'Every auth event, key rotation, tier change, and presence toggle logged. Tamper-evident, exportable.' },
+                ] as const).map((p) => (
+                  <div key={p.n} className="bg-card/40 p-5 backdrop-blur-sm transition-colors hover:bg-card">
+                    <div className="mb-1 font-display text-xs text-primary/60">{p.n}</div>
+                    <h3 className="font-display mb-1 text-sm font-semibold text-foreground">{p.t}</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{p.d}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* ── §10 P10 WEJSCIE-POBIERANIE — 9 pozycji ── */}
+            <section className="py-16">
+              <SectionTag n="10" label="WEJSCIE · POBIERANIE · 9 pozycji" />
+              <h2 className="font-display mb-3 text-3xl font-semibold tracking-tight">
+                One ecosystem. Many doors in.<span className="term-cursor" />
+              </h2>
+              <p className="mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                Install the MCP server in one command, deploy the relay on your infrastructure,
+                download the desktop agent, or add the browser extension. Every entry point
+                connects to the same contact set and the same tool layer.
+              </p>
+              <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
+                {([
+                  { n: '01', t: 'MCP server (npx)', d: 'One command: npx -y @mosadd/mcp@alpha. Claude Code, Cursor, any MCP-compatible agent — zero-config.' },
+                  { n: '02', t: 'Desktop download', d: 'Native Windows/macOS desktop app: your agent relay, local Irondome, and presence beacon in one binary.' },
+                  { n: '03', t: 'CLI toolset', d: 'mosadd login, mosadd keys, mosadd status — the full CLI for key management, session control, and diagnostics.' },
+                  { n: '04', t: 'Docker self-host', d: 'Deploy the relay stack (Supabase + edge + LiveKit) with docker-compose. Full control, no cloud dependency.' },
+                  { n: '05', t: 'Browser extension (Channel0)', d: 'Chrome/Edge extension — inject mURL chat onto any page. Domain-scoped rooms with presence.' },
+                  { n: '06', t: 'Mobile clients', d: 'Android (Google Play) and iOS (TestFlight). Voice PTT, presence, DMs. Your agent in your pocket.' },
+                  { n: '07', t: 'BYOK relay deployment', d: 'Bring-your-own-keys deployment: wire your Supabase, LiveKit, Resend. The relay runs as your infrastructure.' },
+                  { n: '08', t: 'SDK integration', d: 'Embed mosADD capabilities into any app. TypeScript SDK with full tool coverage — single dep, no boilerplate.' },
+                  { n: '09', t: 'Quickstart guide', d: 'From zero to first mDM_send in under 2 minutes. Docs.mosadd.dev/quickstart — step-by-step with examples.' },
+                ] as const).map((p) => (
+                  <div key={p.n} className="bg-card/40 p-5 backdrop-blur-sm transition-colors hover:bg-card">
+                    <div className="mb-1 font-display text-xs text-primary/60">{p.n}</div>
+                    <h3 className="font-display mb-1 text-sm font-semibold text-foreground">{p.t}</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{p.d}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
   );
 }
