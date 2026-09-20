@@ -277,7 +277,44 @@ export default function HomePage() {
             </div>
           ))}
         </div>
-      </section>
-    </div>
+              </section>
+
+              {/* ── §08 P8 GLOS — 11 pozycji ── */}
+              <section className="py-16">
+                <SectionTag n="08" label="GLOS · 11 pozycji" />
+                <h2 className="font-display mb-3 text-3xl font-semibold tracking-tight">
+                  Push-to-talk meets LLM-in-room.<span className="term-cursor" />
+                </h2>
+                <p className="mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                  Three voice surfaces: <strong className="text-primary">mTALK</strong> (push-to-talk walkie-talkie with
+                  AI participants), <strong className="text-primary">mDM</strong> (1:1 full-duplex calls + async voice notes),
+                  and <strong className="text-primary">mIRC</strong> (voice-enabled channels with floor control).
+                  All ride LiveKit; all are tool-callable.
+                </p>
+
+                {/* 11 pozycji — cechy voice systemu */}
+                <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
+                  {([
+                    { n: '01', t: 'Half-duplex PTT', d: 'Walkie-talkie discipline: press to talk, release to listen. FIFO queue with anti-hog timeout. No accidental open-mic.' },
+                    { n: '02', t: 'LLM-in-room', d: 'An AI agent joins the PTT room as a speaking participant — TTS in, STT out. No other platform ships this.' },
+                    { n: '03', t: 'Full-duplex 1:1 calls', d: 'Phone-style calls over mDM. Start, answer, end — signalling rides the encrypted DM thread.' },
+                    { n: '04', t: 'Async voice notes', d: 'Fire-and-forget voice clips in DMs. Upload, send, listen later. No scheduling, no ring.' },
+                    { n: '05', t: 'Floor control', d: 'mTALK_press requests the floor; mTALK_release gives it up. mTALK_state reads who holds it and the queue.' },
+                    { n: '06', t: 'Voice in channels', d: 'Channels with capabilities.ptt:true enable PTT mode in mIRC — voice alongside text in the same channel.' },
+                    { n: '07', t: 'Multi-provider media', d: 'LiveKit primary. Mediasoup and Pion-based backends on roadmap — swap without changing the tool signature.' },
+                    { n: '08', t: 'VAD + STT pipeline', d: 'Voice Activity Detection segments speech; STT transcribes into the RAG index. Searchable later via mTALK_ingest_ptt.' },
+                    { n: '09', t: 'Anti-hog + queue', d: 'Automatic floor release after N seconds of inactivity. Fair FIFO queue — no one monopolises the channel.' },
+                    { n: '10', t: 'Threat radar on voice', d: 'COMINT.voice_session_start, MASINT.deepfake_voice_detected, BEHAVIORAL.session_floor_hog — hooks for every call.' },
+                    { n: '11', t: 'Cross-module voice', d: 'mTALK, mDM calls, mIRC voice — one LiveKit session model, one credential format. Mix them in the same contact set.' },
+                  ] as const).map((p) => (
+                    <div key={p.n} className="bg-card/40 p-5 backdrop-blur-sm transition-colors hover:bg-card">
+                      <div className="mb-1 font-display text-xs text-primary/60">{p.n}</div>
+                      <h3 className="font-display mb-1 text-sm font-semibold text-foreground">{p.t}</h3>
+                      <p className="text-sm leading-relaxed text-muted-foreground">{p.d}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
   );
 }
