@@ -1,0 +1,34 @@
+<!-- @dsCard group="mosADD" height=300 -->
+<!doctype html>
+<html lang="pl">
+<head><meta charset="utf-8"><title>MosaddToggle</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;padding:18px 16px;background:var(--mosadd-background);font-family:var(--font-mosadd-mono);color:var(--mosadd-foreground)}
+.st{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:18px}
+.st div{display:flex;flex-direction:column;align-items:center;gap:8px}
+.st span{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mosadd-muted-foreground)}
+.tg{appearance:none;background:none;border:0;padding:0;width:62px;min-height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.pill{position:relative;display:block;width:var(--mosadd-toggle-w,62px);height:var(--mosadd-toggle-h,34px);border-radius:9999px;border:1px solid var(--mosadd-toggle-off-border);background:var(--mosadd-toggle-off);transition:background-color .15s cubic-bezier(.4,0,.2,1),border-color .15s cubic-bezier(.4,0,.2,1)}
+.knob{position:absolute;left:0;top:3px;width:var(--mosadd-toggle-knob,26px);height:var(--mosadd-toggle-knob,26px);border-radius:9999px;background:var(--mosadd-toggle-off-knob);transform:translateX(3px);transition:transform .15s cubic-bezier(.4,0,.2,1),background-color .15s}
+.tg[aria-checked="true"] .pill{background:var(--mosadd-toggle-on);border-color:var(--mosadd-toggle-on)}
+.tg[aria-checked="true"] .knob{background:var(--mosadd-toggle-on-knob);transform:translateX(31px)}
+.tg[aria-busy="true"] .pill{background:transparent;border-color:var(--mosadd-toggle-on)}
+.tg[aria-busy="true"] .knob{background:var(--mosadd-toggle-on);transform:translateX(17px);animation:p 1.2s ease-in-out infinite}
+@keyframes p{50%{opacity:.4}}
+.tg:disabled .pill{opacity:.5}
+.row{display:flex;align-items:center;gap:12px;min-height:52px;border-top:1px solid var(--mosadd-border)}
+.row b{flex:1;font-size:14px;font-weight:600}
+.row i{font-style:normal;font-size:11px;color:var(--mosadd-muted-foreground)}
+</style></head>
+<body>
+<div class="st">
+  <div><button class="tg" role="switch" aria-checked="false" aria-label="OFF"><span class="pill"><span class="knob"></span></span></button><span>OFF</span></div>
+  <div><button class="tg" role="switch" aria-checked="true" aria-label="ON"><span class="pill"><span class="knob"></span></span></button><span>ON</span></div>
+  <div><button class="tg" role="switch" aria-checked="false" aria-busy="true" aria-label="W toku"><span class="pill"><span class="knob"></span></span></button><span>W toku</span></div>
+  <div><button class="tg" role="switch" aria-checked="true" disabled aria-label="Zablokowany"><span class="pill"><span class="knob"></span></span></button><span>Blok</span></div>
+</div>
+<div class="row"><b>Gmail</b><button class="tg" role="switch" aria-checked="true" aria-label="Gmail"><span class="pill"><span class="knob"></span></span></button></div>
+<div class="row"><b>One more agent</b><i>$9/mo</i><button class="tg" role="switch" aria-checked="false" aria-label="One more agent"><span class="pill"><span class="knob"></span></span></button></div>
+</body>
+</html>
