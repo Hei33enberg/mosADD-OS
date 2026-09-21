@@ -1,0 +1,18 @@
+<!-- @dsCard group="Wspólne" height=130 -->
+<!doctype html>
+<html lang="pl">
+<head><meta charset="utf-8"><title>StatusSlowem</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;padding:18px 20px;display:grid;gap:14px}
+.r{display:flex;gap:26px;align-items:center;padding:12px 14px}
+.s{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.d{width:7px;height:7px;border-radius:50%}
+.en{background:var(--eng-background);font-family:var(--font-eng-mono);color:var(--eng-text)}
+.mo{background:var(--mosadd-background);font-family:var(--font-mosadd-mono);color:var(--mosadd-foreground)}
+</style></head>
+<body>
+<div class="r en"><span class="s"><i class="d" style="background:var(--eng-status-live)"></i>Live now</span><span class="s" style="color:var(--eng-text-dim)"><i class="d" style="background:var(--eng-status-coming)"></i>Coming</span></div>
+<div class="r mo"><span class="s"><i class="d" style="background:var(--mosadd-primary)"></i>Online</span><span class="s" style="color:var(--mosadd-muted-foreground)"><i class="d" style="background:var(--mosadd-muted-foreground)"></i>Soon</span></div>
+</body>
+</html>

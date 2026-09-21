@@ -1,0 +1,49 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kanon RA</title>
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--eng-background); color:var(--eter-foreground); font-family:var(--font-mosadd-mono); overflow:hidden; }
+  .cover { position:relative; height:288px; overflow:hidden; }
+  .art { position:absolute; top:0; left:480px; width:480px; height:288px; overflow:hidden; }
+  .art svg { display:block; width:480px; height:288px; }
+  .m { fill:var(--mosadd-primary); }
+  .v { fill:var(--eter-iridescent-blue); }
+  .f { fill:var(--eter-iridescent-pink); }
+  .r { fill:var(--eng-signal); }
+  .cut { fill:var(--eng-background); }
+  .blk { rx:var(--mosadd-radius-sm); }
+  .words { position:absolute; left:32px; bottom:32px; max-width:440px; }
+  .name { margin:0; font-size:88px; line-height:.9; font-weight:700; letter-spacing:-.02em; color:var(--eter-foreground); }
+  .tag { margin:12px 0 0 4px; font-size:14px; line-height:20px; color:var(--mosadd-lp-muted-foreground); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 288" width="480" height="288">
+<!--
+  blocks      mosadd-primary 128×240 · eter-iridescent-blue 128×256 bled off the bottom · eng-signal 192×192 bled off the right edge · eter-iridescent-pink 64×32 once, the end of the 3T3R ramp — ≈40% of 960×288; one slab per brand, equal weight, because the canon is three products side by side
+  arrangement three staggered slabs, bottoms on the edge, gutters grid-cell-sm (16); the pink satellite rides above the violet slab
+  pattern     discs, from the stable's one shared motif — a sun inside every icon, only its colour changes by brand (brandSun.ts, 17.09): one ground-cut disc per slab
+  scales      gutters grid-cell-sm 16 · disc r = eter-radius-sheet 24 · corners mosadd-radius-sm 0 · satellite 64×32 = four and two grid-cell-sm steps
+-->
+<rect class="m blk" x="16" y="48" width="128" height="240"/>
+<rect class="f blk" x="160" y="0" width="64" height="32"/>
+<rect class="v blk" x="160" y="48" width="128" height="256"/>
+<rect class="r blk" x="304" y="96" width="192" height="192"/>
+<circle class="cut" cx="80" cy="112" r="24"/>
+<circle class="cut" cx="224" cy="144" r="24"/>
+<circle class="cut" cx="384" cy="176" r="24"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">Kanon RA</h1>
+<p class="tag">Wspólny głos. Trzy osobne produkty.</p>
+</div>
+</div>
+</body>
+</html>

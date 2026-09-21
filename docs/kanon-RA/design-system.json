@@ -1,0 +1,513 @@
+{
+  "v": 3,
+  "layout": "files",
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-19T01:58:15Z"
+  },
+  "title": "Kanon RA",
+  "namespace": "KanonRA",
+  "libraries": [],
+  "sections": {},
+  "groups": [
+    "Ikony mosADD",
+    "Ikony 3T3R",
+    "Ikony Engineering",
+    "Znaki",
+    "ORB"
+  ],
+  "assetGroups": {
+    "Ikony mosADD": {
+      "name": "Ikony mosADD",
+      "tile": "m",
+      "order": [
+        "mosadd-mrag.svg",
+        "mosadd-mrag-aktywny.svg",
+        "mosadd-marmy.svg",
+        "mosadd-marmy-aktywny.svg",
+        "mosadd-mops.svg",
+        "mosadd-mops-aktywny.svg",
+        "mosadd-mvault.svg",
+        "mosadd-mvault-aktywny.svg",
+        "mosadd-mdm.svg",
+        "mosadd-mirc.svg",
+        "mosadd-mayl.svg",
+        "mosadd-murl.svg",
+        "mosadd-mcall.svg"
+      ],
+      "files": {
+        "mosadd-marmy-aktywny.svg": {
+          "name": "mosadd-marmy-aktywny.svg",
+          "blob": "bd388917ca9e27aa2f64f5ba589acd3d",
+          "size": 3887,
+          "type": "image/svg+xml"
+        },
+        "mosadd-marmy.svg": {
+          "name": "mosadd-marmy.svg",
+          "blob": "ebaea01ed0912f975cbe84b16e00085b",
+          "size": 3478,
+          "type": "image/svg+xml"
+        },
+        "mosadd-mayl.svg": {
+          "name": "mosadd-mayl.svg",
+          "blob": "e652e3e756c25043f4079db11407a441",
+          "size": 1512,
+          "type": "image/svg+xml"
+        },
+        "mosadd-mcall.svg": {
+          "name": "mosadd-mcall.svg",
+          "blob": "55be9ee125bd197068fdc991a52bc98e",
+          "size": 1885,
+          "type": "image/svg+xml"
+        },
+        "mosadd-mdm.svg": {
+          "name": "mosadd-mdm.svg",
+          "blob": "d2edb23646f899749d6dcda31fc44285",
+          "size": 1725,
+          "type": "image/svg+xml"
+        },
+        "mosadd-mirc.svg": {
+          "name": "mosadd-mirc.svg",
+          "blob": "ccaf2a173bc05ad271973d6523d45e9a",
+          "size": 2348,
+          "type": "image/svg+xml"
+        },
+        "mosadd-mops-aktywny.svg": {
+          "name": "mosadd-mops-aktywny.svg",
+          "blob": "4843140b75d4534ff7ed911f4551a3ac",
+          "size": 1491,
+          "type": "image/svg+xml"
+        },
+        "mosadd-mops.svg": {
+          "name": "mosadd-mops.svg",
+          "blob": "43bf477b0bad6c346239fb94d9532f5d",
+          "size": 1441,
+          "type": "image/svg+xml"
+        },
+        "mosadd-mrag-aktywny.svg": {
+          "name": "mosadd-mrag-aktywny.svg",
+          "blob": "5586a10235e2e7a30991a41c1bd2fc76",
+          "size": 1469,
+          "type": "image/svg+xml"
+        },
+        "mosadd-mrag.svg": {
+          "name": "mosadd-mrag.svg",
+          "blob": "aa2f920d7a8ed5d73a31dcddbeae0e22",
+          "size": 1453,
+          "type": "image/svg+xml"
+        },
+        "mosadd-murl.svg": {
+          "name": "mosadd-murl.svg",
+          "blob": "f23b6430b04fe341c0982b102da1dfe0",
+          "size": 1242,
+          "type": "image/svg+xml"
+        },
+        "mosadd-mvault-aktywny.svg": {
+          "name": "mosadd-mvault-aktywny.svg",
+          "blob": "3bf22dc27b9dc5cd2140be9de6066c94",
+          "size": 1472,
+          "type": "image/svg+xml"
+        },
+        "mosadd-mvault.svg": {
+          "name": "mosadd-mvault.svg",
+          "blob": "37821b360835860730e2df25c93f310c",
+          "size": 1372,
+          "type": "image/svg+xml"
+        }
+      }
+    },
+    "Ikony 3T3R": {
+      "name": "Ikony 3T3R",
+      "tile": "m",
+      "order": [
+        "eter-charakter.svg",
+        "eter-pamiec.svg",
+        "eter-glos.svg",
+        "eter-umiejetnosci.svg",
+        "eter-lustro.svg",
+        "eter-przeznaczenie.svg",
+        "eter-orbSettings.svg",
+        "eter-konto.svg",
+        "eter-blysk.svg",
+        "eter-telemetria.svg",
+        "eter-ustawienia.svg",
+        "eter-pobierania.svg",
+        "eter-wiadomosci.svg",
+        "eter-ludzie.svg",
+        "eter-profil.svg",
+        "eter-zaproszenia.svg",
+        "eter-karty.svg",
+        "eter-obecnoscBoga.svg",
+        "eter-kokpit.svg",
+        "eter-telewizor.svg",
+        "eter-wyloguj.svg",
+        "eter-klodka.svg",
+        "eter-klawiatura.svg",
+        "eter-tarcza.svg",
+        "eter-klucz.svg",
+        "eter-dzwon.svg",
+        "eter-suwaki.svg",
+        "eter-glob.svg",
+        "eter-komputer.svg",
+        "eter-telefon.svg",
+        "eter-pendrive.svg",
+        "eter-warstwy.svg",
+        "eter-wtyczka.svg",
+        "eter-nawiasy.svg"
+      ],
+      "files": {
+        "eter-blysk.svg": {
+          "name": "eter-blysk.svg",
+          "blob": "81f290a9b23fbb76ecee6be9b4a49ce5",
+          "size": 4290,
+          "type": "image/svg+xml"
+        },
+        "eter-charakter.svg": {
+          "name": "eter-charakter.svg",
+          "blob": "1fd05e9cd8003e0f2a6766163b18d595",
+          "size": 5741,
+          "type": "image/svg+xml"
+        },
+        "eter-dzwon.svg": {
+          "name": "eter-dzwon.svg",
+          "blob": "41cf3ec021a1a2d84bce7d51aeaa5fcf",
+          "size": 3100,
+          "type": "image/svg+xml"
+        },
+        "eter-glob.svg": {
+          "name": "eter-glob.svg",
+          "blob": "8c5d14d653650387a4813768acd3e932",
+          "size": 3413,
+          "type": "image/svg+xml"
+        },
+        "eter-glos.svg": {
+          "name": "eter-glos.svg",
+          "blob": "32b7ae9a1aec5655fb336a32b947c831",
+          "size": 2891,
+          "type": "image/svg+xml"
+        },
+        "eter-karty.svg": {
+          "name": "eter-karty.svg",
+          "blob": "f4758e8fbcfec35feccc1d5f4fc36d15",
+          "size": 2548,
+          "type": "image/svg+xml"
+        },
+        "eter-klawiatura.svg": {
+          "name": "eter-klawiatura.svg",
+          "blob": "2feb14f2ae323b75011f51a522e4efad",
+          "size": 4029,
+          "type": "image/svg+xml"
+        },
+        "eter-klodka.svg": {
+          "name": "eter-klodka.svg",
+          "blob": "2cabedf5fe3abbbf5d304892675a1659",
+          "size": 4261,
+          "type": "image/svg+xml"
+        },
+        "eter-klucz.svg": {
+          "name": "eter-klucz.svg",
+          "blob": "fe2e007f8e47cc9bf2a4f363427b8efd",
+          "size": 3523,
+          "type": "image/svg+xml"
+        },
+        "eter-kokpit.svg": {
+          "name": "eter-kokpit.svg",
+          "blob": "73030439ed290518fbd1ee41aaaffd57",
+          "size": 2551,
+          "type": "image/svg+xml"
+        },
+        "eter-komputer.svg": {
+          "name": "eter-komputer.svg",
+          "blob": "5addb9fbca3ed279080fc06c2faf6ca8",
+          "size": 3606,
+          "type": "image/svg+xml"
+        },
+        "eter-konto.svg": {
+          "name": "eter-konto.svg",
+          "blob": "90b0671e3b48c4bc403ac504989572b2",
+          "size": 2811,
+          "type": "image/svg+xml"
+        },
+        "eter-ludzie.svg": {
+          "name": "eter-ludzie.svg",
+          "blob": "87fc0f970e7409a35e6a763f8e5eec75",
+          "size": 2980,
+          "type": "image/svg+xml"
+        },
+        "eter-lustro.svg": {
+          "name": "eter-lustro.svg",
+          "blob": "571f77fbb18cc922b620b98b88e5563b",
+          "size": 3062,
+          "type": "image/svg+xml"
+        },
+        "eter-nawiasy.svg": {
+          "name": "eter-nawiasy.svg",
+          "blob": "830fc09c34ce27ea25d552ce12a73f47",
+          "size": 4894,
+          "type": "image/svg+xml"
+        },
+        "eter-obecnoscBoga.svg": {
+          "name": "eter-obecnoscBoga.svg",
+          "blob": "76d2cdbfcf979a4403ac7507a18e2f1f",
+          "size": 3039,
+          "type": "image/svg+xml"
+        },
+        "eter-orbSettings.svg": {
+          "name": "eter-orbSettings.svg",
+          "blob": "34f093c71982f1474ce80c8af2924763",
+          "size": 2547,
+          "type": "image/svg+xml"
+        },
+        "eter-pamiec.svg": {
+          "name": "eter-pamiec.svg",
+          "blob": "33642849d5639041592750a8977a6bf0",
+          "size": 4331,
+          "type": "image/svg+xml"
+        },
+        "eter-pendrive.svg": {
+          "name": "eter-pendrive.svg",
+          "blob": "6ec349f949ca2fee5af2a3422e47704d",
+          "size": 5591,
+          "type": "image/svg+xml"
+        },
+        "eter-pobierania.svg": {
+          "name": "eter-pobierania.svg",
+          "blob": "ed65f42dbccc414c0152a510a923389c",
+          "size": 2745,
+          "type": "image/svg+xml"
+        },
+        "eter-profil.svg": {
+          "name": "eter-profil.svg",
+          "blob": "fdfa95e72b1d585b19530a95cbd7afa0",
+          "size": 2391,
+          "type": "image/svg+xml"
+        },
+        "eter-przeznaczenie.svg": {
+          "name": "eter-przeznaczenie.svg",
+          "blob": "51e96e8446bef8af944193ae9d9eaedf",
+          "size": 2708,
+          "type": "image/svg+xml"
+        },
+        "eter-suwaki.svg": {
+          "name": "eter-suwaki.svg",
+          "blob": "5781ab4c3229ee6bf0d24e06dca81fe3",
+          "size": 4059,
+          "type": "image/svg+xml"
+        },
+        "eter-tarcza.svg": {
+          "name": "eter-tarcza.svg",
+          "blob": "5749bdb2ec293ab060ea749044cd4be3",
+          "size": 3517,
+          "type": "image/svg+xml"
+        },
+        "eter-telefon.svg": {
+          "name": "eter-telefon.svg",
+          "blob": "4ec6081547ef9989ca4fb7fbcb4de5d5",
+          "size": 4334,
+          "type": "image/svg+xml"
+        },
+        "eter-telemetria.svg": {
+          "name": "eter-telemetria.svg",
+          "blob": "085b6aca69e4e8e42c8afd0153589a80",
+          "size": 3447,
+          "type": "image/svg+xml"
+        },
+        "eter-telewizor.svg": {
+          "name": "eter-telewizor.svg",
+          "blob": "5c8cc571c7a2425a0aa8d5b286476555",
+          "size": 2543,
+          "type": "image/svg+xml"
+        },
+        "eter-umiejetnosci.svg": {
+          "name": "eter-umiejetnosci.svg",
+          "blob": "3d32b44f891dfd1f2b2c338a4ad65e2a",
+          "size": 4025,
+          "type": "image/svg+xml"
+        },
+        "eter-ustawienia.svg": {
+          "name": "eter-ustawienia.svg",
+          "blob": "3cc39947cd05da27d958252baf554709",
+          "size": 4028,
+          "type": "image/svg+xml"
+        },
+        "eter-warstwy.svg": {
+          "name": "eter-warstwy.svg",
+          "blob": "7c0fb598e420f08e4756a78b73f63a79",
+          "size": 4030,
+          "type": "image/svg+xml"
+        },
+        "eter-wiadomosci.svg": {
+          "name": "eter-wiadomosci.svg",
+          "blob": "4ced06503c4a95d29c0dbaf17eb51766",
+          "size": 2437,
+          "type": "image/svg+xml"
+        },
+        "eter-wtyczka.svg": {
+          "name": "eter-wtyczka.svg",
+          "blob": "a464c9d4ba685306404941c5e045c85a",
+          "size": 4896,
+          "type": "image/svg+xml"
+        },
+        "eter-wyloguj.svg": {
+          "name": "eter-wyloguj.svg",
+          "blob": "4dca36bd8d7381ce7e80379eccdfce7b",
+          "size": 2569,
+          "type": "image/svg+xml"
+        },
+        "eter-zaproszenia.svg": {
+          "name": "eter-zaproszenia.svg",
+          "blob": "7fa37a05f660ee9019c6b02189b02c1f",
+          "size": 3171,
+          "type": "image/svg+xml"
+        }
+      }
+    },
+    "Ikony Engineering": {
+      "name": "Ikony Engineering",
+      "tile": "m",
+      "order": [
+        "eng-orb.svg",
+        "eng-glos.svg",
+        "eng-porty.svg",
+        "eng-obwody.svg",
+        "eng-lokalnie.svg",
+        "eng-sejf.svg",
+        "eng-pasmo.svg",
+        "eng-energia.svg",
+        "eng-uklad.svg",
+        "eng-otwarte.svg",
+        "eng-zaslona.svg",
+        "eng-radio.svg"
+      ],
+      "files": {
+        "eng-energia.svg": {
+          "name": "eng-energia.svg",
+          "blob": "f3144b1a22aec3b36053488da1f951b4",
+          "size": 4240,
+          "type": "image/svg+xml"
+        },
+        "eng-glos.svg": {
+          "name": "eng-glos.svg",
+          "blob": "4e3a7e1d707f4b4619c1f69d57b0afdf",
+          "size": 2805,
+          "type": "image/svg+xml"
+        },
+        "eng-lokalnie.svg": {
+          "name": "eng-lokalnie.svg",
+          "blob": "6c59a8c05c8afafc17dd678a572b3333",
+          "size": 3514,
+          "type": "image/svg+xml"
+        },
+        "eng-obwody.svg": {
+          "name": "eng-obwody.svg",
+          "blob": "c651bf28f649cbe13d501cef8986de38",
+          "size": 3959,
+          "type": "image/svg+xml"
+        },
+        "eng-orb.svg": {
+          "name": "eng-orb.svg",
+          "blob": "2042fe81bb044acd3303a7fdbe4f173d",
+          "size": 2385,
+          "type": "image/svg+xml"
+        },
+        "eng-otwarte.svg": {
+          "name": "eng-otwarte.svg",
+          "blob": "931e25a6b1b98048b78d5bd27c77174d",
+          "size": 4801,
+          "type": "image/svg+xml"
+        },
+        "eng-pasmo.svg": {
+          "name": "eng-pasmo.svg",
+          "blob": "70fcb278332be531a1d98aad2dfd5f76",
+          "size": 3279,
+          "type": "image/svg+xml"
+        },
+        "eng-porty.svg": {
+          "name": "eng-porty.svg",
+          "blob": "e0598c54e4af0f5ed6fe772c709db3d8",
+          "size": 4731,
+          "type": "image/svg+xml"
+        },
+        "eng-radio.svg": {
+          "name": "eng-radio.svg",
+          "blob": "8cbdbf613cf3ab39e8c77bdd067362dd",
+          "size": 3341,
+          "type": "image/svg+xml"
+        },
+        "eng-sejf.svg": {
+          "name": "eng-sejf.svg",
+          "blob": "0512313c07f605b7f524599607ce506b",
+          "size": 4114,
+          "type": "image/svg+xml"
+        },
+        "eng-uklad.svg": {
+          "name": "eng-uklad.svg",
+          "blob": "b6c9d605229daf182c411228ccc5610e",
+          "size": 3898,
+          "type": "image/svg+xml"
+        },
+        "eng-zaslona.svg": {
+          "name": "eng-zaslona.svg",
+          "blob": "edcb527011d8d6807ba91ce0613963b7",
+          "size": 3445,
+          "type": "image/svg+xml"
+        }
+      }
+    },
+    "Znaki": {
+      "name": "Znaki",
+      "tile": "l",
+      "order": [
+        "znak-mosadd-favicon.svg",
+        "znak-mosadd-512.png",
+        "znak-3t3r-512.png"
+      ],
+      "files": {
+        "znak-3t3r-512.png": {
+          "name": "znak-3t3r-512.png",
+          "blob": "9118c6bc809f55ae2ec228c3bc54c32b",
+          "size": 30262,
+          "type": "image/png"
+        },
+        "znak-mosadd-512.png": {
+          "name": "znak-mosadd-512.png",
+          "blob": "8983ec3c19699a3026080f2cd3ede6d5",
+          "size": 60535,
+          "type": "image/png"
+        },
+        "znak-mosadd-favicon.svg": {
+          "name": "znak-mosadd-favicon.svg",
+          "blob": "80d2bcd7c5265e32aa87059b15330229",
+          "size": 870,
+          "type": "image/svg+xml"
+        }
+      }
+    },
+    "ORB": {
+      "name": "ORB",
+      "tile": "l",
+      "order": [
+        "orb-ga.svg"
+      ],
+      "files": {
+        "orb-ga.svg": {
+          "name": "orb-ga.svg",
+          "blob": "8fff8208f46a1da7dd20278018ce83da",
+          "size": 53873,
+          "type": "image/svg+xml"
+        }
+      }
+    }
+  },
+  "blobs": {},
+  "docs": {
+    "readme": "project/README.md",
+    "sections": []
+  },
+  "lastChange": {
+    "by": "Jadwiga",
+    "at": "2026-09-19T01:58:15Z",
+    "via": "Cowork · GOD OF RA DESIGN",
+    "note": "Kanon RA z kodu: mosADD, 3T3R, 3T3R Engineering — 148 kolorów, 12 fontów, 63 ikony i znaki, 10 komponentów, okładka."
+  }
+}

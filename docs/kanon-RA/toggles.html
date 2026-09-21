@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>mosADD · przełącznik</title>
+<meta name="description" content="Kanon RA · mosADD · przełącznik (toggle) mOPS / mARMY — SPEC v1, 19.09.2026">
+<style>
+@font-face{font-family:"IBM Plex Mono";src:url("fonts/IBMPlexMono-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"IBM Plex Mono";src:url("fonts/IBMPlexMono-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}
+@font-face{font-family:"IBM Plex Mono";src:url("fonts/IBMPlexMono-Bold.ttf") format("truetype");font-weight:700;font-display:swap}
+
+/* ── PALETY 1:1 z m0ssad-3/apps/web/src/index.css (trójki HSL jak w kodzie) ─────────────────
+   czerń = :root (:166 :167 :169 :253 :269 :303 :339 :341 :389 :391)
+   jasny = .light (:446 :447 :454 :461 :483 :487 :527 :528 :561 :563)
+   force-dark = .force-dark (:720 :721 :722 :727 :744 :745 :760 :761 :784 :786)
+   Aliasy przełącznika deklarowane w KAŻDEJ palecie (reguła G1, index.css:251). */
+.pal-dark{--background:0 0% 5%;--foreground:0 0% 95%;--card:0 0% 15%;--muted:0 0% 18%;--muted-foreground:0 0% 66%;--border:0 0% 26%;--ring:146 72% 45%;--primary:146 72% 45%;--primary-foreground:0 0% 2%;--ptt-go:146 72% 45%;--state-on:var(--ptt-go);
+  --toggle-on:var(--state-on);--toggle-on-knob:var(--primary-foreground);--toggle-off:var(--muted);--toggle-off-border:var(--border);--toggle-off-knob:var(--muted-foreground);--toggle-ring:var(--ring)}
+.pal-light{--background:0 0% 87%;--foreground:0 0% 8%;--card:0 0% 100%;--muted:0 0% 89%;--muted-foreground:0 0% 28%;--border:0 0% 62%;--ring:145 100% 28%;--primary:145 100% 28%;--primary-foreground:0 0% 100%;--ptt-go:145 100% 28%;--state-on:var(--ptt-go);
+  --toggle-on:var(--state-on);--toggle-on-knob:var(--primary-foreground);--toggle-off:var(--muted);--toggle-off-border:var(--border);--toggle-off-knob:var(--muted-foreground);--toggle-ring:var(--ring)}
+.pal-force{--background:0 0% 0%;--foreground:0 0% 95%;--card:0 0% 3%;--muted:0 0% 8%;--muted-foreground:0 0% 55%;--border:0 0% 12%;--ring:146 72% 45%;--primary:146 72% 45%;--primary-foreground:0 0% 2%;--ptt-go:146 72% 45%;--state-on:var(--ptt-go);
+  --toggle-on:var(--state-on);--toggle-on-knob:var(--primary-foreground);--toggle-off:var(--muted);--toggle-off-border:var(--border);--toggle-off-knob:var(--muted-foreground);--toggle-ring:var(--ring)}
+
+*,*::before,*::after{box-sizing:border-box}
+html{background:hsl(0 0% 5%)}
+body{margin:0;background:hsl(var(--background));color:hsl(var(--foreground));font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased}
+main{max-width:1080px;margin:0 auto;padding:28px 16px 64px}
+a{color:hsl(var(--primary))}
+code{font-family:inherit;font-size:12px;color:hsl(var(--foreground));background:hsl(var(--muted));padding:1px 5px;border-radius:2px;word-break:break-word}
+.mk{display:flex;align-items:center;gap:12px;margin:56px 0 18px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:hsl(var(--muted-foreground))}
+.mk b{color:hsl(var(--primary));font-weight:600;letter-spacing:.18em}
+.mk i{flex:1;height:1px;background:repeating-linear-gradient(90deg,hsl(0 0% 23%) 0 3px,transparent 3px 9px)}
+h1{margin:10px 0 6px;font-size:28px;line-height:1.15;font-weight:700;letter-spacing:.02em}
+.lead{max-width:760px;color:hsl(var(--muted-foreground));margin:0}
+.lead b{color:hsl(var(--foreground))}
+.stamp{display:inline-flex;flex-wrap:wrap;gap:6px 14px;margin-top:14px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:hsl(var(--muted-foreground))}
+.stamp span{white-space:nowrap}
+.stamp .wait{color:hsl(40 84% 50%)}
+.quote{margin:18px 0 0;padding:12px 14px;border-left:2px solid hsl(var(--primary));background:hsl(var(--card) / .5);max-width:760px}
+.quote q{font-weight:600}
+.quote small{display:block;margin-top:4px;color:hsl(var(--muted-foreground));font-size:11px}
+
+/* ── PRZEŁĄCZNIK — to jest spec. Klasy mapują się 1:1 na ui/switch.tsx (sekcja //05). ── */
+.tg{appearance:none;-webkit-appearance:none;background:none;border:0;margin:0;padding:0;flex:0 0 62px;width:62px;min-height:44px;align-self:stretch;display:flex;align-items:center;justify-content:center;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
+.tg:focus{outline:none}
+.tg-pill{position:relative;display:block;width:62px;height:34px;border-radius:9999px;border:1px solid hsl(var(--toggle-off-border));background:hsl(var(--toggle-off));transition:background-color .15s cubic-bezier(.4,0,.2,1),border-color .15s cubic-bezier(.4,0,.2,1)}
+.tg-knob{position:absolute;left:0;top:3px;width:26px;height:26px;border-radius:9999px;background:hsl(var(--toggle-off-knob));transform:translateX(3px);transition:transform .15s cubic-bezier(.4,0,.2,1),background-color .15s cubic-bezier(.4,0,.2,1)}
+.tg[aria-checked="true"] .tg-pill{background:hsl(var(--toggle-on));border-color:hsl(var(--toggle-on))}
+.tg[aria-checked="true"] .tg-knob{background:hsl(var(--toggle-on-knob));transform:translateX(31px)}
+.tg[aria-busy="true"]{cursor:progress}
+.tg[aria-busy="true"] .tg-pill{background:transparent;border-color:hsl(var(--toggle-on))}
+.tg[aria-busy="true"] .tg-knob{background:hsl(var(--toggle-on));transform:translateX(17px);animation:tg-pulse 1.2s ease-in-out infinite}
+@keyframes tg-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tg:disabled{cursor:not-allowed}
+.tg:disabled .tg-pill{opacity:.5}
+.tg:focus-visible .tg-pill,.tg.is-focus .tg-pill{outline:2px solid hsl(var(--toggle-ring));outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.tg-pill,.tg-knob{transition:none}.tg[aria-busy="true"] .tg-knob{animation:none}}
+
+/* ── //01 anatomia ── */
+.anat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+.draw{background:hsl(var(--card) / .35);border:1px solid hsl(var(--border));padding:18px 12px;display:grid;place-items:center}
+.draw svg{width:100%;max-width:420px;height:auto;display:block}
+.spec{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 18px;font-size:12px}
+.spec dt{color:hsl(var(--muted-foreground));letter-spacing:.12em;text-transform:uppercase;font-size:11px;padding-top:1px;white-space:nowrap}
+.spec dd{margin:0}
+.spec dd small{color:hsl(var(--muted-foreground))}
+
+/* ── //02 stany ── */
+.pal{border:1px solid hsl(var(--border));background:hsl(var(--background));color:hsl(var(--foreground));margin-bottom:14px}
+.pal-h{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid hsl(var(--border));font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:hsl(var(--muted-foreground))}
+.pal-h b{color:hsl(var(--foreground));font-weight:600}
+.states{display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
+.st{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 6px 14px;border-right:1px solid hsl(var(--border))}
+.st:last-child{border-right:0}
+.st .tg{min-height:48px}
+.st span{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:hsl(var(--muted-foreground));text-align:center}
+.st em{font-style:normal;font-size:10px;color:hsl(var(--muted-foreground));opacity:.8;text-align:center}
+.cr{padding:8px 14px 10px;border-top:1px solid hsl(var(--border));font-size:11px;color:hsl(var(--muted-foreground))}
+
+/* ── //03 w wierszu ── */
+.phones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.phone{width:100%;max-width:375px;background:hsl(var(--background));color:hsl(var(--foreground));border:1px solid hsl(var(--border));overflow:hidden}
+.ph-cap{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:hsl(var(--muted-foreground));margin:0 0 8px}
+.band{height:56px;display:flex;align-items:center;padding:0 16px;font-size:13px;font-weight:700;letter-spacing:.3em}
+.band{color:hsl(var(--primary))}
+.grp{display:flex;align-items:center;gap:10px;padding:0 16px;margin:4px 0 2px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:hsl(var(--muted-foreground))}
+.grp i{flex:1;height:1px;background:hsl(var(--border))}
+.rows{padding:0 16px}
+.row{display:flex;align-items:center;gap:12px;min-height:52px;border-bottom:1px solid hsl(var(--border))}
+.row:last-child{border-bottom:0}
+.gl{flex:0 0 24px;width:24px;height:24px;display:grid;place-items:center;border:1px solid hsl(var(--border));font-size:9px;font-weight:700;letter-spacing:.02em;color:hsl(var(--muted-foreground))}
+.nm{flex:1;min-width:0;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row.tall{align-items:flex-start;padding:9px 0 12px}
+.row.tall .gl{margin-top:5px}
+.row.tall .tg{align-self:flex-start;min-height:44px;align-items:flex-start}
+.row.tall .txt{flex:1;min-width:0}
+.row.tall .nm{display:block;line-height:34px;font-weight:700}
+.row.tall .sub{display:block;font-size:12px;color:hsl(var(--muted-foreground));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:-4px}
+.row.tall .sub2{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:hsl(var(--muted-foreground));margin-top:2px}
+.rest{margin:0 16px 14px;padding:8px 0 0;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:hsl(var(--muted-foreground));border-top:1px dashed hsl(var(--border))}
+.hint{font-size:11px;color:hsl(var(--muted-foreground));margin:10px 0 0}
+
+.gear{flex:0 0 44px;width:44px;min-height:44px;display:grid;place-items:center;background:none;border:0;color:hsl(var(--muted-foreground));cursor:pointer;margin-right:-10px}
+.gear svg{width:20px;height:20px}
+.gear:hover{color:hsl(var(--foreground))}
+.gear-sp{flex:0 0 34px}
+.row .pr{flex:none;font-size:11px;letter-spacing:.08em;color:hsl(var(--muted-foreground))}
+/* ── //04 tokeny, //05 kod ── */
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid hsl(var(--border))}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:12px}
+th,td{padding:9px 12px;border-bottom:1px solid hsl(var(--border));text-align:left;vertical-align:top}
+th{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:hsl(var(--muted-foreground));font-weight:600}
+tr:last-child td{border-bottom:0}
+.sw{display:inline-block;width:12px;height:12px;border:1px solid hsl(0 0% 40%);vertical-align:-2px;margin-right:6px}
+pre{margin:0;padding:14px;overflow-x:auto;background:hsl(var(--card) / .45);border:1px solid hsl(var(--border));font-size:11.5px;line-height:1.55}
+ol.todo{margin:0;padding-left:22px}
+ol.todo li{margin:0 0 12px}
+ol.todo li b{font-weight:600}
+
+/* ── //06 odrzucone ── */
+.rej{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.rj{border:1px solid hsl(var(--border));padding:14px 12px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.rj p{margin:0;font-size:11px;color:hsl(var(--muted-foreground))}
+.rj b{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:hsl(0 66% 62%)}
+.x-sq{width:40px;height:22px;border-radius:2px;background:#20c56a;position:relative}
+.x-sq::after{content:"";position:absolute;right:2px;top:2px;width:16px;height:16px;border-radius:2px;background:#0d0d0d}
+.x-vi{width:62px;height:34px;border-radius:9999px;background:#d67ae8;position:relative}
+.x-vi::after{content:"";position:absolute;right:3px;top:4px;width:26px;height:26px;border-radius:9999px;background:#0d0d0d}
+.x-tx{width:62px;height:34px;border-radius:9999px;background:#20c568;position:relative;font-size:10px;font-weight:700;color:#050505;display:flex;align-items:center;padding-left:9px;letter-spacing:.1em}
+.x-tx::after{content:"";position:absolute;right:3px;top:4px;width:26px;height:26px;border-radius:9999px;background:#050505}
+.x-ls{width:44px;height:24px;border-radius:9999px;background:#20c568;position:relative}
+.x-ls::after{content:"";position:absolute;left:22px;top:4px;width:16px;height:16px;border-radius:9999px;background:#0d0d0d}
+.x-rd{width:44px;height:24px;border-radius:9999px;background:hsl(0 74% 64%);position:relative}
+.x-rd::after{content:"";position:absolute;left:22px;top:2px;width:20px;height:20px;border-radius:9999px;background:#0d0d0d}
+footer{margin-top:56px;padding-top:14px;border-top:1px solid hsl(var(--border));font-size:11px;color:hsl(var(--muted-foreground))}
+footer p{margin:0 0 6px}
+
+@media (max-width:980px){.phones{grid-template-columns:repeat(2,minmax(0,1fr))}.rej{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){.anat{grid-template-columns:minmax(0,1fr)}.states{grid-template-columns:repeat(3,minmax(0,1fr))}.st:nth-child(3n){border-right:0}.st:nth-child(-n+3){border-bottom:1px solid hsl(var(--border))}.phones{grid-template-columns:minmax(0,1fr)}.rej{grid-template-columns:repeat(2,minmax(0,1fr))}h1{font-size:23px}}
+@media (max-width:400px){.spec{grid-template-columns:minmax(0,1fr)}.spec dt{padding-top:6px}}
+</style>
+</head>
+<body class="pal-dark">
+<main>
+
+<header>
+  <div class="mk"><b>//00</b> Kanon RA · mosADD<i></i></div>
+  <h1>Przełącznik mosADD</h1>
+  <p class="lead">Jeden wygląd włącz/wyłącz na całą apkę: <b>mOPS</b> (połączenia), <b>mARMY</b> (agenci), ustawienia. Zastępuje przyciski <code>CONNECT</code> w mOPS i trzy dzisiejsze wersje przełącznika w kodzie.</p>
+  <div class="stamp"><span>SPEC v1.1 · 19.09.2026</span><span>GOD OF RA DESIGN</span><span>wg nagrania 33 (transkrypt)</span><span class="wait">⏳ rysunek 15.09 nieodnaleziony</span></div>
+  <div class="quote"><q>Wszędzie równo, ładnie, czysto, z ŁADNYMI TOGGLE’AMI</q> — mARMY = lista agentów z suwakami; mOPS/USB = połączenia z suwakami.
+    <small>Nagranie 33 (transkrypt hp@, C:\Users\Public\TRANSKRYPT-nagranie33.md): <q>Nazwa, toggle, guzik, nazwa, toggle, guzik, settings, menu</q> · <q>Masz tam od razu toggle on, off, cena, jak kupisz go i włączysz, to możesz ustawić sobie settings</q>.<br>DECYZJE-KROLA.md:41 i :56 (19.09 02:18). Rysunku 15.09 nie ma na dysku (szukane: Pulpit, Public, Pobrane, Obrazy, Dokumenty, docs/). Geometria wzięta ze słowa Króla 11.09: <q>włącz/wyłącz to czysta pigułka 62×34 z kulą 26</q> i 19.09 02:08: <q>większe buttony jak w eterze</q>.</small></div>
+</header>
+
+<section>
+  <div class="mk"><b>//01</b> Anatomia<i></i></div>
+  <div class="anat">
+    <div class="draw" aria-label="Rysunek wymiarów przełącznika, skala 3:1">
+      <svg viewBox="0 0 330 236" role="img" aria-labelledby="svgt">
+        <title id="svgt">Tor 62×34, ramka 1, kula 26, luz 3, przejazd 28, cel dotyku 44 — skala 3:1</title>
+        <g transform="translate(0,18)" font-family="IBM Plex Mono, monospace" font-size="11" fill="hsl(0 0% 66%)">
+          <rect x="42.5" y="25.5" width="185" height="131" fill="none" stroke="hsl(40 84% 50% / .7)" stroke-dasharray="3 5"/>
+          <rect x="43.5" y="41.5" width="183" height="99" rx="49.5" fill="hsl(146 72% 45%)" stroke="hsl(146 72% 45%)" stroke-width="3"/>
+          <circle cx="93" cy="91" r="39" fill="none" stroke="hsl(0 0% 2% / .55)" stroke-width="2" stroke-dasharray="4 4"/>
+          <circle cx="177" cy="91" r="39" fill="hsl(0 0% 2%)"/>
+          <path d="M42 14h186M42 8v12M228 8v12" stroke="hsl(0 0% 45%)" stroke-width="1"/>
+          <text x="135" y="4" text-anchor="middle" fill="hsl(0 0% 95%)">62</text>
+          <path d="M246 40v102M240 40h12M240 142h12" stroke="hsl(0 0% 45%)" stroke-width="1"/>
+          <text x="258" y="95" fill="hsl(0 0% 95%)">34</text>
+          <path d="M270 25v132M264 25h12M264 157h12" stroke="hsl(40 84% 50% / .8)" stroke-width="1"/>
+          <text x="282" y="95" fill="hsl(40 84% 50%)">44</text>
+          <path d="M138 172h78M138 166v12M216 166v12" stroke="hsl(0 0% 45%)" stroke-width="1"/>
+          <text x="177" y="192" text-anchor="middle" fill="hsl(0 0% 95%)">kula 26</text>
+          <path d="M93 118v14M177 118v14M93 125h84" stroke="hsl(0 0% 2%)" stroke-width="1.5"/>
+          <text x="135" y="120" text-anchor="middle" fill="hsl(0 0% 2%)" font-weight="700">28</text>
+          <path d="M42 91h12M42 86v10M54 86v10" stroke="hsl(0 0% 95%)" stroke-width="1"/>
+          <text x="20" y="95" text-anchor="middle" fill="hsl(0 0% 95%)">1+3</text>
+          <text x="42" y="212" fill="hsl(40 84% 50%)">cel dotyku ≥ 44 · pełna wysokość wiersza</text>
+        </g>
+      </svg>
+    </div>
+    <dl class="spec">
+      <dt>Tor</dt><dd>62 × 34 px, ramka 1 px, <code>rounded-full</code>. Wnętrze 60 × 32.</dd>
+      <dt>Kula</dt><dd>26 px, okrągła. Luz 3 px z każdej strony: OFF na 3 px, ON na 31 px (przejazd 28), pion 3 px. <small>Policzone: (32 − 26) / 2 = 3.</small></dd>
+      <dt>Cel dotyku</dt><dd>Szerokość pigułki × pełna wysokość wiersza, nigdy mniej niż 44 px. Pigułka jest rysunkiem w środku guzika.</dd>
+      <dt>Stan</dt><dd>Mówi go położenie kuli i barwa toru. <b>Nigdy słowo w pigułce.</b> Słowo stanu idzie do czytnika ekranu (<code>role="switch"</code> + <code>aria-checked</code>).</dd>
+      <dt>Barwa ON</dt><dd>Tor pełny <code>--state-on</code>, kula <code>--primary-foreground</code>. <small>Stan, nie marka: <code>--primary</code> jest przemapowywany per moduł (ChannelView.tsx:2507 → czerwień mIRC), <code>--state-on</code> nie (index.css:254-269).</small></dd>
+      <dt>Barwa OFF</dt><dd>Tor <code>--muted</code>, ramka <code>--border</code>, kula <code>--muted-foreground</code>.</dd>
+      <dt>Ruch</dt><dd>Kula i barwa 150 ms, <code>cubic-bezier(.4,0,.2,1)</code> (domyślne Tailwinda, jak ui/switch). <code>prefers-reduced-motion</code> gasi przejazd i puls.</dd>
+      <dt>Głębia</dt><dd>Zero cienia, zero poświaty, zero szkła, zero fioletu.</dd>
+      <dt>Pismo</dt><dd><code>dir="ltr"</code> na pigułce — w 26 językach, także RTL, kula w lewo = wyłączone.</dd>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <div class="mk"><b>//02</b> Stany · trzy palety<i></i></div>
+  <div class="pal pal-dark">
+    <div class="pal-h"><b>Czerń</b><span>:root · apka</span></div>
+    <div class="states">
+      <div class="st"><button class="tg" role="switch" aria-checked="false" aria-label="Wyłączony"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>OFF</span></div>
+      <div class="st"><button class="tg" role="switch" aria-checked="true" aria-label="Włączony"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>ON</span></div>
+      <div class="st"><button class="tg" role="switch" aria-checked="false" aria-busy="true" aria-label="W toku"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>W toku</span><em>&gt; 400 ms</em></div>
+      <div class="st"><button class="tg" role="switch" aria-checked="false" disabled aria-disabled="true" aria-label="Zablokowany, wyłączony"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>Blok · OFF</span></div>
+      <div class="st"><button class="tg" role="switch" aria-checked="true" disabled aria-disabled="true" aria-label="Zablokowany, włączony"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>Blok · ON</span></div>
+      <div class="st"><button class="tg is-focus" role="switch" aria-checked="true" aria-label="Fokus z klawiatury" tabindex="-1"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>Fokus</span></div>
+    </div>
+    <div class="cr">Kontrast kuli na torze: ON 9,0:1 · OFF 5,74:1 · W TOKU 8,6:1 (kula na tle)</div>
+  </div>
+  <div class="pal pal-light">
+    <div class="pal-h"><b>Jasny</b><span>.light · tylko mosADD</span></div>
+    <div class="states">
+      <div class="st"><button class="tg" role="switch" aria-checked="false" aria-label="Wyłączony"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>OFF</span></div>
+      <div class="st"><button class="tg" role="switch" aria-checked="true" aria-label="Włączony"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>ON</span></div>
+      <div class="st"><button class="tg" role="switch" aria-checked="false" aria-busy="true" aria-label="W toku"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>W toku</span></div>
+      <div class="st"><button class="tg" role="switch" aria-checked="false" disabled aria-disabled="true" aria-label="Zablokowany, wyłączony"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>Blok · OFF</span></div>
+      <div class="st"><button class="tg" role="switch" aria-checked="true" disabled aria-disabled="true" aria-label="Zablokowany, włączony"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>Blok · ON</span></div>
+      <div class="st"><button class="tg is-focus" role="switch" aria-checked="true" aria-label="Fokus z klawiatury" tabindex="-1"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>Fokus</span></div>
+    </div>
+    <div class="cr">ON 4,22:1 · OFF 7,19:1 · W TOKU 3,13:1 — biała kula na zieleni jasnego motywu to ten sam próg, co napis na przycisku (mosadd-primary-foreground, index.css:461)</div>
+  </div>
+  <div class="pal pal-force">
+    <div class="pal-h"><b>Force-dark</b><span>.force-dark</span></div>
+    <div class="states">
+      <div class="st"><button class="tg" role="switch" aria-checked="false" aria-label="Wyłączony"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>OFF</span></div>
+      <div class="st"><button class="tg" role="switch" aria-checked="true" aria-label="Włączony"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>ON</span></div>
+      <div class="st"><button class="tg" role="switch" aria-checked="false" aria-busy="true" aria-label="W toku"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>W toku</span></div>
+      <div class="st"><button class="tg" role="switch" aria-checked="false" disabled aria-disabled="true" aria-label="Zablokowany, wyłączony"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>Blok · OFF</span></div>
+      <div class="st"><button class="tg" role="switch" aria-checked="true" disabled aria-disabled="true" aria-label="Zablokowany, włączony"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>Blok · ON</span></div>
+      <div class="st"><button class="tg is-focus" role="switch" aria-checked="true" aria-label="Fokus z klawiatury" tabindex="-1"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span>Fokus</span></div>
+    </div>
+    <div class="cr">ON 9,0:1 · OFF 5,48:1 · W TOKU 9,28:1</div>
+  </div>
+  <dl class="spec" style="margin-top:18px">
+    <dt>W toku</dt><dd>Zmiana idzie do serwera dłużej niż 400 ms (łączenie usługi w mOPS, <code>mosadd-agent-toggle</code> w mARMY): kula staje na środku i pulsuje, tor pusty w obrysie <code>--state-on</code>, <code>aria-busy="true"</code>, dotyk nic nie robi. Krócej niż 400 ms — przełącznik po prostu przeskakuje. Pigułka nie mówi „włączone”, dopóki serwer tego nie potwierdzi.</dd>
+    <dt>Błąd</dt><dd>Nie ma osobnego wyglądu: kula wraca na miejsce, obok idzie istniejący toast (<code>app.army.toggleFailed</code>, ArmyPanel.tsx:345).</dd>
+    <dt>Zablokowany</dt><dd>Natywne <code>disabled</code> + <code>aria-disabled</code>, pigułka 50 %, zero reakcji. Stan widać, zmienić się nie da. Powód mówi wiersz słowami, nigdy kłódka w pigułce (ui/switch.tsx:6-33).</dd>
+  </dl>
+</section>
+
+<section>
+  <div class="mk"><b>//03</b> W wierszu · kliknij<i></i></div>
+  <div class="phones">
+    <div>
+      <p class="ph-cap">mOPS · czerń · połączenia</p>
+      <div class="phone pal-dark">
+        <div class="band ops">mOPS</div>
+        <div class="grp">1 · USB<i></i></div>
+        <div class="rows" data-kind="ops">
+          <div class="row"><span class="gl">GM</span><span class="nm">Gmail</span><button class="tg" role="switch" aria-checked="true" aria-label="Gmail"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button></div>
+          <div class="row"><span class="gl">GD</span><span class="nm">Drive</span><button class="tg" role="switch" aria-checked="false" aria-busy="true" aria-label="Drive"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button></div>
+          <div class="row"><span class="gl">NO</span><span class="nm">Notion</span><button class="tg" role="switch" aria-checked="false" aria-label="Notion"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button></div>
+          <div class="row"><span class="gl">SL</span><span class="nm">Slack</span><button class="tg" role="switch" aria-checked="false" aria-label="Slack"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button></div>
+          <div class="row"><span class="gl">GH</span><span class="nm">GitHub</span><button class="tg" role="switch" aria-checked="true" aria-label="GitHub"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button></div>
+        </div>
+      </div>
+      <p class="hint">OFF → ON przechodzi przez W TOKU aż usługa zgłosi połączenie (tu symulacja 1,2 s). Wiersz 52 px, znak 24 px, bez ramki wokół wiersza — grupę znaczy kreska (PanelShell.tsx:30, :171-177).</p>
+    </div>
+    <div>
+      <p class="ph-cap">mARMY · czerń · agenci</p>
+      <div class="phone pal-dark">
+        <div class="band">mARMY</div>
+        <div class="grp">1 · Agents<i></i></div>
+        <div class="rows" data-kind="army">
+          <div class="row"><span class="gl">DL</span><span class="nm">Dispatcher Lenovo</span><button class="tg" role="switch" aria-checked="true" aria-label="Dispatcher Lenovo"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><button class="gear" type="button" aria-label="Settings — Dispatcher Lenovo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path><rect x="13" y="5" width="4" height="4"></rect><rect x="7" y="10" width="4" height="4"></rect><rect x="14" y="15" width="4" height="4"></rect></svg></button></div>
+          <div class="row"><span class="gl">3T</span><span class="nm">Generał · 3T3R</span><button class="tg" role="switch" aria-checked="true" aria-label="Generał 3T3R"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><button class="gear" type="button" aria-label="Settings — Generał 3T3R"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path><rect x="13" y="5" width="4" height="4"></rect><rect x="7" y="10" width="4" height="4"></rect><rect x="14" y="15" width="4" height="4"></rect></svg></button></div>
+          <div class="row"><span class="gl">MA</span><span class="nm">Generał · Marocain</span><button class="tg" role="switch" aria-checked="false" aria-label="Generał Marocain"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><button class="gear" type="button" aria-label="Settings — Generał Marocain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path><rect x="13" y="5" width="4" height="4"></rect><rect x="7" y="10" width="4" height="4"></rect><rect x="14" y="15" width="4" height="4"></rect></svg></button></div>
+        </div>
+        <div class="grp">2 · Recruit<i></i></div>
+        <div class="rows" data-kind="ops">
+          <div class="row"><span class="gl">+1</span><span class="nm">One more agent</span><span class="pr">$9/mo</span><button class="tg" role="switch" aria-checked="false" aria-label="One more agent — $9 per month"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button><span class="gear-sp" aria-hidden="true"></span></div>
+        </div>
+      </div>
+      <p class="hint">Gramatyka Króla z nagrania 33: <b>nazwa · przełącznik · guzik</b>. Wiersz jednoliniowy 52 px, bez podpisów. Ustawienia (glif Sliders z kodu, 44 × 44) tylko przy agencie, którego masz; przy agencie do kupienia w tym miejscu stoi cena, a włączenie przechodzi przez W TOKU jak płatność/łączenie.</p>
+    </div>
+    <div>
+      <p class="ph-cap">mOPS · jasny</p>
+      <div class="phone pal-light">
+        <div class="band ops">mOPS</div>
+        <div class="grp">1 · USB<i></i></div>
+        <div class="rows" data-kind="ops">
+          <div class="row"><span class="gl">GM</span><span class="nm">Gmail</span><button class="tg" role="switch" aria-checked="true" aria-label="Gmail"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button></div>
+          <div class="row"><span class="gl">GD</span><span class="nm">Drive</span><button class="tg" role="switch" aria-checked="false" aria-label="Drive"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button></div>
+          <div class="row"><span class="gl">NO</span><span class="nm">Notion</span><button class="tg" role="switch" aria-checked="false" aria-busy="true" aria-label="Notion"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button></div>
+          <div class="row"><span class="gl">GH</span><span class="nm">GitHub</span><button class="tg" role="switch" aria-checked="true" aria-label="GitHub"><span class="tg-pill" dir="ltr"><span class="tg-knob"></span></span></button></div>
+        </div>
+      </div>
+      <p class="hint">Jasny motyw: te same klasy, inne wartości tokenów — nic w przełączniku nie jest pisane na sztywno.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="mk"><b>//04</b> Tokeny<i></i></div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Rola</th><th>Token kanonu</th><th>= token apki</th><th>Czerń</th><th>Jasny</th><th>Force-dark</th><th>Źródło (index.css)</th></tr></thead>
+      <tbody>
+        <tr><td>Tor ON + ramka</td><td><code>mosadd-toggle-on</code></td><td><code>--state-on</code> → <code>--ptt-go</code></td><td><span class="sw" style="background:hsl(146 72% 45%)"></span>146 72% 45%</td><td><span class="sw" style="background:hsl(145 100% 28%)"></span>145 100% 28%</td><td><span class="sw" style="background:hsl(146 72% 45%)"></span>146 72% 45%</td><td>:253 :269 · :527 :528 · :760 :761</td></tr>
+        <tr><td>Kula ON</td><td><code>mosadd-toggle-on-knob</code></td><td><code>--primary-foreground</code></td><td><span class="sw" style="background:hsl(0 0% 2%)"></span>0 0% 2%</td><td><span class="sw" style="background:hsl(0 0% 100%)"></span>0 0% 100%</td><td><span class="sw" style="background:hsl(0 0% 2%)"></span>0 0% 2%</td><td>:303 · :461 · :727</td></tr>
+        <tr><td>Tor OFF</td><td><code>mosadd-toggle-off</code></td><td><code>--muted</code></td><td><span class="sw" style="background:hsl(0 0% 18%)"></span>0 0% 18%</td><td><span class="sw" style="background:hsl(0 0% 89%)"></span>0 0% 89%</td><td><span class="sw" style="background:hsl(0 0% 8%)"></span>0 0% 8%</td><td>:339 · :483 · :744</td></tr>
+        <tr><td>Ramka OFF</td><td><code>mosadd-toggle-off-border</code></td><td><code>--border</code></td><td><span class="sw" style="background:hsl(0 0% 26%)"></span>0 0% 26%</td><td><span class="sw" style="background:hsl(0 0% 62%)"></span>0 0% 62%</td><td><span class="sw" style="background:hsl(0 0% 12%)"></span>0 0% 12%</td><td>:389 · :561 · :784</td></tr>
+        <tr><td>Kula OFF</td><td><code>mosadd-toggle-off-knob</code></td><td><code>--muted-foreground</code></td><td><span class="sw" style="background:hsl(0 0% 66%)"></span>0 0% 66%</td><td><span class="sw" style="background:hsl(0 0% 28%)"></span>0 0% 28%</td><td><span class="sw" style="background:hsl(0 0% 55%)"></span>0 0% 55%</td><td>:341 · :487 · :745</td></tr>
+        <tr><td>Fokus</td><td><code>mosadd-ring</code></td><td><code>--ring</code></td><td><span class="sw" style="background:hsl(146 72% 45%)"></span>146 72% 45%</td><td><span class="sw" style="background:hsl(145 100% 28%)"></span>145 100% 28%</td><td><span class="sw" style="background:hsl(146 72% 45%)"></span>146 72% 45%</td><td>:391 · :563 · :786 · obrys :1090-1093</td></tr>
+        <tr><td>Wymiary</td><td colspan="5"><code>mosadd-toggle-w</code> 62 · <code>mosadd-toggle-h</code> 34 · <code>mosadd-toggle-knob</code> 26 · <code>mosadd-toggle-inset</code> 3 · <code>mosadd-toggle-hit</code> 44 (min.)</td><td>wzór: cymru-main VaultSwitch.tsx:98, :109, :119-120</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="hint">Żadnego nowego koloru — przełącznik składa się z tokenów, które apka już ma we wszystkich trzech paletach. Aliasy <code>mosadd-toggle-*</code> żyją w kanonie (tokens.json); w kodzie wystarczą klasy z //05. Obrys OFF na tle ma 1,95:1 (czerń) — stan i położenie niesie kula (8,22:1 na tle).</p>
+</section>
+
+<section>
+  <div class="mk"><b>//05</b> Co zmienić w kodzie · dla ADMIRAŁA<i></i></div>
+  <ol class="todo">
+    <li><b>components/ui/switch.tsx:42 i :50</b> — jeden prymityw rysuje każdy przełącznik (11 plików). Dziś 44×24, kula 20, ON przez <code>bg-primary</code>. Nowe klasy niżej. Zachowanie Radixa bez zmian.</li>
+    <li><b>components/panels/ArmyPanel.tsx:105-120</b> — własny <code>Switch</code> (44×24, kula 16): luz 2 px po lewej i 6 px po prawej, ON przez <code>--primary</code>. Usunąć, importować <code>@/components/ui/switch</code>. To samo dla karty mADD (:431).</li>
+    <li><b>mOPS</b> (<code>OpsPanel.tsx:259-268</code> → <code>UsbConnectedApps</code> compact) — kafel z ramką i przyciskiem <code>CONNECT</code> → wiersz 52 px + przełącznik. OFF→ON uruchamia to samo łączenie, co dziś <code>CONNECT</code>; stan W TOKU trwa, aż konektor zgłosi połączenie. Logika połączeń bez zmian.</li>
+    <li><b>MlidarSwitch.tsx:45-70</b> — czwarty wygląd (obrys + tint + omiatanie radaru, akcent czerwony). Poza mOPS/mARMY; do decyzji, czy dostaje geometrię kanonu z warstwą omiatania.</li>
+  </ol>
+<pre><code>// ui/switch.tsx:42 — Root (guzik = cel dotyku ≥44 przez ::after, pigułka = sam Root)
+"peer group relative inline-flex h-[34px] w-[62px] shrink-0 cursor-pointer items-center rounded-full
+ border border-border bg-muted transition-colors motion-reduce:transition-none
+ data-[state=checked]:border-[hsl(var(--state-on))] data-[state=checked]:bg-[hsl(var(--state-on))]
+ after:absolute after:inset-x-0 after:-inset-y-[5px] after:content-['']
+ focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+ focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50
+ aria-busy:border-[hsl(var(--state-on))] aria-busy:bg-transparent aria-busy:cursor-progress"
+// + dir="ltr" na Root
+
+// ui/switch.tsx:50 — Thumb
+"pointer-events-none absolute left-0 top-[3px] block h-[26px] w-[26px] rounded-full bg-muted-foreground
+ transition-transform motion-reduce:transition-none translate-x-[3px]
+ data-[state=checked]:translate-x-[31px] data-[state=checked]:bg-primary-foreground
+ group-aria-busy:translate-x-[17px] group-aria-busy:bg-[hsl(var(--state-on))]
+ group-aria-busy:animate-pulse motion-reduce:group-aria-busy:animate-none"</code></pre>
+</section>
+
+<section>
+  <div class="mk"><b>//06</b> Odrzucone<i></i></div>
+  <div class="rej">
+    <div class="rj"><span class="x-sq"></span><b>Kwadrat</b><p>Makieta mops.html 17.09: tor 40×22, promień 2, kwadratowa kula. Dwa wyglądy w jednej paczce makiet (marmy.html ma okrągły).</p></div>
+    <div class="rj"><span class="x-vi"></span><b>Fiolet mRAG</b><p>Makieta 17.09. Barwa modułu żyje w znaku wiersza, nie w stanie. ON = zawsze <code>--state-on</code>.</p></div>
+    <div class="rj"><span class="x-tx">ON</span><b>Słowo w pigułce</b><p>Stan mówi kula. Król 11.09: „nasrane tekstem”.</p></div>
+    <div class="rj"><span class="x-ls"></span><b>Krzywy luz</b><p>ArmyPanel.tsx:105-120 dziś: 2 px z lewej, 6 px z prawej.</p></div>
+    <div class="rj"><span class="x-rd"></span><b>Czerwony „ON”</b><p><code>bg-primary</code> pod ChannelView.tsx:2507 = czerwień mIRC. Czerwień znaczy zagrożenie.</p></div>
+  </div>
+</section>
+
+<footer>
+  <p>Źródła: DECYZJE-KROLA.md:41, :56 · m0ssad-3/apps/web/src: index.css, components/ui/switch.tsx, components/panels/ArmyPanel.tsx, components/panels/OpsPanel.tsx, components/ui/PanelShell.tsx, components/ui/KebabMenu.tsx:128, :192, components/mlidar/MlidarSwitch.tsx · cymru-main/src/components/cymru/vault/VaultSwitch.tsx · makiety Pulpit\MOCKUPY-17-09 · zrzuty Public\zrzuty-19-09\po-03-mops.png, Public\CTO-C2\04-mARMY-375.png.</p>
+  <p>Status: ⏳ SPEC v1. Kanon RA · komponent MosaddToggle. Rozjazdy R15, R18.</p>
+</footer>
+</main>
+<script>
+(function(){
+  var SLOW = 1200;
+  document.querySelectorAll('.rows .tg').forEach(function(b){
+    b.addEventListener('click', function(){
+      if (b.disabled || b.getAttribute('aria-busy') === 'true') return;
+      var on = b.getAttribute('aria-checked') === 'true';
+      var kind = b.closest('.rows').getAttribute('data-kind');
+      if (!on && kind === 'ops') {
+        b.setAttribute('aria-busy', 'true');
+        setTimeout(function(){ b.removeAttribute('aria-busy'); b.setAttribute('aria-checked', 'true'); }, SLOW);
+      } else {
+        b.setAttribute('aria-checked', on ? 'false' : 'true');
+      }
+    });
+  });
+  // wiersze startujące w stanie W TOKU kończą łączenie po chwili — żeby podgląd nie wisiał
+  document.querySelectorAll('.rows .tg[aria-busy="true"]').forEach(function(b){
+    setTimeout(function(){ b.removeAttribute('aria-busy'); b.setAttribute('aria-checked', 'true'); }, 2400);
+  });
+})();
+</script>
+</body>
+</html>

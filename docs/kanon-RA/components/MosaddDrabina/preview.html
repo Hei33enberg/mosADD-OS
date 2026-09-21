@@ -1,0 +1,26 @@
+<!-- @dsCard group="mosADD" height=300 -->
+<!doctype html>
+<html lang="pl">
+<head><meta charset="utf-8"><title>MosaddDrabina</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;padding:18px 20px;background:var(--mosadd-lp-background);font-family:var(--font-mosadd-mono)}
+.ladder{display:grid;border:1px solid hsl(0 0% 13%);max-width:560px}
+.rung{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:18px;border-bottom:1px solid hsl(0 0% 13%)}
+.rung:last-child{border-bottom:0}
+.pop{background:hsl(146 72% 45% / .05);box-shadow:inset 3px 0 0 var(--mosadd-primary)}
+.ix{font-size:11px;letter-spacing:.18em;font-weight:600;color:var(--mosadd-primary);align-self:start;padding-top:4px}
+.nm{display:block;font-family:var(--font-mosadd-brand);font-size:15px;font-weight:700;letter-spacing:.1em;color:var(--mosadd-foreground)}
+.pop .nm::after{content:"RECOMMENDED";margin-left:9px;font-family:var(--font-mosadd-mono);font-size:11px;letter-spacing:.16em;color:var(--mosadd-primary-foreground);background:var(--mosadd-primary);padding:2px 5px;vertical-align:2px;font-weight:700}
+.ds{display:block;font-size:11px;color:hsl(0 0% 47%);margin-top:4px;line-height:1.5}
+.pr{font-family:var(--font-mosadd-brand);font-size:17px;font-weight:700;color:var(--mosadd-primary);white-space:nowrap}
+.pr em{font-style:normal;font-size:11px;color:hsl(0 0% 47%)}
+</style></head>
+<body>
+<div class="ladder">
+ <div class="rung"><span class="ix">01</span><span><span class="nm">RECON</span><span class="ds">Full comms &#183; unlimited contacts &#183; 1 agent on your own key &#183; mRAG 2 GB</span></span><span class="pr">$0</span></div>
+ <div class="rung pop"><span class="ix">02</span><span><span class="nm">COMMANDER</span><span class="ds">mADD in full &#183; mRAG 100 GB + graph &#183; 3 agents &#183; 5 devices</span></span><span class="pr">$19<em>/mo</em></span></div>
+ <div class="rung"><span class="ix">03</span><span><span class="nm">SOVEREIGN</span><span class="ds">mRAG 1 TB &#183; 10 agents &#183; all mAPPS &#183; unlimited devices</span></span><span class="pr">$49<em>/mo</em></span></div>
+</div>
+</body>
+</html>
