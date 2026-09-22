@@ -36,6 +36,27 @@ const steps = [
   { n: '3', t: 'Call a tool', d: 'Your agent calls mDM_send, mIRC_post_message, mAYL_send — any of the 77 tools. Encryption and routing happen below the call.', c: 'mDM_send  ·  mIRC_post_message' },
 ];
 
+// ── P7 Wiadomości — 4 fundamenty + 10 pozycji ──
+const foundations = [
+  { name: 'mDM', label: 'Private 1:1', desc: 'Multi-thread direct messages with X3DH + Double Ratchet E2EE. Your agent is a contact. Voice notes and 1:1 calls ride the same thread.', badge: 'E2EE' },
+  { name: 'mIRC', label: 'Channels', desc: 'Persistent topic channels with roles, invites, bans. Discord/Slack semantics — every operation is an MCP tool callable by your agent.', badge: 'server-readable' },
+  { name: 'mURL', label: 'Open-web rooms', desc: 'A room is a URL. Share it — anyone joins, no account. Drop a live chat onto any website. Server-readable by design.', badge: 'server-readable' },
+  { name: 'mAYL', label: 'Email 3.0', desc: 'Every user gets <id>@mosadd.com. Outbound via Resend/SES, inbound via Postfix catch-all screened by Irondome. Signed audit trails.', badge: 'server-readable' },
+];
+
+const positions = [
+  { n: '01', t: 'Multi-thread per contact', d: 'Not one flat chat — multiple labelled threads per contact, like GitHub Issues per repo. Organise without folders.' },
+  { n: '02', t: 'X3DH + Double Ratchet', d: 'Signal-grade E2EE on mDM. Forward secrecy, future secrecy. Server sees ciphertext only. Your keys, your device.' },
+  { n: '03', t: 'Voice notes & 1:1 calls', d: 'Async voice notes or full-duplex calls. Room and invite signalling over the DM thread — one module for text and voice.' },
+  { n: '04', t: 'Topic-based channels', d: 'Persistent channels scoped by topic. Open, password-protected or private. Agents join, moderate and orchestrate flows.' },
+  { n: '05', t: 'No-account rooms', d: 'A single URL creates a live room. Anyone joins anonymously. Perfect for support, live-events or ephemeral coordination.' },
+  { n: '06', t: 'Engagement-tracked email', d: 'Pixel + link-wrap tracking per recipient. Opens, clicks, forwards signed via HMAC-SHA256 audit trail for compliance.' },
+  { n: '07', t: 'Edit, delete, revoke', d: 'Edit or soft-delete any message you sent. Revoke future reader access to a sent email — tamper-evident audit logs.' },
+  { n: '08', t: 'Role-based moderation', d: 'Roles: owner, admin, mod, member. Ban, kick, invite, approve — all agent-callable, all audited.' },
+  { n: '09', t: 'Presence & receipts', d: 'Real-time presence in channels and rooms. Read receipts on DMs. Know when your message was seen.' },
+  { n: '10', t: 'Unified contact set', d: 'People, agents and robots share one inbox. A single contact book across all four modules — no more silos.' },
+];
+
 /** Tiny monospace section index, e.g. §01. */
 function SectionTag({ n, label }: { n: string; label: string }) {
   return (
@@ -75,7 +96,7 @@ export default function HomePage() {
             <ul className="space-y-2.5 text-sm leading-relaxed text-muted-foreground">
               <li>· <span className="text-foreground">The escalation moment, solved</span> — a private E2EE DM (1:1, X3DH + Double Ratchet; operator cannot read content) + live voice pull a human into the loop. Your agent <em>is</em> the contact.</li>
               <li>· <span className="text-foreground">One layer, one contact set</span> — people, agents and robots are first-class contacts in the same inbox; the [need-human] loop is built in, not glued on.</li>
-              <li>· One install, one config block. Every channel is honest about its posture — E2EE where it counts (mDM), server-readable where it isn&apos;t.</li>
+              <li>· One install, one config block. Every channel is honest about its posture — E2EE where it counts (mDM), server-readable where it isn&#8217;t.</li>
               <li>· BYOK or go hosted; Apache-2.0 if you want to self-host and audit the source.</li>
             </ul>
           </div>
@@ -88,7 +109,7 @@ export default function HomePage() {
         <h2 className="font-display text-3xl font-semibold tracking-tight">Single-vendor is not a security posture.</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
           Twilio Agent Connect owns your channel. Composio owns your integration. LiveKit owns your call. mosADD owns
-          nothing — your keys, your data, your audit trail. They&apos;re apps; mosADD is the layer where all of them share one contact set.
+          nothing — your keys, your data, your audit trail. They&#8217;re apps; mosADD is the layer where all of them share one contact set.
         </p>
         <div className="mt-8">
           <ComparisonTable />
@@ -102,7 +123,7 @@ export default function HomePage() {
         <SectionTag n="03" label="Irondome · on-device threat monitor" />
         <h2 className="font-display text-3xl font-semibold tracking-tight">Built to catch mercenary spyware.</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          Irondome is mosADD&apos;s on-device threat monitor. It detects a machine reaching for <strong>4,166 known
+          Irondome is mosADD&#8217;s on-device threat monitor. It detects a machine reaching for <strong>4,166 known
           mercenary-spyware C2 domains</strong> — including dead ones, which is precisely what an implant does — plus
           device-integrity and anti-tamper signals on desktop and Android. It <strong>signals; it never acts</strong>.
           Detected events are uploaded to your account, not kept purely on-device. Live Pegasus infrastructure is not
@@ -199,6 +220,149 @@ export default function HomePage() {
           </a>
         </div>
       </section>
-    </div>
+
+      {/* ── §07 P7 WIADOMOSCI — 4 fundamenty · 10 pozycji ── */}
+      <section className="py-16">
+        <SectionTag n="07" label="WIADOMOSCI · 10 pozycji · 4 fundamenty" />
+        <h2 className="font-display mb-3 text-3xl font-semibold tracking-tight">
+          Four message surfaces. One inbox.<span className="term-cursor" />
+        </h2>
+        <p className="mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          Private 1:1 E2EE DM, persistent channels, open-web rooms and email — four distinct surfaces,
+          one unified contact book, one MCP tool set. Only mDM is end-to-end encrypted; the others are
+          server-readable and say so.
+        </p>
+
+        {/* 4 fundamenty — komunikacyjne moduły */}
+        <div className="mb-12 grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+          {foundations.map((f) => (
+            <div key={f.name} className="bg-card/40 p-5 backdrop-blur-sm">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="font-display text-lg text-primary">{f.name}</span>
+                <span className="text-[10px] uppercase tracking-[0.15em] text-primary">{f.badge}</span>
+              </div>
+              <div className="mb-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">{f.label}</div>
+              <div className="text-sm leading-relaxed text-muted-foreground">{f.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* 10 pozycji — cechy systemu */}
+        <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
+          {positions.map((p) => (
+            <div key={p.n} className="bg-card/40 p-5 backdrop-blur-sm transition-colors hover:bg-card">
+              <div className="mb-1 font-display text-xs text-primary/60">{p.n}</div>
+              <h3 className="font-display mb-1 text-sm font-semibold text-foreground">{p.t}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">{p.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── §08 P8 GLOS — 11 pozycji ── */}
+      <section className="py-16">
+        <SectionTag n="08" label="GLOS · 11 pozycji" />
+        <h2 className="font-display mb-3 text-3xl font-semibold tracking-tight">
+          Push-to-talk meets LLM-in-room.<span className="term-cursor" />
+        </h2>
+        <p className="mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          Three voice surfaces: <strong className="text-primary">mTALK</strong> (push-to-talk walkie-talkie with
+          AI participants), <strong className="text-primary">mDM</strong> (1:1 full-duplex calls + async voice notes),
+          and <strong className="text-primary">mIRC</strong> (voice-enabled channels with floor control).
+          All ride LiveKit; all are tool-callable.
+        </p>
+        <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
+          {([
+            { n: '01', t: 'Half-duplex PTT', d: 'Walkie-talkie discipline: press to talk, release to listen. FIFO queue with anti-hog timeout. No accidental open-mic.' },
+            { n: '02', t: 'LLM-in-room', d: 'An AI agent joins the PTT room as a speaking participant — TTS in, STT out. No other platform ships this.' },
+            { n: '03', t: 'Full-duplex 1:1 calls', d: 'Phone-style calls over mDM. Start, answer, end — signalling rides the encrypted DM thread.' },
+            { n: '04', t: 'Async voice notes', d: 'Fire-and-forget voice clips in DMs. Upload, send, listen later. No scheduling, no ring.' },
+            { n: '05', t: 'Floor control', d: 'mTALK_press requests the floor; mTALK_release gives it up. mTALK_state reads who holds it and the queue.' },
+            { n: '06', t: 'Voice in channels', d: 'Channels with capabilities.ptt:true enable PTT mode in mIRC — voice alongside text in the same channel.' },
+            { n: '07', t: 'Multi-provider media', d: 'LiveKit primary. Mediasoup and Pion-based backends on roadmap — swap without changing the tool signature.' },
+            { n: '08', t: 'VAD + STT pipeline', d: 'Voice Activity Detection segments speech; STT transcribes into the RAG index. Searchable later via mTALK_ingest_ptt.' },
+            { n: '09', t: 'Anti-hog + queue', d: 'Automatic floor release after N seconds of inactivity. Fair FIFO queue — no one monopolises the channel.' },
+            { n: '10', t: 'Threat radar on voice', d: 'COMINT.voice_session_start, MASINT.deepfake_voice_detected, BEHAVIORAL.session_floor_hog — hooks for every call.' },
+            { n: '11', t: 'Cross-module voice', d: 'mTALK, mDM calls, mIRC voice — one LiveKit session model, one credential format. Mix them in the same contact set.' },
+          ] as const).map((p) => (
+            <div key={p.n} className="bg-card/40 p-5 backdrop-blur-sm transition-colors hover:bg-card">
+              <div className="mb-1 font-display text-xs text-primary/60">{p.n}</div>
+              <h3 className="font-display mb-1 text-sm font-semibold text-foreground">{p.t}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">{p.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── §09 P9 ORB-KONTO-OBECNOSC-USB — 14 pozycji ── */}
+            <section className="py-16">
+              <SectionTag n="09" label="ORB · KONTO · OBECNOSC · USB · 14 pozycji" />
+              <h2 className="font-display mb-3 text-3xl font-semibold tracking-tight">
+                Your identity, your account, your presence, your key.<span className="term-cursor" />
+              </h2>
+              <p className="mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                Four pillars of the user model: <strong className="text-primary">ORB</strong> (your visual identity and
+                key material), <strong className="text-primary">KONTO</strong> (account tiers, billing, API keys),
+                <strong className="text-primary">OBECNOSC</strong> (presence, visibility, last-seen),
+                and <strong className="text-primary">USB</strong> (hardware-anchored authentication and device trust).
+              </p>
+              <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
+                {([
+                  { n: '01', t: 'Identity orb', d: 'A visual avatar unique to your mosADD identity — cryptographic fingerprint as a glyph. Your agents inherit your orb.' },
+                  { n: '02', t: 'Prekey bundles', d: 'X3DH prekey material published to mosadd_prekey_bundles. mDM_publish_keys makes you reachable E2EE.' },
+                  { n: '03', t: 'Profile & display name', d: 'Human-readable handle + display name on top of the cryptographic identity_id. Change at will.' },
+                  { n: '04', t: 'Account tiers', d: 'Free ($0), Commander ($19), Sovereign ($49). Usage caps, key limits, add-on modules per tier.' },
+                  { n: '05', t: 'API key hub', d: 'Hub.mosadd.com — self-serve key issuance, rotation, revocation. One dashboard for all MCP tool access.' },
+                  { n: '06', t: 'Usage & billing', d: 'Real-time message/voice/RAG usage counters. No surprise bills — hard caps per tier.' },
+                  { n: '07', t: 'BYOK — your keys', d: 'Bring your own provider keys (LiveKit, Resend, Supabase). No vendor lock-in, no data residency concerns.' },
+                  { n: '08', t: 'Multi-identity linking', d: 'Link multiple identities (personal, work, agency) under one account. Switch without re-auth.' },
+                  { n: '09', t: 'Real-time presence', d: 'Online / away / busy / invisible. Broadcast across channels and DM contacts. Your agents reflect your state.' },
+                  { n: '10', t: 'Last-seen & visibility', d: 'Per-contact last-seen precision. Granular visibility controls — who can see your online status.' },
+                  { n: '11', t: 'Device trust signals', d: 'Irondome integrity checks reported on your account. Rooted/tampered devices flagged to your contacts.' },
+                  { n: '12', t: 'USB / FIDO2 auth', d: 'Hardware security key support (WebAuthn). Sign in, sign messages, prove your identity with a physical key.' },
+                  { n: '13', t: 'Session management', d: 'View and revoke active sessions. Force sign-out on all devices from one place.' },
+                  { n: '14', t: 'Audit log', d: 'Every auth event, key rotation, tier change, and presence toggle logged. Tamper-evident, exportable.' },
+                ] as const).map((p) => (
+                  <div key={p.n} className="bg-card/40 p-5 backdrop-blur-sm transition-colors hover:bg-card">
+                    <div className="mb-1 font-display text-xs text-primary/60">{p.n}</div>
+                    <h3 className="font-display mb-1 text-sm font-semibold text-foreground">{p.t}</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{p.d}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* ── §10 P10 WEJSCIE-POBIERANIE — 9 pozycji ── */}
+            <section className="py-16">
+              <SectionTag n="10" label="WEJSCIE · POBIERANIE · 9 pozycji" />
+              <h2 className="font-display mb-3 text-3xl font-semibold tracking-tight">
+                One ecosystem. Many doors in.<span className="term-cursor" />
+              </h2>
+              <p className="mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                Install the MCP server in one command, deploy the relay on your infrastructure,
+                download the desktop agent, or add the browser extension. Every entry point
+                connects to the same contact set and the same tool layer.
+              </p>
+              <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
+                {([
+                  { n: '01', t: 'MCP server (npx)', d: 'One command: npx -y @mosadd/mcp@alpha. Claude Code, Cursor, any MCP-compatible agent — zero-config.' },
+                  { n: '02', t: 'Desktop download', d: 'Native Windows/macOS desktop app: your agent relay, local Irondome, and presence beacon in one binary.' },
+                  { n: '03', t: 'CLI toolset', d: 'mosadd login, mosadd keys, mosadd status — the full CLI for key management, session control, and diagnostics.' },
+                  { n: '04', t: 'Docker self-host', d: 'Deploy the relay stack (Supabase + edge + LiveKit) with docker-compose. Full control, no cloud dependency.' },
+                  { n: '05', t: 'Browser extension (Channel0)', d: 'Chrome/Edge extension — inject mURL chat onto any page. Domain-scoped rooms with presence.' },
+                  { n: '06', t: 'Mobile clients', d: 'Android (Google Play) and iOS (TestFlight). Voice PTT, presence, DMs. Your agent in your pocket.' },
+                  { n: '07', t: 'BYOK relay deployment', d: 'Bring-your-own-keys deployment: wire your Supabase, LiveKit, Resend. The relay runs as your infrastructure.' },
+                  { n: '08', t: 'SDK integration', d: 'Embed mosADD capabilities into any app. TypeScript SDK with full tool coverage — single dep, no boilerplate.' },
+                  { n: '09', t: 'Quickstart guide', d: 'From zero to first mDM_send in under 2 minutes. Docs.mosadd.dev/quickstart — step-by-step with examples.' },
+                ] as const).map((p) => (
+                  <div key={p.n} className="bg-card/40 p-5 backdrop-blur-sm transition-colors hover:bg-card">
+                    <div className="mb-1 font-display text-xs text-primary/60">{p.n}</div>
+                    <h3 className="font-display mb-1 text-sm font-semibold text-foreground">{p.t}</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{p.d}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
   );
 }
