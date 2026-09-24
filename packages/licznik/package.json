@@ -1,0 +1,34 @@
+{
+  "name": "@mosadd/licznik",
+  "version": "0.1.0",
+  "description": "mosADD LICZNIK — brama proxy do dostawców LLM (deepseek direct primary, openrouter fallback), licznik tokenów + koszt hurtowy, księga paragonów z marżą. Tor produktu RAMKA+SKLEP (LINEAR-6045, fala 0).",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

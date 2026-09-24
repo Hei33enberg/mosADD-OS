@@ -18,6 +18,10 @@ pnpm-debug.log*
 .env.local
 .env.*.local
 
+# LICZNIK — księga paragonów (runtime data, nie kod)
+apps/dev/data/
+packages/licznik/data/
+
 # Editor
 .vscode/
 .idea/

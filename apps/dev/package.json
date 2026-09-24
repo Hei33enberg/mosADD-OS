@@ -5,13 +5,14 @@
   "description": "mosadd.dev — Developer portal for the mosadd OS",
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node ../../scripts/sync-embed-bundle.mjs || true",
+    "prebuild": "node ../../scripts/sync-embed-bundle.mjs || true && pnpm --filter @mosadd/licznik build",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@mosadd/licznik": "file:../../packages/licznik",
     "@supabase/supabase-js": "^2.106.2",
     "@vercel/analytics": "^2.0.1",
     "next": "^15.1.6",

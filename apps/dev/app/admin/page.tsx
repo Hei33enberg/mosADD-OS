@@ -64,9 +64,44 @@ interface Ops {
   };
 }
 
-type TabId = 'overview' | 'customers' | 'ops' | 'moderation' | 'murl';
+// LICZNIK (LINEAR-6045, fala 0) — księga paragonów bramy proxy.
+interface Margins {
+  summary: {
+    count: number;
+    ok_count: number;
+    failed_count: number;
+    tokens_in: number;
+    tokens_out: number;
+    wholesale_usd: number;
+    retail_usd: number;
+    profit_usd: number;
+    avg_margin_pct: number;
+    fallback_count: number;
+  };
+  receipts: Array<{
+    id: string;
+    ts: string;
+    user_id: string;
+    provider: string;
+    model: string;
+    prompt_tokens: number;
+    completion_tokens: number;
+    wholesale_usd: number;
+    margin_pct: number;
+    retail_usd: number;
+    profit_usd: number;
+    pricing_verified: boolean;
+    attempts: number;
+    fallback_used: boolean;
+    ok: boolean;
+    error?: string;
+  }>;
+}
+
+type TabId = 'overview' | 'margin' | 'customers' | 'ops' | 'moderation' | 'murl';
 const TABS: { id: TabId; label: string }[] = [
   { id: 'overview', label: 'Overview' },
+  { id: 'margin', label: 'Margin' },
   { id: 'customers', label: 'Customers' },
   { id: 'ops', label: 'Ops' },
   { id: 'moderation', label: 'Moderation' },
@@ -114,6 +149,45 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState<TabId>('overview');
   const [openCustomer, setOpenCustomer] = useState<string | null>(null);
+
+  // LICZNIK (LINEAR-6045) — marża toru RAMKA+SKLEP.
+  const [margins, setMargins] = useState<Margins | null>(null);
+  const [marginToken, setMarginToken] = useState('');
+  const [marginErr, setMarginErr] = useState('');
+  const [marginLoading, setMarginLoading] = useState(false);
+
+  useEffect(() => {
+    try {
+      setMarginToken(window.localStorage.getItem('licznik_admin_token') ?? '');
+    } catch {
+      /* noop */
+    }
+  }, []);
+
+  const loadMargins = useCallback(async (tokenOverride?: string) => {
+    const t = tokenOverride !== undefined ? tokenOverride : marginToken;
+    if (!t) {
+      setMarginErr('Podaj token licznika (LICZNIK_ADMIN_TOKEN).');
+      return;
+    }
+    setMarginLoading(true);
+    setMarginErr('');
+    try {
+      const r = await fetch('/api/licznik/paragony', { headers: { 'x-licznik-token': t } });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d?.error ?? `HTTP ${r.status}`);
+      setMargins(d as Margins);
+      try {
+        window.localStorage.setItem('licznik_admin_token', t);
+      } catch {
+        /* noop */
+      }
+    } catch (e) {
+      setMarginErr(e instanceof Error ? e.message : 'failed to load margins');
+    } finally {
+      setMarginLoading(false);
+    }
+  }, [marginToken]);
 
   useEffect(() => {
     if (!supabase) {
@@ -412,6 +486,78 @@ export default function AdminPage() {
             Generated {new Date(stats.generated_at).toLocaleString()} ·{' '}
             <button onClick={() => { void load(); void loadOps(); }} className="underline hover:text-foreground">refresh</button>
           </p>
+        </>
+      )}
+
+      {tab === 'margin' && (
+        <>
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
+            Margin — tor LICZNIK (RAMKA+SKLEP)
+          </h2>
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <input
+              type="password"
+              value={marginToken}
+              onChange={(e) => setMarginToken(e.target.value)}
+              placeholder="LICZNIK_ADMIN_TOKEN"
+              className="font-mono flex-1 min-w-[240px] bg-background border border-border px-3 py-2 text-sm"
+            />
+            <button
+              onClick={() => void loadMargins(marginToken)}
+              disabled={marginLoading}
+              className="border border-border px-4 py-2 text-xs uppercase tracking-widest font-bold hover:border-primary hover:text-primary"
+            >
+              {marginLoading ? 'Loading…' : 'Load margin'}
+            </button>
+          </div>
+          {marginErr && (
+            <div className="border-l-2 border-destructive bg-destructive/5 p-3 mb-4 text-sm text-destructive">{marginErr}</div>
+          )}
+          {!margins ? (
+            <div className="text-sm text-muted-foreground">
+              Brak danych. Podaj token i załaduj — licznik liczy marżę = detal − hurt na każdym żądaniu bramy.
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                <Stat label="Requests" value={margins.summary.count} sub={`${margins.summary.failed_count} failed`} />
+                <Stat label="Tokens in" value={margins.summary.tokens_in.toLocaleString()} sub={`${margins.summary.tokens_out.toLocaleString()} out`} />
+                <Stat label="Wholesale" value={`$${margins.summary.wholesale_usd.toFixed(4)}`} sub={`${margins.summary.fallback_count}× fallback`} />
+                <Stat label="Profit (marża)" value={`$${margins.summary.profit_usd.toFixed(4)}`} sub={`retail $${margins.summary.retail_usd.toFixed(4)} · avg ${margins.summary.avg_margin_pct.toFixed(0)}%`} />
+              </div>
+
+              <div className="border border-border divide-y divide-border mb-4">
+                {margins.receipts.length === 0 && (
+                  <div className="p-3 text-sm text-muted-foreground">Księga pusta — żadne żądanie nie przeszło jeszcze przez bramę.</div>
+                )}
+                {margins.receipts.map((rc) => (
+                  <div key={rc.id} className="flex items-center gap-3 p-3 text-xs">
+                    <span className={`text-[10px] ${rc.ok ? 'text-primary' : 'text-destructive'}`}>●</span>
+                    <span className="font-mono text-muted-foreground truncate max-w-[140px]" title={rc.user_id}>{rc.user_id}</span>
+                    <span className="font-mono truncate max-w-[200px]" title={rc.model}>{rc.provider}/{rc.model}</span>
+                    <span className="text-muted-foreground whitespace-nowrap">
+                      {rc.prompt_tokens.toLocaleString()}→{rc.completion_tokens.toLocaleString()} tok
+                    </span>
+                    <span className="text-muted-foreground whitespace-nowrap">hurt ${rc.wholesale_usd.toFixed(5)}</span>
+                    <span className="text-muted-foreground whitespace-nowrap">
+                      marża <span className="text-foreground font-mono">{rc.margin_pct}%</span> = ${rc.profit_usd.toFixed(5)}
+                    </span>
+                    {rc.fallback_used && (
+                      <span className="uppercase tracking-widest text-[10px] text-muted-foreground" title={`${rc.attempts} prób`}>fallback</span>
+                    )}
+                    {!rc.pricing_verified && (
+                      <span className="uppercase tracking-widest text-[10px] text-destructive" title="cena niepotwierdzona — nie rozliczać">est.</span>
+                    )}
+                    <span className="ml-auto text-muted-foreground whitespace-nowrap">{fmtAgo(rc.ts)}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Księga: apps/dev/data/licznik-paragony.jsonl (append-only) ·{' '}
+                <button onClick={() => void loadMargins()} className="underline hover:text-foreground">refresh</button>
+              </p>
+            </>
+          )}
         </>
       )}
 
