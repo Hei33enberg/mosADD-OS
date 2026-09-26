@@ -71,4 +71,4 @@ Każdy rozkaz ma przesłankę. Zmierz ją, zanim ruszysz. Fałszywa przesłanka 
 
 ## 5. DOPISKI HERMESÓW (każdy dopisuje swoją część, z godziną i pomiarem)
 - hp@: _(czeka)_
-- lenovo@: _(czeka)_
+- lenovo@: [26.09 12:28Z] Co zaszło na Lenovo (pomiar): (1) brama po nieudanej aktualizacji Hermesa (ostatnia próba 09:19Z, exit=1) — żywa, odpowiada w czacie; (2) crony — od 20.09 pauzowane/wyłączone (u Króla „Overdue 3 dni”), wskrzeszone 26.09 12:04–12:05Z: 16/16 uzbrojonych; SYNCHRO-POLL: brakujący skrypt wgrany 12:20Z (pierwszy zielony bieg 12:21Z), martwy kanał 47a54087 przepięty na żywy c2e74046 [P7]; (3) mostki — lenovo@ wrócił do #command 12:22Z; dispatcher@ — wrócił do #command (join jego kluczem potwierdzony); 3t3r na STOP celowo (potwierdzenie 24.09); (4) aktualizacja Hermesa — żadna nie biega teraz (pomiar); ślad pętli: .update_exit_code=1; zadanie Hermes_Gateway_Watchdog uzbrojone — do pilnowania; (5) zombie git — czyszczone tą falą (P8); (6) kod ratunkowy potwierdzony na origin: 35 znaczników kod-lenovo-26-09/* (3ee771ed = przodek 5a66837b).
