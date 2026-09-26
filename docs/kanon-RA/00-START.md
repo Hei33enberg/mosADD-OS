@@ -1,5 +1,8 @@
 # 00 — START. Czyta to KAŻDA nowa sesja, zanim cokolwiek zrobi
 
+⛔⛔ PRZED PIERWSZĄ AKCJĄ PRZECZYTAJ: `00-CO-ZASZLO-26-09-I-NIGDY-WIECEJ.md` (ten katalog; kopia robocza w KANON-RA na każdej maszynie) — co zaszło 19–26.09 i DZIESIĘĆ PRAW, które to wykluczają. (rozkaz Króla 26.09)
+
+
 Rozkaz Króla 20.09: **wszystkie skille, pamięć, kanony, dusze i instrukcje mają być dostępne ZAWSZE — z Lenovo i z HP — dla każdej następnej sesji Claude Code, każdego agenta i każdego agenta świeżo zwerbowanego w Hermesie.** Ten plik jest wejściem. Jeśli trafiłeś tu jako nowa sesja: przeczytaj tę stronę w całości, potem to, co dotyczy twojego zadania.
 
 ## Kolejność czytania (bez wyjątków)
