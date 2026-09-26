@@ -60,7 +60,7 @@ Stan wykonania (20.09):
 
 ## Meldunek
 
-Po każdej fali: mDM do Króla (`4cd1894d-b878-4fe4-b221-084419f7d225`) ORAZ post na `#command` (`47a54087-b131-4e07-bf1b-4662854cd5a6`) — oba. Liczby, nie przymiotniki. Cytat bez źródła (`plik:linia`) nie jest rozkazem.
+Po każdej fali: mDM do Króla (`4cd1894d-b878-4fe4-b221-084419f7d225`) ORAZ post na `#command` (`c2e74046-2a72-4647-8a6c-0e6d82296828`) (odtworzony 26.09 08:59Z; ⛔ id bierz z mIRC_list, nie z pliku) — oba. Liczby, nie przymiotniki. Cytat bez źródła (`plik:linia`) nie jest rozkazem.
 
 ## Handoff sesji, która ten plik postawiła
 
