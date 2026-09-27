@@ -17,13 +17,55 @@ import type {
   DmSendResult,
   DmListArgs,
   DmListResult,
+  DmMessage,
 } from "@mosadd/providers";
 import { getSupabase, invokeFunction, readSupabaseEnv } from "./supabase.js";
 
 const PROTOCOL_VERSION = "mosadd.chat.v1";
 
+/**
+ * ⛔ THE CANONICAL mDM TEXT TYPE IS `txt`. The app sends and renders `txt`; `text` is a legacy
+ * spelling the server keeps only so old clients are not refused (message-send
+ * CLIENT_SENDABLE_MESSAGE_TYPES, "text 18 legacy, last written 2026-07-08"). This provider kept
+ * writing `text` for every MCP DM until 27.09 — the last writer of the legacy type.
+ */
+export const MDM_TEXT_MESSAGE_TYPE = "txt";
+
+/**
+ * Supabase-only extras for a DM send. The transport-agnostic DmSendArgs (@mosadd/providers)
+ * carries opaque bytes only; the network lane can additionally store the two recoverable copies
+ * the app reads (see sealForSelf / sealForPeerRecoverable in crypto/mdm-session.ts). A radio
+ * provider ignores these fields.
+ */
+export interface DmSendExtras {
+  messageType?: string;
+  /** "s1." copy sealed to the sender's self-read key → `messages.self_payload`. */
+  selfPayload?: string | null;
+  /** "r1." copy sealed to the recipient's identity → `messages.recipient_self_payload`. */
+  recipientSelfPayload?: string | null;
+}
+export type DmSendArgsExt = DmSendArgs & DmSendExtras;
+
+/** A listed DM plus the recoverable copies message-list returns (RLS: own copy only). */
+export interface DmMessageExt extends DmMessage {
+  selfPayload?: string | null;
+  recipientSelfPayload?: string | null;
+  messageType?: string;
+}
+
 export class SupabaseDmProvider implements DmProvider {
   private cachedSelfId: string | null = null;
+  private cachedSelfKind: string | null = null;
+
+  /**
+   * `identities.kind` of the caller ("human" | "agent" | …). An agent LINE owns its mDM
+   * identity outright (its key is its only runtime); a human's identity is anchored in the app.
+   * ensureOwnBundlePublished uses this to decide whether a stale bundle may be replaced.
+   */
+  async selfKind(): Promise<string | null> {
+    await this.selfId();
+    return this.cachedSelfKind;
+  }
 
   async selfId(): Promise<string> {
     if (this.cachedSelfId) return this.cachedSelfId;
@@ -37,27 +79,31 @@ export class SupabaseDmProvider implements DmProvider {
     }
     const { data: identity, error } = await sb
       .from("identities")
-      .select("id")
+      .select("id, kind")
       .eq("user_id", u.user.id)
       .maybeSingle();
     if (error || !identity) {
       throw new Error("Current user has no mosadd identity row. Sign in to mosadd.com first.");
     }
     this.cachedSelfId = identity.id as string;
+    this.cachedSelfKind = typeof identity.kind === "string" ? identity.kind : null;
     return this.cachedSelfId;
   }
 
-  async send(args: DmSendArgs): Promise<DmSendResult> {
+  async send(args: DmSendArgsExt): Promise<DmSendResult> {
     const encrypted_payload = Buffer.from(args.payload).toString("base64");
     type MessageSendResponse = { message?: { id: string; created_at: string } };
     const data = await invokeFunction<MessageSendResponse>("message-send", {
       space_id: "dm",
       thread_id: args.threadId,
       encrypted_payload,
-      message_type: "text",
+      message_type: args.messageType ?? MDM_TEXT_MESSAGE_TYPE,
       protocol_version: PROTOCOL_VERSION,
       recipient_account_id: args.to,
       reply_to_id: args.replyToId ?? null,
+      // Same optional columns the app writes (ircApi.sendThreadMessage); omitted when absent.
+      ...(args.selfPayload ? { self_payload: args.selfPayload } : {}),
+      ...(args.recipientSelfPayload ? { recipient_self_payload: args.recipientSelfPayload } : {}),
     });
     if (!data?.message?.id) {
       throw new Error("message-send returned no message id");
@@ -94,6 +140,9 @@ export class SupabaseDmProvider implements DmProvider {
         thread_id: string;
         encrypted_payload: string;
         created_at: string;
+        message_type?: string | null;
+        self_payload?: string | null;
+        recipient_self_payload?: string | null;
       }>;
       cursor?: string | null;
       has_more?: boolean;
@@ -108,12 +157,15 @@ export class SupabaseDmProvider implements DmProvider {
       before: args.cursor,
     });
     return {
-      messages: (data?.messages ?? []).map((m) => ({
+      messages: (data?.messages ?? []).map((m): DmMessageExt => ({
         id: m.id,
         senderId: m.sender_identity_id,
         payload: new Uint8Array(Buffer.from(m.encrypted_payload, "base64")),
         timestamp: m.created_at,
         threadId: m.thread_id,
+        messageType: m.message_type ?? undefined,
+        selfPayload: m.self_payload ?? null,
+        recipientSelfPayload: m.recipient_self_payload ?? null,
       })),
       // history mode (`before`) returns `next_before`; incremental (`since`) returns `cursor`+`has_more`.
       nextCursor: data?.next_before ?? (data?.has_more ? (data?.cursor ?? null) : null),

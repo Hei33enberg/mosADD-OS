@@ -24,6 +24,8 @@
 
 import {
   decryptBytes,
+  deriveHkdfKey,
+  deriveSharedSecret,
   encryptBytes,
   generateEd25519KeyPair,
   generateX25519KeyPair,
@@ -127,6 +129,15 @@ export interface MdmKeyStore {
    */
   putSentMessage?(messageId: string, plaintext: Uint8Array): Promise<void>;
   getSentMessage?(messageId: string): Promise<Uint8Array | undefined>;
+
+  /**
+   * OPTIONAL symmetric SELF-READ key (32 bytes), derived from the same recoverable
+   * seed as the identity. Present only on seed-backed keystores. With it the sender
+   * seals a copy of every outgoing DM to itself (`self_payload`, tag "s1.") that any
+   * process holding the same seed can open again — the cross-process answer to the
+   * "local sent-items cache only" note above. Null/absent = no self copy.
+   */
+  getSelfKeyBytes?(): Promise<Uint8Array | null>;
 }
 
 // ---- In-memory keystore (default) ----
@@ -179,6 +190,291 @@ export class InMemoryMdmKeyStore implements MdmKeyStore {
 
 function randomId(): number {
   return crypto.getRandomValues(new Uint32Array(1))[0]!;
+}
+
+// ---- Seed-backed keystore: ONE stable identity, not a new one per call ----
+//
+// ⛔ WHY (measured 27.09.2026, LINEAR-6089 follow-up): the hosted gateway builds a fresh
+// McpServer per HTTP request, so the default InMemoryMdmKeyStore minted a BRAND-NEW random
+// identity for every single mDM_send. Every envelope carried an X3DH header from an identity
+// that existed for one request and was never published — the sender could never read its own
+// message again (no self_payload, no key), and the recipient's recoverable copy could not be
+// written (it needs the sender's PUBLISHED identity). The app (mosADD f95557f) now says WHY such
+// a bubble is unreadable; this is the source fix, so new messages are born readable.
+//
+// The fix mirrors the web client exactly (apps/web/src/lib/mdmKeyStore.ts, LINEAR-3521 P2): the
+// whole identity is derived by HKDF from ONE recoverable 32-byte seed, with the SAME labels, zero
+// one-time prekeys and signed-prekey id 1 — so the bundle is byte-identical on every process that
+// knows the seed. The web takes its seed from the login secret; an MCP runtime has no password,
+// its login secret IS the API key (`mosadd_sk_live_…`) — see deriveMdmSeedFromSecret below.
+
+/** X25519 base point (u = 9, little-endian). X25519(k, 9) is exactly k's public key. */
+const X25519_BASE_POINT = (() => {
+  const b = new Uint8Array(32);
+  b[0] = 9;
+  return b;
+})();
+
+/**
+ * Deterministic X25519 pair from a 32-byte seed (the seed IS the private scalar — same
+ * convention as the web's x25519KeyPairFromSeed). The published @mosadd/crypto has no
+ * seed constructor, so the public half is computed as X25519(seed, basepoint), which is the
+ * definition of the public key (the curve library clamps the scalar in both paths).
+ */
+async function x25519PairFromSeed(seed: Uint8Array): Promise<X25519Pair> {
+  const privateKey = seed.length === 32 ? seed : seed.slice(0, 32);
+  const publicKey = await deriveSharedSecret(privateKey, X25519_BASE_POINT);
+  return { privateKey, publicKey };
+}
+
+const utf8 = new TextEncoder();
+
+async function subSeed(seed: Uint8Array, label: string): Promise<Uint8Array> {
+  return deriveHkdfKey(seed, { info: utf8.encode(label), length: 32 });
+}
+
+/** Same derivation, same labels as the web's deriveOwnMaterialFromSeed — keep them in lockstep. */
+export async function deriveOwnMaterialFromSeed(seed: Uint8Array): Promise<OwnPrekeyMaterial> {
+  const [idSeed, signSeed, spkSeed] = await Promise.all([
+    subSeed(seed, "mosadd-mdm-identity-x25519"),
+    subSeed(seed, "mosadd-mdm-signing-ed25519"),
+    subSeed(seed, "mosadd-mdm-signed-prekey-x25519"),
+  ]);
+  return {
+    identity: await x25519PairFromSeed(idSeed),
+    signingIdentity: await generateEd25519KeyPair(signSeed),
+    signedPrekey: { id: 1, pair: await x25519PairFromSeed(spkSeed) },
+    oneTimePrekeys: [],
+  };
+}
+
+/**
+ * The recoverable 32-byte seed of an MCP runtime, from its login secret (the API key).
+ * Same key → same identity on every gateway instance, every call, every restart. A rotated
+ * key is a new login secret and therefore a new identity — exactly like a changed PIN on web.
+ * Not escrow: nothing here is stored; whoever holds the key could already act as the account.
+ */
+export async function deriveMdmSeedFromSecret(secret: string): Promise<Uint8Array> {
+  return deriveHkdfKey(utf8.encode(secret), {
+    salt: utf8.encode("mosadd-mcp-api-key"),
+    info: utf8.encode("mosadd-mdm-identity-seed"),
+    length: 32,
+  });
+}
+
+/**
+ * Keystore anchored to a recoverable seed. Identity, signing key and signed prekey are
+ * derived (stable); ratchet sessions and the sent cache stay in memory for this process.
+ * No one-time prekeys: a stateless process could never remember which ones were consumed.
+ */
+export class SeededMdmKeyStore implements MdmKeyStore {
+  private material: Promise<OwnPrekeyMaterial> | null = null;
+  private readonly sessions = new Map<string, MdmSessionRecord>();
+  private readonly sentMessages = new Map<string, Uint8Array>();
+
+  constructor(private readonly seed: Uint8Array) {
+    if (!seed || seed.length < 32) throw new Error("SeededMdmKeyStore needs a 32-byte seed");
+  }
+
+  static async fromSecret(secret: string): Promise<SeededMdmKeyStore> {
+    return new SeededMdmKeyStore(await deriveMdmSeedFromSecret(secret));
+  }
+
+  getOwnMaterial(): Promise<OwnPrekeyMaterial> {
+    if (!this.material) this.material = deriveOwnMaterialFromSeed(this.seed);
+    return this.material;
+  }
+
+  async takeOneTimePrekey(_id: number): Promise<Uint8Array | undefined> {
+    return undefined; // the seeded bundle publishes none
+  }
+
+  async getSession(peerId: string): Promise<MdmSessionRecord | undefined> {
+    return this.sessions.get(peerId);
+  }
+
+  async putSession(peerId: string, record: MdmSessionRecord): Promise<void> {
+    this.sessions.set(peerId, record);
+  }
+
+  async putSentMessage(messageId: string, plaintext: Uint8Array): Promise<void> {
+    this.sentMessages.set(messageId, plaintext);
+  }
+
+  async getSentMessage(messageId: string): Promise<Uint8Array | undefined> {
+    return this.sentMessages.get(messageId);
+  }
+
+  /** Same label as the web's getSelfKeyBytes ("mosadd-mdm-self-read"). */
+  async getSelfKeyBytes(): Promise<Uint8Array | null> {
+    return deriveHkdfKey(this.seed, { info: utf8.encode("mosadd-mdm-self-read"), length: 32 });
+  }
+}
+
+/**
+ * A keystore that derives its seed lazily from a secret — lets a synchronous factory
+ * (defaultProviders) hand out a stable-identity keystore without awaiting HKDF up front.
+ */
+export class SecretMdmKeyStore implements MdmKeyStore {
+  private inner: Promise<SeededMdmKeyStore> | null = null;
+  constructor(private readonly secret: string) {}
+  private store(): Promise<SeededMdmKeyStore> {
+    if (!this.inner) this.inner = SeededMdmKeyStore.fromSecret(this.secret);
+    return this.inner;
+  }
+  async getOwnMaterial() { return (await this.store()).getOwnMaterial(); }
+  async takeOneTimePrekey(id: number) { return (await this.store()).takeOneTimePrekey(id); }
+  async getSession(peerId: string) { return (await this.store()).getSession(peerId); }
+  async putSession(peerId: string, record: MdmSessionRecord) { return (await this.store()).putSession(peerId, record); }
+  async putSentMessage(messageId: string, plaintext: Uint8Array) { return (await this.store()).putSentMessage(messageId, plaintext); }
+  async getSentMessage(messageId: string) { return (await this.store()).getSentMessage(messageId); }
+  async getSelfKeyBytes() { return (await this.store()).getSelfKeyBytes(); }
+}
+
+// ---- Recoverable copies: the web's wire format, byte for byte ----
+//
+// Two opaque AES-GCM strings ride next to the ratchet envelope in `messages`:
+//   self_payload           "s1." + b64(iv‖ct)  — sealed to the SENDER's self-read key
+//   recipient_self_payload "r1." + b64(iv‖ct)  — sealed to HKDF(ECDH(sender IK, recipient IK))
+// Formats, tags and HKDF labels are copied from apps/web/src/lib/mdmE2ee.ts (sealForSelf /
+// sealForPeerRecoverable) — the app opens exactly these. The server never reads them.
+
+const SELF_TAG = "s1.";
+const PEER_RECOVERABLE_TAG = "r1.";
+const PEER_RECOVERABLE_INFO = "mosadd.mdm.recipient-recoverable.v1";
+
+async function aesGcmSeal(tag: string, keyBytes: Uint8Array, plaintext: Uint8Array): Promise<string> {
+  const key = await crypto.subtle.importKey("raw", keyBytes as BufferSource, { name: "AES-GCM" }, false, ["encrypt"]);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plaintext as BufferSource));
+  const packed = new Uint8Array(iv.length + ct.length);
+  packed.set(iv, 0);
+  packed.set(ct, iv.length);
+  return tag + toBase64(packed);
+}
+
+async function aesGcmOpen(tag: string, keyBytes: Uint8Array, sealed: string): Promise<Uint8Array | null> {
+  if (!sealed.startsWith(tag)) return null;
+  const packed = fromBase64(sealed.slice(tag.length));
+  if (packed.length <= 12) return null;
+  const key = await crypto.subtle.importKey("raw", keyBytes as BufferSource, { name: "AES-GCM" }, false, ["decrypt"]);
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: packed.slice(0, 12) }, key, packed.slice(12));
+  return new Uint8Array(pt);
+}
+
+/** Sender's own copy ("s1."). Null when the keystore has no seed. Never throws. */
+export async function sealForSelf(keystore: MdmKeyStore, plaintext: Uint8Array): Promise<string | null> {
+  try {
+    const keyBytes = (await keystore.getSelfKeyBytes?.()) ?? null;
+    if (!keyBytes) return null;
+    return await aesGcmSeal(SELF_TAG, keyBytes, plaintext);
+  } catch {
+    return null;
+  }
+}
+
+/** Open an "s1." copy with this keystore's self-read key. Null when absent/foreign. Never throws. */
+export async function openSelfSealed(keystore: MdmKeyStore, sealed: string | null | undefined): Promise<Uint8Array | null> {
+  try {
+    if (!sealed) return null;
+    const keyBytes = (await keystore.getSelfKeyBytes?.()) ?? null;
+    if (!keyBytes) return null;
+    return await aesGcmOpen(SELF_TAG, keyBytes, sealed);
+  } catch {
+    return null;
+  }
+}
+
+async function pairKey(keystore: MdmKeyStore, otherIdentityPublicKey: Uint8Array): Promise<Uint8Array> {
+  const own = await keystore.getOwnMaterial();
+  const secret = await deriveSharedSecret(own.identity.privateKey, otherIdentityPublicKey);
+  return deriveHkdfKey(secret, { info: utf8.encode(PEER_RECOVERABLE_INFO), length: 32 });
+}
+
+/** Recipient-openable copy ("r1.") for a VERIFIED peer bundle. Never throws. */
+export async function sealForPeerRecoverable(
+  keystore: MdmKeyStore,
+  peer: PublicPrekeyBundle,
+  plaintext: Uint8Array,
+): Promise<string | null> {
+  try {
+    return await aesGcmSeal(PEER_RECOVERABLE_TAG, await pairKey(keystore, peer.identityPublicKey), plaintext);
+  } catch {
+    return null;
+  }
+}
+
+/** Open an "r1." copy written by the peer whose VERIFIED bundle is given. Never throws. */
+export async function openPeerRecoverable(
+  keystore: MdmKeyStore,
+  sender: PublicPrekeyBundle,
+  sealed: string | null | undefined,
+): Promise<Uint8Array | null> {
+  try {
+    if (!sealed) return null;
+    return await aesGcmOpen(PEER_RECOVERABLE_TAG, await pairKey(keystore, sender.identityPublicKey), sealed);
+  } catch {
+    return null;
+  }
+}
+
+/** Fetch + parse + signature-check a peer bundle. Null when absent or failing verification. */
+export async function fetchVerifiedBundle(dm: DmProvider, peerId: string): Promise<PublicPrekeyBundle | null> {
+  const raw = await dm.fetchPrekeyBundle(peerId);
+  if (!raw) return null;
+  const parsed = parsePublicBundle(raw);
+  return verifyPublicBundle(parsed) ? parsed : null;
+}
+
+function sameBytes(a: Uint8Array, b: Uint8Array): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i += 1) if (a[i] !== b[i]) return false;
+  return true;
+}
+
+export type OwnBundleState =
+  /** the directory already holds exactly our identity */
+  | "consistent"
+  /** the directory had no bundle (or we own the identity) and now holds ours */
+  | "published"
+  /** someone else's key material is published for this identity and we must not replace it */
+  | "foreign";
+
+/**
+ * Make the key directory agree with this keystore's identity — WITHOUT hijacking a human's keys.
+ *
+ * - directory == ours            → "consistent" (no write).
+ * - directory empty              → publish ours → "published".
+ * - directory differs, we OWN it → publish ours → "published". An AGENT line's identity has no
+ *   other runtime than its key; a stale bundle there is dead material from an old random run.
+ * - directory differs, human     → "foreign". A person's bundle is anchored to their login
+ *   secret in the app; overwriting it from an agent key would break every DM to that person.
+ *   The ratchet envelope still works (it carries its own handshake); only the recipient's
+ *   recoverable copy is skipped, because it would be sealed under the wrong identity.
+ */
+export async function ensureOwnBundlePublished(
+  keystore: MdmKeyStore,
+  dm: DmProvider,
+  selfId: string,
+  opts: { mayReplaceForeign: boolean },
+): Promise<OwnBundleState> {
+  const own = await keystore.getOwnMaterial();
+  const raw = await dm.fetchPrekeyBundle(selfId);
+  if (raw) {
+    let published: PublicPrekeyBundle | null = null;
+    try { published = parsePublicBundle(raw); } catch { published = null; }
+    if (
+      published &&
+      sameBytes(published.identityPublicKey, own.identity.publicKey) &&
+      sameBytes(published.signingIdentityPublicKey, own.signingIdentity.publicKey) &&
+      sameBytes(published.signedPrekey.publicKey, own.signedPrekey.pair.publicKey)
+    ) {
+      return "consistent";
+    }
+    if (!opts.mayReplaceForeign) return "foreign";
+  }
+  await dm.publishPrekeyBundle(serializePublicBundle(own));
+  return "published";
 }
 
 // ---- Bundle codec (opaque bytes the provider moves) ----

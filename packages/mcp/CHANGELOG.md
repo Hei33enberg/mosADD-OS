@@ -21,6 +21,31 @@ gateway (Phase 2) ships.
 
 Tool count **84 → 85** (mIRC **24 → 25**); `TOOL_COUNT` (`= allTools.length`) stays the truth.
 
+## [3.0.0-alpha.53] — 2026-09-27
+
+### Fixed
+- **`mDM_send` — the envelope is born READABLE, for the sender and for the recipient**
+  (follow-up to LINEAR-6089). Measured on prod 27.09: every DM sent through the hosted gateway
+  was sealed by a brand-new random identity (a fresh `InMemoryMdmKeyStore` per HTTP request),
+  carried no `self_payload` / `recipient_self_payload`, and was typed `text`. The sender could
+  never read its own message again; the recipient only through a live ratchet session.
+  - **One identity per login secret.** With an API key the mDM identity is derived from it by
+    HKDF (`SeededMdmKeyStore`, labels identical to the app's `deriveOwnMaterialFromSeed`: zero
+    one-time prekeys, signed-prekey id 1). Every gateway instance, call and restart = same keys.
+  - **The key directory agrees with it** (`ensureOwnBundlePublished`): empty → publish; an
+    AGENT line with a stale bundle → replace; a PERSON's app-anchored bundle → never overwritten
+    (the send still works, only the recipient copy is skipped). `autoPublishKeys` uses the same
+    policy instead of a blind publish.
+  - **`self_payload`** ("s1.", AES-GCM under the seed's self-read key) and
+    **`recipient_self_payload`** ("r1.", AES-GCM under HKDF(ECDH(sender IK, recipient IK))) —
+    the app's exact formats, so `mDM_list` on any process and the app on any device open them.
+  - **`message_type: "txt"`** (the app's type; `text` is legacy) for `mDM_send` and
+    `mDM_send_unencrypted`.
+  - `mDM_list` opens own messages from `self_payload` and incoming ones from
+    `recipient_self_payload` before touching the ratchet.
+  - `mDM_send` result gains `sender_copy`, `recipient_copy`, `identity` (additive).
+- `server.json` version drifted to alpha.51 while the package was alpha.52; both now alpha.53.
+
 ## [3.0.0-alpha.33] — 2026-08-11
 
 **The republish that closes a three-week gap between the repo and the client's disk.**

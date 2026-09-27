@@ -23,7 +23,16 @@ import {
   decryptFromPeer,
   publishOwnPrekeys,
   isE2eeEnvelope,
+  ensureOwnBundlePublished,
+  fetchVerifiedBundle,
+  sealForSelf,
+  sealForPeerRecoverable,
+  openSelfSealed,
+  openPeerRecoverable,
+  type OwnBundleState,
+  type PublicPrekeyBundle,
 } from "../crypto/mdm-session.js";
+import { MDM_TEXT_MESSAGE_TYPE, type DmSendArgsExt, type DmMessageExt } from "../providers/supabase-dm.js";
 
 // ---- Constants ----
 
@@ -139,10 +148,27 @@ function unpackPayload(payload: Uint8Array): { text: string; sent_at?: string; r
 
 // ---- Handlers ----
 
+/** Does this provider know the caller's identity kind (Supabase lane)? */
+async function selfKindOf(dm: MosaddToolContext["providers"]["dm"]): Promise<string | null> {
+  const f = (dm as { selfKind?: () => Promise<string | null> }).selfKind;
+  return typeof f === "function" ? await f.call(dm) : null;
+}
+
 async function mDM_send(
   input: z.infer<typeof mDM_send_input>,
   ctx: MosaddToolContext,
-): Promise<{ message_id: string; delivered_at: string; thread_id: string; encrypted: true }> {
+): Promise<{
+  message_id: string;
+  delivered_at: string;
+  thread_id: string;
+  encrypted: true;
+  /** the sender can read this message back on any process holding the same key (self_payload) */
+  sender_copy: boolean;
+  /** the recipient can open it without a ratchet session (recipient_self_payload) */
+  recipient_copy: boolean;
+  /** state of this identity in the key directory after the send */
+  identity: OwnBundleState;
+}> {
   // E2EE path (default). The plaintext is packed into the inner mosadd.chat.v1
   // envelope, then SEALED via X3DH + Double Ratchet into an opaque envelope the
   // DmProvider moves without understanding. First contact fetches the peer's
@@ -151,25 +177,67 @@ async function mDM_send(
   const selfId = await dm.selfId();
   const threadId = dmThreadId(selfId, input.to, input.thread_label);
 
+  const keys = ctx.providers.keys;
+
+  // ⛔ 27.09.2026 — the three defects measured on prod, fixed at the source:
+  //   1. a NEW identity per call  → the keystore is seed-derived from the key (server.ts), and the
+  //      directory is made to agree with it here (never hijacking a person's app-anchored bundle);
+  //   2. NO self_payload          → the sender's "s1." copy, the app's exact format;
+  //   3. message_type "text"      → "txt", the type the app writes and reads.
+  // Plus the recipient's "r1." copy, so the reader needs no live ratchet session on any device.
+  let identity: OwnBundleState = "foreign";
+  try {
+    identity = await ensureOwnBundlePublished(keys, dm, selfId, {
+      mayReplaceForeign: (await selfKindOf(dm)) === "agent",
+    });
+  } catch (err) {
+    // Directory unreachable: the ratchet envelope still carries its own handshake, so the send
+    // proceeds; only the recipient copy is skipped (it would be sealed under an unverified identity).
+    ctx.log("warn", "mDM_send could not reconcile own prekey bundle", { error: String(err) });
+  }
+
   // reply-linkage jedzie w dm.send({replyToId}) — surowy tekst nie ma koperty, w którą
   // można by go wpakować (zmiana formatu 2026-08-25, patrz packPlaintextPayload).
   const inner = packPlaintextPayload(input.text);
-  const sealed = await encryptForPeer(ctx.providers.keys, dm, input.to, inner);
+  const sealed = await encryptForPeer(keys, dm, input.to, inner);
 
-  ctx.log("debug", "mDM_send E2EE via DmProvider", { thread_id: threadId, bytes: sealed.byteLength });
+  const selfPayload = await sealForSelf(keys, inner);
+  let recipientSelfPayload: string | null = null;
+  // The recipient opens "r1." with OUR PUBLISHED identity — so it is written only when the
+  // directory holds exactly our key. A note-to-self needs none: self_payload already covers it.
+  if (identity !== "foreign" && input.to !== selfId) {
+    try {
+      const peer = await fetchVerifiedBundle(dm, input.to);
+      if (peer) recipientSelfPayload = await sealForPeerRecoverable(keys, peer, inner);
+    } catch (err) {
+      ctx.log("warn", "mDM_send skipped the recipient copy", { error: String(err) });
+    }
+  }
 
-  const result = await dm.send({
+  ctx.log("debug", "mDM_send E2EE via DmProvider", {
+    thread_id: threadId,
+    bytes: sealed.byteLength,
+    identity,
+    sender_copy: !!selfPayload,
+    recipient_copy: !!recipientSelfPayload,
+  });
+
+  const sendArgs: DmSendArgsExt = {
     to: input.to,
     threadId,
     payload: sealed,
     replyToId: input.reply_to_id,
-  });
+    messageType: MDM_TEXT_MESSAGE_TYPE,
+    selfPayload,
+    recipientSelfPayload,
+  };
+  const result = await dm.send(sendArgs);
 
   // Keep a LOCAL copy of our own outgoing plaintext so mDM_list can show it
   // back to the sender (the ratchet can't re-derive it on read). Best-effort:
   // only if the keystore offers the optional sent-items cache.
-  if (ctx.providers.keys.putSentMessage) {
-    await ctx.providers.keys.putSentMessage(result.id, inner);
+  if (keys.putSentMessage) {
+    await keys.putSentMessage(result.id, inner);
   }
 
   return {
@@ -177,6 +245,9 @@ async function mDM_send(
     delivered_at: result.deliveredAt,
     thread_id: threadId,
     encrypted: true,
+    sender_copy: !!selfPayload,
+    recipient_copy: !!recipientSelfPayload,
+    identity,
   };
 }
 
@@ -197,12 +268,14 @@ async function mDM_send_unencrypted(
     bytes: payload.byteLength,
   });
 
-  const result = await dm.send({
+  const plainArgs: DmSendArgsExt = {
     to: input.to,
     threadId,
     payload,
     replyToId: input.reply_to_id,
-  });
+    messageType: MDM_TEXT_MESSAGE_TYPE,
+  };
+  const result = await dm.send(plainArgs);
 
   return {
     message_id: result.id,
@@ -246,8 +319,21 @@ async function mDM_list(
 
   const result = await dm.list({ threadId, limit: input.limit ?? 50, cursor: input.cursor });
 
+  const keys = ctx.providers.keys;
+  // One verified bundle per sender for the "r1." copies (usually just the contact).
+  const bundleBySender = new Map<string, Promise<PublicPrekeyBundle | null>>();
+  const senderBundle = (id: string) => {
+    let p = bundleBySender.get(id);
+    if (!p) {
+      p = fetchVerifiedBundle(dm, id).catch(() => null);
+      bundleBySender.set(id, p);
+    }
+    return p;
+  };
+
   const messages = await Promise.all(
-    result.messages.map(async (m) => {
+    result.messages.map(async (raw) => {
+      const m = raw as DmMessageExt;
       const base = {
         id: m.id,
         sender_identity_id: m.senderId,
@@ -258,16 +344,32 @@ async function mDM_list(
       if (!isE2eeEnvelope(m.payload)) {
         return { ...base, text: formatVoiceIfAny(unpackPayload(m.payload).text), encrypted: false };
       }
-      // Our own outgoing ratchet messages aren't decryptable from our own
-      // ratchet on read. Recover the plaintext from the local sent-items cache
-      // (this process). If absent (e.g. a different device/process), fall back
-      // to a marker instead of failing.
+      // Our own outgoing ratchet messages aren't decryptable from our own ratchet on read.
+      // 1) the "s1." self copy (any process holding the same key), 2) this process's sent cache,
+      // 3) a note-to-self is sealed to our own bundle, so our own key opens it.
       if (m.senderId === selfId) {
-        const cached = await ctx.providers.keys.getSentMessage?.(m.id);
-        if (cached) {
-          return { ...base, text: formatVoiceIfAny(unpackPayload(cached).text), encrypted: true };
+        const own = (await openSelfSealed(keys, m.selfPayload)) ?? (await keys.getSentMessage?.(m.id));
+        if (own) {
+          return { ...base, text: formatVoiceIfAny(unpackPayload(own).text), encrypted: true };
+        }
+        if (input.contact_id === selfId) {
+          try {
+            const inner = await decryptFromPeer(keys, selfId, m.payload);
+            return { ...base, text: formatVoiceIfAny(unpackPayload(inner).text), encrypted: true };
+          } catch { /* fall through to the marker */ }
         }
         return { ...base, text: "<encrypted · sent by you>", encrypted: true };
+      }
+      // Recipient side: the sender's "r1." copy, or our own "s1." backfill in the same column
+      // (the app writes it after a successful read) — neither needs a live ratchet session.
+      if (m.recipientSelfPayload) {
+        const bundle = await senderBundle(m.senderId);
+        const copy =
+          (bundle ? await openPeerRecoverable(keys, bundle, m.recipientSelfPayload) : null) ??
+          (await openSelfSealed(keys, m.recipientSelfPayload));
+        if (copy) {
+          return { ...base, text: formatVoiceIfAny(unpackPayload(copy).text), encrypted: true };
+        }
       }
       try {
         const inner = await decryptFromPeer(ctx.providers.keys, m.senderId, m.payload);

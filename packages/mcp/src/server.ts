@@ -8,7 +8,7 @@ import { autoBeatFromActivity } from "./tools/presence.js";
 import { PKG_VERSION } from "./version.js";
 import { SupabaseDmProvider } from "./providers/supabase-dm.js";
 import { SupabaseVoiceProvider } from "./providers/supabase-voice.js";
-import { InMemoryMdmKeyStore, publishOwnPrekeys } from "./crypto/mdm-session.js";
+import { InMemoryMdmKeyStore, SecretMdmKeyStore, ensureOwnBundlePublished } from "./crypto/mdm-session.js";
 import type { MosaddServerOptions, MosaddToolContext, ProviderRegistry } from "./types.js";
 
 /**
@@ -18,12 +18,27 @@ import type { MosaddServerOptions, MosaddToolContext, ProviderRegistry } from ".
  * adapters are named — both `createMosaddServer` and the `@mosadd/ai` adapters
  * build their context through it so they stay in lockstep.
  */
-export function defaultProviders(injected?: Partial<ProviderRegistry>): ProviderRegistry {
+export function defaultProviders(
+  injected?: Partial<ProviderRegistry>,
+  opts: { mdmSecret?: string } = {},
+): ProviderRegistry {
   return {
     dm: injected?.dm ?? new SupabaseDmProvider(),
-    keys: injected?.keys ?? new InMemoryMdmKeyStore(),
+    keys: injected?.keys ?? defaultKeyStore(opts.mdmSecret),
     voice: injected?.voice ?? new SupabaseVoiceProvider(),
   };
+}
+
+/**
+ * ⛔ ONE IDENTITY PER LOGIN SECRET, NOT ONE PER CALL (27.09.2026). With an API key the mDM
+ * identity is derived from it (SecretMdmKeyStore → SeededMdmKeyStore): the hosted gateway builds
+ * a new server per HTTP request, and with a random in-memory keystore every mDM_send was sealed
+ * by an identity that lived for one request. Without any secret (BYOK JWT only) there is nothing
+ * stable to derive from, so the old per-process random keystore remains.
+ */
+function defaultKeyStore(secret?: string) {
+  const s = (secret ?? "").trim();
+  return s ? new SecretMdmKeyStore(s) : new InMemoryMdmKeyStore();
 }
 
 export function createMosaddServer(options: MosaddServerOptions = {}) {
@@ -32,7 +47,7 @@ export function createMosaddServer(options: MosaddServerOptions = {}) {
   const logLevel = options.logLevel ?? "info";
 
   // DI seam: default network adapters, overridden by anything the host injects.
-  const providers = defaultProviders(options.providers);
+  const providers = defaultProviders(options.providers, { mdmSecret: options.apiKey });
 
   const ctx: MosaddToolContext = {
     options: { ...options, mode, hubUrl },
@@ -53,9 +68,18 @@ export function createMosaddServer(options: MosaddServerOptions = {}) {
   // session, so it silently skips when there is none (BYOK without a JWT, offline,
   // etc.) and never blocks startup. Uses the SAME keystore the tools use, so the
   // published identity matches what mDM_send/encryptForPeer will use this process.
+  //
+  // ⛔ ENSURE, NOT BLIND PUBLISH (27.09.2026): an agent runtime started on a PERSON's key must not
+  // overwrite that person's app-anchored bundle — that silently breaks every DM to them. Same
+  // policy as mDM_send (ensureOwnBundlePublished): empty → publish; agent line → replace stale;
+  // human with a different bundle → leave it alone.
   if (options.autoPublishKeys) {
-    void publishOwnPrekeys(providers.keys, providers.dm)
-      .then((r) => ctx.log("debug", "auto-published mDM prekeys", { one_time_prekeys: r.oneTimePrekeyCount }))
+    void (async () => {
+      const selfId = await providers.dm.selfId();
+      const kind = await (providers.dm as { selfKind?: () => Promise<string | null> }).selfKind?.();
+      return ensureOwnBundlePublished(providers.keys, providers.dm, selfId, { mayReplaceForeign: kind === "agent" });
+    })()
+      .then((state) => ctx.log("debug", "auto-ensure mDM prekeys", { state }))
       .catch((err) => ctx.log("debug", "auto-publish mDM prekeys skipped", { error: String(err) }));
   }
 
