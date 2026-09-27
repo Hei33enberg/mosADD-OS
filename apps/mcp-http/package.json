@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
-    "@mosadd/mcp": "3.0.0-alpha.52"
+    "@mosadd/mcp": "3.0.0-alpha.53"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
