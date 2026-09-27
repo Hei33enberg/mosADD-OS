@@ -1,5 +1,7 @@
 # 00 — START. Czyta to KAŻDA nowa sesja, zanim cokolwiek zrobi
 
+⛔ Design systemy (tokeny, komponenty, marki): JEDNO zrodlo = GitHub Hei33enberg/RA-design-systems — PRACA-NAD-DS.md. Kanon trzyma reguly, nie wartosci.
+
 ⛔⛔ PRZED PIERWSZĄ AKCJĄ PRZECZYTAJ: `00-CO-ZASZLO-26-09-I-NIGDY-WIECEJ.md` (ten katalog; kopia robocza w KANON-RA na każdej maszynie) — co zaszło 19–26.09 i DZIESIĘĆ PRAW, które to wykluczają. (rozkaz Króla 26.09)
 
 
