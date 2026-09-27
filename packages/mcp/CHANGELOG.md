@@ -21,6 +21,35 @@ gateway (Phase 2) ships.
 
 Tool count **84 → 85** (mIRC **24 → 25**); `TOOL_COUNT` (`= allTools.length`) stays the truth.
 
+## [3.0.0-alpha.54] — 2026-09-27
+
+### Fixed
+- **`mDM_send` — readable on EVERY key of the identity, and never a false reason in the app**
+  (correction of alpha.53 after independent verification, LINEAR-6089 follow-up). alpha.53 seeded
+  the mDM identity from ONE API key and let an agent line (re)publish it. An identity holds many
+  keys (each OAuth connector mints its own; measured 27.09: general@ has 8 active, 7 of 17 agent
+  identities have several), so the key directory flapped between per-key identities: a `s1.`
+  copy opened only under the key that wrote it, and `r1.` copies stopped opening for the
+  recipient after the next send from another key. alpha.53 also typed sends on a PERSON's key
+  `txt` with a `s1.` copy the app can never open, so the app told the owner a false reason
+  ("sent from another device" / "unlock your identity") instead of "sent by MCP".
+  - **Agent lines send in the clear** — the King's rule of 20.09 (no E2EE for lines<->lines,
+    lines<->King, human->line), the same rule the app applies (`peerIsAgent`). When the sender
+    or the recipient is `kind = 'agent'`, `mDM_send` writes plain UTF-8, type `txt`, and never
+    touches the key directory. Every key of the line and the recipient's app on every device read
+    it. Result field `mode: "plaintext_agent_lane"`, `encrypted: false`.
+  - **Human<->human stays E2EE**, but on a person's key MCP never writes their key directory
+    automatically (neither over the app's bundle nor on an empty directory), writes no `s1.`
+    copy, and types the envelope `text`, which the app reads as "sent by MCP, no copy for this
+    device". A note-to-self is sealed to the app's bundle and opens in the app.
+  - **`mDM_publish_keys` no longer overwrites a person's app bundle** (`published: false`,
+    `identity: "foreign"`, with a note). It may fill an empty directory. Agent lines may still
+    publish explicitly.
+  - **`autoPublishKeys`** (stdio) follows the same policy (`bundlePolicyForKind`): agent lines and
+    people write nothing; other lanes (radio) publish on an empty directory as before.
+  - New `SupabaseDmProvider.peerKind(id)`; `ensureOwnBundlePublished` takes a `BundlePolicy` and
+    can return `"absent"`.
+
 ## [3.0.0-alpha.53] — 2026-09-27
 
 ### Fixed

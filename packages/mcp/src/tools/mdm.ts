@@ -21,9 +21,9 @@ import { invokeFunction, getSupabase, readSupabaseEnv } from "../providers/supab
 import {
   encryptForPeer,
   decryptFromPeer,
-  publishOwnPrekeys,
   isE2eeEnvelope,
   ensureOwnBundlePublished,
+  bundlePolicyForKind,
   fetchVerifiedBundle,
   sealForSelf,
   sealForPeerRecoverable,
@@ -32,7 +32,12 @@ import {
   type OwnBundleState,
   type PublicPrekeyBundle,
 } from "../crypto/mdm-session.js";
-import { MDM_TEXT_MESSAGE_TYPE, type DmSendArgsExt, type DmMessageExt } from "../providers/supabase-dm.js";
+import {
+  MDM_TEXT_MESSAGE_TYPE,
+  MDM_MCP_SEALED_MESSAGE_TYPE,
+  type DmSendArgsExt,
+  type DmMessageExt,
+} from "../providers/supabase-dm.js";
 
 // ---- Constants ----
 
@@ -154,58 +159,110 @@ async function selfKindOf(dm: MosaddToolContext["providers"]["dm"]): Promise<str
   return typeof f === "function" ? await f.call(dm) : null;
 }
 
-async function mDM_send(
-  input: z.infer<typeof mDM_send_input>,
-  ctx: MosaddToolContext,
-): Promise<{
+/** A peer's identity kind when the provider can tell (Supabase lane); null = unknown. */
+async function peerKindOf(dm: MosaddToolContext["providers"]["dm"], peerId: string): Promise<string | null> {
+  const f = (dm as { peerKind?: (id: string) => Promise<string | null> }).peerKind;
+  if (typeof f !== "function") return null;
+  try {
+    return await f.call(dm, peerId);
+  } catch {
+    return null;
+  }
+}
+
+type MdmSendResultOut = {
   message_id: string;
   delivered_at: string;
   thread_id: string;
-  encrypted: true;
-  /** the sender can read this message back on any process holding the same key (self_payload) */
+  encrypted: boolean;
+  /**
+   * "plaintext_agent_lane": an agent line is a party, so the DM goes in the clear (rozkaz Krola
+   * 20.09, same rule as the app's peerIsAgent). "e2ee": human to human, X3DH + Double Ratchet.
+   */
+  mode: "plaintext_agent_lane" | "e2ee";
+  /** the sender can read this message back from ANY process / ANY key of the same identity */
   sender_copy: boolean;
-  /** the recipient can open it without a ratchet session (recipient_self_payload) */
+  /** the recipient can read it without a ratchet session */
   recipient_copy: boolean;
-  /** state of this identity in the key directory after the send */
-  identity: OwnBundleState;
-}> {
-  // E2EE path (default). The plaintext is packed into the inner mosadd.chat.v1
-  // envelope, then SEALED via X3DH + Double Ratchet into an opaque envelope the
-  // DmProvider moves without understanding. First contact fetches the peer's
-  // published prekey bundle through the same provider (decision "1a").
+  /** state of this identity in the key directory (E2EE only; the plaintext lane never touches it) */
+  identity: OwnBundleState | "untouched";
+};
+
+async function mDM_send(
+  input: z.infer<typeof mDM_send_input>,
+  ctx: MosaddToolContext,
+): Promise<MdmSendResultOut> {
   const dm = ctx.providers.dm;
   const selfId = await dm.selfId();
   const threadId = dmThreadId(selfId, input.to, input.thread_label);
-
   const keys = ctx.providers.keys;
 
-  // ⛔ 27.09.2026 — the three defects measured on prod, fixed at the source:
-  //   1. a NEW identity per call  → the keystore is seed-derived from the key (server.ts), and the
-  //      directory is made to agree with it here (never hijacking a person's app-anchored bundle);
-  //   2. NO self_payload          → the sender's "s1." copy, the app's exact format;
-  //   3. message_type "text"      → "txt", the type the app writes and reads.
-  // Plus the recipient's "r1." copy, so the reader needs no live ratchet session on any device.
+  // ⛔ POPRAWKA 27.09.2026 (niezalezna weryfikacja toru mdm-brama). The first fix seeded the mDM
+  // identity from ONE API key and let an agent line (re)publish it. An identity holds MANY keys
+  // (general@: 8 active), so the directory flapped between per-key identities and every copy
+  // sealed under the previous key stopped opening. The source answer is the King's rule, not a
+  // better key: an agent line NEVER uses E2EE (DECYZJE-KROLA 20.09 12:56Z: linie<->linie,
+  // linie<->Krol, czlowiek->linia: jawnie). Plaintext is readable by every key of the line and by
+  // the recipient's app on every device, and no bundle is needed, so nothing can flap.
+  const selfKind = await selfKindOf(dm);
+  const peerKind = selfKind === "agent" || input.to === selfId ? selfKind : await peerKindOf(dm, input.to);
+  if (selfKind === "agent" || peerKind === "agent") {
+    const payload = packPlaintextPayload(input.text);
+    ctx.log("debug", "mDM_send plaintext agent lane (rozkaz Krola 20.09)", {
+      thread_id: threadId,
+      self_kind: selfKind,
+      peer_kind: peerKind,
+    });
+    const plainArgs: DmSendArgsExt = {
+      to: input.to,
+      threadId,
+      payload,
+      replyToId: input.reply_to_id,
+      messageType: MDM_TEXT_MESSAGE_TYPE,
+    };
+    const result = await dm.send(plainArgs);
+    return {
+      message_id: result.id,
+      delivered_at: result.deliveredAt,
+      thread_id: threadId,
+      encrypted: false,
+      mode: "plaintext_agent_lane",
+      sender_copy: true,
+      recipient_copy: true,
+      identity: "untouched",
+    };
+  }
+
+  // E2EE path (human to human, or a lane that cannot tell kinds). The plaintext is packed into
+  // the inner envelope, then SEALED via X3DH + Double Ratchet into an opaque envelope the
+  // DmProvider moves without understanding. First contact fetches the peer's published prekey
+  // bundle through the same provider (decision "1a").
+  //
+  // On a PERSON's key MCP writes nothing to the key directory (bundlePolicyForKind: the app owns
+  // a human's bundle) and no "s1." self copy: the app opens only copies sealed under its own seed,
+  // and an unopenable "s1." makes it state a FALSE reason ("device"/"key") for the bubble. The
+  // envelope is typed `text` so the app states the true one: sent by MCP, no copy for this device.
   let identity: OwnBundleState = "foreign";
   try {
-    identity = await ensureOwnBundlePublished(keys, dm, selfId, {
-      mayReplaceForeign: (await selfKindOf(dm)) === "agent",
-    });
+    identity = await ensureOwnBundlePublished(keys, dm, selfId, bundlePolicyForKind(selfKind, { explicit: false }));
   } catch (err) {
     // Directory unreachable: the ratchet envelope still carries its own handshake, so the send
     // proceeds; only the recipient copy is skipped (it would be sealed under an unverified identity).
     ctx.log("warn", "mDM_send could not reconcile own prekey bundle", { error: String(err) });
   }
+  const ourIdentityIsPublished = identity === "consistent" || identity === "published";
 
-  // reply-linkage jedzie w dm.send({replyToId}) — surowy tekst nie ma koperty, w którą
-  // można by go wpakować (zmiana formatu 2026-08-25, patrz packPlaintextPayload).
+  // reply-linkage jedzie w dm.send({replyToId}) — surowy tekst nie ma koperty, w ktora
+  // mozna by go wpakowac (zmiana formatu 2026-08-25, patrz packPlaintextPayload).
   const inner = packPlaintextPayload(input.text);
   const sealed = await encryptForPeer(keys, dm, input.to, inner);
 
-  const selfPayload = await sealForSelf(keys, inner);
+  // "s1." only where the reader of that copy is MCP itself: never on a human key (see above).
+  const selfPayload = selfKind !== "human" && ourIdentityIsPublished ? await sealForSelf(keys, inner) : null;
   let recipientSelfPayload: string | null = null;
-  // The recipient opens "r1." with OUR PUBLISHED identity — so it is written only when the
-  // directory holds exactly our key. A note-to-self needs none: self_payload already covers it.
-  if (identity !== "foreign" && input.to !== selfId) {
+  // The recipient opens "r1." with OUR PUBLISHED identity, so it is written only when the
+  // directory holds exactly our key. A note-to-self needs none.
+  if (ourIdentityIsPublished && input.to !== selfId) {
     try {
       const peer = await fetchVerifiedBundle(dm, input.to);
       if (peer) recipientSelfPayload = await sealForPeerRecoverable(keys, peer, inner);
@@ -227,7 +284,7 @@ async function mDM_send(
     threadId,
     payload: sealed,
     replyToId: input.reply_to_id,
-    messageType: MDM_TEXT_MESSAGE_TYPE,
+    messageType: MDM_MCP_SEALED_MESSAGE_TYPE,
     selfPayload,
     recipientSelfPayload,
   };
@@ -245,6 +302,7 @@ async function mDM_send(
     delivered_at: result.deliveredAt,
     thread_id: threadId,
     encrypted: true,
+    mode: "e2ee",
     sender_copy: !!selfPayload,
     recipient_copy: !!recipientSelfPayload,
     identity,
@@ -288,12 +346,34 @@ async function mDM_send_unencrypted(
 async function mDM_publish_keys(
   _input: Record<string, never>,
   ctx: MosaddToolContext,
-): Promise<{ published: true; one_time_prekeys: number }> {
+): Promise<{ published: boolean; identity: OwnBundleState; one_time_prekeys: number; note?: string }> {
   // Publish the local prekey bundle so peers can start encrypted sessions with
   // us. Rides the same provider as messages (network row / radio announce).
-  const { oneTimePrekeyCount } = await publishOwnPrekeys(ctx.providers.keys, ctx.providers.dm);
-  ctx.log("debug", "mDM_publish_keys", { one_time_prekeys: oneTimePrekeyCount });
-  return { published: true, one_time_prekeys: oneTimePrekeyCount };
+  //
+  // ⛔ 27.09.2026: never over a PERSON's app-anchored bundle. The MCP identity is seeded from the
+  // API key, the app's from the login secret; replacing the app's bundle breaks every DM to that
+  // person on every device (bundlePolicyForKind, explicit). An empty directory may be filled.
+  const dm = ctx.providers.dm;
+  const keys = ctx.providers.keys;
+  const selfId = await dm.selfId();
+  const identity = await ensureOwnBundlePublished(
+    keys,
+    dm,
+    selfId,
+    bundlePolicyForKind(await selfKindOf(dm), { explicit: true }),
+  );
+  const { oneTimePrekeys } = await keys.getOwnMaterial();
+  ctx.log("debug", "mDM_publish_keys", { identity, one_time_prekeys: oneTimePrekeys.length });
+  if (identity === "foreign") {
+    return {
+      published: false,
+      identity,
+      one_time_prekeys: 0,
+      note:
+        "This identity already has keys published by the mosADD app. They were left untouched: replacing them from an API key would make every conversation with you unreadable in the app.",
+    };
+  }
+  return { published: identity === "published", identity, one_time_prekeys: oneTimePrekeys.length };
 }
 
 async function mDM_list(
@@ -540,7 +620,7 @@ export const mdmTools: MosaddTool[] = [
     annotations: { readOnlyHint: false },
     requires: "any",
     description:
-      "Send an END-TO-END-ENCRYPTED direct message via mosadd mDM. Pass `to` as the recipient's mosadd identity_id (look it up with mDM_list_contacts). Establishes an X3DH + Double Ratchet session on first contact (the recipient must have run mDM_publish_keys). Optional thread_label puts the message in a named thread — mosadd USP: multiple threads per contact, unlike WhatsApp/Telegram. If the recipient has no published keys yet, use mDM_send_unencrypted.",
+      "Send a direct message via mosadd mDM. Between two PEOPLE it is END-TO-END-ENCRYPTED; when either side is an agent line it goes in the clear (mosadd rule: agents must read their DMs), exactly like the mosadd app. Pass `to` as the recipient's mosadd identity_id (look it up with mDM_list_contacts). Establishes an X3DH + Double Ratchet session on first contact (the recipient must have run mDM_publish_keys). Optional thread_label puts the message in a named thread — mosadd USP: multiple threads per contact, unlike WhatsApp/Telegram. If the recipient has no published keys yet, use mDM_send_unencrypted.",
     inputSchema: mDM_send_input,
     handler: mDM_send as MosaddTool["handler"],
   },

@@ -438,25 +438,67 @@ export type OwnBundleState =
   /** the directory had no bundle (or we own the identity) and now holds ours */
   | "published"
   /** someone else's key material is published for this identity and we must not replace it */
-  | "foreign";
+  | "foreign"
+  /** the directory holds NO bundle for this identity and this runtime may not create one */
+  | "absent";
+
+/** What this runtime may write to the key directory for its own identity. */
+export interface BundlePolicy {
+  /** directory empty → publish this keystore's bundle */
+  mayPublishWhenEmpty: boolean;
+  /** directory holds a DIFFERENT bundle → replace it with this keystore's */
+  mayReplaceForeign: boolean;
+}
 
 /**
- * Make the key directory agree with this keystore's identity — WITHOUT hijacking a human's keys.
+ * ⛔ WHO MAY WRITE THE KEY DIRECTORY FROM MCP (27.09.2026, poprawka po weryfikacji toru mdm-brama).
  *
- * - directory == ours            → "consistent" (no write).
- * - directory empty              → publish ours → "published".
- * - directory differs, we OWN it → publish ours → "published". An AGENT line's identity has no
- *   other runtime than its key; a stale bundle there is dead material from an old random run.
- * - directory differs, human     → "foreign". A person's bundle is anchored to their login
- *   secret in the app; overwriting it from an agent key would break every DM to that person.
- *   The ratchet envelope still works (it carries its own handshake); only the recipient's
- *   recoverable copy is skipped, because it would be sealed under the wrong identity.
+ * The MCP identity is seeded from ONE API key. A mosADD identity has MANY active keys (every OAuth
+ * connector mints its own — measured 27.09: 7 of 17 agent identities hold several, general@ alone
+ * 8, all used within 3 days). A per-key identity that is allowed to (re)publish therefore makes the
+ * directory FLAP between up to 8 identities: copies sealed under key A stop opening once key B
+ * published, and envelopes sealed to "the" bundle open on one key only. So:
+ *
+ * - kind "agent": an agent LINE sends JAWNIE (plaintext) — rozkaz Króla 20.09 12:56Z „E2EE
+ *   wewnętrzne = zero": linie↔linie, linie↔Król, człowiek→linia bez E2EE; the app does the same
+ *   (ircApi.ts peerIsAgent). An agent never needs a bundle for mDM_send, so the AUTOMATIC paths
+ *   write nothing. Only an explicit mDM_publish_keys still publishes (the caller asked for it).
+ * - kind "human": the person's bundle is anchored to their login secret IN THE APP
+ *   (mdmKeyStore.setIdentitySeed; kanon in hub-key-exchange: only the identity's own client
+ *   publishes). MCP never replaces it and never pre-empts it on an empty directory automatically
+ *   — a bundle published from an API-key seed would be overwritten by the app later and strand
+ *   everything sealed to it meanwhile. Explicit mDM_publish_keys may fill an EMPTY directory.
+ * - unknown kind (non-Supabase lanes, e.g. radio): the pre-27.09 behaviour, empty → publish;
+ *   explicit → publish.
+ */
+export function bundlePolicyForKind(kind: string | null | undefined, opts: { explicit: boolean }): BundlePolicy {
+  if (kind === "agent") {
+    return opts.explicit
+      ? { mayPublishWhenEmpty: true, mayReplaceForeign: true }
+      : { mayPublishWhenEmpty: false, mayReplaceForeign: false };
+  }
+  if (kind === "human") {
+    return { mayPublishWhenEmpty: opts.explicit, mayReplaceForeign: false };
+  }
+  return { mayPublishWhenEmpty: true, mayReplaceForeign: opts.explicit };
+}
+
+/**
+ * Make the key directory agree with this keystore's identity — only as far as `policy` allows.
+ *
+ * - directory == ours                       → "consistent" (no write).
+ * - directory empty, may publish            → publish ours → "published".
+ * - directory empty, may not                → "absent" (no write).
+ * - directory differs, may replace          → publish ours → "published".
+ * - directory differs, may not              → "foreign" (no write). The ratchet envelope still
+ *   works (it carries its own handshake); recoverable copies are skipped, because they would
+ *   be sealed under an identity nobody can look up.
  */
 export async function ensureOwnBundlePublished(
   keystore: MdmKeyStore,
   dm: DmProvider,
   selfId: string,
-  opts: { mayReplaceForeign: boolean },
+  policy: BundlePolicy,
 ): Promise<OwnBundleState> {
   const own = await keystore.getOwnMaterial();
   const raw = await dm.fetchPrekeyBundle(selfId);
@@ -471,7 +513,9 @@ export async function ensureOwnBundlePublished(
     ) {
       return "consistent";
     }
-    if (!opts.mayReplaceForeign) return "foreign";
+    if (!policy.mayReplaceForeign) return "foreign";
+  } else if (!policy.mayPublishWhenEmpty) {
+    return "absent";
   }
   await dm.publishPrekeyBundle(serializePublicBundle(own));
   return "published";

@@ -1,30 +1,44 @@
 /**
- * ZAMEK (27.09.2026, nastepstwo LINEAR-6089): koperta wyslana przez mDM_send z MCP ma byc
- * CZYTELNA — u nadawcy i u odbiorcy — a nie tylko „zaszyfrowana".
+ * ZAMEK (27.09.2026, nastepstwo LINEAR-6089, POPRAWKA po niezaleznej weryfikacji toru mdm-brama):
+ * wiadomosc wyslana przez mDM_send z MCP ma byc CZYTELNA u nadawcy i u odbiorcy — na KAZDYM
+ * kluczu tej samej tozsamosci, nie tylko na tym, ktory ja wyslal — a aplikacja ma mowic PRAWDE,
+ * gdy czegos pokazac nie moze.
  *
- * Zmierzone na prod 27.09: mDM_send przez brame mcp.mosadd.com
- *   1. przy kazdym wywolaniu rodzil NOWA tozsamosc (InMemoryMdmKeyStore na zadanie HTTP),
- *   2. nie zapisywal self_payload ani recipient_self_payload,
- *   3. pisal message_type "text" zamiast "txt".
- * Skutek: nadawca nie odczyta wlasnej wiadomosci nigdy wiecej, odbiorca tylko przez ratchet.
+ * Co zmierzono 27.09:
+ *   1. mDM_send przez brame rodzil NOWA tozsamosc co wywolanie (keystore w pamieci na zadanie HTTP).
+ *   2. Pierwsza poprawka (alpha.53) dala tozsamosc stala per KLUCZ API i pozwolila linii agenta
+ *      podmieniac pek w katalogu. Tozsamosc ma WIELE aktywnych kluczy (general@: 8, wszystkie
+ *      uzywane w 3 dni; 7 z 17 agentow ma po kilka), wiec pek przeskakiwal miedzy tozsamosciami:
+ *      kopia s1. otwierala sie tylko pod kluczem, ktory ja zapisal, a kopie r1. przestawaly sie
+ *      otwierac u odbiorcy po nastepnej wysylce innym kluczem.
+ *   3. alpha.53 pisala tez `txt` + s1. pod ziarnem z klucza API na kluczu CZLOWIEKA — aplikacja
+ *      (mdmE2ee.ts readOwnMdmMessage) nie otwiera takiej kopii i podawala FALSZYWY powod
+ *      („wyslane z innego urzadzenia" / „odblokuj tozsamosc") zamiast „wyslane przez MCP".
+ *
+ * Naprawa u zrodla = regula Krola (DECYZJE-KROLA 20.09 12:56Z „E2EE wewnetrzne = zero"): gdy
+ * strona rozmowy jest linia agenta, DM idzie JAWNIE — tak samo robi aplikacja (peerIsAgent).
+ * Jawny tekst czyta kazdy klucz linii i aplikacja odbiorcy na kazdym urzadzeniu; pek nie jest
+ * potrzebny, wiec nie ma czego podmieniac. Czlowiek↔czlowiek zostaje E2EE, a MCP na kluczu
+ * czlowieka NIE rusza jego peku z aplikacji, nie pisze kopii s1. i znakuje koperte `text`.
  *
  * Prawdziwa kryptografia (X3DH + Double Ratchet + AES-GCM + HKDF z @mosadd/crypto), zero atrap
- * szyfru. Kazde "zadanie" bramy = SWIEZY serwer z tym samym kluczem API — dokladnie jak handler
- * bramy (createMosaddServer per request). Otwieracze "s1."/"r1." w tym pliku sa WIERNA KOPIA
- * algorytmu aplikacji (apps/web/src/lib/mdmE2ee.ts: tryReadOwnSelf / tryOpenPeerRecoverable),
- * a wektory KAT policzone bibliotekami aplikacji (@noble 2.0.1 z drzewa mosADD).
+ * szyfru. Kazde "zadanie" bramy = SWIEZY serwer z danym kluczem API — jak handler bramy.
  */
 
+import { execFileSync } from "node:child_process";
 import { describe, expect, it } from "vitest";
 import type { DmProvider, DmListArgs, DmListResult, DmSendResult } from "@mosadd/providers";
-import { deriveHkdfKey, deriveSharedSecret, fromBase64, toBase64 } from "@mosadd/crypto";
+import { deriveHkdfKey, fromBase64, toBase64 } from "@mosadd/crypto";
 import { mdmTools } from "../tools/mdm.js";
-import { defaultProviders } from "../server.js";
+import { createMosaddServer, defaultProviders } from "../server.js";
 import {
   SeededMdmKeyStore,
   decryptFromPeer,
+  deriveMdmSeedFromSecret,
   deriveOwnMaterialFromSeed,
-  parsePublicBundle,
+  encryptForPeer,
+  fetchVerifiedBundle,
+  sealForPeerRecoverable,
   serializePublicBundle,
   type MdmKeyStore,
 } from "../crypto/mdm-session.js";
@@ -32,7 +46,7 @@ import type { DmMessageExt, DmSendArgsExt } from "../providers/supabase-dm.js";
 import { InMemoryVoiceProvider } from "../providers/memory-voice.js";
 import type { MosaddToolContext } from "../types.js";
 
-// ---- a backend shaped like message-send / message-list / prekey directory ----
+// ---- a backend shaped like message-send / message-list / prekey directory / identities ----
 
 type Row = {
   id: string;
@@ -49,12 +63,14 @@ class Backend {
   readonly rows: Row[] = [];
   readonly bundles = new Map<string, Uint8Array>();
   readonly kinds = new Map<string, string>();
+  publishes = 0;
 }
 
 class Lane implements DmProvider {
   constructor(private readonly b: Backend, private readonly me: string) {}
   async selfId() { return this.me; }
   async selfKind() { return this.b.kinds.get(this.me) ?? null; }
+  async peerKind(id: string) { return this.b.kinds.get(id) ?? null; }
   async send(args: DmSendArgsExt): Promise<DmSendResult> {
     const id = `m${this.b.rows.length + 1}`;
     this.b.rows.push({
@@ -85,7 +101,10 @@ class Lane implements DmProvider {
       }));
     return { messages, nextCursor: null };
   }
-  async publishPrekeyBundle(bundle: Uint8Array) { this.b.bundles.set(this.me, bundle); }
+  async publishPrekeyBundle(bundle: Uint8Array) {
+    this.b.publishes += 1;
+    this.b.bundles.set(this.me, bundle);
+  }
   async fetchPrekeyBundle(peerId: string) { return this.b.bundles.get(peerId) ?? null; }
 }
 
@@ -114,42 +133,68 @@ async function appOf(b: Backend, me: string, seedByte: number) {
   return keys;
 }
 
-// ---- the app's openers, copied algorithm-for-algorithm from apps/web/src/lib/mdmE2ee.ts ----
+/** What the app shows for a plaintext row (ircApi decodePayload: base64 → UTF-8 text). */
+const appPlaintext = (row: Row) => new TextDecoder().decode(row.payload);
+
+// ---- the app's decisions, algorithm-for-algorithm from apps/web/src/lib/mdmE2ee.ts ----
+// (the drift check at the bottom compares these lines with the app's source on origin/main)
 
 async function appOpenAesGcm(tag: string, keyBytes: Uint8Array, sealed: string | null): Promise<string | null> {
   if (!sealed || !sealed.startsWith(tag)) return null;
   const packed = fromBase64(sealed.slice(tag.length));
   if (packed.length <= 12) return null;
   const key = await crypto.subtle.importKey("raw", keyBytes as BufferSource, { name: "AES-GCM" }, false, ["decrypt"]);
-  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: packed.slice(0, 12) }, key, packed.slice(12));
-  return new TextDecoder().decode(pt);
+  try {
+    const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: packed.slice(0, 12) }, key, packed.slice(12));
+    return new TextDecoder().decode(pt);
+  } catch {
+    return null;
+  }
 }
 
-/** tryOpenPeerRecoverable: HKDF(ECDH(my IK priv, SENDER's PUBLISHED IK), info) → AES-GCM. */
-async function appOpenRecipientCopy(b: Backend, me: MdmKeyStore, senderId: string, sealed: string | null) {
-  const raw = b.bundles.get(senderId);
-  if (!raw) return null;
-  const sender = parsePublicBundle(raw);
-  const own = await me.getOwnMaterial();
-  const secret = await deriveSharedSecret(own.identity.privateKey, sender.identityPublicKey);
-  const k = await deriveHkdfKey(secret, {
-    info: new TextEncoder().encode("mosadd.mdm.recipient-recoverable.v1"),
-    length: 32,
-  });
-  return appOpenAesGcm("r1.", k, sealed);
+/**
+ * readOwnMdmMessage (f95557f), for a device that holds the owner's app seed. Steps 2 (this
+ * device's sent memory) is empty by construction: the message was sent by MCP, not this device.
+ */
+async function appReadOwn(
+  appSeed: Uint8Array,
+  appKeys: MdmKeyStore,
+  myIdentityId: string,
+  row: Row,
+): Promise<{ text: string; reason: null } | { text: null; reason: "key" | "agent" | "device" }> {
+  const selfKey = await deriveHkdfKey(appSeed, { info: new TextEncoder().encode("mosadd-mdm-self-read"), length: 32 });
+  const zKopii = await appOpenAesGcm("s1.", selfKey, row.selfPayload);
+  if (zKopii != null) return { text: zKopii, reason: null };
+  const maKlucz = true;
+  const para = row.threadId.slice(3).split(":thread:")[0]!.split(":");
+  const doSiebie = para.length === 2 && para[0] === myIdentityId && para[1] === myIdentityId;
+  if (doSiebie && maKlucz) {
+    try {
+      return { text: new TextDecoder().decode(await decryptFromPeer(appKeys, myIdentityId, row.payload)), reason: null };
+    } catch { /* fall through */ }
+  }
+  const kopiaDlaMnie = doSiebie || (!!row.selfPayload && row.selfPayload.startsWith("s1."));
+  if (!maKlucz && kopiaDlaMnie) return { text: null, reason: "key" };
+  return { text: null, reason: row.messageType === "text" ? "agent" : "device" };
 }
 
-/** tryReadOwnSelf: HKDF(seed, "mosadd-mdm-self-read") → AES-GCM over "s1.". */
-async function appOpenSelfCopy(seed: Uint8Array, sealed: string | null) {
-  const k = await deriveHkdfKey(seed, { info: new TextEncoder().encode("mosadd-mdm-self-read"), length: 32 });
-  return appOpenAesGcm("s1.", k, sealed);
-}
-
-const API_KEY = "mosadd_sk_live_0123456789abcdef0123456789abcdef";
+const KEY_A = "mosadd_sk_live_0123456789abcdef0123456789abcdef";
+const KEY_B = "mosadd_sk_live_fedcba9876543210fedcba9876543210"; // druga, rownolegle aktywna, ta sama linia
 const LINE = "general-line-identity";
 const KING = "king-identity";
+const PEER = "peer-human-identity";
 
-describe("mDM_send z MCP — koperta czytelna u nadawcy i u odbiorcy (zamek 27.09)", () => {
+type SendOut = {
+  message_id: string;
+  encrypted: boolean;
+  mode: string;
+  identity: string;
+  sender_copy: boolean;
+  recipient_copy: boolean;
+};
+type ListOut = { messages: Array<{ text: string; sender_identity_id: string; encrypted: boolean }> };
+
+describe("mDM_send z MCP — czytelne na kazdym kluczu, prawdziwe powody w aplikacji (zamek 27.09)", () => {
   it("KAT: tozsamosc z ziarna jest bit w bit ta, ktora wylicza aplikacja", async () => {
     const seed = new Uint8Array(32).map((_, i) => i + 1);
     const m = await deriveOwnMaterialFromSeed(seed);
@@ -166,107 +211,146 @@ describe("mDM_send z MCP — koperta czytelna u nadawcy i u odbiorcy (zamek 27.0
 
   it("dwa zadania bramy z tym samym kluczem = JEDNA tozsamosc (nie nowa co wywolanie)", async () => {
     const b = new Backend();
-    const a = await gatewayRequest(b, LINE, API_KEY).providers.keys.getOwnMaterial();
-    const c = await gatewayRequest(b, LINE, API_KEY).providers.keys.getOwnMaterial();
+    const a = await gatewayRequest(b, LINE, KEY_A).providers.keys.getOwnMaterial();
+    const c = await gatewayRequest(b, LINE, KEY_A).providers.keys.getOwnMaterial();
     expect(toBase64(a.identity.publicKey)).toBe(toBase64(c.identity.publicKey));
     expect(toBase64(a.signedPrekey.pair.publicKey)).toBe(toBase64(c.signedPrekey.pair.publicKey));
-    const other = await gatewayRequest(b, LINE, API_KEY + "ff").providers.keys.getOwnMaterial();
-    expect(toBase64(other.identity.publicKey)).not.toBe(toBase64(a.identity.publicKey));
   });
 
-  it("wysylka linii do Krola: txt + self_payload + recipient_self_payload; oboje czytaja po nowym zadaniu", async () => {
+  it("linia agenta, DWA klucze naprzemiennie: jawny txt, kazdy klucz czyta wszystko, Krol czyta w aplikacji, katalog nietkniety", async () => {
     const b = new Backend();
     b.kinds.set(LINE, "agent");
-    const kingSeed = new Uint8Array(32).fill(7);
-    const king = await appOf(b, KING, 7);
+    await appOf(b, KING, 7);
 
-    const sent = (await tool("mDM_send")({ to: KING, text: "meldunek: brama czytelna" }, gatewayRequest(b, LINE, API_KEY))) as {
-      sender_copy: boolean; recipient_copy: boolean; identity: string; message_id: string;
-    };
-    expect(sent).toMatchObject({ sender_copy: true, recipient_copy: true });
-    expect(["published", "consistent"]).toContain(sent.identity);
+    const s1 = (await tool("mDM_send")({ to: KING, text: "meldunek z klucza A" }, gatewayRequest(b, LINE, KEY_A))) as SendOut;
+    const s2 = (await tool("mDM_send")({ to: KING, text: "meldunek z klucza B" }, gatewayRequest(b, LINE, KEY_B))) as SendOut;
+    const s3 = (await tool("mDM_send")({ to: KING, text: "znow klucz A" }, gatewayRequest(b, LINE, KEY_A))) as SendOut;
+    for (const s of [s1, s2, s3]) {
+      expect(s).toMatchObject({ encrypted: false, mode: "plaintext_agent_lane", sender_copy: true, recipient_copy: true, identity: "untouched" });
+    }
 
-    const row = b.rows.at(-1)!;
-    expect(row.messageType).toBe("txt");
-    expect(row.selfPayload).toMatch(/^s1\./);
-    expect(row.recipientSelfPayload).toMatch(/^r1\./);
-    // ciphertext na drucie, nie tekst
-    expect(Buffer.from(row.payload).toString("utf8")).not.toContain("meldunek");
-    expect(row.selfPayload).not.toContain("meldunek");
+    // Katalog kluczy: ZERO zapisow — pek linii nie istnieje, wiec nie ma czego przestawiac.
+    expect(b.publishes).toBe(0);
+    expect(b.bundles.has(LINE)).toBe(false);
 
-    // NADAWCA: nowe zadanie bramy (inna lambda, pusta pamiec wyslanych) czyta swoja wiadomosc.
-    const lineRead = (await tool("mDM_list")({ contact_id: KING }, gatewayRequest(b, LINE, API_KEY))) as {
-      messages: Array<{ text: string; sender_identity_id: string }>;
-    };
-    expect(lineRead.messages.map((m) => m.text)).toEqual(["meldunek: brama czytelna"]);
+    for (const row of b.rows) {
+      expect(row.messageType).toBe("txt");
+      expect(row.selfPayload).toBeNull();
+      expect(row.recipientSelfPayload).toBeNull();
+    }
+    // Krol w aplikacji, na DOWOLNYM urzadzeniu: jawny tekst, bez kluczy i bez ratchetu.
+    expect(b.rows.map(appPlaintext)).toEqual(["meldunek z klucza A", "meldunek z klucza B", "znow klucz A"]);
 
-    // ODBIORCA w aplikacji, BEZ sesji ratchetu (nowe urzadzenie): kopia r1. algorytmem aplikacji.
-    expect(await appOpenRecipientCopy(b, king, LINE, row.recipientSelfPayload)).toBe("meldunek: brama czytelna");
-    // ODBIORCA przez ratchet (koperta niesie naglowek X3DH do opublikowanego peku Krola).
-    const viaRatchet = await decryptFromPeer(new SeededMdmKeyStore(kingSeed), LINE, row.payload);
-    expect(new TextDecoder().decode(viaRatchet)).toBe("meldunek: brama czytelna");
-
-    // Druga wysylka z NOWEGO zadania: ta sama tozsamosc -> pek w katalogu sie nie zmienia.
-    const bundleBefore = toBase64(b.bundles.get(LINE)!);
-    const second = (await tool("mDM_send")({ to: KING, text: "drugi" }, gatewayRequest(b, LINE, API_KEY))) as { identity: string };
-    expect(second.identity).toBe("consistent");
-    expect(toBase64(b.bundles.get(LINE)!)).toBe(bundleBefore);
-    expect(await appOpenRecipientCopy(b, king, LINE, b.rows.at(-1)!.recipientSelfPayload)).toBe("drugi");
+    // Nadawca: KAZDY klucz linii, swieze zadanie (pusta pamiec wyslanych), czyta WSZYSTKIE trzy.
+    for (const k of [KEY_A, KEY_B]) {
+      const read = (await tool("mDM_list")({ contact_id: KING }, gatewayRequest(b, LINE, k))) as ListOut;
+      expect(read.messages.map((m) => m.text)).toEqual(["meldunek z klucza A", "meldunek z klucza B", "znow klucz A"]);
+    }
   });
 
-  it("watek wlasny linii (dm:ja:ja): nadawca czyta z nowego zadania, kopia s1. otwiera sie algorytmem aplikacji", async () => {
+  it("watek wlasny linii (dm:ja:ja): zapis kluczem A, odczyt kluczem B", async () => {
     const b = new Backend();
     b.kinds.set(LINE, "agent");
-    await tool("mDM_send")({ to: LINE, text: "notatka do siebie" }, gatewayRequest(b, LINE, API_KEY));
+    await tool("mDM_send")({ to: LINE, text: "notatka do siebie" }, gatewayRequest(b, LINE, KEY_A));
     const row = b.rows.at(-1)!;
     expect(row.threadId).toBe(`dm:${LINE}:${LINE}`);
     expect(row.messageType).toBe("txt");
-    expect(row.selfPayload).toMatch(/^s1\./);
-
-    const read = (await tool("mDM_list")({ contact_id: LINE }, gatewayRequest(b, LINE, API_KEY))) as {
-      messages: Array<{ text: string }>;
-    };
+    const read = (await tool("mDM_list")({ contact_id: LINE }, gatewayRequest(b, LINE, KEY_B))) as ListOut;
     expect(read.messages.map((m) => m.text)).toEqual(["notatka do siebie"]);
-
-    // To samo ziarno w aplikacji otwiera kopie wlasna jej algorytmem (tryReadOwnSelf).
-    const { deriveMdmSeedFromSecret } = await import("../crypto/mdm-session.js");
-    expect(await appOpenSelfCopy(await deriveMdmSeedFromSecret(API_KEY), row.selfPayload)).toBe("notatka do siebie");
+    expect(b.publishes).toBe(0);
   });
 
-  it("linia agenta ze starym losowym pekiem: pek zastapiony; pek CZLOWIEKA z aplikacji nigdy nie nadpisany", async () => {
-    // agent: martwy pek po dawnym losowym przebiegu -> zastapiony stala tozsamoscia
+  it("czlowiek pisze przez MCP DO linii agenta: jawnie (jak peerIsAgent w aplikacji)", async () => {
     const b = new Backend();
     b.kinds.set(LINE, "agent");
-    const stale = serializePublicBundle(await new SeededMdmKeyStore(new Uint8Array(32).fill(99)).getOwnMaterial());
-    b.bundles.set(LINE, stale);
     await appOf(b, KING, 7);
-    const r = (await tool("mDM_send")({ to: KING, text: "x" }, gatewayRequest(b, LINE, API_KEY))) as { identity: string };
-    expect(r.identity).toBe("published");
-    expect(toBase64(b.bundles.get(LINE)!)).not.toBe(toBase64(stale));
-
-    // czlowiek (klucz Krola uzyty przez agenta): pek aplikacji zostaje, kopii r1. nie ma (bylaby pod zla tozsamoscia)
-    const h = new Backend();
-    const kingApp = serializePublicBundle(await (await appOf(h, KING, 7)).getOwnMaterial());
-    await appOf(h, "peer", 5);
-    const hr = (await tool("mDM_send")({ to: "peer", text: "y" }, gatewayRequest(h, KING, API_KEY))) as {
-      identity: string; recipient_copy: boolean; sender_copy: boolean;
-    };
-    expect(hr).toMatchObject({ identity: "foreign", recipient_copy: false, sender_copy: true });
-    expect(toBase64(h.bundles.get(KING)!)).toBe(toBase64(kingApp));
-    expect(h.rows.at(-1)!.messageType).toBe("txt");
+    const s = (await tool("mDM_send")({ to: LINE, text: "rozkaz" }, gatewayRequest(b, KING, KEY_A))) as SendOut;
+    expect(s.mode).toBe("plaintext_agent_lane");
+    expect(appPlaintext(b.rows.at(-1)!)).toBe("rozkaz");
+    const lineRead = (await tool("mDM_list")({ contact_id: KING }, gatewayRequest(b, LINE, KEY_B))) as ListOut;
+    expect(lineRead.messages.map((m) => m.text)).toEqual(["rozkaz"]);
   });
 
-  it("odbior w MCP: wiadomosc Krola z kopia r1. czytelna w bramie bez sesji ratchetu", async () => {
+  it("klucz CZLOWIEKA do czlowieka: E2EE, pek z aplikacji nietkniety, bez s1., typ `text` — aplikacja mowi PRAWDZIWY powod", async () => {
+    const b = new Backend();
+    const kingSeed = new Uint8Array(32).fill(7);
+    const kingApp = await appOf(b, KING, 7);
+    const kingBundle = toBase64(b.bundles.get(KING)!);
+    const peerApp = await appOf(b, PEER, 5);
+
+    const s = (await tool("mDM_send")({ to: PEER, text: "tajne" }, gatewayRequest(b, KING, KEY_A))) as SendOut;
+    expect(s).toMatchObject({ encrypted: true, mode: "e2ee", identity: "foreign", sender_copy: false, recipient_copy: false });
+    const row = b.rows.at(-1)!;
+    expect(row.messageType).toBe("text");
+    expect(row.selfPayload).toBeNull();
+    expect(appPlaintext(row)).not.toContain("tajne");
+    expect(b.publishes).toBe(0);
+    expect(toBase64(b.bundles.get(KING)!)).toBe(kingBundle);
+
+    // Odbiorca czyta przez ratchet (koperta niesie naglowek X3DH do JEGO peku z aplikacji).
+    expect(new TextDecoder().decode(await decryptFromPeer(peerApp, KING, row.payload))).toBe("tajne");
+    // Wlasciciel w aplikacji: tresci nie ma (MCP nie zna ziarna aplikacji) i powod jest PRAWDZIWY.
+    expect(await appReadOwn(kingSeed, kingApp, KING, row)).toEqual({ text: null, reason: "agent" });
+  });
+
+  it("klucz czlowieka, notatka do siebie: aplikacja OTWIERA ja wlasnymi kluczami", async () => {
+    const b = new Backend();
+    const kingSeed = new Uint8Array(32).fill(7);
+    const kingApp = await appOf(b, KING, 7);
+    await tool("mDM_send")({ to: KING, text: "do siebie z MCP" }, gatewayRequest(b, KING, KEY_A));
+    const row = b.rows.at(-1)!;
+    expect(row.messageType).toBe("text");
+    expect(await appReadOwn(kingSeed, kingApp, KING, row)).toEqual({ text: "do siebie z MCP", reason: null });
+  });
+
+  it("czlowiek BEZ peku: MCP nie publikuje sam (ani mDM_send, ani autoPublishKeys); jawne mDM_publish_keys moze", async () => {
+    const b = new Backend();
+    b.kinds.set(KING, "human");
+    await appOf(b, PEER, 5);
+    const s = (await tool("mDM_send")({ to: PEER, text: "x" }, gatewayRequest(b, KING, KEY_A))) as SendOut;
+    expect(s.identity).toBe("absent");
+    expect(b.bundles.has(KING)).toBe(false);
+
+    createMosaddServer({ apiKey: KEY_A, autoPublishKeys: true, providers: { dm: new Lane(b, KING), voice: new InMemoryVoiceProvider(KING) } });
+    await new Promise((r) => setTimeout(r, 50));
+    expect(b.bundles.has(KING)).toBe(false);
+    expect(b.publishes).toBe(0);
+
+    const p = (await tool("mDM_publish_keys")({}, gatewayRequest(b, KING, KEY_A))) as { published: boolean; identity: string };
+    expect(p).toMatchObject({ published: true, identity: "published" });
+  });
+
+  it("jawne mDM_publish_keys na kluczu czlowieka NIE nadpisuje peku z aplikacji", async () => {
+    const b = new Backend();
+    await appOf(b, KING, 7);
+    const before = toBase64(b.bundles.get(KING)!);
+    const p = (await tool("mDM_publish_keys")({}, gatewayRequest(b, KING, KEY_A))) as { published: boolean; identity: string; note?: string };
+    expect(p).toMatchObject({ published: false, identity: "foreign" });
+    expect(p.note).toBeTruthy();
+    expect(toBase64(b.bundles.get(KING)!)).toBe(before);
+    expect(b.publishes).toBe(0);
+  });
+
+  it("autoPublishKeys na linii agenta: zero zapisow w katalogu (zaden z jej kluczy nie przestawia peku)", async () => {
+    const b = new Backend();
+    b.kinds.set(LINE, "agent");
+    for (const k of [KEY_A, KEY_B]) {
+      createMosaddServer({ apiKey: k, autoPublishKeys: true, providers: { dm: new Lane(b, LINE), voice: new InMemoryVoiceProvider(LINE) } });
+    }
+    await new Promise((r) => setTimeout(r, 50));
+    expect(b.publishes).toBe(0);
+    expect(b.bundles.has(LINE)).toBe(false);
+  });
+
+  it("stara koperta E2EE od Krola z kopia r1. (pek linii sprzed poprawki) dalej czytelna w bramie", async () => {
     const b = new Backend();
     b.kinds.set(LINE, "agent");
     const king = await appOf(b, KING, 7);
-    // linia publikuje swoj pek (pierwsze zadanie), Krol pisze z aplikacji z kopia r1.
-    await tool("mDM_send")({ to: KING, text: "hej" }, gatewayRequest(b, LINE, API_KEY));
-    const { sealForPeerRecoverable, fetchVerifiedBundle, encryptForPeer } = await import("../crypto/mdm-session.js");
+    // pek linii opublikowany przez alpha.53 z ziarna klucza A
+    b.bundles.set(LINE, serializePublicBundle(await new SeededMdmKeyStore(await deriveMdmSeedFromSecret(KEY_A)).getOwnMaterial()));
     const kingLane = new Lane(b, KING);
     const lineBundle = (await fetchVerifiedBundle(kingLane, LINE))!;
     const inner = new TextEncoder().encode("rozkaz od Krola");
-    // ratchet Krola jest juz daleko (n>=1, bez naglowka) — brama go nie ma; ratuje ja r1.
     await encryptForPeer(king, kingLane, LINE, new TextEncoder().encode("pierwsza"));
     const env = await encryptForPeer(king, kingLane, LINE, inner);
     await kingLane.send({
@@ -276,9 +360,27 @@ describe("mDM_send z MCP — koperta czytelna u nadawcy i u odbiorcy (zamek 27.0
       messageType: "txt",
       recipientSelfPayload: await sealForPeerRecoverable(king, lineBundle, inner),
     });
-    const read = (await tool("mDM_list")({ contact_id: KING }, gatewayRequest(b, LINE, API_KEY))) as {
-      messages: Array<{ text: string; sender_identity_id: string }>;
-    };
+    const read = (await tool("mDM_list")({ contact_id: KING }, gatewayRequest(b, LINE, KEY_A))) as ListOut;
     expect(read.messages.find((m) => m.sender_identity_id === KING)?.text).toBe("rozkaz od Krola");
+  });
+
+  // Straznik rozjazdu z aplikacja: dwie reguly, na ktorych stoi ta poprawka, czytane ze zrodla
+  // aplikacji na origin/main repo mosADD (MOSADD_WEB_REPO albo C:/Projects/mosADD). Bez repo obok
+  // (np. CI bez siostrzanego drzewa) — pominiety, nie zielony na slepo.
+  const webRepo = process.env.MOSADD_WEB_REPO ?? "C:/Projects/mosADD";
+  const appSource = (path: string): string | null => {
+    try {
+      return execFileSync("git", ["-C", webRepo, "show", `origin/main:${path}`], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+    } catch {
+      return null;
+    }
+  };
+  const mdmE2ee = appSource("apps/web/src/lib/mdmE2ee.ts");
+  const ircApi = appSource("apps/web/src/lib/ircApi.ts");
+  it.skipIf(!mdmE2ee || !ircApi)("kontrakt aplikacji: `text` = powod agent, s1. = kopia dla mnie, agent = jawnie", () => {
+    expect(mdmE2ee).toContain('reason: msg.message_type === "text" ? "agent" : "device"');
+    expect(mdmE2ee).toContain("const kopiaDlaMnie = doSiebie || (!!msg.self_payload && msg.self_payload.startsWith(SELF_TAG));");
+    expect(mdmE2ee).toContain('const SELF_TAG = "s1.";');
+    expect(ircApi).toContain('input.threadId.startsWith("dm:") && !input.peerIsAgent');
   });
 });

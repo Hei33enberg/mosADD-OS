@@ -32,6 +32,17 @@ const PROTOCOL_VERSION = "mosadd.chat.v1";
 export const MDM_TEXT_MESSAGE_TYPE = "txt";
 
 /**
+ * ⛔ AN E2EE ENVELOPE SEALED BY MCP ON A PERSON'S KEY IS TYPED `text` — ON PURPOSE (27.09.2026).
+ * The app's readOwnMdmMessage (apps/web/src/lib/mdmE2ee.ts, from f95557f) explains an unreadable
+ * OWN bubble by message_type: `text` → reason "agent" („wysłane przez agenta/MCP bez kopii dla
+ * Ciebie"), anything else → "device" („wysłane z innego urządzenia"). MCP holds an API-key seed,
+ * never the person's app seed, so it can never write a self copy the app opens — typing its
+ * envelope `txt` made the app tell the owner a false reason. `text` stays client-sendable in
+ * message-send (CLIENT_SENDABLE_MESSAGE_TYPES) precisely for this lane. Plaintext stays `txt`.
+ */
+export const MDM_MCP_SEALED_MESSAGE_TYPE = "text";
+
+/**
  * Supabase-only extras for a DM send. The transport-agnostic DmSendArgs (@mosadd/providers)
  * carries opaque bytes only; the network lane can additionally store the two recoverable copies
  * the app reads (see sealForSelf / sealForPeerRecoverable in crypto/mdm-session.ts). A radio
@@ -65,6 +76,23 @@ export class SupabaseDmProvider implements DmProvider {
   async selfKind(): Promise<string | null> {
     await this.selfId();
     return this.cachedSelfKind;
+  }
+
+  /**
+   * `identities.kind` of a PEER, or null when it cannot be read (RLS can_see_identity scopes rows
+   * to contacts / thread co-members; a miss is not an error). mDM_send uses it exactly like the
+   * app's ChatPanel `peerIsAgent` (theirIdent.kind === 'agent' || iAmAgent): a DM to an agent
+   * line is sent in the clear, because the line must read it (rozkaz Króla 20.09).
+   */
+  async peerKind(peerId: string): Promise<string | null> {
+    try {
+      const sb = getSupabase();
+      const { data, error } = await sb.from("identities").select("kind").eq("id", peerId).limit(1).maybeSingle();
+      if (error || !data) return null;
+      return typeof data.kind === "string" ? data.kind : null;
+    } catch {
+      return null;
+    }
   }
 
   async selfId(): Promise<string> {

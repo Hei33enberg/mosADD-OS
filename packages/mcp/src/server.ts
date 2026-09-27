@@ -8,7 +8,12 @@ import { autoBeatFromActivity } from "./tools/presence.js";
 import { PKG_VERSION } from "./version.js";
 import { SupabaseDmProvider } from "./providers/supabase-dm.js";
 import { SupabaseVoiceProvider } from "./providers/supabase-voice.js";
-import { InMemoryMdmKeyStore, SecretMdmKeyStore, ensureOwnBundlePublished } from "./crypto/mdm-session.js";
+import {
+  InMemoryMdmKeyStore,
+  SecretMdmKeyStore,
+  bundlePolicyForKind,
+  ensureOwnBundlePublished,
+} from "./crypto/mdm-session.js";
 import type { MosaddServerOptions, MosaddToolContext, ProviderRegistry } from "./types.js";
 
 /**
@@ -35,6 +40,10 @@ export function defaultProviders(
  * a new server per HTTP request, and with a random in-memory keystore every mDM_send was sealed
  * by an identity that lived for one request. Without any secret (BYOK JWT only) there is nothing
  * stable to derive from, so the old per-process random keystore remains.
+ *
+ * ⛔ STABLE PER KEY, NOT PER IDENTITY. One identity holds many keys (each OAuth connector mints
+ * its own), so this seed never publishes on its own authority: agent lines send in the clear and
+ * people keep the app's bundle (bundlePolicyForKind in crypto/mdm-session.ts).
  */
 function defaultKeyStore(secret?: string) {
   const s = (secret ?? "").trim();
@@ -69,15 +78,15 @@ export function createMosaddServer(options: MosaddServerOptions = {}) {
   // etc.) and never blocks startup. Uses the SAME keystore the tools use, so the
   // published identity matches what mDM_send/encryptForPeer will use this process.
   //
-  // ⛔ ENSURE, NOT BLIND PUBLISH (27.09.2026): an agent runtime started on a PERSON's key must not
-  // overwrite that person's app-anchored bundle — that silently breaks every DM to them. Same
-  // policy as mDM_send (ensureOwnBundlePublished): empty → publish; agent line → replace stale;
-  // human with a different bundle → leave it alone.
+  // ⛔ ENSURE, NOT BLIND PUBLISH (27.09.2026, poprawka po weryfikacji): the policy is
+  // bundlePolicyForKind — the SAME one mDM_send uses. Agent line: writes NOTHING (it sends in the
+  // clear, rozkaz Krola 20.09; a per-key bundle from each of its keys only made the directory flap).
+  // Human: writes NOTHING (the app owns that bundle). Unknown kind (e.g. radio): empty -> publish.
   if (options.autoPublishKeys) {
     void (async () => {
       const selfId = await providers.dm.selfId();
       const kind = await (providers.dm as { selfKind?: () => Promise<string | null> }).selfKind?.();
-      return ensureOwnBundlePublished(providers.keys, providers.dm, selfId, { mayReplaceForeign: kind === "agent" });
+      return ensureOwnBundlePublished(providers.keys, providers.dm, selfId, bundlePolicyForKind(kind, { explicit: false }));
     })()
       .then((state) => ctx.log("debug", "auto-ensure mDM prekeys", { state }))
       .catch((err) => ctx.log("debug", "auto-publish mDM prekeys skipped", { error: String(err) }));
