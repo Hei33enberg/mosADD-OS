@@ -47,9 +47,14 @@ Node.js 18 or newer is required. Add `--dry-run` to see the changes without writ
 pick hosts.
 
 ```bash
-# from a clone of this repository (the pinned curl | sh and PowerShell one-liners are in docs/hosts.md)
-node packages/m0s/m0s.mjs install
+curl -fsSL https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/303fa304f612e67c222d9b48e613827e73d41f53/install/install.sh | sh
 ```
+
+```powershell
+irm https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/303fa304f612e67c222d9b48e613827e73d41f53/install/install.ps1 | iex
+```
+
+The links are pinned to a commit, never to a branch. From a clone: `node packages/m0s/m0s.mjs install`.
 
 ## What is MIT, what is ours
 

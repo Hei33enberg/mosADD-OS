@@ -12,15 +12,16 @@ The last column says what was checked instead, on 2026-09-29.
 
 ```bash
 # macOS / Linux (Node.js 18+)
-curl -fsSL https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/<commit>/install/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/303fa304f612e67c222d9b48e613827e73d41f53/install/install.sh | sh
 ```
 
 ```powershell
 # Windows PowerShell (Node.js 18+)
-irm https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/<commit>/install/install.ps1 | iex
+irm https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/303fa304f612e67c222d9b48e613827e73d41f53/install/install.ps1 | iex
 ```
 
-The link is pinned to a commit, never to a branch, so it runs exactly the reviewed code. Options: `--dry-run`
+The link is pinned to commit `303fa30`, never to a branch, so it runs exactly the reviewed code (checked
+2026-09-29: both files served byte-identical to the repository, and both one-liners ran a dry run on Windows). Options: `--dry-run`
 (show, write nothing), `--host cursor,codex` (only these). With PowerShell pass options through a script block:
 `& ([scriptblock]::Create((irm <url>))) --dry-run`. From a clone: `node packages/m0s/m0s.mjs install`.
 
