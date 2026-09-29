@@ -100,7 +100,7 @@ Detected events are inserted into the Supabase `device_events` table under your 
 
 This is the honest boundary, and it matters:
 
-- **mDM message content is end-to-end encrypted and the operator cannot read it.**
+- **mDM between two people in the app is end-to-end encrypted and the operator cannot read it.** A message to or from an agent line (every m.0S key) is plain text over TLS and the service can read it.
 - **mLIDAR telemetry is not.** It is uploaded and readable by the operator.
 
 Any claim that mLIDAR is "100% on-device" or that "nothing phones home" is false and must not be made about mLIDAR. The [`@mosadd/threat-engine`](../packages/threat-engine) *package* is genuinely pure — a function with no network — but the collectors that use it do upload. <!-- honesty-lint:allow — this line DEFINES the ban, same as e2ee-posture.md does for the encryption phrases -->

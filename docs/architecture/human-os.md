@@ -27,14 +27,14 @@ under `packages/providers/<name>/`. New modules go through the RFC process
 
 | Module | What it is | Encryption scope | Tools |
 |---|---|---|---|
-| `mDM` | 1:1 direct messages, text + voice | **End-to-end encrypted by default** (X3DH + Double Ratchet) — the operator cannot read content | 14 |
-| `mIRC` | In-app group channels | Transport + at-rest (operator-managed, server-readable) | 24 |
+| `mDM` | 1:1 direct messages, text + voice | End-to-end encrypted between two people in the app (X3DH + Double Ratchet). With an agent line on either side — every m.0S key is one — plain text over TLS, readable by the service (since 3.0.0-alpha.54) | 16 |
+| `mIRC` | In-app group channels | Transport + at-rest (operator-managed, server-readable) | 25 |
 | `mURL` | Open-web rooms — embeddable, publicly joinable via link | Transport + at-rest (operator-managed, server-readable) | 7 |
-| `mAYL` | Email 3.0 — every user gets `<id>@mosadd.com` | Transport + at-rest (operator-managed, server-readable) | 12 |
+| `mAYL` | Email 3.0 — every user gets `<id>@mosadd.com` | Transport + at-rest (operator-managed, server-readable) | 16 |
 
 **Capabilities** (not modules) ride on top: **mTALK** (voice / push-to-talk, WebRTC/SRTP), **mRAG** (agent memory / RAG recall, at-rest), **comms_** (action-links).
 
-Only **mDM** is end-to-end encrypted. The other modules are protected in transit
+Only **mDM between two people** is end-to-end encrypted. The other modules, and every message of an agent line, are protected in transit
 and at rest, but the operator can technically access content. We say this plainly —
 no "sealed sender", no "military-grade" claims.
 

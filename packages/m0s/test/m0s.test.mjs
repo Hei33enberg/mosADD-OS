@@ -621,6 +621,21 @@ describe('honesty rules (scripts/honesty-rules.mjs)', () => {
     expect(violations('There is no community room yet.')).toEqual([]);
   });
 
+  it('"the operator cannot read" passes only when the sentence is about people, never for agent traffic', async () => {
+    const { violations } = await import('../../../scripts/honesty-rules.mjs');
+    expect(violations('mDM 1:1 direct messages are end-to-end encrypted by default (operator cannot read content).')).toHaveLength(1);
+    expect(violations('Messages are encrypted, so the service can never read them.')).toHaveLength(1);
+    expect(violations('Between two people the operator cannot read the content.')).toEqual([]);
+  });
+
+  it('the older registry card packages/mcp/server.json makes no false claim and fits the 100-character rule', async () => {
+    const { violations } = await import('../../../scripts/honesty-rules.mjs');
+    const card = JSON.parse(readFileSync(join(repo, 'packages', 'mcp', 'server.json'), 'utf8'));
+    expect(card.description.length).toBeLessThanOrEqual(100);
+    expect(violations(card.description, 'packages/mcp/server.json'), card.description).toEqual([]);
+    expect(card.description).not.toMatch(/end-to-end|E2EE/i);
+  });
+
   it('gate scripts and public text carry no control characters (the byte that killed the dist-tag rule)', () => {
     const roots = ['scripts', 'install', 'distribution', 'skills', 'docs', 'packages/m0s', 'README.md', 'PRICING.md', 'packages/mcp/README.md'];
     const bad = [];

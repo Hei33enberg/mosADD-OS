@@ -5,6 +5,7 @@
 // so a rule that can never match (the 29.09 case: a stray backspace byte, 0x08, sat inside the
 // `@mosadd/mcp@(alpha|latest)` pattern and the rule stayed silent for everything) turns the suite red.
 // `skip` (optional) = files the rule does not apply to, e.g. changelogs that record what was true back then.
+// `unless` (optional) = a line matching it is not a claim of this rule (it states the narrower, true case).
 //
 // Allowlist: a line containing "honesty-lint:allow" is skipped (for docs that discuss the banned phrase itself).
 
@@ -56,6 +57,14 @@ export const BANNED = [
     why: `mDM_send is plain text whenever an agent line is on either side (alpha.54/55); only people-to-people mDM in the app is E2EE`,
     sample: '`mDM_send` is end-to-end encrypted by default.',
   },
+  {
+    // 30.09: "the operator cannot read" stood unqualified in packages/mcp/server.json, docs/threat-monitoring.md and
+    // docs/architecture/human-os.md after the 29.09 pass. True only between two people; agent lines are readable.
+    re: /\b(operator|server|service)\b[^.]{0,20}\b(cannot|can ?not|can't|never) read/i,
+    unless: /\b(two people|between people|people|person|human)\b/i,
+    why: `"the operator cannot read" holds only for mDM between two people in the app; every agent line (every m.0S key) is readable by the service`,
+    sample: 'mDM direct messages are end-to-end encrypted; the operator cannot read content.',
+  },
 ];
 
 /**
@@ -74,6 +83,7 @@ export function violations(line, file = '') {
   const out = [];
   for (const rule of BANNED) {
     if (rule.skip && rule.skip.test(file)) continue;
+    if (rule.unless && rule.unless.test(line)) continue; // e.g. the sentence names people, not agent lines
     const m = rule.re.exec(line);
     if (!m || isNegated(line, m.index)) continue;
     out.push({ rule, index: m.index });
