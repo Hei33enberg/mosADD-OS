@@ -18,4 +18,4 @@ they ship — see [docs/roadmap.md](../../docs/roadmap.md).
 
 ## License
 
-[Apache-2.0](../../LICENSE).
+[MIT](../../LICENSE).

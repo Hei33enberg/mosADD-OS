@@ -1,8 +1,11 @@
 {
   "mcpServers": {
     "mosadd": {
-      "command": "npx",
-      "args": ["-y", "@mosadd/mcp@alpha"]
+      "type": "http",
+      "url": "https://mcp.mosadd.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer ${MOSADD_KEY}"
+      }
     }
   }
 }

@@ -8,7 +8,7 @@ The Sovereign holds final authority on strategic direction, trademark, licence p
 
 | Name | GitHub | Areas |
 |---|---|---|
-| Joseph Matthew Damian White | [@Hei33enberg](https://github.com/Hei33enberg) | founder · strategic direction · trademark · commercial hub roadmap |
+| Joseph Matthew Damian White | [@Hei33enberg](https://github.com/Hei33enberg) | founder · strategic direction · trademark · hosted service |
 
 Succession and absorption-proofing are written down in [REALM.md](./REALM.md#succession--absorption-proofing).
 
@@ -24,7 +24,6 @@ Maintainers can merge PRs in their area, request reviews, and advise on RFCs (RF
 | *(open)* | | `@mosadd/providers` — provider contracts + future adapters | seeking |
 | *(open)* | | `@mosadd/crypto` — E2E primitives, X3DH, Double Ratchet | seeking |
 | *(open)* | | `@mosadd/threat-engine` — radar event taxonomy | seeking |
-| *(open)* | | `apps/dev` — developer portal (folded into mosadd.com) | seeking |
 | *(open)* | | docs · RFCs · governance | seeking |
 
 We're seeking maintainers. If you want to help maintain one of these areas after a few merged contributions, open an issue tagged `maintainer-track` and we'll talk.
@@ -39,7 +38,7 @@ Reviewers can approve PRs in their area but cannot merge unilaterally. Promotion
 
 1. Land 5+ substantive PRs in one area
 2. Show good judgement in code review (comments on others' PRs)
-3. Be active in the [community channels](./README.md#contributing) — GitHub Discussions, the mosADD community room
+3. Be active in the [community channels](./README.md#contributing) — GitHub Discussions and Issues
 4. Open an issue tagged `maintainer-track` with your case
 5. Nominated by an existing maintainer and ratified by the Sovereign (see [GOVERNANCE.md](./GOVERNANCE.md))
 
@@ -59,5 +58,5 @@ Open hours when maintainers are available for sync conversation:
 
 ## Contact
 
-- Public: GitHub Discussions, Issues, the mosADD community room (see [README → Contributing](./README.md#contributing))
+- Public: GitHub Discussions and Issues
 - Private (legal, security, conflicts): `conduct@mosadd.com` · `security@mosadd.com`

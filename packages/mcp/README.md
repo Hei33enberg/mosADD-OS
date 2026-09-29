@@ -134,7 +134,7 @@ For PTT / CALL (real-time media), the architecture separates **control plane** (
 | `MOSADD_LIVEKIT_API_SECRET` | LiveKit API secret | no |
 | `MOSADD_API_KEY` | Hub API key (Phase 2 hosted mode) | no |
 | `MOSADD_HUB_URL` | Override hub url | no |
-| `MOSADD_MODE` | `local` / `cloud` / `self-host` | no (auto-detected) |
+| `MOSADD_MODE` | `local` / `cloud` (the code accepts one more legacy value; there is no self-hosted service) | no (auto-detected) |
 | `MOSADD_LOG_LEVEL` | `debug` / `info` / `warn` / `error` | no (default `info`) |
 
 Missing optional keys fail closed — that channel is simply absent from `comms_capabilities`.
@@ -143,8 +143,9 @@ Missing optional keys fail closed — that channel is simply absent from `comms_
 
 - **Mint a key + docs** — [mosadd.com/keys](https://mosadd.com/keys) · [mosadd.com/docs](https://mosadd.com/docs) · [mosadd.com/mcp](https://mosadd.com/mcp)
 - **Hosted gateway** — `https://mcp.mosadd.com/mcp` (BYOK key broker, zero-install for remote agents)
-- **Source + self-host** — [github.com/Hei33enberg/mosADD-OS](https://github.com/Hei33enberg/mosADD-OS) (Apache-2.0)
+- **Source** — [github.com/Hei33enberg/mosADD-OS](https://github.com/Hei33enberg/mosADD-OS) (MIT)
+- **m.0S endpoint** — `https://mcp.mosadd.dev/mcp` with a key from [app.mosadd.dev](https://app.mosadd.dev); see the [repo README](https://github.com/Hei33enberg/mosADD-OS#start-in-5-minutes)
 
 ## License
 
-Apache-2.0. See repo [LICENSE](https://github.com/Hei33enberg/mosadd-os/blob/main/LICENSE) and [NOTICE](https://github.com/Hei33enberg/mosadd-os/blob/main/NOTICE).
+MIT from 2026-09-29 (earlier releases: Apache-2.0). See repo [LICENSE](https://github.com/Hei33enberg/mosADD-OS/blob/main/LICENSE) and [NOTICE](https://github.com/Hei33enberg/mosADD-OS/blob/main/NOTICE).

@@ -1,0 +1,51 @@
+{
+  "name": "@mosadd/m0s",
+  "version": "0.1.0",
+  "mcpName": "dev.mosadd/m0s",
+  "description": "m.0S installer and stdio shim: puts the m.0S MCP endpoint (one key for messages, memory and identity) into Claude Code, Claude Desktop, Codex, Cursor, Windsurf, Hermes and OpenClaw. Zero dependencies.",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/Hei33enberg/mosADD-OS/tree/main/packages/m0s",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hei33enberg/mosADD-OS.git",
+    "directory": "packages/m0s"
+  },
+  "bin": {
+    "m0s": "./bin/m0s.mjs",
+    "m0s-mcp": "./bin/m0s-mcp.mjs"
+  },
+  "exports": {
+    ".": "./m0s.mjs"
+  },
+  "files": [
+    "m0s.mjs",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  },
+  "keywords": [
+    "m0s",
+    "mosadd",
+    "mcp",
+    "model-context-protocol",
+    "claude-code",
+    "codex",
+    "cursor",
+    "windsurf",
+    "hermes",
+    "openclaw"
+  ]
+}

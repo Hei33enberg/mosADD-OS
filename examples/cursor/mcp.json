@@ -1,12 +1,9 @@
 {
   "mcpServers": {
     "mosadd": {
-      "command": "npx",
-      "args": ["-y", "@mosadd/mcp@alpha"],
-      "env": {
-        "MOSADD_SUPABASE_URL": "https://<your-project>.supabase.co",
-        "MOSADD_SUPABASE_ANON_KEY": "<your supabase anon key>",
-        "MOSADD_USER_JWT": "<your session JWT — see README>"
+      "url": "https://mcp.mosadd.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:MOSADD_KEY}"
       }
     }
   }

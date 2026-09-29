@@ -30,35 +30,34 @@ const SURFACES: { file: string; re: RegExp; what: string }[] = [
   // 2026-07-29 — the gate guarded four internal surfaces and left the public face of the project
   // unguarded, which is the wrong way round. The badge is checked because a wrong number in a
   // green badge is the most confident-looking lie a repo can tell.
-  { file: "README.md", re: /badge\/tools-(\d+)%20live/, what: "README badge" },
-  { file: "README.md", re: /starts an MCP server with \*\*(\d+) tools\*\*/, what: "README intro line" },
-  { file: "README.md", re: /\*\*(\d+) callable tools across/, what: "README module breakdown" },
-  { file: "README.md", re: /npx -y @mosadd\/mcp@alpha\s+#\s*(\d+) tools/, what: "README quickstart comment" },
+  // README rewritten 2026-09-29 (m.0S truth pass): the badge, the @alpha quickstart line and the long module
+  // table are gone; the two sentences that carry the total are pinned instead.
+  { file: "README.md", re: /`https:\/\/mcp\.mosadd\.dev\/mcp`, with \*\*(\d+) tools\*\*/, what: "README intro line" },
+  { file: "README.md", re: /^(\d+) tools in `@mosadd\/mcp`/m, what: "README tools section" },
   { file: "packages/mcp/server.json", re: /(\d+)\s+MCP tools/, what: "MCP registry manifest description" },
   // The npm-visible description — what `npm view @mosadd/mcp description` and the npmjs.com
   // page show. Added 2026-07-30 (LINEAR-4813): it already said 73 but nothing enforced it.
   { file: "packages/mcp/package.json", re: /—\s*(\d+)\s+tools\s+—/, what: "package.json description" },
-  { file: "apps/realm/index.html", re: /#\s*(\d+)\s+tools/, what: "mosadd.dev Realm hero" },
-  { file: "apps/dev/app/docs/mcp/page.tsx", re: /Total surface today:[\s\S]*?(\d+)\s+tools/, what: "dev docs /docs/mcp" },
-  { file: "apps/dev/app/opengraph-image.tsx", re: /(\d+)\s+MCP tools/, what: "dev OG image" },
   // Added 2026-08-01 (content-truth audit, LINEAR-5057 E-17): six surfaces the gate did
   // not pin had silently drifted to 69/66/71/22/4 while TOOL_COUNT was 73. Every public
   // file that hand-types a total is now listed here — if you add a surface with a
   // number, add it to this array in the same PR.
-  { file: "docs/OWNER-GUIDE.md", re: /\*\*(\d+) mosADD tools\*\*/, what: "owner guide" },
   { file: "packages/ai/README.md", re: /the (\d+) mosADD toolkit tools/, what: "@mosadd/ai README" },
   { file: "docs/architecture/human-os.md", re: /exposing \*\*(\d+) tools\*\*/, what: "human-os architecture doc" },
   { file: "examples/README.md", re: /\*\*(\d+) live MCP tools across/, what: "examples README header" },
   { file: "packages/mcp/README.md", re: /One key, one server, (\d+) tools/, what: "@mosadd/mcp README intro" },
   { file: "packages/mcp/README.md", re: /\*\*(\d+) callable tools\*\* in total/, what: "@mosadd/mcp README breakdown" },
-  { file: "apps/dev/public/llms.txt", re: /(\d+)\s+(?:MCP\s+)?tools/, what: "llms.txt (read by AI crawlers)" },
   // Added 2026-09-04 (kanon 1.1 review, LINEAR-5870): three more public files hand-typed a total
   // and had sat at 77 through two bumps (82, 84) because nothing pinned them. Both realm llms.txt
   // lines are pinned separately — a single /(\d+) tools/ would only ever see the first.
-  { file: "apps/realm/llms.txt", re: /@mosadd\/mcp — (\d+) tools, Apache-2\.0/, what: "mosadd.dev Realm llms.txt intro" },
-  { file: "apps/realm/llms.txt", re: /## Toolkit \(@mosadd\/mcp — (\d+) tools\)/, what: "mosadd.dev Realm llms.txt toolkit heading" },
-  { file: "docs/registry-submissions/smithery.md", re: /mAYL, (\d+) MCP tools, one server/, what: "Smithery listing tagline" },
-  { file: "docs/registry-submissions/smithery.md", re: /\*\*(\d+) MCP tools — 4 modules/, what: "Smithery long description" },
+  // Added 2026-09-29 (m.0S distribution): the host guide, the skills and the prepared registry texts.
+  // apps/dev, apps/realm, docs/OWNER-GUIDE.md and docs/registry-submissions/ were removed that day.
+  { file: "docs/hosts.md", re: /`tools\/list` → (\d+) tools/, what: "host guide shim check" },
+  { file: "skills/m0s-quickstart/SKILL.md", re: /`https:\/\/mcp\.mosadd\.dev\/mcp`, with (\d+) tools/, what: "m0s-quickstart skill" },
+  { file: "distribution/clawhub/m0s/SKILL.md", re: /`https:\/\/mcp\.mosadd\.dev\/mcp`, with (\d+)\s+tools/, what: "ClawHub skill" },
+  { file: "distribution/pulsemcp.md", re: /hosted MCP endpoint with (\d+) tools/, what: "PulseMCP listing" },
+  { file: "distribution/mcp-so.md", re: /Hosted MCP endpoint with (\d+) tools/, what: "mcp.so listing" },
+  { file: "distribution/awesome-mcp-servers.md", re: /endpoint with (\d+) tools/, what: "awesome-mcp-servers entry" },
 ];
 
 describe("tool-count consistency (anti-drift gate)", () => {
@@ -147,22 +146,10 @@ const MODULE_SURFACES: { file: string; what: string; re: (label: string) => RegE
     re: (label) => new RegExp(`\\*\\*${label}\\*\\*\\s*\\((\\d+)\\)`),
   },
   {
-    file: "apps/realm/llms.txt",
-    what: "mosadd.dev Realm llms.txt per-module list",
-    // "- mDM (16): E2EE 1:1 messaging …" — one bullet per module, mTALK and mRAG included.
-    re: (label) => new RegExp(`^- ${label} \\((\\d+)\\):`, "m"),
-  },
-  {
-    file: "docs/registry-submissions/smithery.md",
-    what: "Smithery long-description per-module list",
-    // "- mDM (16 tools) — …"
-    re: (label) => new RegExp(`^- ${label} \\((\\d+) tools`, "m"),
-  },
-  {
-    file: "apps/dev/public/llms.txt",
-    what: "dev llms.txt per-module list",
-    // "- mDM — 1:1 direct messages … (16 tools)" / "mRAG — agent memory … (8 tools);"
-    re: (label) => new RegExp(`\\b${label} — [^\\n]*?\\((\\d+) tools\\)`),
+    file: "README.md",
+    what: "README tools line",
+    // "mDM 16 · mIRC 25 · mURL 7 · mAYL 16 · mTALK 6 · mRAG 8 · comms 5 · threat 2"
+    re: (label) => new RegExp(`\\b${label} (\\d+) ·`),
   },
 ];
 

@@ -113,4 +113,4 @@ This adapter pack stays minimal on purpose:
 
 ## License
 
-Apache-2.0. See [LICENSE](../../LICENSE).
+MIT. See [LICENSE](../../LICENSE).

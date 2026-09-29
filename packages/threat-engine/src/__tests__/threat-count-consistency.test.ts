@@ -30,11 +30,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "../../../.."); // packages/threat-engine/src/__tests__ -> repo root
 
 const SURFACES: { file: string; re: RegExp; what: string }[] = [
-  {
-    file: "README.md",
-    re: /badge\/threat%20events-(\d+)/,
-    what: "root README badge",
-  },
+  // The root README badge was removed on 2026-09-29 (m.0S truth pass); the sentence below carries the count.
   {
     file: "README.md",
     re: /canonical taxonomy of \*\*(\d+) threat events\*\*/,

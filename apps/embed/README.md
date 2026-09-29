@@ -4,8 +4,10 @@ Drop-in chat embed. Six lines of HTML on your blog / Webflow / WordPress / news 
 
 ## Quickstart (for a creator)
 
-1. Sign in at https://mosadd.dev/hub
-2. Create an embed key — set the channel name + the domain(s) you'll embed on.
+> Status (2026-09-29): the widget script is served at `https://embed.mosadd.com/v1.js`; issuing embed keys through
+> `comms_embed_create` has not been verified end to end.
+
+1. Create an embed key with the `comms_embed_create` MCP tool — set the channel name + the domain(s) you'll embed on.
 3. Paste these 6 lines into your site:
 
 ```html
@@ -40,13 +42,7 @@ When a visitor opens the page, the widget POSTs the publishable key + their chan
 
 ## Pricing
 
-See [mosadd.dev/pricing](https://mosadd.dev/pricing). The unit is **MAT** — Monthly Active Talkers (unique senders per month). Viewers are free, messages are not metered. Free tier covers 1,000 MAT — enough for a small community blog.
-
-Self-host the whole thing for $0 forever (the Worker + this bundle are Apache-2.0).
-
-## Skin Shop
-
-Browse + apply skins at [mosadd.dev/skins](https://mosadd.dev/skins). Live editor at [mosadd.dev/skins/editor](https://mosadd.dev/skins/editor). Contribute a skin via PR to [`mosadd-os/skins/`](https://github.com/Hei33enberg/mosadd-os/tree/main/skins).
+Prepaid per use, like the rest of m.0S: [PRICING.md](../../PRICING.md). There is no self-hosted version.
 
 ## Local dev
 
@@ -64,4 +60,4 @@ CDN target: `https://embed.mosadd.com/v1.js`. Served from Vercel via the same `m
 
 ## License
 
-Apache-2.0. Bundle source = `src/`. Default skin = `src/skins/default.css`.
+MIT. Bundle source = `src/`. Default skin = `src/skins/default.css`.

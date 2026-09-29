@@ -1,12 +1,8 @@
-<p align="center"><img src="https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/main/apps/realm/icon-512.png" width="120" alt="mosADD" /></p>
+<p align="center"><img src=".github/assets/icon-512.png" width="120" alt="m.0S" /></p>
 
 # The mosADD™ Manifesto
 
 > **They're apps. We're the layer.**
-
-## What's in a name
-
-**mosADD™ = Hu(m)an OS to ADD.** The *m* is the human. The *OS* is the operating system of communication. The *ADD* is what you do with it: you add it — to a person, to an agent, to a robot, to a website, to a fleet. mosADD is not another place you go to talk. It is the human operating system you attach to everything that needs to talk.
 
 ## Why we exist
 
@@ -20,13 +16,13 @@ We think the moment demands the opposite: communication as **infrastructure** �
 Telegram, Slack, Gmail, and Discord are apps. mosADD is the layer underneath them — semantic, MCP-native primitives any human, agent, or robot can plug into. An agent is a contact, not a bot. A robot is a contact, not an endpoint. A human is pulled in the instant a machine needs a decision, through the `[need-human]` loop.
 
 **2. Encrypted where it counts, honest where it isn't.**
-mDM 1:1 messages are end-to-end encrypted by default (X3DH + Double Ratchet) — the operator cannot read message content. mIRC channels, mURL rooms, and mAYL mail are transport-encrypted in flight and at rest but **server-readable by design**; the mosadd.com app additionally group-key-encrypts **private and password channel text** on supported clients (the toolkit posts server-readable today); **all channel voice is server-relayed** (never end-to-end). We label encryption per channel, in the tools themselves. Our differentiator is not that everything is encrypted. It is that **we never lie about what is**. The full posture lives in this repo: [docs/security/e2ee-posture.md](./docs/security/e2ee-posture.md). Check us.
+1:1 messages between two people in the mosADD app are end-to-end encrypted (X3DH + Double Ratchet) — the operator cannot read their content. Traffic of agent lines, including every call made with an m.0S key, is readable by the service: metering, memory and audit need it. Open mIRC channels, mURL rooms and mAYL mail are transport-encrypted but **server-readable by design**; private channels of agent lines are readable too, because the service holds the line keys; **all channel voice is server-relayed** (never end-to-end). We label encryption per channel, in the tools themselves. Our differentiator is not that everything is encrypted. It is that **we never lie about what is**. The full posture lives in this repo: [docs/security/e2ee-posture.md](./docs/security/e2ee-posture.md). Check us.
 
 **3. We will not build scanning backdoors.**
-Chat Control and its siblings — in the EU, the US, or anywhere else — ask operators to scan what people say before it is sealed. We refuse. If a law requires us to scan or weaken mDM's end-to-end encryption, we will withdraw from that market before we break the seal. We designed mDM so that we hold no message content to hand over. We do not claim to be beyond the reach of any law — no one is — but we can promise what we control: **we will not build the scanner.**
+Chat Control and its siblings — in the EU, the US, or anywhere else — ask operators to scan what people say before it is sealed. We refuse. If a law requires us to scan or weaken mDM's end-to-end encryption, we will withdraw from that market before we break the seal. We designed person-to-person mDM so that we hold no message content to hand over. We do not claim to be beyond the reach of any law — no one is — but we can promise what we control: **we will not build the scanner.**
 
 **4. Grassroots, self-funded, sovereign.**
-There are no billions from the US or China behind this project. No venture capital, no private equity, no public markets — ever. mosADD is funded by its own commercial hub and built by its community, headquartered in Plan-les-Ouates, Switzerland. Money that can outvote the mission is money we do not take.
+There are no billions from the US or China behind this project. No venture capital, no private equity, no public markets — ever. m.0S is funded by the per-use payments for its hosted service. Money that can outvote the mission is money we do not take.
 
 **5. A kingdom, honestly.**
 mosADD is governed by one founder who holds the vision and the final word — the way Satoshi set Bitcoin's direction, the way a BDFL steers a project. The community proposes, builds, and is credited in the open ledger; the crown decides. We say this openly because pretending a project this young is a democracy would be the dishonest version. The rules are written down: [GOVERNANCE.md](./GOVERNANCE.md) · [REALM.md](./REALM.md).
@@ -37,17 +33,17 @@ Centralized infrastructure is a single point of pressure. Our direction is decen
 ## What we will never do
 
 - Sell or mine your message content for advertising.
-- Claim blanket encryption. Only mDM 1:1 is end-to-end encrypted; private/password-channel text is group-key encrypted on supported clients (the toolkit posts server-readable today) — and we label it per channel.
+- Claim blanket encryption. Only person-to-person mDM is end-to-end encrypted — and we label it per channel.
 - Build content-scanning into mDM — under any law, in any market.
 - Take investor money that can outvote the mission.
 - Claim decentralization we have not shipped.
 
 ## What we ask of you
 
-Don't believe us — **verify us**. The code is here, Apache-2.0 with a patent grant. Run it, self-host it, read the posture doc, and check every claim on this page against the source. Then, if it holds: build with us. Every contribution is credited in the open ledger, and the path from first pull request to a seat at the table is written down in [REALM.md](./REALM.md).
+Don't believe us — **verify us**. The client code is here under MIT. The service is ours and there is no self-hosted version, so read the posture doc and check every claim on this page against the code you can see. Then, if it holds: build with us. Every contribution is credited in the open ledger, and the path from first pull request to a seat at the table is written down in [REALM.md](./REALM.md).
 
 ---
 
 **Trust no trace.**
 
-— Hei33enberg · Plan-les-Ouates, Switzerland · 2026
+— Hei33enberg · 2026

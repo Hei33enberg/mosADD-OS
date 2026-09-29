@@ -4,10 +4,8 @@ Index of architecture documents.
 
 | Doc | Status | Description |
 |---|---|---|
-| [phase-2-hub.md](phase-2-hub.md) | Draft | Commercial hub design — 5 responsibilities, trust boundaries, pricing tiers |
-| [phase-3-shells.md](phase-3-shells.md) | Draft | App shells design — apps/web rebuild + PWA + Android + iOS + Electron + macOS (with global PTT keybind) |
+| [phase-2-hub.md](phase-2-hub.md) | **Live** | What the hosted service (`mcp.mosadd.dev`) guarantees to clients — endpoint, auth, key kinds, metering |
 | control-data-plane.md | TODO | PTT/CALL: agent ↔ MCP control + client ↔ WebRTC data |
-| fork-strategy.md | TODO | LiveKit fork + divergence discipline |
 | identity-recovery.md | Descoped | Anonymous identity + passphrase/seed recovery (descoped — see [roadmap](../roadmap.md)) |
 | anti-abuse.md | TODO | PoW + rate limits + radar scoring |
 | [../threat-monitoring.md](../threat-monitoring.md) | **Live** | mLIDAR end to end — collectors, what leaves the device, signal-only stance, the honest Pegasus section, and what fires today |

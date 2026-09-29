@@ -3,13 +3,14 @@
  * skill-lint + honesty-lint — the drift gate.
  *
  * Checks (all hard failures):
- *  1. Every skills/<dir>/SKILL.md has YAML frontmatter with `name` + `description`,
- *     and `name` matches `mosadd-<dir>`.
+ *  1. Every skills/<dir>/SKILL.md follows the agentskills.io spec: YAML frontmatter with
+ *     `name` + `description`, `name` equal to the directory name, lowercase letters, digits
+ *     and single hyphens, at most 64 characters; `description` at most 1024 characters.
  *  2. skills/ dirs ↔ the root `.claude-plugin/marketplace.json` plugin entry's `skills[]`
- *     are in sync both ways (except `coordinate`, which is intentionally distributed with
+ *     are in sync both ways (except `mosadd-coordinate`, which is intentionally distributed with
  *     the agent runtime), and `skills/.claude-plugin/plugin.json` exists.
- *  3. Version triple-check: README badge/heading == skills/.claude-plugin/plugin.json ==
- *     packages/mcp/package.json (packages/mcp/server.json checked too).
+ *  3. Version check: every 3.0.0-alpha.N in README == skills/.claude-plugin/plugin.json ==
+ *     packages/mcp/package.json (packages/mcp/server.json and distribution/server.json too).
  *  4. Honesty-lint: banned claim phrases must not appear in prose files, and docs may
  *     not reference community surfaces that don't exist (community/surfaces.json).
  *
@@ -46,9 +47,12 @@ for (const dir of skillDirs) {
   if (!name) fail(`skills/${dir}/SKILL.md: frontmatter missing 'name'`);
   if (!desc || desc.trim().length < 20)
     fail(`skills/${dir}/SKILL.md: frontmatter missing or too-short 'description'`);
-  const expected = dir === "coordinate" ? "mosadd-coordinate" : `mosadd-${dir}`;
-  if (name && name !== expected)
-    fail(`skills/${dir}/SKILL.md: name '${name}' != expected '${expected}'`);
+  if (desc && desc.trim().length > 1024)
+    fail(`skills/${dir}/SKILL.md: description is ${desc.trim().length} chars (agentskills.io max 1024)`);
+  // agentskills.io: name == directory, [a-z0-9-], no leading/trailing/double hyphen, <= 64 chars
+  if (name && name !== dir) fail(`skills/${dir}/SKILL.md: name '${name}' != directory '${dir}' (agentskills.io)`);
+  if (name && (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(name) || name.length > 64))
+    fail(`skills/${dir}/SKILL.md: name '${name}' breaks the agentskills.io name rules`);
   if (name) skillNames.set(dir, name);
 }
 
@@ -76,7 +80,7 @@ if (pluginEntry) {
     (pluginEntry.skills ?? []).map((s) => String(s).replace(/^\.\//, ""))
   );
   for (const [dir] of skillNames) {
-    if (dir === "coordinate") continue; // distributed with the agent runtime, by design
+    if (dir === "mosadd-coordinate") continue; // distributed with the agent runtime, by design
     if (!listedDirs.has(dir))
       fail(`.claude-plugin/marketplace.json: skill dir '${dir}' (skills/${dir}/) not listed in plugins[].skills`);
   }
@@ -85,8 +89,8 @@ if (pluginEntry) {
     if (!existsSync(join(ROOT, rel, "SKILL.md")))
       fail(`.claude-plugin/marketplace.json: plugins[].skills entry '${s}' has no ${rel}/SKILL.md`);
   }
-  if (listedDirs.has("coordinate"))
-    fail(`.claude-plugin/marketplace.json: 'coordinate' must NOT be in the bundle (agent-runtime distribution)`);
+  if (listedDirs.has("mosadd-coordinate"))
+    fail(`.claude-plugin/marketplace.json: 'mosadd-coordinate' must NOT be in the bundle (agent-runtime distribution)`);
 }
 let pluginManifest;
 try {
@@ -124,6 +128,14 @@ try {
       fail(`packages/mcp/server.json packages[].version '${pkg.version}' != '${mcpVersion}'`);
 } catch (e) {
   fail(`packages/mcp/server.json: ${e.message}`);
+}
+// distribution/server.json (the MCP registry entry for the hub) carries the version the hub reports.
+try {
+  const dist = JSON.parse(read("distribution/server.json"));
+  if (dist.version !== mcpVersion)
+    fail(`distribution/server.json version '${dist.version}' != packages/mcp '${mcpVersion}'`);
+} catch (e) {
+  fail(`distribution/server.json: ${e.message}`);
 }
 // server.ts hardcodes the MCP serverInfo version — keep it in lockstep too.
 try {
@@ -172,6 +184,19 @@ const BANNED = [
   [/zero cloud custody/i, `"zero cloud custody" — false for mLIDAR telemetry`],
   [/24\/7[^.]{0,25}(monitor|scan|watch|protect)/i, `"24/7 monitoring" — mLIDAR is a 60-second poll, only while the desktop app is open`],
   [/iron ?dome for your phone/i, `"iron dome for your phone" — there is no phone spyware monitor; desktop + Android posture only`],
+
+  // ── m.0S truth pass (2026-09-29, PRZEORANIE 04 §4, items 2-7, 10, 13-15) ────────────────────
+  // Each of these sentences was published here and was false when measured on 2026-09-28.
+  [/self[- ]?host/i, `self-host claim — there is no self-hosted service; the client is MIT, the service is ours`],
+  [/hub\.mosadd\.com/i, `hub.mosadd.com — never launched (404); the panel is app.mosadd.dev`],
+  [/commercial hub/i, `"commercial hub" — the hosted service is mcp.mosadd.dev`],
+  [/full[- ]time maintenance/i, `"full-time maintenance" — one maintainer plus agents`],
+  [/@mosadd\/mcp@(alpha|latest)/i, `dist-tag install — pin an exact version, never alpha/latest`],
+  [/`latest` = `alpha`/i, `stale dist-tag claim`],
+  [/roll(s)? out with partners/i, `robot deployments with partners — none exist`],
+  [/open authenticity/i, `Voice Truthgate is not open (private repository)`],
+  [/Plan-les-Ouates|Swiss HQ/i, `legal seat not confirmed — the entity question is open`],
+  [/community room runs on mosADD/i, `community room not verified for outside users`],
 ];
 // Files that legitimately discuss banned phrases (they define the policy).
 // Kept minimal on purpose: the two files that must literally spell out the
@@ -251,7 +276,7 @@ for (const rel of proseFiles) {
       // exists to stop. The negation now has to appear in the ~40 characters immediately BEFORE the
       // banned phrase, which is where a real negation of it would actually sit.
       const before = line.slice(Math.max(0, m.index - 40), m.index);
-      if (/\b(never|don'?t|do not|won'?t|isn'?t|is not|are not|no longer|not)\b[^.]*$|❌/i.test(before)) continue;
+      if (/\b(no|without|never|don'?t|do not|won'?t|isn'?t|is not|are not|no longer|not)\b[^.]*$|❌/i.test(before)) continue;
       fail(`${relPosix}:${i + 1}: banned phrase — ${why}`);
     }
     if (surfaces) {

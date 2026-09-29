@@ -3,7 +3,7 @@
 Last reviewed: 2026-05-27. Owner: AG (Hei33enberg).
 Partial correction 2026-08-01: removed references to components that do not exist in this repo (a LiveKit fork "mosadd-fabric", a `@mosadd/daemon` package) — voice media runs on the hosted LiveKit service. A full re-review (mURL revival, mAYL rename, mLIDAR) is overdue and tracked.
 
-STRIDE-derived threat model for the public Apache-2.0 layer of mosadd. Covers the MCP server and the per-channel m* modules. The proprietary hub (radar, BYOK broker, billing) has its own private threat model in a separate proprietary repo.
+STRIDE-derived threat model for the public MIT layer of mosadd. Covers the MCP server and the per-channel m* modules. The proprietary hub (radar, BYOK broker, billing) has its own private threat model in a separate proprietary repo.
 
 ## Scope
 
@@ -16,7 +16,7 @@ In scope:
 
 Out of scope:
 
-- The hosted hub (`mcp.mosadd.com`, `hub.mosadd.com`) — proprietary
+- The hosted service (`mcp.mosadd.dev`, `app.mosadd.dev`, and the older `mcp.mosadd.com`) — proprietary
 - Consumer apps (`mosadd.com`, PWA, Android, iOS, Electron)
 - Hardware firmware (separate project, out of scope here)
 - The hosted radar middleware
@@ -30,7 +30,7 @@ Out of scope:
 | Tool-call payloads (DM bodies, email content, room contents) | High — privacy | User |
 | Identity recovery seed / passphrase | Critical — account recovery | User local |
 | Threat-engine event taxonomy | Moderate — public catalog | repo |
-| Source code | Moderate — Apache-2.0 published | repo |
+| Source code | Moderate — MIT, published | repo |
 | LiveKit (hosted service) API tokens | High | Operator |
 
 ## Trust boundaries

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "dev.mosadd/m0s",
+  "title": "m.0S",
+  "description": "One key for your agents: messages, channels, mail, push-to-talk, memory (mRAG) and identity.",
+  "version": "3.0.0-alpha.55",
+  "websiteUrl": "https://github.com/Hei33enberg/mosADD-OS",
+  "repository": {
+    "url": "https://github.com/Hei33enberg/mosADD-OS",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.mosadd.dev/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Bearer <m.0S key> — test key m0s_tk_test_… or line key m0s_lk_live_… from https://app.mosadd.dev",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

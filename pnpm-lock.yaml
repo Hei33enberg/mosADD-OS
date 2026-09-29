@@ -184,23 +184,29 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.19.19)(lightningcss@1.32.0)
 
+  packages/m0s:
+    devDependencies:
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.19.19)(lightningcss@1.32.0)
+
   packages/mcp:
     dependencies:
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.4
         version: 1.29.0(@cfworker/json-schema@4.1.1)(zod@4.4.3)
       '@mosadd/crypto':
-        specifier: workspace:*
-        version: link:../crypto
+        specifier: 3.0.0-alpha.27
+        version: 3.0.0-alpha.27
       '@mosadd/protocol':
-        specifier: workspace:*
-        version: link:../protocol
+        specifier: 3.0.0-alpha.28
+        version: 3.0.0-alpha.28
       '@mosadd/providers':
-        specifier: workspace:*
-        version: link:../providers
+        specifier: 3.0.0-alpha.27
+        version: 3.0.0-alpha.27
       '@mosadd/threat-engine':
-        specifier: workspace:*
-        version: link:../threat-engine
+        specifier: 3.0.0-alpha.28
+        version: 3.0.0-alpha.28
       '@supabase/supabase-js':
         specifier: ^2.48.0
         version: 2.106.2
@@ -249,8 +255,6 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
-
-  packages/skins: {}
 
   packages/threat-engine:
     devDependencies:
@@ -909,8 +913,16 @@ packages:
   '@mosadd/core@3.0.0-alpha.0':
     resolution: {integrity: sha512-k+pc+batdYtD6wxKlElNZyNK46llAqazFB56l3+1rP8h7PTxaiWDSUAZLHiSFOK9L3iQCKJ+6ml7JTINlK3YIA==}
 
+  '@mosadd/core@3.0.0-alpha.28':
+    resolution: {integrity: sha512-EbFoszt5lqUBp8UCR2Z+7uahmQ3nKJE+c16TV01REhHsz6dMQtB4qcPtA1Mld1xdIvmMS/5C0aews4bQMq3cUg==}
+    engines: {node: '>=18'}
+
   '@mosadd/crypto@3.0.0-alpha.0':
     resolution: {integrity: sha512-x6bDZGgTyGGABqsCBNhKZeSsTVjq7eH1MSdwDXHAzJYcfDPv5ZTSO74YD9+hS8QK+jG8JcjTmOIBJpf9kOmoBA==}
+
+  '@mosadd/crypto@3.0.0-alpha.27':
+    resolution: {integrity: sha512-i3CxLsuMan5nhWq7yhxcGGPa5DLZ/PhtzzdgTEqwH/hVmhO2vk0QmuN4boIM1XmTJbWAHhW6N5yM6jNc1sjkJw==}
+    engines: {node: '>=18'}
 
   '@mosadd/mcp@3.0.0-alpha.0':
     resolution: {integrity: sha512-vvJd5BA3VhzpxGm39IRlLaLl0huqa/fV/E5Hf1iUmz6BibPqS2Lr4bwu7oxLX0HGmuayST06qBs/qAkle45lvQ==}
@@ -919,8 +931,20 @@ packages:
   '@mosadd/protocol@3.0.0-alpha.0':
     resolution: {integrity: sha512-08xjNqGMZbHrTRO8ofstrF/yCl7sBwtkCB2k7mR30xvwGrp2tvh/4yHzV6Aez5IuTrwc7Y6Dcu56HGOFBRlyGA==}
 
+  '@mosadd/protocol@3.0.0-alpha.28':
+    resolution: {integrity: sha512-oMYNZ7epmYJMv3nP2B3BGg86/0ole9DsKKgDnEW4dw1nKKSaAVijwuzsvK1PjCxl+wvVJvRvEhntF36AhUo6PA==}
+    engines: {node: '>=18'}
+
   '@mosadd/providers@3.0.0-alpha.0':
     resolution: {integrity: sha512-KzqgIkROotP/ESd/cnJjmOnS5unEtyRUzMiydxkeKpTnlblpAYlhqr5HoD5hKYktO2QecbV3Nb0+vpnMD8h47w==}
+
+  '@mosadd/providers@3.0.0-alpha.27':
+    resolution: {integrity: sha512-BH2cKREF1iAryCA5iRgQbnHM4eYRmOBIEsJuaxdvLpq7Wu1zuiHNckXPgs+d4p8WoJ1oBIyGhkFgKWS8UsVGyA==}
+    engines: {node: '>=18'}
+
+  '@mosadd/threat-engine@3.0.0-alpha.28':
+    resolution: {integrity: sha512-59r0+7GY/jgp1OaMqWuGzfxvd5keW8pxuNXusOi7uqCn7vbyLH+c58R3Ymj+lU5Q7bRLFgE1ocNfslQidjVjDg==}
+    engines: {node: '>=18'}
 
   '@noble/ciphers@2.2.0':
     resolution: {integrity: sha512-Z6pjIZ/8IJcCGzb2S/0Px5J81yij85xASuk1teLNeg75bfT07MV3a/O2Mtn1I2se43k3lkVEcFaR10N4cgQcZA==}
@@ -2980,7 +3004,17 @@ snapshots:
     dependencies:
       '@mosadd/protocol': 3.0.0-alpha.0
 
+  '@mosadd/core@3.0.0-alpha.28':
+    dependencies:
+      '@mosadd/protocol': 3.0.0-alpha.28
+
   '@mosadd/crypto@3.0.0-alpha.0':
+    dependencies:
+      '@noble/ciphers': 2.2.0
+      '@noble/curves': 2.2.0
+      '@noble/hashes': 2.2.0
+
+  '@mosadd/crypto@3.0.0-alpha.27':
     dependencies:
       '@noble/ciphers': 2.2.0
       '@noble/curves': 2.2.0
@@ -3002,9 +3036,19 @@ snapshots:
     dependencies:
       zod: 4.4.3
 
+  '@mosadd/protocol@3.0.0-alpha.28':
+    dependencies:
+      zod: 4.4.3
+
   '@mosadd/providers@3.0.0-alpha.0':
     dependencies:
       '@mosadd/core': 3.0.0-alpha.0
+
+  '@mosadd/providers@3.0.0-alpha.27':
+    dependencies:
+      '@mosadd/core': 3.0.0-alpha.28
+
+  '@mosadd/threat-engine@3.0.0-alpha.28': {}
 
   '@noble/ciphers@2.2.0': {}
 

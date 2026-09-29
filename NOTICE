@@ -1,8 +1,12 @@
-mosadd
-Copyright 2026 mosadd contributors
+m.0S / mosADD
+Copyright (c) 2026 m.0S / mosADD contributors
 
-This product includes software developed at mosadd
-(https://mosadd.com/).
+This repository is licensed under the MIT License (see LICENSE) from
+2026-09-29. Releases published before that date were distributed under
+Apache-2.0 and remain available under it.
+
+The hosted m.0S service (https://mcp.mosadd.dev, https://app.mosadd.dev)
+is not part of this repository and is not licensed by it.
 
 ---
 

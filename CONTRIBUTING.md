@@ -9,7 +9,7 @@ This project follows the [Contributor Covenant v2.1](./CODE_OF_CONDUCT.md). By p
 ## Quick start (dev setup)
 
 ```bash
-git clone https://github.com/Hei33enberg/mosadd-os.git
+git clone https://github.com/Hei33enberg/mosADD-OS.git
 cd mosadd-os
 pnpm install
 pnpm build
@@ -44,7 +44,7 @@ This is a **major contribution**. Follow the RFC process:
 - **Call out public-API changes** explicitly in the PR description. (A [Changesets](https://github.com/changesets/changesets) flow is planned; the tooling is not wired into this repo yet, so semver decisions are made by maintainers at release time.)
 - **DCO sign-off.** Add `Signed-off-by: Your Name <email>` to commits (use `git commit -s`).
 - **Tests required** for new code — cover the lines you changed. There is no automated coverage gate yet; reviewers check.
-- **Gates clean.** `pnpm -r build && pnpm -r typecheck && pnpm -r test --if-present && node scripts/check-skill-lint.mjs` must pass **locally**. The `.github/workflows/` files encode the same checks, but GitHub Actions is currently switched off for this repo (a cost decision) — maintainers run the gates locally on every PR before merging; don't wait for GitHub checks that will never run.
+- **Gates clean.** `pnpm -r build && pnpm -r typecheck && pnpm -r test --if-present && node scripts/check-skill-lint.mjs` must pass **locally**. This repository has no GitHub Actions: maintainers run the gates locally on every PR before merging; don't wait for GitHub checks, there are none.
 
 ### Adding a provider
 
@@ -56,8 +56,7 @@ See `packages/providers/README.md` for the contracts and their honest status (in
 
 See [`docs/architecture/`](./docs/architecture/) for design docs:
 - [`human-os.md`](./docs/architecture/human-os.md) — the OS framing rationale
-- [`phase-2-hub.md`](./docs/architecture/phase-2-hub.md) — Phase 2 hub architecture
-- [`phase-3-shells.md`](./docs/architecture/phase-3-shells.md) — Phase 3 shells architecture
+- [`phase-2-hub.md`](./docs/architecture/phase-2-hub.md) — what the hosted service guarantees to clients
 
 Additional architecture docs (control-data-plane, fork-strategy, identity-recovery, anti-abuse, threat-radar) are TODO — see the index.
 
@@ -65,11 +64,10 @@ Additional architecture docs (control-data-plane, fork-strategy, identity-recove
 
 - **GitHub Discussions** — design questions, ideas
 - **GitHub Issues** — bugs, RFCs, concrete proposals
-- **mosADD community room** — chat, help, real-time coordination; our community chat runs on mosADD itself (see [README → Contributing](./README.md#contributing))
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under Apache-2.0, the same as the project. Patent grant applies.
+By contributing, you agree that your contributions will be licensed under the MIT License, the same as the project.
 
 ## Recognition
 

@@ -10,11 +10,6 @@
       "id": "github-issues",
       "label": "GitHub Issues",
       "url": "https://github.com/Hei33enberg/mosADD-OS/issues"
-    },
-    {
-      "id": "mosadd-community-room",
-      "label": "mosADD community room (dogfooded — mURL room on mosadd.com)",
-      "url": "https://mosadd.com"
     }
   ],
   "banned_references": [

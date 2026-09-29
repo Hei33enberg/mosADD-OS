@@ -66,7 +66,7 @@ The MCP layer is framework-agnostic; anything that speaks MCP or HTTP can drive 
 
 **SDKs (working configs in [`examples/`](../examples/))** — Anthropic SDK · OpenAI SDK · Vercel AI SDK · LangChain. (LlamaIndex and other MCP-capable frameworks should work the same way — MCP-compatible in principle, no shipped example yet.)
 
-**Robotics stacks (integration recipe #2 above — MCP-compatible in principle, no field reference yet)** — ROS 2 nodes · MQTT brokers · Kubernetes-based fleet controllers speak the same HTTP/MCP surface, so recipe #2 applies to any vendor stack that exposes telemetry (Clearpath, Boston Dynamics, MiR, Fetch, PAL Robotics, UR, Franka, Doosan and similar). We do not claim tested integrations with those vendors — field-deployment references are in preview, and this line will name real ones only when they exist. The toolkit is Apache-2.0 so a customer can self-host end-to-end.
+**Robotics stacks (integration recipe #2 above — MCP-compatible in principle, no field reference yet)** — ROS 2 nodes · MQTT brokers · Kubernetes-based fleet controllers speak the same HTTP/MCP surface, so recipe #2 applies to any vendor stack that exposes telemetry (Clearpath, Boston Dynamics, MiR, Fetch, PAL Robotics, UR, Franka, Doosan and similar). We do not claim tested integrations with those vendors — field-deployment references are in preview, and this line will name real ones only when they exist. The client code is MIT; the service stays hosted by us.
 
 **IoT / edge sensor meshes** — anything that can HTTP-POST to a hub key: LoRaWAN gateways, mesh network controllers, edge inference nodes.
 
@@ -89,6 +89,6 @@ We label the scope on every surface. See [SECURITY.md](../SECURITY.md) for the w
 
 - **Per-fleet role library** — shared identities for whole fleets with pre-baked permissions. On the roadmap; today you build it out of channel-member roles + a fleet agent.
 - **On-device model integration for robot voice** — talking to robots by push-to-talk is possible today; higher-fidelity voice fingerprinting for robot IDs ties into the [Voice Truthgate](https://mosadd.com/voice-truthgate) enterprise product.
-- **Vendor-specific quickstarts** — ROS 2 / Boston Dynamics / UR examples land as partner integrations mature.
+- **Vendor-specific quickstarts** — none exist yet; no robot fleet runs on mosADD today.
 
-If you're integrating a real fleet, `founders@mosadd.com` is the fastest path.
+If you are integrating a real fleet, open a GitHub Discussion.

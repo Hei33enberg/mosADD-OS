@@ -1,0 +1,22 @@
+# Smithery entry for m.0S (prepared, not submitted). The server itself is hosted at https://mcp.mosadd.dev/mcp;
+# this config runs the MIT stdio shim from this repository (packages/m0s/m0s.mjs, zero dependencies), which
+# forwards every JSON-RPC message to the hub with the user's key.
+# Smithery reads smithery.yaml from the repository root: copy this file there when publishing.
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - mosaddKey
+    properties:
+      mosaddKey:
+        type: string
+        description: "m.0S key from https://app.mosadd.dev (m0s_tk_test_… free test key, or m0s_lk_live_… line key)."
+  commandFunction: |-
+    (config) => ({
+      command: 'node',
+      args: ['packages/m0s/m0s.mjs', 'mcp'],
+      env: { MOSADD_KEY: config.mosaddKey }
+    })
+  exampleConfig:
+    mosaddKey: m0s_tk_test_0000000000000000000000000000000000000000000000000000000000000000

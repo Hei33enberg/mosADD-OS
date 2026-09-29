@@ -10,4 +10,4 @@ Pre-alpha. Interface skeletons land in v3.0.0-alpha.1.
 
 ## License
 
-[Apache-2.0](../../LICENSE).
+[MIT](../../LICENSE).

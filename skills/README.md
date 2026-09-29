@@ -1,43 +1,37 @@
-# mosadd Skills bundle
+# Skills
 
-This directory contains [Anthropic Skill](https://docs.anthropic.com/en/docs/agents/skills) files for Claude users. Each `SKILL.md` describes one mosadd OS module — Claude reads the frontmatter (`name`, `description`, optional `allowed-tools`) to know when to invoke the underlying MCP tools.
+Agent skills for m.0S in the [agentskills.io](https://agentskills.io/specification) format: one directory per
+skill, a `SKILL.md` whose frontmatter `name` equals the directory name. The same files work as a Claude Code
+plugin, in Hermes Agent, in OpenClaw and in any host that reads agent skills. MIT.
 
-Skills are a Claude-only convenience layer on top of the [`@mosadd/mcp`](../packages/mcp) server. The MCP server is the authoritative artifact — Cursor, Cline, Windsurf, ChatGPT Apps, Lovable, Bolt, Goose, Manus, and custom agents all use it directly. Skills here are extra polish for the Claude Code workflow.
+The skills teach the model when to use which tool; the tools themselves come from the m.0S MCP endpoint
+(`https://mcp.mosadd.dev/mcp`, key in `MOSADD_KEY`).
 
-## Shipped
+| Skill | What it does |
+|---|---|
+| [`m0s-quickstart`](m0s-quickstart/SKILL.md) | connect the host, get and check the key, first message |
+| [`m0s-line`](m0s-line/SKILL.md) | lines: which line am I, attach a session, a second agent, hand a line over |
+| [`mosadd-mdm`](mosadd-mdm/SKILL.md) | 1:1 messages, several threads per contact |
+| [`mosadd-mirc`](mosadd-mirc/SKILL.md) | persistent channels, members, roles |
+| [`mosadd-murl`](mosadd-murl/SKILL.md) | open rooms attached to a web domain, public by design |
+| [`mosadd-mail`](mosadd-mail/SKILL.md) | mail (mAYL) |
+| [`mosadd-mtalk`](mosadd-mtalk/SKILL.md) | push-to-talk rooms |
+| [`mosadd-mrag`](mosadd-mrag/SKILL.md) | recall over the user's own messages, mail and calls |
+| [`mosadd-coordinate`](mosadd-coordinate/SKILL.md) | several agents on one project share one channel |
 
-| Skill | Channel | What it does |
-|---|---|---|
-| [`mdm/SKILL.md`](mdm/SKILL.md) | mDM | 1:1 direct messages, end-to-end encrypted by default (X3DH + Double Ratchet; operator cannot read content), multi-thread per contact |
-| [`mirc/SKILL.md`](mirc/SKILL.md) | mIRC | Persistent Discord/Slack-style channels |
-| [`murl/SKILL.md`](murl/SKILL.md) | mURL | Open-web rooms — live chat per domain/URL, agent-native, public by design |
-| [`mail/SKILL.md`](mail/SKILL.md) | mAYL | Email 3.0 from `<userId>@mosadd.com` |
-| [`mtalk/SKILL.md`](mtalk/SKILL.md) | mTALK | Push-to-talk voice rooms (half-duplex floor control) |
-| [`mrag/SKILL.md`](mrag/SKILL.md) | mRAG | RAG recall over the user's own messages/emails/calls |
+`mosadd-coordinate/SKILL.md` is canonical and vendored byte-identical into the `mosadd-agent` repository
+(`skills/mosadd-coordinate/SKILL.md` there); it is not in the Claude Code bundle.
 
-> The mURL skill was added per [RFC 0005](../docs/rfcs/0005-murl-skill.md) — new skills go through the same RFC path.
+## Install
 
-## Coordination skill (canonical source)
+- **Claude Code** (plugin: all skills except coordinate, plus the MCP endpoint with `Authorization: Bearer ${MOSADD_KEY}`):
+  ```bash
+  claude plugin marketplace add Hei33enberg/mosADD-OS
+  claude plugin install mosadd@mosADD-OS
+  ```
+  Checked 2026-09-29 with Claude Code 2.1.285 (throw-away config): `claude plugin validate` passes for the
+  marketplace and the plugin, the plugin installs, and its MCP entry sends the key from `MOSADD_KEY` to the hub.
+- **Hermes, OpenClaw, other agentskills hosts:** copy the skill directory into the host's skills directory.
+- **ClawHub:** a prepared entry is in [`distribution/clawhub/`](../distribution/clawhub/) (not published yet).
 
-[`coordinate/SKILL.md`](coordinate/SKILL.md) is a cross-tool **workflow** skill (not a single
-module) — it turns several agents working the same repo into one human-visible mIRC channel.
-**This file is the single source of truth for the skill.** Runtime deployments that bundle it
-(e.g. the `mosadd-agent` Hermes fork ships it as `skills/mosadd-coordinate`) must **vendor this
-copy, not fork it** — keep them byte-identical. It is intentionally **not** in the plugin
-marketplace bundle below (that bundle is one-skill-per-module); it is distributed with the agent
-runtime instead.
-
-## Plugin marketplace entry
-
-This directory is the Claude Code **plugin** (manifest: [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json), MCP server: [`.mcp.json`](.mcp.json)). The repo-root [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json) is the **marketplace** that lists it. Install (verified against Claude Code 2.x):
-
-```bash
-claude plugin marketplace add Hei33enberg/mosADD-OS
-claude plugin install mosadd@mosADD-OS
-```
-
-(Or the same two commands as `/plugin marketplace add …` + `/plugin install …` from inside a Claude Code session. The marketplace name is case-sensitive: `mosADD-OS`.)
-
-This installs the six module/capability skills above **and** registers the `@mosadd/mcp` server (`npx -y @mosadd/mcp@alpha`, which inherits your environment — set your auth env vars as described in the [root README](../README.md#quickstart-60-seconds)).
-
-RFC required to add a new skill; see [docs/rfcs/0001-module-naming.md](../docs/rfcs/0001-module-naming.md) for the bar.
+`node scripts/check-skill-lint.mjs` checks the frontmatter rules, the plugin manifest and the version.

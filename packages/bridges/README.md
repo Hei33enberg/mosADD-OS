@@ -24,4 +24,4 @@ Adding a real provider requires an accepted RFC (see [GOVERNANCE.md](../../GOVER
 
 ## License
 
-Apache-2.0. See [LICENSE](../../LICENSE) and [NOTICE](../../NOTICE).
+MIT. See [LICENSE](../../LICENSE) and [NOTICE](../../NOTICE).

@@ -240,7 +240,7 @@ The bar for moving anything out of this table is the same as everything else in 
 
 ## Plugging in your own feeds and detectors
 
-The engine is Apache-2.0 and has no backend. You can run the classification layer without mosADD at all.
+The engine is MIT-licensed and has no backend. You can run the classification layer without mosADD at all.
 
 **Classify your own events:**
 

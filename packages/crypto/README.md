@@ -103,6 +103,6 @@ Report vulnerabilities privately to `security@mosadd.com`. See [SECURITY.md](../
 
 ## License
 
-[Apache-2.0](../../LICENSE). Patent grant included.
+[MIT](../../LICENSE) from 2026-09-29 (releases before that date: Apache-2.0).
 
-Originally licensed MIT under the mosADD backend (the original MIT text is preserved in [`LICENSE.original-MIT`](./LICENSE.original-MIT)). Relicensed Apache-2.0 in v3.0.0 for the public OSS release with consent of the original authors.
+Originally licensed MIT under the mosADD backend (the original MIT text is preserved in [`LICENSE.original-MIT`](./LICENSE.original-MIT)). Relicensed Apache-2.0 in v3.0.0, and MIT again from 2026-09-29 for the public OSS release with consent of the original authors.

@@ -43,4 +43,4 @@ const envelope = decodeEnvelope(wire);
 
 ## License
 
-[Apache-2.0](../../LICENSE). Patent grant included.
+[MIT](../../LICENSE) from 2026-09-29 (releases before that date: Apache-2.0).

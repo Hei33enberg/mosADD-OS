@@ -8,7 +8,7 @@
     "url": "https://github.com/Hei33enberg/mosadd-os.git",
     "directory": "packages/bridges"
   },
-  "license": "Apache-2.0",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

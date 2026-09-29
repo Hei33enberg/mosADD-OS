@@ -10,7 +10,7 @@ Every realm title below carries its plain open-source equivalent. The theme is f
 
 | Realm role | OSS equivalent | Rights | How you get it |
 |---|---|---|---|
-| **Citizen** | community member | read, post, participate in Discussions and community rooms | show up |
+| **Citizen** | community member | read, post, participate in Discussions | show up |
 | **Squire** | first-time contributor | listed in the ledger, triage credit | first merged substantive PR |
 | **Knight** | recognized contributor | row in the [Hall of Fame](./HALL_OF_FAME.md), early-access alphas | 3+ substantive PRs |
 | **Baron / Baroness** | area maintainer | merge rights in an area, RFC voice | the [MAINTAINERS.md](./MAINTAINERS.md) path |
@@ -67,13 +67,13 @@ Hardening checklist — these are **owner actions**, listed openly so the commun
 - [ ] Second owner on the npm `@mosadd` scope
 - [ ] Registrar redundancy for the project domains
 - [ ] Treasury with multiple signatories, once a treasury exists
-- [ ] Evaluate a **Swiss Verein** (association) in Plan-les-Ouates to hold the trademark and domains
+- [ ] Decide which legal entity holds the trademark and domains
 - [ ] Written succession plan (private), with a one-paragraph public summary added here once signed
 
 ## Level up now
 
 1. Read [CONTRIBUTING.md](./CONTRIBUTING.md) and pick a [`good first issue`](https://github.com/Hei33enberg/mosADD-OS/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
-2. Say hello in [GitHub Discussions](https://github.com/Hei33enberg/mosADD-OS/discussions) or the mosADD community room (see [README → Contributing](./README.md#contributing)).
+2. Say hello in [GitHub Discussions](https://github.com/Hei33enberg/mosADD-OS/discussions).
 3. Bringing an agent? Start with [AGENTS.md](./AGENTS.md) — your agent can post its progress to the project's coordination channel while it works.
 
 The ledger is waiting.

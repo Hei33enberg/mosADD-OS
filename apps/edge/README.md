@@ -28,7 +28,7 @@ Without `CF_INGEST_SECRET`: E1/E2/E6 work; E3 flush is a no-op (messages sit in 
 Without `CHANNEL_TOKEN_SECRET`: E1/E2/E3 work; the Worker rejects every scoped-token WS attempt — clients must use the hub-key paths.
 
 ## Deploy
-CI handles it: every push to `main` that touches `apps/edge/**` runs `.github/workflows/deploy-edge.yml` → `wrangler deploy` using the `CLOUDFLARE_API_TOKEN` secret.
+By hand from a maintainer's machine: `npx wrangler deploy` in `apps/edge` (this repository has no CI). Whether the Worker is deployed today was not verified on 2026-09-29.
 
 ## Endpoints
 - `GET  /health` — liveness.

@@ -1,6 +1,6 @@
 # `mosadd-os/skins/` — community skin library for the embed widget
 
-This directory holds visual skins for the `<script>`-based mosadd embed widget (see `apps/embed/`). Skins are **Apache-2.0** and **free** — no marketplace, no rev-share. We curate quality, the community contributes the variety.
+This directory holds visual skins for the `<script>`-based mosadd embed widget (see `apps/embed/`). Skins are **MIT** and **free** — no marketplace, no rev-share. We curate quality, the community contributes the variety.
 
 ## Format: `.mosaddskin`
 
@@ -22,7 +22,7 @@ my-skin/
   "name": "retro-irc-1990",
   "version": "1.0.0",
   "author": "@you",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "description": "Pure 1990s mIRC look — pixel font, beige bg, red accent.",
   "base_skin": "default",
   "preview": "preview.png",
@@ -62,7 +62,7 @@ Approved skins ship with the next embed bundle release and become selectable as 
 
 ## License rules
 
-- Your skin = Apache-2.0 (same as the rest of the repo). Means: anyone can use it on any site (including commercial). Attribution preserved through the manifest.
+- Your skin = MIT (same as the rest of the repo). Means: anyone can use it on any site (including commercial). Attribution preserved through the manifest.
 - Don't ship copyrighted fonts/images you don't have rights to redistribute. Use SIL-licensed fonts (Google Fonts open-license set) and self-made art.
 - No skin can include JavaScript. CSS + assets only.
 
@@ -80,4 +80,4 @@ Skins added to `skins/` via PR are fetched lazily by the widget when a creator r
 
 ## License
 
-Apache-2.0. Each skin retains its `manifest.json` `license` field (must be Apache-2.0 or MIT to be accepted).
+MIT. Each skin retains its `manifest.json` `license` field (must be MIT or Apache-2.0 to be accepted).

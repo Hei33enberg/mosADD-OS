@@ -168,4 +168,4 @@ Both are pure and need no backend, so they work in a fully offline agent.
 
 ## License
 
-[Apache-2.0](../../LICENSE).
+[MIT](../../LICENSE).

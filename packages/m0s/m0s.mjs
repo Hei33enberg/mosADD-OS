@@ -1,0 +1,603 @@
+// m0s - one key, every AI host. MIT License, zero dependencies, Node.js >= 18.
+// Run it as `node m0s.mjs <command>` or through the npm bin (bin/m0s.mjs).
+//
+//   m0s install [--host a,b] [--url URL] [--dry-run]   write the m.0S MCP entry into your AI hosts
+//   m0s print <host>                                   print one host's config, write nothing
+//   m0s mcp                                            stdio <-> Streamable HTTP shim (hosts that only run local servers)
+//   m0s doctor                                         check the hub and your MOSADD_KEY (the key is never printed)
+//   m0s hosts                                          list supported hosts
+//
+// The key lives in the MOSADD_KEY environment variable. Hosts that can read a variable get a reference
+// to it, never the key itself; the only exception is Claude Desktop, whose config file is the documented
+// place for a local server's environment (the installer says so when it writes it).
+// This file is copied verbatim into install/install.sh and install/install.ps1 (scripts/build-installers.mjs).
+
+import { existsSync, readFileSync, writeFileSync, mkdirSync, copyFileSync, statSync, readdirSync } from 'node:fs';
+import { homedir, platform as osPlatform } from 'node:os';
+import { join, dirname, delimiter, resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { spawnSync } from 'node:child_process';
+import { createInterface } from 'node:readline';
+
+export const VERSION = '0.1.0';
+export const DEFAULT_URL = 'https://mcp.mosadd.dev/mcp';
+export const KEY_ENV = 'MOSADD_KEY';
+export const SERVER_NAME = 'mosadd';
+export const KEY_PAGE = 'https://app.mosadd.dev';
+const BOM = new RegExp('^' + String.fromCharCode(0xfeff));
+
+// --- environment --------------------------------------------------------------------------------
+
+/** Paths a host config lives under. Tests and unusual setups override them through env. */
+export function envPaths(env = process.env, plat = osPlatform()) {
+  const home = env.M0S_USER_HOME || homedir();
+  const appData = env.APPDATA || join(home, 'AppData', 'Roaming');
+  const localAppData = env.LOCALAPPDATA || join(home, 'AppData', 'Local');
+  const xdg = env.XDG_CONFIG_HOME || join(home, '.config');
+  return { home, appData, localAppData, xdg, plat, m0sHome: env.M0S_HOME || join(home, '.m0s') };
+}
+
+/** The MCP endpoint. Only https, except http on a loopback address (tests, local mirrors). */
+export function resolveUrl(raw) {
+  const url = new URL(raw || DEFAULT_URL);
+  const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
+  if (url.protocol !== 'https:' && !(url.protocol === 'http:' && loopback)) {
+    throw new Error(`refusing ${url.protocol}// endpoint ${url.href}: m.0S keys travel only over https`);
+  }
+  return url.href;
+}
+
+// --- host catalogue -----------------------------------------------------------------------------
+
+const bearer = (ref) => ({ Authorization: `Bearer ${ref}` });
+
+/** The server entry each host expects. `shim` = the local stdio bridge this file provides. */
+export const HOSTS = {
+  'claude-code': {
+    title: 'Claude Code',
+    kind: 'cli',
+    entry: (url) => ({ type: 'http', url, headers: bearer('${MOSADD_KEY}') }),
+    command: (url) => ['claude', 'mcp', 'add', '--transport', 'http', '--scope', 'user', SERVER_NAME, url, '--header', 'Authorization: Bearer ${MOSADD_KEY}'],
+    note: 'Claude Code expands ${MOSADD_KEY} from the environment when it starts; the key is not stored in ~/.claude.json.',
+  },
+  'claude-desktop': {
+    title: 'Claude Desktop',
+    kind: 'json',
+    path: ['mcpServers', SERVER_NAME],
+    files: (p) =>
+      p.plat === 'win32'
+        ? [join(p.appData, 'Claude', 'claude_desktop_config.json'), ...msixClaude(p)]
+        : p.plat === 'darwin'
+          ? [join(p.home, 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json')]
+          : [join(p.xdg, 'Claude', 'claude_desktop_config.json')],
+    entry: (url, ctx) => ({
+      command: ctx.node,
+      args: [ctx.shim, 'mcp'],
+      env: { ...(ctx.key ? { [KEY_ENV]: ctx.key } : {}), ...(url !== DEFAULT_URL ? { M0S_MCP_URL: url } : {}) },
+    }),
+    note: 'Claude Desktop runs local (stdio) servers from its config file, so m.0S goes through the m0s shim. Remote connectors in Settings need OAuth, which the hub does not offer yet.',
+  },
+  codex: {
+    title: 'Codex',
+    kind: 'toml',
+    files: (p, env) => [join(env.CODEX_HOME || join(p.home, '.codex'), 'config.toml')],
+    entry: (url) => ({ url, bearer_token_env_var: KEY_ENV }),
+    note: 'Codex reads MOSADD_KEY from the environment on start (bearer_token_env_var).',
+  },
+  cursor: {
+    title: 'Cursor',
+    kind: 'json',
+    path: ['mcpServers', SERVER_NAME],
+    files: (p) => [join(p.home, '.cursor', 'mcp.json')],
+    entry: (url) => ({ url, headers: bearer('${env:MOSADD_KEY}') }),
+    note: 'Cursor fills ${env:MOSADD_KEY} itself when it reads mcp.json.',
+  },
+  windsurf: {
+    title: 'Windsurf',
+    kind: 'json',
+    path: ['mcpServers', SERVER_NAME],
+    files: (p) => {
+      const classic = join(p.home, '.codeium', 'windsurf', 'mcp_config.json');
+      const devin = p.plat === 'win32' ? join(p.appData, 'devin', 'mcp_config.json') : join(p.xdg, 'devin', 'mcp_config.json');
+      const found = [classic, devin].filter((f) => existsSync(dirname(f)));
+      return found.length ? found : [classic];
+    },
+    entry: (url) => ({ serverUrl: url, headers: bearer('${env:MOSADD_KEY}') }),
+    note: 'Windsurf (and its successor, the Devin desktop app) fills ${env:MOSADD_KEY} in serverUrl/headers.',
+  },
+  hermes: {
+    title: 'Hermes Agent',
+    kind: 'yaml',
+    files: (p, env) => [
+      join(env.HERMES_HOME || (p.plat === 'win32' ? join(p.localAppData, 'hermes') : join(p.home, '.hermes')), 'config.yaml'),
+    ],
+    entry: (url) => ({ url, headers: bearer('${MOSADD_KEY}') }),
+    note: 'Hermes resolves ${MOSADD_KEY} from its environment/secret scope; run `hermes mcp test mosadd` after.',
+  },
+  openclaw: {
+    title: 'OpenClaw',
+    kind: 'json',
+    path: ['mcp', 'servers', SERVER_NAME],
+    files: (p, env) => [env.OPENCLAW_CONFIG_PATH || join(env.OPENCLAW_STATE_DIR || join(p.home, '.openclaw'), 'openclaw.json')],
+    entry: (url) => ({ url, transport: 'streamable-http', headers: bearer('${MOSADD_KEY}') }),
+    note: 'OpenClaw substitutes ${MOSADD_KEY} in config strings; verify with `openclaw mcp doctor mosadd --probe`.',
+  },
+  lovable: {
+    title: 'Lovable',
+    kind: 'manual',
+    steps: (url) => [
+      'Open https://lovable.dev/dashboard?connectors -> "+" -> "MCP server".',
+      'Server name: m.0S',
+      `Server URL: ${url}`,
+      'Authentication: "Bearer token or API key" -> paste your m.0S key (m0s_lk_live_... or m0s_tk_test_...).',
+      'Click "Add server".',
+    ],
+  },
+  manus: {
+    title: 'Manus',
+    kind: 'manual',
+    steps: (url) => [
+      'Settings -> Connectors -> "Add connectors" -> "Custom MCP" -> "Add custom MCP server" -> "Direct configuration".',
+      'Transport type: HTTP',
+      `Server URL: ${url}`,
+      'Custom header: Authorization = Bearer <your m.0S key>',
+      'Save, then ask Manus to call comms_capabilities.',
+    ],
+  },
+};
+
+function msixClaude(p) {
+  // Claude Desktop from the Microsoft Store keeps its config inside the package's virtualised AppData.
+  const pkgs = join(p.localAppData, 'Packages');
+  if (!existsSync(pkgs)) return [];
+  let names = [];
+  try {
+    names = readdirSync(pkgs).filter((n) => /^Claude_/.test(n));
+  } catch {
+    return [];
+  }
+  return names.map((n) => join(pkgs, n, 'LocalCache', 'Roaming', 'Claude', 'claude_desktop_config.json'));
+}
+
+// --- config writers (pure: text in -> text out) -------------------------------------------------
+
+/** Merge `value` at `path` into a JSON document. Throws on anything that is not a JSON object. */
+export function mergeJson(text, path, value) {
+  const src = (text ?? '').replace(BOM, '');
+  let doc = {};
+  if (src.trim()) {
+    try {
+      doc = JSON.parse(src);
+    } catch (e) {
+      throw new Error(`not plain JSON (${e.message}); left untouched`);
+    }
+    if (!doc || typeof doc !== 'object' || Array.isArray(doc)) throw new Error('top level is not a JSON object; left untouched');
+  }
+  let node = doc;
+  for (const k of path.slice(0, -1)) {
+    if (node[k] === undefined) node[k] = {};
+    if (!node[k] || typeof node[k] !== 'object' || Array.isArray(node[k])) throw new Error(`"${k}" is not an object; left untouched`);
+    node = node[k];
+  }
+  node[path[path.length - 1]] = value;
+  return JSON.stringify(doc, null, 2) + '\n';
+}
+
+const tomlStr = (s) => JSON.stringify(String(s)); // TOML basic strings share JSON escaping for our values
+
+/** Replace (or append) the [mcp_servers.<name>] table in a Codex config.toml. */
+export function upsertToml(text, name, entry) {
+  const lines = (text ?? '').replace(BOM, '').split(/\r?\n/);
+  const header = new RegExp(`^\\s*\\[\\s*mcp_servers\\s*\\.\\s*(?:${name}|"${name}")\\s*(\\]|\\.)`);
+  const anyTable = /^\s*\[/;
+  const inTable = new RegExp(`^\\s*(?:${name}|"${name}")\\s*=`);
+  const dotted = new RegExp(`^\\s*mcp_servers\\s*(?:\\.\\s*(?:${name}|"${name}")\\s*)?=`);
+  const out = [];
+  let skipping = false;
+  let section = '';
+  for (const line of lines) {
+    if (anyTable.test(line)) {
+      skipping = header.test(line);
+      section = line.trim().replace(/\s+/g, '');
+      if (skipping) continue;
+    }
+    if (skipping) continue;
+    if ((section === '[mcp_servers]' && inTable.test(line)) || (section === '' && dotted.test(line))) {
+      throw new Error(`inline mcp_servers definition found; edit it by hand`);
+    }
+    out.push(line);
+  }
+  while (out.length && out[out.length - 1].trim() === '') out.pop();
+  const block = [`[mcp_servers.${name}]`, ...Object.entries(entry).map(([k, v]) => `${k} = ${tomlStr(v)}`)];
+  return (out.length ? out.join('\n') + '\n\n' : '') + block.join('\n') + '\n';
+}
+
+const yamlStr = (s) => JSON.stringify(String(s)); // a JSON string is a valid YAML double-quoted scalar
+
+function yamlBlock(name, entry, indent) {
+  const pad = ' '.repeat(indent);
+  const rows = [`${pad}${name}:`];
+  for (const [k, v] of Object.entries(entry)) {
+    if (v && typeof v === 'object') {
+      rows.push(`${pad}  ${k}:`);
+      for (const [k2, v2] of Object.entries(v)) rows.push(`${pad}    ${k2}: ${yamlStr(v2)}`);
+    } else rows.push(`${pad}  ${k}: ${yamlStr(v)}`);
+  }
+  return rows;
+}
+
+/** Replace (or add) mcp_servers.<name> in a block-style YAML document (Hermes config.yaml). */
+export function upsertYaml(text, name, entry) {
+  const lines = (text ?? '').replace(BOM, '').split(/\r?\n/);
+  while (lines.length && lines[lines.length - 1].trim() === '') lines.pop();
+  const top = lines.findIndex((l) => /^mcp_servers\s*:/.test(l));
+  if (top === -1) return [...lines, ...(lines.length ? [''] : []), 'mcp_servers:', ...yamlBlock(name, entry, 2)].join('\n') + '\n';
+  const rest = lines[top].replace(/^mcp_servers\s*:/, '').replace(/\s+#.*$/, '').trim();
+  if (rest === '{}' || rest === '~' || rest === 'null') {
+    lines[top] = 'mcp_servers:';
+  } else if (rest !== '') {
+    throw new Error('mcp_servers is written in flow style; edit it by hand');
+  }
+  const isContent = (l) => l.trim() !== '' && !/^\s*#/.test(l);
+  const indentOf = (l) => l.match(/^ */)[0].length;
+  let end = top + 1;
+  while (end < lines.length && (!isContent(lines[end]) || indentOf(lines[end]) > 0)) end++;
+  const firstChild = lines.slice(top + 1, end).find(isContent);
+  const child = firstChild ? indentOf(firstChild) : 2;
+  const body = [];
+  for (let i = top + 1; i < end; i++) {
+    const l = lines[i];
+    if (isContent(l) && indentOf(l) === child && new RegExp(`^\\s*(?:${name}|"${name}"|'${name}')\\s*:`).test(l)) {
+      let last = i;
+      for (let j = i + 1; j < end && (!isContent(lines[j]) || indentOf(lines[j]) > child); j++) if (isContent(lines[j])) last = j;
+      i = last; // blank lines after the old entry stay where they were
+      continue;
+    }
+    body.push(l);
+  }
+  let gap = 0;
+  while (body.length && body[body.length - 1].trim() === '') body.pop(), gap++;
+  const spacer = end < lines.length && gap ? [''] : [];
+  return [...lines.slice(0, top + 1), ...yamlBlock(name, entry, child), ...body, ...spacer, ...lines.slice(end)].join('\n') + '\n';
+}
+
+// --- install ------------------------------------------------------------------------------------
+
+/** Find an executable on PATH (Windows: honours PATHEXT). */
+export function which(cmd, env = process.env) {
+  const exts = osPlatform() === 'win32' ? (env.PATHEXT || '.EXE;.CMD;.BAT').split(';').map((e) => e.toLowerCase()) : [''];
+  for (const dir of (env.PATH || env.Path || '').split(delimiter)) {
+    if (!dir) continue;
+    for (const ext of osPlatform() === 'win32' ? ['', ...exts] : exts) {
+      const f = join(dir, cmd + ext);
+      try {
+        if (statSync(f).isFile()) return f;
+      } catch {}
+    }
+  }
+  return null;
+}
+
+/** Hosts that look installed on this machine. Lovable and Manus live in the browser and are always shown. */
+export function detectHosts(env = process.env) {
+  const p = envPaths(env);
+  const found = [];
+  if (which('claude', env) || existsSync(join(p.home, '.claude.json'))) found.push('claude-code');
+  if (HOSTS['claude-desktop'].files(p).some((f) => existsSync(dirname(f)))) found.push('claude-desktop');
+  if (which('codex', env) || existsSync(env.CODEX_HOME || join(p.home, '.codex'))) found.push('codex');
+  if (existsSync(join(p.home, '.cursor'))) found.push('cursor');
+  if (HOSTS.windsurf.files(p).some((f) => existsSync(dirname(f)))) found.push('windsurf');
+  if (which('hermes', env) || existsSync(dirname(HOSTS.hermes.files(p, env)[0]))) found.push('hermes');
+  if (which('openclaw', env) || existsSync(dirname(HOSTS.openclaw.files(p, env)[0]))) found.push('openclaw');
+  return found;
+}
+
+/** Render a host's config as text (what `m0s print` shows and what install writes). */
+export function renderHost(id, { url = DEFAULT_URL, ctx = {} } = {}) {
+  const h = HOSTS[id];
+  if (!h) throw new Error(`unknown host "${id}" - try: ${Object.keys(HOSTS).join(', ')}`);
+  if (h.kind === 'manual') return h.steps(url).map((s, i) => `${i + 1}. ${s}`).join('\n');
+  if (h.kind === 'cli') return h.command(url).map(shellQuote).join(' ');
+  const entry = h.entry(url, { node: 'node', shim: join(envPaths().m0sHome, 'm0s.mjs'), key: '<your m.0S key>', ...ctx });
+  if (h.kind === 'toml') return upsertToml('', SERVER_NAME, entry).trim();
+  if (h.kind === 'yaml') return upsertYaml('', SERVER_NAME, entry).trim();
+  return mergeJson('', h.path, entry).trim();
+}
+
+function shellQuote(a) {
+  return /^[\w@%+=:,./-]+$/.test(a) ? a : `'${a.replace(/'/g, `'\\''`)}'`;
+}
+
+function backup(file) {
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const to = `${file}.m0s-backup-${stamp}`;
+  copyFileSync(file, to);
+  return to;
+}
+
+/** Copy this file to ~/.m0s/m0s.mjs so local-only hosts can start the shim without npm. */
+export function installShim(p, self = fileURLToPath(import.meta.url)) {
+  const target = join(p.m0sHome, 'm0s.mjs');
+  mkdirSync(p.m0sHome, { recursive: true });
+  if (resolve(self) !== resolve(target)) writeFileSync(target, readFileSync(self));
+  return target;
+}
+
+/**
+ * Write the m.0S entry for each host. Returns one report row per host; never throws for a single
+ * host (a broken config is reported and left untouched).
+ */
+export function install({ hosts, url = DEFAULT_URL, env = process.env, dryRun = false, log = () => {}, run = runCli } = {}) {
+  url = resolveUrl(url);
+  const p = envPaths(env);
+  const list = hosts?.length ? hosts : [...detectHosts(env), 'lovable', 'manus'];
+  const key = env[KEY_ENV] || '';
+  const ctx = { node: process.execPath, shim: join(p.m0sHome, 'm0s.mjs'), key };
+  const rows = [];
+  let shimReady = false;
+  for (const id of list) {
+    const h = HOSTS[id];
+    if (!h) {
+      rows.push({ host: id, status: 'error', detail: `unknown host - try: ${Object.keys(HOSTS).join(', ')}` });
+      continue;
+    }
+    try {
+      if (h.kind === 'manual') {
+        rows.push({ host: id, status: 'manual', detail: renderHost(id, { url }) });
+        continue;
+      }
+      if (h.kind === 'cli') {
+        const argv = h.command(url);
+        const bin = which(argv[0], env);
+        if (!bin || dryRun) {
+          rows.push({ host: id, status: dryRun ? 'dry-run' : 'manual', detail: `run: ${argv.map(shellQuote).join(' ')}` });
+          continue;
+        }
+        run(bin, ['mcp', 'remove', '--scope', 'user', SERVER_NAME], { quiet: true });
+        const r = run(bin, argv.slice(1));
+        rows.push({ host: id, status: r.ok ? 'written' : 'error', detail: r.ok ? h.note : `claude mcp add failed: ${r.out}` });
+        continue;
+      }
+      if (h.kind === 'json' && id === 'claude-desktop' && !dryRun && !shimReady) {
+        installShim(p);
+        shimReady = true;
+      }
+      const entry = h.entry(url, ctx);
+      const files = h.files(p, env);
+      for (const file of files) {
+        if (h.kind === 'json' && id === 'claude-desktop' && !existsSync(dirname(file)) && file !== files[0]) continue;
+        const before = existsSync(file) ? readFileSync(file, 'utf8') : '';
+        const after =
+          h.kind === 'json' ? mergeJson(before, h.path, entry) : h.kind === 'toml' ? upsertToml(before, SERVER_NAME, entry) : upsertYaml(before, SERVER_NAME, entry);
+        if (dryRun) {
+          rows.push({ host: id, status: 'dry-run', file, detail: after });
+          continue;
+        }
+        const saved = before ? backup(file) : null;
+        mkdirSync(dirname(file), { recursive: true });
+        writeFileSync(file, after);
+        const warn = id === 'claude-desktop' ? (key ? ' The key is stored in this file (env block).' : ` ${KEY_ENV} was not set: add it to the env block, then restart Claude Desktop.`) : '';
+        rows.push({ host: id, status: 'written', file, backup: saved, detail: h.note + warn });
+      }
+    } catch (e) {
+      rows.push({ host: id, status: 'error', detail: `${e.message}. Paste by hand:\n${renderHost(id, { url })}` });
+    }
+  }
+  for (const r of rows) log(r);
+  return rows;
+}
+
+function runCli(bin, args, { quiet = false } = {}) {
+  const shell = /\.(cmd|bat)$/i.test(bin);
+  const r = spawnSync(shell ? `"${bin}"` : bin, shell ? args.map((a) => (/[\s"]/.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a)) : args, {
+    encoding: 'utf8',
+    shell,
+    timeout: 60_000,
+  });
+  const out = `${r.stdout || ''}${r.stderr || ''}`.trim();
+  if (!quiet && r.status !== 0) return { ok: false, out: out || String(r.error || r.status) };
+  return { ok: r.status === 0, out };
+}
+
+// --- stdio shim ---------------------------------------------------------------------------------
+
+/** Parse a text/event-stream body into the JSON messages carried in its `data:` fields. */
+export function parseSse(body) {
+  const msgs = [];
+  let data = [];
+  for (const line of body.split(/\r?\n/)) {
+    if (line === '') {
+      if (data.length) msgs.push(data.join('\n'));
+      data = [];
+    } else if (line.startsWith('data:')) data.push(line.slice(5).replace(/^ /, ''));
+  }
+  if (data.length) msgs.push(data.join('\n'));
+  return msgs;
+}
+
+const rpcError = (id, code, message, data) => JSON.stringify({ jsonrpc: '2.0', id: id ?? null, error: { code, message, ...(data ? { data } : {}) } });
+
+/**
+ * Bridge newline-delimited JSON-RPC on stdin to the hub's Streamable HTTP endpoint and write every
+ * response line to stdout. Resolves when stdin closes and in-flight requests are answered.
+ */
+export async function runShim({
+  url = resolveUrl(process.env.M0S_MCP_URL),
+  key = process.env[KEY_ENV],
+  input = process.stdin,
+  output = process.stdout,
+  errors = process.stderr,
+  fetchImpl = globalThis.fetch,
+} = {}) {
+  const state = { session: null, protocol: null };
+  const write = (s) => output.write(s.endsWith('\n') ? s : s + '\n');
+  if (!key) errors.write(`m0s: ${KEY_ENV} is not set - the hub lists tools without a key, but every tools/call returns 401. Get a key at ${KEY_PAGE}.\n`);
+  const pending = new Set();
+
+  async function forward(line) {
+    let msg;
+    try {
+      msg = JSON.parse(line);
+    } catch {
+      write(rpcError(null, -32700, 'Parse error: stdin line is not JSON'));
+      return;
+    }
+    const first = Array.isArray(msg) ? msg[0] : msg;
+    const id = first && 'id' in first && first.method ? first.id : undefined;
+    const headers = { 'content-type': 'application/json', accept: 'application/json, text/event-stream' };
+    if (key) headers.authorization = `Bearer ${key}`;
+    if (state.session) headers['mcp-session-id'] = state.session;
+    if (state.protocol) headers['mcp-protocol-version'] = state.protocol;
+    let res;
+    try {
+      res = await fetchImpl(url, { method: 'POST', headers, body: line });
+    } catch (e) {
+      if (id !== undefined) write(rpcError(id, -32000, `m.0S hub unreachable at ${url}: ${e.message}`));
+      return;
+    }
+    const sid = res.headers.get('mcp-session-id');
+    if (sid) state.session = sid;
+    if (res.status === 202 || res.status === 204) return;
+    const type = res.headers.get('content-type') || '';
+    const body = await res.text();
+    const bodies = type.includes('text/event-stream') ? parseSse(body) : [body];
+    let forwarded = false;
+    for (const b of bodies) {
+      if (!b.trim()) continue;
+      try {
+        const parsed = JSON.parse(b);
+        for (const m of Array.isArray(parsed) ? parsed : [parsed]) {
+          if (first?.method === 'initialize' && m?.id === id && m?.result?.protocolVersion) state.protocol = m.result.protocolVersion;
+        }
+        write(JSON.stringify(parsed));
+        forwarded = true;
+      } catch {}
+    }
+    if (!forwarded && id !== undefined) write(rpcError(id, -32000, `m.0S hub answered HTTP ${res.status}`, { status: res.status, body: body.slice(0, 300) }));
+  }
+
+  // Everything after an `initialize` waits for its answer, so the session id is known before the next POST.
+  let initialized = Promise.resolve();
+  const rl = createInterface({ input, crlfDelay: Infinity });
+  for await (const raw of rl) {
+    const line = raw.trim();
+    if (!line) continue;
+    const isInit = /"method"\s*:\s*"initialize"/.test(line);
+    const gate = initialized;
+    const p = (isInit ? forward(line) : gate.then(() => forward(line))).catch((e) => errors.write(`m0s: ${e.message}\n`));
+    if (isInit) initialized = p;
+    pending.add(p);
+    p.finally(() => pending.delete(p));
+  }
+  await Promise.all([...pending]);
+  if (state.session) {
+    try {
+      await fetchImpl(url, {
+        method: 'DELETE',
+        headers: { 'mcp-session-id': state.session, ...(key ? { authorization: `Bearer ${key}` } : {}) },
+        signal: AbortSignal.timeout(2000),
+      });
+    } catch {}
+  }
+}
+
+// --- doctor -------------------------------------------------------------------------------------
+
+/** Check that the hub answers initialize + tools/list, and whether a key is set. Never prints the key. */
+export async function doctor({ url = DEFAULT_URL, env = process.env, fetchImpl = globalThis.fetch, log = console.log } = {}) {
+  url = resolveUrl(url);
+  const rows = [];
+  const call = async (body) => {
+    const r = await fetchImpl(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream' },
+      body: JSON.stringify(body),
+    });
+    const t = await r.text();
+    const json = (r.headers.get('content-type') || '').includes('event-stream') ? JSON.parse(parseSse(t)[0]) : JSON.parse(t);
+    return json;
+  };
+  try {
+    const init = await call({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'm0s-doctor', version: VERSION } } });
+    rows.push(['hub', 'ok', `${url} -> ${init.result?.serverInfo?.name} ${init.result?.serverInfo?.version}`]);
+    const list = await call({ jsonrpc: '2.0', id: 2, method: 'tools/list' });
+    rows.push(['tools', 'ok', `${list.result?.tools?.length ?? 0} tools listed`]);
+  } catch (e) {
+    rows.push(['hub', 'error', `${url}: ${e.message}`]);
+  }
+  const key = env[KEY_ENV] || '';
+  const kind = /^m0s_lk_live_/.test(key) ? 'line key' : /^m0s_tk_test_/.test(key) ? 'test key' : key ? 'unrecognised format' : 'not set';
+  rows.push(['key', key && kind !== 'unrecognised format' ? 'ok' : 'warn', `${KEY_ENV}: ${kind}${key ? '' : ` - get one at ${KEY_PAGE}`}`]);
+  for (const r of rows) log(`${r[1].padEnd(5)} ${r[0].padEnd(6)} ${r[2]}`);
+  return rows;
+}
+
+// --- CLI ----------------------------------------------------------------------------------------
+
+export function parseArgs(argv) {
+  const out = { _: [] };
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--dry-run') out.dryRun = true;
+    else if (a === '--host' || a === '--hosts' || a === '-Host') out.hosts = (argv[++i] || '').split(',').map((s) => s.trim()).filter(Boolean);
+    else if (a.startsWith('--host=')) out.hosts = a.slice(7).split(',').filter(Boolean);
+    else if (a === '--url') out.url = argv[++i];
+    else if (a.startsWith('--url=')) out.url = a.slice(6);
+    else if (a === '-h' || a === '--help') out.help = true;
+    else if (a === '-v' || a === '--version') out.version = true;
+    else out._.push(a);
+  }
+  return out;
+}
+
+const HELP = `m0s ${VERSION} - m.0S: one key for your agents' messages, memory and identity, in every AI host.
+
+  m0s install [--host ${Object.keys(HOSTS).join(',')}] [--url URL] [--dry-run]
+  m0s print <host>      show one host's config, write nothing
+  m0s mcp               stdio shim to ${DEFAULT_URL} (reads ${KEY_ENV})
+  m0s doctor            check the hub and your key (never prints the key)
+  m0s hosts             list supported hosts
+
+Key: ${KEY_PAGE} -> put it in ${KEY_ENV}. Endpoint override: M0S_MCP_URL. MIT License.`;
+
+export async function main(argv = process.argv.slice(2)) {
+  const a = parseArgs(argv);
+  const cmd = a._[0];
+  if (a.version) return console.log(VERSION);
+  if (a.help || !cmd) return console.log(HELP);
+  if (cmd === 'mcp') return runShim({ url: resolveUrl(a.url || process.env.M0S_MCP_URL) });
+  if (cmd === 'hosts') return console.log(Object.entries(HOSTS).map(([id, h]) => `${id.padEnd(15)} ${h.title} (${h.kind})`).join('\n'));
+  if (cmd === 'print') return console.log(renderHost(a._[1], { url: resolveUrl(a.url) }));
+  if (cmd === 'doctor') {
+    const rows = await doctor({ url: a.url });
+    if (rows.some((r) => r[1] === 'error')) process.exitCode = 1;
+    return;
+  }
+  if (cmd === 'install') {
+    if (!process.env[KEY_ENV]) console.log(`note: ${KEY_ENV} is not set. Hosts will reference it; set it before you start them (key: ${KEY_PAGE}).`);
+    const rows = install({ hosts: a.hosts, url: a.url, dryRun: a.dryRun });
+    for (const r of rows) {
+      console.log(`\n[${r.status}] ${HOSTS[r.host]?.title || r.host}${r.file ? ` - ${r.file}` : ''}${r.backup ? ` (backup: ${r.backup})` : ''}`);
+      if (r.detail) console.log(r.detail.replace(/^/gm, '  '));
+    }
+    if (rows.some((r) => r.status === 'error')) process.exitCode = 1;
+    console.log(`\nNext: restart the host, then ask it to call comms_capabilities. Check anytime: m0s doctor`);
+    return;
+  }
+  console.error(`unknown command "${cmd}"\n\n${HELP}`);
+  process.exitCode = 2;
+}
+
+const invokedDirectly = (() => {
+  try {
+    return process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url;
+  } catch {
+    return false;
+  }
+})();
+if (invokedDirectly || process.env.M0S_RUN_MAIN === '1') {
+  main().catch((e) => {
+    console.error(`m0s: ${e.message}`);
+    process.exitCode = 1;
+  });
+}

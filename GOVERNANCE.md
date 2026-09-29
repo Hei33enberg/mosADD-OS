@@ -20,7 +20,7 @@ Merge rights are **delegated authority** — granted by the Sovereign, revocable
 Becoming a maintainer:
 1. Land 5+ substantive PRs over 3+ months
 2. Demonstrated good judgement in reviews
-3. Active in community (Discussions, the mosADD community room, RFCs, issue triage)
+3. Active in the community (Discussions, RFCs, issue triage)
 4. Nominated by an existing maintainer, ratified by the Sovereign
 
 ### The Sovereign (BDFL)
@@ -51,29 +51,27 @@ Follow the RFC template in [`docs/rfcs/0000-template.md`](./docs/rfcs/0000-templ
 
 ## Release cadence
 
-- **Patch releases** (`3.0.0` → `3.0.1`) — as needed, security fixes within 24h
-- **Minor releases** (`3.0.x` → `3.1.0`) — monthly
-- **Major releases** (`3.x.x` → `4.0.0`) — when breaking changes accumulate, typically annually
+Pre-release today (`3.0.0-alpha.N`). No fixed cadence is promised; releases ship when a change is ready and tested.
 
-Releases are cut by maintainers through the release pipeline; package versions are bumped in-repo. A [Changesets](https://github.com/changesets/changesets) flow is planned but not wired in yet — until it is, call out public-API changes explicitly in the PR description and maintainers make the semver call at release time.
+Releases are cut by maintainers from their own machines (there is no CI release pipeline); package versions are bumped in-repo. A [Changesets](https://github.com/changesets/changesets) flow is planned but not wired in yet — until it is, call out public-API changes explicitly in the PR description and maintainers make the semver call at release time.
 
 ## Security
 
-Vulnerability disclosure: see [SECURITY.md](./SECURITY.md). Email `security@mosadd.com` privately. We respond within 48h.
+Vulnerability disclosure: see [SECURITY.md](./SECURITY.md).
 
 ## Funding
 
-mosadd is **self-funded** — by the team behind the commercial hub at `mcp.mosadd.com` and `hub.mosadd.com`, which pays for full-time maintenance. We take **no venture capital, no private equity, no public-market money — ever** ([MANIFESTO.md](./MANIFESTO.md)). Money that can outvote the mission is money we do not take.
+m.0S is **self-funded**: the hosted service at `mcp.mosadd.dev` is paid per use, and that usage funds the work. One maintainer plus AI agents maintain it today. We take **no venture capital, no private equity, no public-market money — ever** ([MANIFESTO.md](./MANIFESTO.md)). Money that can outvote the mission is money we do not take.
 
 Open source contributions are welcomed and credited in the open ledger ([REALM.md](./REALM.md), [HALL_OF_FAME.md](./HALL_OF_FAME.md)) but unpaid today; see REALM.md for what is (and is not yet) promisable.
 
 ## Trademark
 
-"mosadd" and the mosadd logo are trademarks, held by the Sovereign. The Apache-2.0 license does **not** grant trademark rights. You may not use the name in a way that implies endorsement without permission. See [TRADEMARK.md](./TRADEMARK.md).
+"mosadd" and the mosadd logo are trademarks, held by the Sovereign. The MIT license does **not** grant trademark rights. You may not use the name in a way that implies endorsement without permission. See [TRADEMARK.md](./TRADEMARK.md).
 
 ## Forks
 
-You're free to fork under Apache-2.0. We ask that:
+You're free to fork under MIT. We ask that:
 - You rename the fork (don't call it "mosadd")
 - You make clear it's a fork (in README and package name)
 - You contribute back when feasible

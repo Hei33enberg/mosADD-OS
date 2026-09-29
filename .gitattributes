@@ -1,4 +1,9 @@
 # The coordinate skill is vendored byte-identical into the mosadd-agent repo
 # (skills/mosadd-coordinate/SKILL.md there). Disable EOL normalization so
 # CRLF/LF can never silently break the byte-identical contract.
-skills/coordinate/SKILL.md -text
+skills/mosadd-coordinate/SKILL.md -text
+
+# The one-line installers embed packages/m0s/m0s.mjs verbatim; sh breaks on CRLF.
+install/install.sh text eol=lf
+install/install.ps1 text eol=lf
+packages/m0s/m0s.mjs text eol=lf

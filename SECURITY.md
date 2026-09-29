@@ -2,63 +2,27 @@
 
 ## Reporting a vulnerability
 
-If you've found a security vulnerability in mosadd, **please do not open a public GitHub issue**. Instead:
+Please do not open a public issue. Use one of:
 
-**Email:** `security@mosadd.com` (no PGP key published yet — if your report needs encrypted transport, say so in a first plain email and we'll arrange a channel)
+- GitHub private vulnerability reporting: <https://github.com/Hei33enberg/mosADD-OS/security/advisories/new>
+- Email `security@mosadd.com` (no PGP key published; ask for an encrypted channel in a first plain email if you need one)
 
-Include:
-- Description of the vulnerability
-- Steps to reproduce
-- Affected versions
-- Suggested mitigation (if any)
-- Whether you intend to publish a write-up after the fix lands
+Include a description, steps to reproduce, affected versions, and whether you plan to publish a write-up.
 
-We will:
-- Acknowledge receipt within **48 hours**
-- Provide an initial assessment within **5 business days**
-- Coordinate with you on disclosure timing
-- Credit you in the security advisory (unless you prefer anonymity)
-
-## Severity classification
-
-We follow CVSS 3.1.
-
-| Severity | Response time | Patch ETA |
-|---|---|---|
-| Critical | < 24h | < 7 days |
-| High | < 48h | < 14 days |
-| Medium | < 5 days | < 30 days |
-| Low | < 14 days | Next release |
+What we do: an agent confirms receipt within 48 hours; the fix is best effort, ordered by severity (CVSS 3.1).
+m.0S is run by one maintainer with AI agents, so we do not promise fixed patch deadlines. We credit reporters in
+the advisory unless they prefer otherwise. There is no paid bug bounty and no swag.
 
 ## Scope
 
 In scope:
-- `@mosadd/*` packages on npm
-- mosadd MCP server
-- `mcp.mosadd.com` hosted endpoint
-- `hub.mosadd.com` dashboard
+- this repository and the `@mosadd/*` npm packages built from it
+- the hosted endpoints `mcp.mosadd.dev`, `api.mosadd.dev`, `app.mosadd.dev`
+- the older endpoint `mcp.mosadd.com`
 
-Out of scope:
-- Issues in unaffiliated user applications
-- Social engineering attacks against contributors
-- Physical attacks
-- Issues already publicly disclosed without coordination
-
-## Bug bounty
-
-mosadd does not currently run a paid bug bounty. We do offer:
-- Public recognition in the [security advisories](https://github.com/Hei33enberg/mosadd-os/security/advisories)
-- mosadd swag for non-trivial findings
-- Priority support on the commercial hub
-
-Paid bounty program is on the roadmap once we reach scale.
+Out of scope: applications we do not run, social engineering, physical attacks, issues already disclosed publicly
+without coordination.
 
 ## Supported versions
 
-Until v3.0.0 stable releases:
-- `3.0.0-alpha.*` — best-effort
-- `3.0.0-beta.*` — security patches within SLA
-
-After v3.0.0 stable:
-- Current major version: full support
-- Previous major: security patches only, 12 months after new major releases
+Pre-release (`3.0.0-alpha.*`, `@mosadd/m0s` `0.x`): fixes land in the next release only.

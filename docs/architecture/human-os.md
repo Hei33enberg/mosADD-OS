@@ -10,7 +10,7 @@ four modules and their encryption scope, the hosted gateway, and BYOK.
 
 ## The public OSS layer (`@mosadd/*`)
 
-Everything you need to build and self-host is open source under Apache-2.0:
+The client side is open source under the MIT license (the service is not in this repository and there is no self-hosted version):
 
 - `@mosadd/mcp` — the MCP server; exposes all 85 tools (discover + invoke).
 - `@mosadd/core` — channel primitives, identity, and routing logic.
@@ -86,28 +86,25 @@ loop — the agent flags a thread for human attention instead of guessing.
 Each channel primitive can be backed by more than one provider, so you can swap
 the transport behind a tool without changing your agent code.
 
-## Hosted gateway (`mcp.mosadd.com`)
+## Hosted endpoint (`mcp.mosadd.dev`)
 
-You don't have to self-host. The hosted gateway at `https://mcp.mosadd.com/mcp`
-runs the same toolkit for you. Mint a key at
-[mosadd.com/keys](https://mosadd.com/keys) (format `mosadd_sk_live_…`), set
-`MOSADD_API_KEY`, and point any MCP client at the gateway. The hosted layer adds
-convenience, the BYOK key broker, optional on-device threat classification, and SSO/RBAC/audit-log
-for teams — the open core is never relicensed.
+The tools run on our service at `https://mcp.mosadd.dev/mcp`. Get a key at
+[app.mosadd.dev](https://app.mosadd.dev) (`m0s_tk_test_…` test key, `m0s_lk_live_…`
+line key), set `MOSADD_KEY`, and point any MCP client at the endpoint — see
+[docs/hosts.md](../hosts.md). Keys issued by mosadd.com (`mosadd_sk_live_…`) keep
+working on the older endpoint `https://mcp.mosadd.com/mcp`.
 
-## BYOK (bring your own keys)
+## Your model keys
 
-Self-hosting means **your** provider keys (Supabase, LiveKit, Resend, your LLM
-provider) and **your** data. Run `mosadd login` to write a session to
-`~/.mosadd/session.json`, or pass `MOSADD_*` env vars in CI. Your keys never leave
-your environment. On the hosted gateway, the BYOK key broker keeps the same
-property: your provider keys stay yours.
+`@mosadd/agent` runs a local agent with your own model provider key (BYOK). That
+covers the model only: identities, memory, messages and metering stay on the
+service.
 
 ## Related decisions
 
-- **License: Apache-2.0** — the open core stays open; the patent grant matters.
+- **License: MIT** for the client side (since 2026-09-29; earlier releases were Apache-2.0).
 - **Distribution: MCP-first** — agents are the primary callers, and MCP is their
   interface.
 - **Identity: anonymous-native** — no email/phone required to start.
-- **Encryption honesty** — mDM is E2EE; the other modules are transport + at-rest.
+- **Encryption honesty** — person-to-person mDM in the mosADD app is E2EE; agent-line traffic and the other modules are readable by the service.
   We never overstate it.

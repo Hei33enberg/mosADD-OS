@@ -5,6 +5,23 @@
 > is not yet end-to-end encrypted, we say so plainly. Marketing copy on mosadd.com /
 > this toolkit must not claim stronger guarantees than this page.
 
+## Update 2026-09-29 — what changed since the June snapshot (read this first)
+
+- **Agent lines talk in the clear.** Since `@mosadd/mcp` 3.0.0-alpha.54/55, `mDM_send` sends plain text whenever
+  either side is an agent line, and for notes to yourself. Every m.0S key (`m0s_lk_live_…`, `m0s_tk_test_…`)
+  speaks as an agent line, so **everything sent through `https://mcp.mosadd.dev/mcp` is readable by the
+  service**. It is protected by TLS in transit only.
+- **The m.0S hub reads what it meters.** Metering, mRAG and audit work on the content of calls; that is a
+  property of the hosted service, not a bug.
+- **Unchanged:** 1:1 mDM between two *people* in the mosADD app stays end-to-end encrypted (X3DH + Double
+  Ratchet). Open channels, mURL rooms, mail and all voice stay server-readable. Private channels of agent lines
+  are readable by the service because it holds the line keys (caveat 2 below).
+- Allowed copy for m.0S: "Your host talks to the hub over TLS. Agent traffic is readable by the service; it is not
+  end-to-end encrypted." Not allowed: any end-to-end claim for agent or m.0S traffic.
+
+The sections below are the June 2026 snapshot for the mosadd.com app and the toolkit; where they say "the toolkit
+encrypts mDM by default", read them together with the update above.
+
 There are two surfaces over one backend (Supabase + Edge Functions):
 
 - **mosadd.com app** — the consumer app.

@@ -1,34 +1,11 @@
-# Cursor example
+# Cursor
 
-Setup mosadd MCP server in Cursor.
+Put your key in `MOSADD_KEY` (from [app.mosadd.dev](https://app.mosadd.dev)) and restart Cursor from a shell that
+has it, or set it as a user environment variable. Then add [`mcp.json`](./mcp.json) to `~/.cursor/mcp.json`
+(all projects) or `.cursor/mcp.json` (one project). Cursor replaces `${env:MOSADD_KEY}` itself when it reads the
+file, so the key is not stored in it.
 
-## Install
+The installer does the same and keeps your other servers: `node packages/m0s/m0s.mjs install --host cursor`.
 
-Copy [`mcp.json`](./mcp.json) to `~/.cursor/mcp.json` (or merge if you already have other MCP servers configured), then fill in the three env vars at the bottom.
-
-How to get the values:
-
-- `MOSADD_SUPABASE_URL`: from https://supabase.com → your project → Settings → API → "Project URL"
-- `MOSADD_SUPABASE_ANON_KEY`: same page → "anon public" key
-- `MOSADD_USER_JWT`:
-  1. Sign in to https://mosadd.com
-  2. Open DevTools → Application → Local Storage
-  3. Find key `sb-<projectref>-auth-token`
-  4. Copy the `access_token` field from the JSON value
-
-Restart Cursor. The agent now has 77 live mosadd tools across the four modules (mDM · mIRC · mURL · mAYL) plus capabilities (mTALK, mRAG, comms_).
-
-## Try it
-
-In Cursor chat, ask:
-
-> Use mosadd to list my contacts.
-
-The agent should call `mDM_list_contacts` and return your roster.
-
-## Troubleshooting
-
-- "Tool not found": Cursor didn't load the MCP server. Check `cursor` logs or restart.
-- `MissingSupabaseEnvError`: env vars didn't propagate. Restart Cursor with the file saved.
-
-For the full tool catalogue, see [packages/mcp/README.md](../../packages/mcp/README.md).
+Syntax per the Cursor MCP documentation (config interpolation `${env:NAME}` in `url` and `headers`). Not yet run
+inside Cursor by us.
