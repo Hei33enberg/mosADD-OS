@@ -211,8 +211,8 @@ async function mDM_send(
   // linie<->Krol, czlowiek->linia: jawnie). Plaintext is readable by every key of the line and by
   // the recipient's app on every device, and no bundle is needed, so nothing can flap.
   //
-  // ⛔ 29.09.2026 (ZERO SZYFROWANIA, rozkaz Krola 28.09 „sciagnij te jebane szyfrowanie z naszych
-  // rozmow w kazdym kanale i w kazdej tozsamosci"): a note to SELF (to === selfId) goes in the
+  // 29.09.2026 (owner decision 28.09: no encryption on agent-line conversations, in any channel or
+  // identity): a note to SELF (to === selfId) goes in the
   // clear too. MCP sessions on the King's key sealed his own thread (11 envelopes 21.09) and the
   // server now refuses envelopes there (message-send `fleet_plaintext_only`). Kinds of BOTH sides
   // are read from `identities.kind` before any sealing; only person↔person stays E2EE.
@@ -221,7 +221,7 @@ async function mDM_send(
   const peerKind = selfKind === "agent" || noteToSelf ? selfKind : await peerKindOf(dm, input.to);
   if (selfKind === "agent" || peerKind === "agent" || noteToSelf) {
     const payload = packPlaintextPayload(input.text);
-    ctx.log("debug", "mDM_send fleet plaintext (rozkaz Krola 20.09 + 28.09)", {
+    ctx.log("debug", "mDM_send agent-line plaintext (owner decisions 20.09 + 28.09)", {
       thread_id: threadId,
       self_kind: selfKind,
       peer_kind: peerKind,

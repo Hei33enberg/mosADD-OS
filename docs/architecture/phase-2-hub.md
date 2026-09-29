@@ -13,7 +13,7 @@ run-it-yourself options), none of which shipped.
 | Health | `https://api.mosadd.dev/v1/health`, `https://mcp.mosadd.dev/health` | `curl` |
 | OAuth | not offered yet (`/.well-known/oauth-protected-resource` → 404) | `curl` |
 | Metering | every call is held before it runs and settled after it; an empty prepaid balance answers 402 | usage view in the panel |
-| Prices | `GET https://api.mosadd.dev/v1/prices` — not public yet (404 on 2026-09-29) | [PRICING.md](../../PRICING.md) |
+| Prices | `GET https://api.mosadd.dev/v1/pricing` — public, no key (200 on 2026-09-29; `/v1/prices` answers 404) | [PRICING.md](../../PRICING.md), generated from it |
 
-The older endpoint `https://mcp.mosadd.com/mcp` (gateway code in `apps/mcp-http`) keeps working for keys issued by
+The older endpoint `https://mcp.mosadd.com/mcp` (its gateway code is part of the service and left this repository on 2026-09-29) keeps working for keys issued by
 mosadd.com (`mosadd_sk_live_…`).

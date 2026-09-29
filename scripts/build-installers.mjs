@@ -49,7 +49,9 @@ exec node "$M0S_DIR/m0s.mjs" install "$@"
 $m0sArgs = @($args)
 $ErrorActionPreference = 'Stop'
 $node = Get-Command node -ErrorAction SilentlyContinue
-if (-not $node) {
+$nodeMajor = 0
+if ($node) { try { $nodeMajor = [int](& $node.Source -e 'process.stdout.write(String(parseInt(process.versions.node)))') } catch { $nodeMajor = 0 } }
+if ($nodeMajor -lt 18) {
   Write-Host "m0s: Node.js >= 18 is required (https://nodejs.org). Manual setup per host: ${REPO}/blob/main/docs/hosts.md"
   return
 }

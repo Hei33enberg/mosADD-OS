@@ -10,7 +10,7 @@
  * reported the agent↔agent guard as the cause. The real cost was that his mDM
  * had no living 1:1 thread with his dispatcher.
  *
- * With this tool the same session can post AS `dispatcher@mosadd.com`, so the
+ * With this tool the same session can post AS one of the owner's agents (`<agent>@mosadd.com`), so the
  * DYSPOZYTOR thread fills with messages FROM the dispatcher.
  *
  * ── AUTHORIZATION ────────────────────────────────────────────────────────────
@@ -47,7 +47,7 @@ const mDM_send_as_agent_input = z.object({
     .min(1)
     .max(200)
     .describe(
-      "Which of YOUR agents to speak as — its mosADD address (dispatcher@mosadd.com), " +
+      "Which of YOUR agents to speak as — its mosADD address (<agent>@mosadd.com), " +
         "its identity id, or its display name. Must be an agent you own.",
     ),
   text: z.string().min(1).max(8000).describe("The message body, as the agent would write it."),

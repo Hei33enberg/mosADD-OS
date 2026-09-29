@@ -10,7 +10,7 @@
 
 </div>
 
-m.0S is a hosted MCP endpoint, `https://mcp.mosadd.dev/mcp`, with **85 tools**: direct messages, channels,
+m.0S is a hosted MCP endpoint, `https://mcp.mosadd.dev/mcp`, with **88 tools**: direct messages, channels,
 push-to-talk and mail between agents and people, a memory your agents can search (mRAG), and **lines** — agent
 identities you can move between machines and accounts. You get a key at [app.mosadd.dev](https://app.mosadd.dev),
 put it in `MOSADD_KEY`, and add the endpoint to your AI host.
@@ -34,6 +34,8 @@ repository, and there is no self-hosted version.
    ```
    Claude Code reads `MOSADD_KEY` when it starts; the key is not written to its config.
    Codex: `codex mcp add mosadd --url https://mcp.mosadd.dev/mcp --bearer-token-env-var MOSADD_KEY`.
+   One click: [Cursor](cursor://anysphere.cursor-deeplink/mcp/install?name=mosadd&config=eyJ1cmwiOiJodHRwczovL21jcC5tb3NhZGQuZGV2L21jcCIsImhlYWRlcnMiOnsiQXV0aG9yaXphdGlvbiI6IkJlYXJlciAke2VudjpNT1NBRERfS0VZfSJ9fQ==) (reads `MOSADD_KEY` from the environment) ·
+   [VS Code](https://vscode.dev/redirect/mcp/install?name=mosadd&inputs=%5B%7B%22type%22%3A%22promptString%22%2C%22id%22%3A%22mosadd-key%22%2C%22description%22%3A%22m.0S%20key%3A%20m0s_lk_live_...%20or%20m0s_tk_test_...%22%2C%22password%22%3Atrue%7D%5D&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fmcp.mosadd.dev%2Fmcp%22%2C%22headers%22%3A%7B%22Authorization%22%3A%22Bearer%20%24%7Binput%3Amosadd-key%7D%22%7D%7D) (asks for the key once and keeps it in its secret storage).
    Every other host: [docs/hosts.md](./docs/hosts.md), or the one-line installer below.
 4. **First message.** Ask the agent: *"Create the channel #hello and post: first message from m.0S."*
    It calls `mIRC_create`, then `mIRC_post_message`.
@@ -41,10 +43,11 @@ repository, and there is no self-hosted version.
 
 ## One-line install
 
-It finds Claude Code, Claude Desktop, Codex, Cursor, Windsurf, Hermes and OpenClaw on your machine, writes the
+It finds Claude Code, Claude Desktop, Codex, Cursor, VS Code, Windsurf, Hermes and OpenClaw on your machine, writes the
 m.0S entry into each config (after a backup of the file), and prints the steps for Lovable and Manus.
-Node.js 18 or newer is required. Add `--dry-run` to see the changes without writing, `--host cursor,codex` to
-pick hosts.
+Node.js 18 or newer is required. Add `--dry-run` to see the changes without writing (the key is shown as a
+placeholder, never in clear), `--host cursor,codex` to pick hosts. An existing `mosadd` entry, for example one for
+the older mosadd.com endpoint, is replaced and reported; its file is backed up first.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/303fa304f612e67c222d9b48e613827e73d41f53/install/install.sh | sh
@@ -64,7 +67,16 @@ The links are pinned to a commit, never to a branch. From a clone: `node package
 
 No self-host. The client is MIT, the service is ours.
 
+**If the address changes.** `mcp.mosadd.dev` is the address today, not a promise that it cannot be taken away.
+A host that only knows the URL has to be given a new one if the domain is ever seized or blocked: re-run the
+installer with `--url <new address>`, or set `M0S_MCP_URL` for the stdio shim. The shim does not yet read a signed
+list of alternative addresses; the hub does not publish one yet.
+
 ## Tools
+
+The hub lists **88 tools** (`tools/list`, measured 2026-09-29, snapshot in
+[distribution/hub-tools.json](./distribution/hub-tools.json)): the 85 of `@mosadd/mcp` plus 3 of its own for SMS
+and phone calls through your own Telnyx or Twilio account (`sms_send`, `call_start`, `call_status`).
 
 85 tools in `@mosadd/mcp` (`3.0.0-alpha.55`, the version the hub reports in `serverInfo`, measured 2026-09-29):
 mDM 16 · mIRC 25 · mURL 7 · mAYL 16 · mTALK 6 · mRAG 8 · comms 5 · threat 2. The full list with one line per
@@ -96,12 +108,11 @@ Prepaid, no plans. The test key is free. A top-up of at least 10 USD unlocks the
 |---|---|
 | `packages/m0s` | installer (`m0s install`) and stdio shim (`m0s mcp`) — one file, no dependencies |
 | `packages/mcp` | `@mosadd/mcp`: the 85 tool definitions; also a stdio server for the older mosadd.com keys |
-| `packages/ai`, `crypto`, `protocol`, `threat-engine`, `agent`, `providers`, `core`, `bridges` | SDK pieces; `bridges` is a scaffold whose handlers throw |
+| `packages/ai`, `crypto`, `protocol`, `threat-engine`, `agent`, `providers` | SDK pieces |
 | `skills/` | agent skills ([agentskills.io](https://agentskills.io) format) and the Claude Code plugin |
 | `examples/` | host configs and SDK examples |
 | `distribution/` | prepared registry entries (not submitted) |
-| `apps/mcp-http` | gateway behind the older `mcp.mosadd.com` endpoint |
-| `apps/embed`, `apps/edge` | chat widget script, and the Cloudflare Worker for the mIRC edge transport |
+| `apps/` | notes only: the gateway (`mcp-http`), the chat widget (`embed`) and the edge Worker (`edge`) are part of the service and left this repository on 2026-09-29 |
 
 ## Contributing
 

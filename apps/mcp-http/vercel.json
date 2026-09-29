@@ -1,16 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  },
   "framework": null,
-  "buildCommand": "true",
-  "outputDirectory": "public",
-  "rewrites": [
-    { "source": "/mcp", "destination": "/api/mcp" },
-    { "source": "/", "destination": "/api/mcp" },
-    { "source": "/health", "destination": "/api/health" },
-    { "source": "/.well-known/oauth-authorization-server", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/metadata" },
-    { "source": "/.well-known/oauth-authorization-server/mcp", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/metadata" },
-    { "source": "/.well-known/oauth-protected-resource", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/resource" },
-    { "source": "/.well-known/oauth-protected-resource/mcp", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/resource" },
-    { "source": "/oauth/:path*", "destination": "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-oauth/:path*" }
-  ]
+  "buildCommand": "echo 'apps/mcp-http moved out of this public repository on 2026-09-29 (it is part of the hosted service). Nothing to deploy from here.' && exit 1",
+  "outputDirectory": "."
 }

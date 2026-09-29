@@ -17,11 +17,10 @@ This product includes code derived from third-party projects:
    Licensed under the MIT License.
    https://github.com/NousResearch/Hermes-Agent
 
-   The multi-platform bridge pattern in `packages/bridges/src/`
-   (BridgeProvider interface, per-platform adapters) is structurally
+   The multi-platform bridge pattern once in `packages/bridges/src/`
+   (removed 2026-09-29; history up to commit 69e8b0d) was structurally
    derived from Hermes Agent's gateway/platforms/ module,
    reimplemented in TypeScript with significant modifications.
-   See `packages/bridges/NOTICE` for details.
 
 2. BIP-39 English wordlist
    `packages/crypto/src/bip39-english.txt` is the standard 2048-word

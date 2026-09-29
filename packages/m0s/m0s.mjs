@@ -3,13 +3,15 @@
 //
 //   m0s install [--host a,b] [--url URL] [--dry-run]   write the m.0S MCP entry into your AI hosts
 //   m0s print <host>                                   print one host's config, write nothing
+//   m0s link <cursor|vscode>                           print the one-click install link for that editor
 //   m0s mcp                                            stdio <-> Streamable HTTP shim (hosts that only run local servers)
 //   m0s doctor                                         check the hub and your MOSADD_KEY (the key is never printed)
 //   m0s hosts                                          list supported hosts
 //
 // The key lives in the MOSADD_KEY environment variable. Hosts that can read a variable get a reference
 // to it, never the key itself; the only exception is Claude Desktop, whose config file is the documented
-// place for a local server's environment (the installer says so when it writes it).
+// place for a local server's environment (the installer says so when it writes it). Nothing this file
+// prints to the terminal carries the key: dry runs show a placeholder, every report line is redacted.
 // This file is copied verbatim into install/install.sh and install/install.ps1 (scripts/build-installers.mjs).
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync, copyFileSync, statSync, readdirSync } from 'node:fs';
@@ -19,11 +21,15 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { createInterface } from 'node:readline';
 
-export const VERSION = '0.1.0';
+export const VERSION = '0.2.0';
 export const DEFAULT_URL = 'https://mcp.mosadd.dev/mcp';
 export const KEY_ENV = 'MOSADD_KEY';
 export const SERVER_NAME = 'mosadd';
 export const KEY_PAGE = 'https://app.mosadd.dev';
+/** What a dry run and every report line show in place of the key. */
+export const KEY_HIDDEN = '<value of MOSADD_KEY, hidden>';
+/** VS Code keeps secrets out of mcp.json through an input: it asks once and stores the answer itself. */
+export const VSCODE_INPUT = { type: 'promptString', id: 'mosadd-key', description: 'm.0S key: m0s_lk_live_... or m0s_tk_test_...', password: true };
 const BOM = new RegExp('^' + String.fromCharCode(0xfeff));
 
 // --- environment --------------------------------------------------------------------------------
@@ -91,6 +97,20 @@ export const HOSTS = {
     files: (p) => [join(p.home, '.cursor', 'mcp.json')],
     entry: (url) => ({ url, headers: bearer('${env:MOSADD_KEY}') }),
     note: 'Cursor fills ${env:MOSADD_KEY} itself when it reads mcp.json.',
+  },
+  vscode: {
+    title: 'VS Code',
+    kind: 'vscode',
+    // The user-profile mcp.json ("MCP: Open User Configuration"), next to settings.json.
+    files: (p) => [
+      p.plat === 'win32'
+        ? join(p.appData, 'Code', 'User', 'mcp.json')
+        : p.plat === 'darwin'
+          ? join(p.home, 'Library', 'Application Support', 'Code', 'User', 'mcp.json')
+          : join(p.xdg, 'Code', 'User', 'mcp.json'),
+    ],
+    entry: (url) => ({ type: 'http', url, headers: bearer('${input:' + VSCODE_INPUT.id + '}') }),
+    note: 'VS Code asks for the key once (password prompt) and keeps it in its own secret storage; mcp.json holds only ${input:mosadd-key}.',
   },
   windsurf: {
     title: 'Windsurf',
@@ -181,6 +201,48 @@ export function mergeJson(text, path, value) {
   }
   node[path[path.length - 1]] = value;
   return JSON.stringify(doc, null, 2) + '\n';
+}
+
+/** VS Code mcp.json: servers.<name> plus the input that holds the key (replaced by id, never duplicated). */
+export function mergeVscode(text, name, entry, input = VSCODE_INPUT) {
+  const doc = JSON.parse(mergeJson(text, ['servers', name], entry));
+  if (doc.inputs !== undefined && !Array.isArray(doc.inputs)) throw new Error('"inputs" is not an array; left untouched');
+  doc.inputs = [...(doc.inputs || []).filter((i) => !(i && i.id === input.id)), input];
+  return JSON.stringify(doc, null, 2) + '\n';
+}
+
+/** The server entry already stored under our name, if any (JSON-based hosts only). */
+function previousEntry(text, path) {
+  try {
+    let node = JSON.parse((text || '').replace(BOM, ''));
+    for (const k of path) node = node && typeof node === 'object' ? node[k] : undefined;
+    return node;
+  } catch {
+    return undefined;
+  }
+}
+
+const b64 = (s) => (typeof Buffer !== 'undefined' ? Buffer.from(s, 'utf8').toString('base64') : btoa(s));
+
+/**
+ * One-click install links for the remote endpoint (never a local npx): Cursor's deeplink carries the
+ * base64 server entry, VS Code's install redirect carries the entry and the password input for the key.
+ */
+export function deepLink(host, url = DEFAULT_URL) {
+  url = resolveUrl(url);
+  if (host === 'cursor') return `cursor://anysphere.cursor-deeplink/mcp/install?name=${SERVER_NAME}&config=${b64(JSON.stringify(HOSTS.cursor.entry(url)))}`;
+  if (host === 'vscode')
+    return (
+      `https://vscode.dev/redirect/mcp/install?name=${SERVER_NAME}` +
+      `&inputs=${encodeURIComponent(JSON.stringify([VSCODE_INPUT]))}` +
+      `&config=${encodeURIComponent(JSON.stringify(HOSTS.vscode.entry(url)))}`
+    );
+  throw new Error(`no install link for "${host}" - links exist for: cursor, vscode`);
+}
+
+/** Replace every occurrence of the key in a report string. */
+export function redact(text, key) {
+  return key && typeof text === 'string' ? text.split(key).join(KEY_HIDDEN) : text;
 }
 
 const tomlStr = (s) => JSON.stringify(String(s)); // TOML basic strings share JSON escaping for our values
@@ -286,6 +348,7 @@ export function detectHosts(env = process.env) {
   if (HOSTS['claude-desktop'].files(p).some((f) => existsSync(dirname(f)))) found.push('claude-desktop');
   if (which('codex', env) || existsSync(env.CODEX_HOME || join(p.home, '.codex'))) found.push('codex');
   if (existsSync(join(p.home, '.cursor'))) found.push('cursor');
+  if (which('code', env) || existsSync(dirname(HOSTS.vscode.files(p)[0]))) found.push('vscode');
   if (HOSTS.windsurf.files(p).some((f) => existsSync(dirname(f)))) found.push('windsurf');
   if (which('hermes', env) || existsSync(dirname(HOSTS.hermes.files(p, env)[0]))) found.push('hermes');
   if (which('openclaw', env) || existsSync(dirname(HOSTS.openclaw.files(p, env)[0]))) found.push('openclaw');
@@ -301,6 +364,7 @@ export function renderHost(id, { url = DEFAULT_URL, ctx = {} } = {}) {
   const entry = h.entry(url, { node: 'node', shim: join(envPaths().m0sHome, 'm0s.mjs'), key: '<your m.0S key>', ...ctx });
   if (h.kind === 'toml') return upsertToml('', SERVER_NAME, entry).trim();
   if (h.kind === 'yaml') return upsertYaml('', SERVER_NAME, entry).trim();
+  if (h.kind === 'vscode') return mergeVscode('', SERVER_NAME, entry).trim();
   return mergeJson('', h.path, entry).trim();
 }
 
@@ -332,7 +396,8 @@ export function install({ hosts, url = DEFAULT_URL, env = process.env, dryRun = 
   const p = envPaths(env);
   const list = hosts?.length ? hosts : [...detectHosts(env), 'lovable', 'manus'];
   const key = env[KEY_ENV] || '';
-  const ctx = { node: process.execPath, shim: join(p.m0sHome, 'm0s.mjs'), key };
+  // A dry run prints the would-be file; the key is never part of what reaches the terminal.
+  const ctx = { node: process.execPath, shim: join(p.m0sHome, 'm0s.mjs'), key: dryRun && key ? KEY_HIDDEN : key };
   const rows = [];
   let shimReady = false;
   for (const id of list) {
@@ -353,9 +418,18 @@ export function install({ hosts, url = DEFAULT_URL, env = process.env, dryRun = 
           rows.push({ host: id, status: dryRun ? 'dry-run' : 'manual', detail: `run: ${argv.map(shellQuote).join(' ')}` });
           continue;
         }
+        // An existing "mosadd" entry (for example the older mosadd.com one) is saved before it is replaced.
+        const prev = run(bin, ['mcp', 'get', SERVER_NAME], { quiet: true });
+        let saved = null;
+        if (prev.ok && prev.out) {
+          saved = join(p.m0sHome, 'backups', `claude-code-${SERVER_NAME}-${new Date().toISOString().replace(/[:.]/g, '-')}.txt`);
+          mkdirSync(dirname(saved), { recursive: true });
+          writeFileSync(saved, prev.out + '\n');
+        }
         run(bin, ['mcp', 'remove', '--scope', 'user', SERVER_NAME], { quiet: true });
         const r = run(bin, argv.slice(1));
-        rows.push({ host: id, status: r.ok ? 'written' : 'error', detail: r.ok ? h.note : `claude mcp add failed: ${r.out}` });
+        const replaced = saved ? ` Replaced the existing "${SERVER_NAME}" entry; its previous definition (claude mcp get) is in ${saved}.` : '';
+        rows.push({ host: id, status: r.ok ? 'written' : 'error', backup: saved, detail: r.ok ? h.note + replaced : `claude mcp add failed: ${r.out}` });
         continue;
       }
       if (h.kind === 'json' && id === 'claude-desktop' && !dryRun && !shimReady) {
@@ -368,21 +442,31 @@ export function install({ hosts, url = DEFAULT_URL, env = process.env, dryRun = 
         if (h.kind === 'json' && id === 'claude-desktop' && !existsSync(dirname(file)) && file !== files[0]) continue;
         const before = existsSync(file) ? readFileSync(file, 'utf8') : '';
         const after =
-          h.kind === 'json' ? mergeJson(before, h.path, entry) : h.kind === 'toml' ? upsertToml(before, SERVER_NAME, entry) : upsertYaml(before, SERVER_NAME, entry);
+          h.kind === 'json'
+            ? mergeJson(before, h.path, entry)
+            : h.kind === 'vscode'
+              ? mergeVscode(before, SERVER_NAME, entry)
+              : h.kind === 'toml'
+                ? upsertToml(before, SERVER_NAME, entry)
+                : upsertYaml(before, SERVER_NAME, entry);
+        const old = h.kind === 'json' || h.kind === 'vscode' ? previousEntry(before, h.kind === 'vscode' ? ['servers', SERVER_NAME] : h.path) : undefined;
+        const oldUrl = old && typeof old === 'object' ? old.url || old.serverUrl || (Array.isArray(old.args) ? `local command ${old.command} ${old.args.join(' ')}` : null) : null;
+        const replaced = old !== undefined && JSON.stringify(old) !== JSON.stringify(entry) ? ` Replaced the existing "${SERVER_NAME}" entry${oldUrl ? ` (${oldUrl})` : ''}.` : '';
         if (dryRun) {
-          rows.push({ host: id, status: 'dry-run', file, detail: after });
+          rows.push({ host: id, status: 'dry-run', file, detail: after + (replaced ? `\n${replaced.trim()}` : '') });
           continue;
         }
         const saved = before ? backup(file) : null;
         mkdirSync(dirname(file), { recursive: true });
         writeFileSync(file, after);
         const warn = id === 'claude-desktop' ? (key ? ' The key is stored in this file (env block).' : ` ${KEY_ENV} was not set: add it to the env block, then restart Claude Desktop.`) : '';
-        rows.push({ host: id, status: 'written', file, backup: saved, detail: h.note + warn });
+        rows.push({ host: id, status: 'written', file, backup: saved, detail: h.note + warn + replaced });
       }
     } catch (e) {
       rows.push({ host: id, status: 'error', detail: `${e.message}. Paste by hand:\n${renderHost(id, { url })}` });
     }
   }
+  for (const r of rows) for (const f of ['detail', 'file', 'backup']) r[f] = redact(r[f], key);
   for (const r of rows) log(r);
   return rows;
 }
@@ -554,6 +638,7 @@ const HELP = `m0s ${VERSION} - m.0S: one key for your agents' messages, memory a
 
   m0s install [--host ${Object.keys(HOSTS).join(',')}] [--url URL] [--dry-run]
   m0s print <host>      show one host's config, write nothing
+  m0s link <cursor|vscode>  one-click install link for that editor (remote endpoint, key by reference)
   m0s mcp               stdio shim to ${DEFAULT_URL} (reads ${KEY_ENV})
   m0s doctor            check the hub and your key (never prints the key)
   m0s hosts             list supported hosts
@@ -568,6 +653,7 @@ export async function main(argv = process.argv.slice(2)) {
   if (cmd === 'mcp') return runShim({ url: resolveUrl(a.url || process.env.M0S_MCP_URL) });
   if (cmd === 'hosts') return console.log(Object.entries(HOSTS).map(([id, h]) => `${id.padEnd(15)} ${h.title} (${h.kind})`).join('\n'));
   if (cmd === 'print') return console.log(renderHost(a._[1], { url: resolveUrl(a.url) }));
+  if (cmd === 'link') return console.log(deepLink(a._[1], a.url));
   if (cmd === 'doctor') {
     const rows = await doctor({ url: a.url });
     if (rows.some((r) => r[1] === 'error')) process.exitCode = 1;

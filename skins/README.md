@@ -1,6 +1,6 @@
 # `mosadd-os/skins/` — community skin library for the embed widget
 
-This directory holds visual skins for the `<script>`-based mosadd embed widget (see `apps/embed/`). Skins are **MIT** and **free** — no marketplace, no rev-share. We curate quality, the community contributes the variety.
+This directory holds visual skins for the `<script>`-based mosadd embed widget served at `https://embed.mosadd.com/v1.js` (the widget itself is part of the hosted service). Skins are **MIT** and **free** — no marketplace, no rev-share. We curate quality, the community contributes the variety.
 
 ## Format: `.mosaddskin`
 
@@ -36,7 +36,7 @@ Required fields: `name`, `version`, `license`. Everything else optional.
 
 ### `style.css` — what you can change
 
-The default skin (`apps/embed/src/skins/default.css`) defines CSS variables and the `.m-*` class structure. The simplest skin only overrides the variables:
+The default skin (`skins/builtin/default.css`, a copy of the file bundled into `v1.js` on 2026-09-29) defines CSS variables and the `.m-*` class structure. The simplest skin only overrides the variables:
 
 ```css
 :host, .m-root {
@@ -68,7 +68,7 @@ Approved skins ship with the next embed bundle release and become selectable as 
 
 ## Phase 1 — what ships first
 
-These five are in `apps/embed/src/skins/` and bundled into `v1.js` directly (so a creator can use them with `data-skin="<name>"` zero-config):
+These five are in `skins/builtin/` (copies of the files bundled into `v1.js` on 2026-09-29) (so a creator can use them with `data-skin="<name>"` zero-config):
 
 - `default` — mosadd brand frame + mIRC retro chat (the OOTB look)
 - `retro-irc-1990` — full vintage mIRC (planned, post-Phase-1)

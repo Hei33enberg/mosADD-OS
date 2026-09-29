@@ -133,35 +133,6 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.19.19)(lightningcss@1.32.0)
 
-  packages/bridges:
-    dependencies:
-      '@mosadd/core':
-        specifier: workspace:*
-        version: link:../core
-    devDependencies:
-      tsup:
-        specifier: ^8.3.5
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.3)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.7.2
-        version: 5.9.3
-      vitest:
-        specifier: ^2.1.8
-        version: 2.1.9(@types/node@22.19.19)(lightningcss@1.32.0)
-
-  packages/core:
-    dependencies:
-      '@mosadd/protocol':
-        specifier: workspace:*
-        version: link:../protocol
-    devDependencies:
-      tsup:
-        specifier: ^8.3.5
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.3)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.7.2
-        version: 5.9.3
-
   packages/crypto:
     dependencies:
       '@noble/ciphers':
@@ -244,10 +215,6 @@ importers:
         version: 2.1.9(@types/node@22.19.19)(lightningcss@1.32.0)
 
   packages/providers:
-    dependencies:
-      '@mosadd/core':
-        specifier: workspace:*
-        version: link:../core
     devDependencies:
       tsup:
         specifier: ^8.3.5

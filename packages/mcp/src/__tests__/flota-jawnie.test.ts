@@ -1,6 +1,6 @@
 /**
- * ZAMEK „ZERO SZYFROWANIA Z FLOTA" (29.09.2026, rozkaz Krola 28.09: „sciagnij te jebane
- * szyfrowanie z naszych rozmow w kazdym kanale i w kazdej tozsamosci").
+ * ZAMEK „ZERO SZYFROWANIA Z FLOTA" (29.09.2026, owner decision 28.09: no encryption on agent-line
+ * conversations, in any channel or identity).
  *
  * Dwie reguly bramy MCP, obie zmierzone jako zepsute 28–29.09 (Public\ZERO-SZYFROWANIA-29-09,
  * D1 §3 i S1 §1b):

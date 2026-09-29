@@ -18,6 +18,7 @@
  */
 import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
+import { violations } from "./honesty-rules.mjs";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
 const errors = [];
@@ -137,6 +138,22 @@ try {
 } catch (e) {
   fail(`distribution/server.json: ${e.message}`);
 }
+// The private workspace root must not carry a sixth version string (it said 3.0.0-alpha.4 until 2026-09-29).
+try {
+  const root = JSON.parse(read("package.json"));
+  if (root.version !== undefined && root.version !== mcpVersion)
+    fail(`package.json (workspace root) version '${root.version}' != packages/mcp '${mcpVersion}' — drop it or keep it equal`);
+} catch (e) {
+  fail(`package.json: ${e.message}`);
+}
+// distribution/hub-tools.json is the measured tools/list of the hub; its server version is the one README cites.
+try {
+  const hub = JSON.parse(read("distribution/hub-tools.json"));
+  if (hub.server_version !== mcpVersion)
+    fail(`distribution/hub-tools.json server_version '${hub.server_version}' != packages/mcp '${mcpVersion}' — re-measure: node scripts/check-hub-tools.mjs --write`);
+} catch (e) {
+  fail(`distribution/hub-tools.json: ${e.message}`);
+}
 // server.ts hardcodes the MCP serverInfo version — keep it in lockstep too.
 try {
   const serverTs = read("packages/mcp/src/server.ts");
@@ -148,56 +165,10 @@ try {
 }
 
 // ── 4. honesty-lint ──────────────────────────────────────────────────────────
-// Banned phrases in prose. Each entry: [regex, why]. Case-insensitive.
+// Banned phrases in prose live in scripts/honesty-rules.mjs (one object per rule, each with a `sample`
+// sentence it must flag; packages/m0s/test proves every rule fires on its sample).
 // Allowlist: a line containing "honesty-lint:allow" is skipped (for docs that
 // discuss the banned phrase itself, e.g. e2ee-posture.md quoting what NOT to say).
-const BANNED = [
-  [/unbannable/i, `"unbannable" — we don't claim that (HYDRA lesson)`],
-  [/everything is (end-to-end )?encrypted/i, `blanket encryption claim — only mDM is E2EE`],
-  [/all messages are (end-to-end )?encrypted/i, `blanket encryption claim — only mDM is E2EE`],
-  [/zero[- ]knowledge everywhere/i, `blanket zero-knowledge claim — only the encrypted paths are`],
-  [/sealed sender/i, `"sealed sender" — mosadd does not hide who-messaged-whom`],
-  [/military[- ]grade/i, `"military-grade" — meaningless marketing crypto claim`],
-  [/nsa[- ]proof/i, `"NSA-proof" — false absolute`],
-  [/zero[- ]trace/i, `"zero-trace" — false absolute (the motto "Trust no trace" is fine; "zero-trace" is not)`],
-  [/cannot be monitored/i, `"cannot be monitored" — false absolute`],
-  [/\bno logs\b/i, `"no logs" — we don't claim that`],
-  [/we can never be compelled/i, `false legal absolute`],
-
-  // ── mLIDAR / threat-detection over-claims (LINEAR-4838) ────────────────────────────────────
-  // These come from the 2026-07-14 mLIDAR code+DB audit, which found every one of them live on a
-  // public surface. Until now the honesty lint had NO rule for any of them: it policed encryption
-  // language and said nothing about detection language, which is the half with the bigger gap
-  // between what the taxonomy describes (193 event types) and what a collector emits (20).
-  // The counter-claims, one at a time:
-  //   · Nothing detects live Pegasus from a public list — the Amnesty sets are seized 2021 infra.
-  //   · Zero-click, IMSI-catcher/Stingray, rogue-certificate and jailbreak detection are taxonomy
-  //     entries with no emitter. They are not features.
-  //   · mLIDAR uploads detections to `device_events`, so it is not "100% on-device".
-  //   · It is a 60-second poll while the desktop app is open — not 24/7, not always-on.
-  [/(only|first) (messenger|app|product)[^.]{0,40}detects?/i, `superlative detection claim — we are not the only or first anything here`],
-  [/detects? (live )?pegasus/i, `"detects Pegasus" — public indicator lists cannot detect live Pegasus infrastructure`],
-  [/zero[- ]click[^.]{0,30}(detect|scan|flag|protect)/i, `zero-click detection — in the taxonomy, no detector emits it`],
-  [/(imsi[- ]catcher|stingray)[^.]{0,30}(detect|scan|flag)/i, `IMSI-catcher/Stingray detection — in the taxonomy, no detector emits it`],
-  [/rogue[- ]certificate[s]?[^.]{0,30}(detect|scan|flag)/i, `rogue-certificate detection — not implemented (no certificate inspection)`],
-  [/100% on[- ]device/i, `"100% on-device" — mLIDAR uploads detections to your account; true of mDM content only`],
-  [/zero cloud custody/i, `"zero cloud custody" — false for mLIDAR telemetry`],
-  [/24\/7[^.]{0,25}(monitor|scan|watch|protect)/i, `"24/7 monitoring" — mLIDAR is a 60-second poll, only while the desktop app is open`],
-  [/iron ?dome for your phone/i, `"iron dome for your phone" — there is no phone spyware monitor; desktop + Android posture only`],
-
-  // ── m.0S truth pass (2026-09-29, PRZEORANIE 04 §4, items 2-7, 10, 13-15) ────────────────────
-  // Each of these sentences was published here and was false when measured on 2026-09-28.
-  [/self[- ]?host/i, `self-host claim — there is no self-hosted service; the client is MIT, the service is ours`],
-  [/hub\.mosadd\.com/i, `hub.mosadd.com — never launched (404); the panel is app.mosadd.dev`],
-  [/commercial hub/i, `"commercial hub" — the hosted service is mcp.mosadd.dev`],
-  [/full[- ]time maintenance/i, `"full-time maintenance" — one maintainer plus agents`],
-  [/@mosadd\/mcp@(alpha|latest)/i, `dist-tag install — pin an exact version, never alpha/latest`],
-  [/`latest` = `alpha`/i, `stale dist-tag claim`],
-  [/roll(s)? out with partners/i, `robot deployments with partners — none exist`],
-  [/open authenticity/i, `Voice Truthgate is not open (private repository)`],
-  [/Plan-les-Ouates|Swiss HQ/i, `legal seat not confirmed — the entity question is open`],
-  [/community room runs on mosADD/i, `community room not verified for outside users`],
-];
 // Files that legitimately discuss banned phrases (they define the policy).
 // Kept minimal on purpose: the two files that must literally spell out the
 // banned phrases to define the policy. MANIFESTO.md is deliberately NOT exempt —
@@ -265,19 +236,15 @@ for (const rel of proseFiles) {
   const lines = read(relPosix).split(/\r?\n/);
   lines.forEach((line, i) => {
     if (line.includes("honesty-lint:allow")) return;
-    for (const [re, why] of BANNED) {
-      const m = re.exec(line);
-      if (!m) continue;
-      // Skip explicit negations like "never claim X", "we don't say X", "❌ X".
-      //
-      // TIGHTENED 2026-07-30 (LINEAR-4838): this used to test the WHOLE line for `not\b`, which is
-      // one of the most common words in English prose — so a sentence like "mosADD is not a toy and
-      // everything is encrypted" passed the gate while making the exact blanket claim the rule
-      // exists to stop. The negation now has to appear in the ~40 characters immediately BEFORE the
-      // banned phrase, which is where a real negation of it would actually sit.
-      const before = line.slice(Math.max(0, m.index - 40), m.index);
-      if (/\b(no|without|never|don'?t|do not|won'?t|isn'?t|is not|are not|no longer|not)\b[^.]*$|❌/i.test(before)) continue;
-      fail(`${relPosix}:${i + 1}: banned phrase — ${why}`);
+    // A pinned install must pin THE current version (a pin left at an old alpha is the same drift, one bump later).
+    // Changelogs record old versions on purpose.
+    if (!/(^|\/)CHANGELOG\.md$/.test(relPosix)) {
+      for (const m of line.matchAll(/@mosadd\/mcp@(\d+\.\d+\.\d+-alpha\.\d+)/g))
+        if (m[1] !== mcpVersion)
+          fail(`${relPosix}:${i + 1}: pins @mosadd/mcp@${m[1]} but packages/mcp/package.json is '${mcpVersion}'`);
+    }
+    for (const { rule } of violations(line, relPosix)) {
+      fail(`${relPosix}:${i + 1}: banned phrase — ${rule.why}`);
     }
     if (surfaces) {
       for (const ghost of surfaces.banned_references ?? []) {

@@ -10,8 +10,8 @@ metadata:
 
 # m.0S quickstart
 
-m.0S is one MCP endpoint, `https://mcp.mosadd.dev/mcp`, with 85 tools (mDM, mIRC, mURL, mAYL, mTALK, mRAG,
-comms, threat). The user needs a key; the host needs the endpoint and the key in a header.
+m.0S is one MCP endpoint, `https://mcp.mosadd.dev/mcp`, with 88 tools (mDM, mIRC, mURL, mAYL, mTALK, mRAG,
+comms, threat, and SMS/phone through your own carrier account). The user needs a key; the host needs the endpoint and the key in a header.
 
 ## 1. Key
 

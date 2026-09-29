@@ -1,16 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "headers": [
-    {
-      "source": "/v1.js",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Cache-Control", "value": "public, max-age=300, s-maxage=300" },
-        { "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
-      ]
+  "git": {
+    "deploymentEnabled": {
+      "main": false
     }
-  ]
+  },
+  "framework": null,
+  "buildCommand": "echo 'apps/embed moved out of this public repository on 2026-09-29 (it is part of the hosted service). Nothing to deploy from here.' && exit 1",
+  "outputDirectory": "."
 }

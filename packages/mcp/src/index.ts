@@ -4,7 +4,7 @@
  * Exposes mosadd OS modules (m*) as MCP tools to any agent runtime
  * (Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, etc.).
  *
- * License: Apache-2.0
+ * License: MIT (releases before 2026-09-29: Apache-2.0)
  */
 
 export { createMosaddServer, defaultProviders } from "./server.js";

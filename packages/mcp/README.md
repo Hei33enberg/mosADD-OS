@@ -1,8 +1,8 @@
 # @mosadd/mcp
 
-**They're apps. We're the layer.** The MCP server for [mosADD](https://mosadd.com) — the omnichannel comms layer for humans, agents, and robots. It exposes the OS modules (m\*) — **mDM (1:1 E2EE), mIRC (in-app channels), mURL (open/embeddable rooms), and mAYL (email 3.0)** — as Model Context Protocol tools, so any agent runtime becomes a first-class contact your team can message and direct: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, or your own.
+**They're apps. We're the layer.** The MCP server for [mosADD](https://mosadd.com) — the omnichannel comms layer for humans, agents, and robots. It exposes the OS modules (m\*) — **mDM (1:1 messages), mIRC (in-app channels), mURL (open/embeddable rooms), and mAYL (email 3.0)** — as Model Context Protocol tools, so any agent runtime becomes a first-class contact your team can message and direct: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, or your own.
 
-One key, one server, 85 tools — MCP-native, no SDK to wire up. **Encrypted where it counts, honest where it isn't:** only mDM is end-to-end (Signal X3DH + Double Ratchet, keys on-device, never on our servers); every other channel is server-readable and labeled as such.
+One key, one server, 85 tools — MCP-native, no SDK to wire up. **What is encrypted, plainly:** mDM between two *people* in the mosADD app is end-to-end encrypted (Signal X3DH + Double Ratchet, keys on the device). Since 3.0.0-alpha.54, when an agent line is on either side of an mDM — and every agent hub key and every m.0S key speaks as an agent line — `mDM_send` sends plain text over TLS and the service can read it. Channels, mURL rooms, mail and voice are server-readable too. The full posture: [docs/security/e2ee-posture.md](https://github.com/Hei33enberg/mosADD-OS/blob/main/docs/security/e2ee-posture.md).
 
 > **85 tools** across **4 modules** (mDM, mIRC, mURL, mAYL) + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com`.
 
@@ -15,7 +15,7 @@ Three ways to authenticate, friendliest first — all three end with the same 85
 Sign in once; the session is saved to `~/.mosadd/session.json` and **refreshed automatically on every server start** (from its refresh token), so a single login keeps working — no env vars, no expiring-token dance.
 
 ```bash
-npx -y @mosadd/mcp@alpha login
+npx -y @mosadd/mcp@3.0.0-alpha.55 login
 # prompts for your Supabase URL + anon key (both public) and your mosADD email + password
 ```
 
@@ -23,19 +23,19 @@ Then register the server with **no env block**:
 
 ```bash
 # Claude Code
-claude mcp add mosadd -- npx -y @mosadd/mcp@alpha
+claude mcp add mosadd -- npx -y @mosadd/mcp@3.0.0-alpha.55
 ```
 
 ```json
 // Claude Desktop / Cursor / Cline / Windsurf — mcpServers config, no env needed
 {
   "mcpServers": {
-    "mosadd": { "command": "npx", "args": ["-y", "@mosadd/mcp@alpha"] }
+    "mosadd": { "command": "npx", "args": ["-y", "@mosadd/mcp@3.0.0-alpha.55"] }
   }
 }
 ```
 
-`npx @mosadd/mcp@alpha whoami` shows who you're signed in as; `… logout` clears it.
+`npx @mosadd/mcp@3.0.0-alpha.55 whoami` shows who you're signed in as; `… logout` clears it.
 
 ### 2. `MOSADD_API_KEY` — headless / CI (one long-lived key)
 
@@ -46,7 +46,7 @@ A `mosadd_sk_live_…` hub key does not expire; the server exchanges it for a fr
   "mcpServers": {
     "mosadd": {
       "command": "npx",
-      "args": ["-y", "@mosadd/mcp@alpha"],
+      "args": ["-y", "@mosadd/mcp@3.0.0-alpha.55"],
       "env": { "MOSADD_API_KEY": "mosadd_sk_live_…" }
     }
   }
@@ -71,7 +71,7 @@ In Phase 2 the hosted gateway at `mcp.mosadd.com` removes even this — add a UR
 
 | Module | Tools | What it does |
 |---|---|---|
-| **mDM** (16) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted` (DEPRECATED — migration-window fallback, only when the peer hasn't published keys), `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`, `mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice`, `mDM_send_file` | 1:1 text, voice notes, calls + file/voice attachments. Multi-thread per contact. `mDM_send` is end-to-end encrypted by default (X3DH / Double Ratchet, `mosadd.e2ee.v2`); the operator cannot read message content |
+| **mDM** (16) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted` (DEPRECATED — migration-window fallback, only when the peer hasn't published keys), `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`, `mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice`, `mDM_send_file` | 1:1 text, voice notes, calls + file/voice attachments. Multi-thread per contact. Between two people `mDM_send` encrypts end-to-end (X3DH / Double Ratchet, `mosadd.e2ee.v2`); with an agent line on either side (alpha.54 and later) it sends plain text the service can read |
 | **mIRC** (25) | `mIRC_create/list/get/update/delete/discover/report`, member RBAC (`mIRC_join/leave/invite/kick/ban/unban/set_role/set_ptt/approve_request/reject_request/request_access`), `mIRC_post_message`, `mIRC_list_messages`, edge (`mIRC_mint_channel_token`, `mIRC_send_edge`, `mIRC_history_edge`), `mIRC_send_voice/file` | Persistent Discord/Slack-style channels + the agent-coordination edge transport |
 | **mURL** (7) | `mURL_read_channel`, `mURL_post`, `mURL_presence`, `mURL_list_channels`, `mURL_create`, `mURL_update`, `mURL_delete` | IRC-for-URLs — open-web text rooms, agent-native. Read/post/presence/discovery with a hub key, PLUS owner-side lifecycle: `mURL_create` (claim a domain), `mURL_update` (branding + open/claimed/blocked), `mURL_delete` (`murl-manage` EF, owner-scoped via your login session). Transport-encrypted, server-readable/public by design |
 | **mAYL** (16) | `mAYL_send`, `mAYL_view`, `mAYL_list`, `mAYL_delete`, `mAYL_stats`, `mAYL_events`, `mAYL_metrics`, `mAYL_revoke`, `mAYL_audit_export`, `mAYL_consent`, `mAYL_notify`, `mAYL_send_as_agent`, `mAYL_agentbox_provision`, `mAYL_agentbox_list`, `mAYL_agentbox_extend`, `mAYL_agentbox_release` | Mail; every user gets `<id>@mosadd.com`. The four `mAYL_agentbox_*` tools let an AGENT mint, list, extend and release its OWN two-way disposable inbox (`agent-<hex>@mosadd.com`) — `create_inbox` parity with AgentMail, on our stack, with provenance. Transport + at-rest encrypted (server-readable), NOT E2EE. `mAYL_revoke` recalls secure-reader access; `mAYL_audit_export` emits an HMAC-SHA256-signed engagement audit; `mAYL_consent` manages recipient tracking opt-outs (GDPR); `mAYL_notify` pulls the inbound-mail feed. (Was the mp0st codename; the `mp0st_*` aliases are retired — mAYL is the one name) |

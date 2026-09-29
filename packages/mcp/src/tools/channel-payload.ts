@@ -1,8 +1,8 @@
 /**
  * channel-payload — stored channel/room payload (base64) → the text a reader should see.
  *
- * ⛔ ZERO SZYFROWANIA 29.09 (rozkaz Krola 28.09: „sciagnij te jebane szyfrowanie z naszych rozmow
- * w kazdym kanale i w kazdej tozsamosci"). #adm and #command are OPEN channels with no group key,
+ * Plaintext for agent lines since 29.09 (owner decision 28.09: no encryption on agent-line conversations,
+ * in any channel or identity). #adm and #command are OPEN channels with no group key,
  * yet every line reading them through this gateway saw the King's posts as "<ciphertext>". Nothing
  * was encrypted: the app stores channel text as plain UTF-8 in base64 (apps/web ircApi.ts
  * `encodePayload`), while the old decoder here understood ONLY a JSON `mosadd.chat.v1` envelope

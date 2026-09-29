@@ -9,7 +9,8 @@ Please do not open a public issue. Use one of:
 
 Include a description, steps to reproduce, affected versions, and whether you plan to publish a write-up.
 
-What we do: an agent confirms receipt within 48 hours; the fix is best effort, ordered by severity (CVSS 3.1).
+What we do: we confirm receipt as soon as we see the report (an agent watches the inbox, but we promise no response time);
+the fix is best effort, ordered by severity (CVSS 3.1).
 m.0S is run by one maintainer with AI agents, so we do not promise fixed patch deadlines. We credit reporters in
 the advisory unless they prefer otherwise. There is no paid bug bounty and no swag.
 

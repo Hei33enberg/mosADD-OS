@@ -5,16 +5,16 @@ What is live is measured; what is planned is marked planned. Dates are targets, 
 ## Live (measured 2026-09-29)
 
 - Hosted endpoint `https://mcp.mosadd.dev/mcp` (Streamable HTTP): `initialize` and `tools/list` without a key,
-  85 tools, `tools/call` behind a line key (401 without one). Primary node in Tel Aviv with a streaming replica
+  88 tools, `tools/call` behind a line key (401 without one). Primary node in Tel Aviv with a streaming replica
   in Mumbai (`/health`).
 - Panel `https://app.mosadd.dev`: account with a passkey, lines, keys, usage.
+- Public price list `GET https://api.mosadd.dev/v1/pricing` (no key); `PRICING.md` is generated from it.
 - `@mosadd/mcp` `3.0.0-alpha.55` — the tool definitions the hub serves.
 - `packages/m0s`: installer and stdio shim (this repository, not yet on npm).
 - Skills in the agentskills.io format and a Claude Code plugin (`skills/`).
 
 ## Next
 
-- Public price list at `GET https://api.mosadd.dev/v1/prices`; `PRICING.md` is generated from it.
 - OAuth on the hub, so hosts that only accept OAuth connectors (claude.ai, Claude Desktop connectors, ChatGPT)
   can connect without the shim.
 - A signed list of hub addresses (`/.well-known/m0s-endpoints.json`, Ed25519) read by the shim and the SDK, so a

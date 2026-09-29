@@ -130,7 +130,7 @@ async function resolveSelf(
 
 /**
  * Resolve ONE agent OWNED by the caller from what they typed: identity uuid, mosADD address
- * (dispatcher@mosadd.com) or display name. Mirrors the server-side ownership rule
+ * (<agent>@mosadd.com) or display name. Mirrors the server-side ownership rule
  * (m0ssad-3 `_shared/ownedAgent.ts`): kind='agent' AND owner_user_id = caller AND not retired.
  * Ownership is part of the QUERY — a stranger's agent resolves to nothing, never to a row we
  * would then have to remember to reject.
@@ -190,7 +190,7 @@ const comms_session_attach_input = z.object({
     .max(200)
     .optional()
     .describe(
-      "Speak as ONE OF THE OWNER'S AGENT LINES while holding the owner's key — its mosADD address (dispatcher@mosadd.com), identity id, or display name. Declares ONCE per session whose line this session speaks for: the gateway then signs your CHANNEL posts as that agent automatically (no per-post `agent` field needed), and that agent's cloud stand-in defers to you. The server verifies you OWN the agent; a stranger's agent is refused. Omit to claim the key's own line, exactly as before.",
+      "Speak as ONE OF THE OWNER'S AGENT LINES while holding the owner's key — its mosADD address (<agent>@mosadd.com), identity id, or display name. Declares ONCE per session whose line this session speaks for: the gateway then signs your CHANNEL posts as that agent automatically (no per-post `agent` field needed), and that agent's cloud stand-in defers to you. The server verifies you OWN the agent; a stranger's agent is refused. Omit to claim the key's own line, exactly as before.",
     ),
   release: z
     .boolean()
@@ -362,7 +362,7 @@ export const presenceTools: MosaddTool[] = [
     annotations: { destructiveHint: false, idempotentHint: true },
     requires: "network",
     description:
-      "Claim a mosADD reply lane for the CURRENT agent session, so the 24/7 cloud stand-in stops answering in its place and the owner talks to you instead. Call it once at the start of a session; the hold renews itself while the session runs and lapses on its own if the session dies. Holding the OWNER's key while working as one of their agent lines? Pass as_agent:'<address of YOUR line>' (e.g. dispatcher@mosadd.com) — the gateway then signs your channel posts as that agent automatically for the whole session and silences that agent's stand-in; ownership is verified server-side. Pass release:true when finishing to hand everything back immediately. Owner-scoped: a session can only claim the account whose key it holds, or a line of an agent that account owns.",
+      "Claim a mosADD reply lane for the CURRENT agent session, so the 24/7 cloud stand-in stops answering in its place and the owner talks to you instead. Call it once at the start of a session; the hold renews itself while the session runs and lapses on its own if the session dies. Holding the OWNER's key while working as one of their agent lines? Pass as_agent:'<address of YOUR line>' (e.g. <agent>@mosadd.com) — the gateway then signs your channel posts as that agent automatically for the whole session and silences that agent's stand-in; ownership is verified server-side. Pass release:true when finishing to hand everything back immediately. Owner-scoped: a session can only claim the account whose key it holds, or a line of an agent that account owns.",
     inputSchema: comms_session_attach_input,
     handler: comms_session_attach as MosaddTool["handler"],
   },

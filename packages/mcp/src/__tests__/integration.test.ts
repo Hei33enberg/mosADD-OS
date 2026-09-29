@@ -9,10 +9,27 @@
  */
 
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
+import { mkdtempSync } from "node:fs";
+import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 const MCP_BIN = join(__dirname, "..", "..", "dist", "bin", "mcp.js");
+
+/**
+ * The child server runs with an EMPTY home and no MOSADD_* variables.
+ *
+ * Until 2026-09-29 it inherited the developer's environment: on a machine with a `mosadd login` session
+ * (~/.mosadd/session.json) the "tool handler throws" case below sent a REAL mDM_send through that account
+ * (to 11111111-…, failing only on the missing prekey bundle), so running the suite wrote to production.
+ * Sealed, the server finds no credentials and every networked tool stops at MissingSupabaseEnvError.
+ */
+export function sealedEnv(parent: NodeJS.ProcessEnv = process.env): NodeJS.ProcessEnv {
+  const home = mkdtempSync(join(tmpdir(), "mosadd-mcp-it-"));
+  const env: NodeJS.ProcessEnv = {};
+  for (const [k, v] of Object.entries(parent)) if (!/^(MOSADD_|SUPABASE_)/i.test(k)) env[k] = v;
+  return { ...env, HOME: home, USERPROFILE: home, HOMEDRIVE: "", HOMEPATH: "" };
+}
 
 interface JsonRpcMessage {
   jsonrpc: "2.0";
@@ -30,7 +47,7 @@ class McpClient {
   private nextId = 1;
 
   async start(): Promise<void> {
-    this.proc = spawn("node", [MCP_BIN], { stdio: ["pipe", "pipe", "pipe"] });
+    this.proc = spawn("node", [MCP_BIN], { stdio: ["pipe", "pipe", "pipe"], env: sealedEnv() });
 
     this.proc.stdout.on("data", (chunk: Buffer) => {
       this.buffer += chunk.toString("utf8");
@@ -90,6 +107,19 @@ class McpClient {
     });
   }
 }
+
+describe("integration child environment (no real session, no real messages)", () => {
+  it("is sealed: no MOSADD_*/SUPABASE_* variable and a home that is not the developer's", () => {
+    const env = sealedEnv({ ...process.env, MOSADD_API_KEY: "mosadd_sk_live_x", MOSADD_USER_JWT: "jwt", SUPABASE_URL: "https://x", PATH: "p" });
+    expect(Object.keys(env).filter((k) => /^(MOSADD_|SUPABASE_)/i.test(k))).toEqual([]);
+    expect(env.PATH).toBe("p");
+    for (const k of ["HOME", "USERPROFILE"] as const) {
+      expect(env[k]).toBeTruthy();
+      expect(env[k]).not.toBe(homedir());
+      expect(env[k]!.startsWith(tmpdir())).toBe(true);
+    }
+  });
+});
 
 describe("@mosadd/mcp — integration (real stdio)", () => {
   let client: McpClient;
@@ -164,11 +194,8 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
 
     // mDM_send to a nonexistent peer MUST fail — but as a normal `isError: true`
     // content block, not a JSON-RPC error (that would crash the agent loop).
-    // The exact message depends on the machine: without credentials it's
-    // MissingSupabaseEnvError, with a logged-in `mosadd login` session the call
-    // reaches the real server and fails on the peer's missing prekey bundle.
-    // Both are the correct envelope; asserting one exact message made the test
-    // red on any machine with a live session (audyt 2026-08-27).
+    // The child runs sealed (sealedEnv), so it has no credentials on any machine and the
+    // call stops at MissingSupabaseEnvError before any network request.
     const resp = await client.send("tools/call", {
       name: "mDM_send",
       arguments: { to: "11111111-1111-1111-1111-111111111111", text: "hi" },
@@ -177,6 +204,6 @@ describe("@mosadd/mcp — integration (real stdio)", () => {
     expect(resp.error).toBeUndefined(); // JSON-RPC level OK
     const result = resp.result as { isError?: boolean; content?: Array<{ text?: string }> };
     expect(result.isError).toBe(true);
-    expect(result.content?.[0]?.text ?? "").toMatch(/Missing|error/i);
+    expect(result.content?.[0]?.text ?? "").toMatch(/Missing/i);
   });
 });

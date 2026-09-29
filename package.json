@@ -1,12 +1,11 @@
 {
   "name": "mosadd-os",
-  "version": "3.0.0-alpha.4",
   "private": true,
-  "description": "mosadd — the comms layer for AI agents, and the humans who direct them.",
-  "homepage": "https://mosadd.com",
+  "description": "m.0S client (MIT): installer and stdio shim, MCP tool definitions, SDK adapters, skills. The hosted service is not in this repository.",
+  "homepage": "https://github.com/Hei33enberg/mosADD-OS",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Hei33enberg/mosadd-os.git"
+    "url": "https://github.com/Hei33enberg/mosADD-OS.git"
   },
   "license": "MIT",
   "author": "mosadd contributors",
@@ -40,16 +39,14 @@
     }
   },
   "keywords": [
+    "m0s",
     "mosadd",
-    "communication",
     "mcp",
     "agent",
     "claude",
     "cursor",
+    "codex",
     "messaging",
-    "ptt",
-    "discord",
-    "telegram",
-    "e2ee"
+    "ptt"
   ]
 }

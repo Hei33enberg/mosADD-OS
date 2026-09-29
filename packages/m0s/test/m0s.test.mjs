@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { createServer } from 'node:http';
-import { mkdtempSync, writeFileSync, readFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, readFileSync, existsSync, readdirSync, mkdirSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,6 +19,12 @@ import {
   resolveUrl,
   doctor,
   parseArgs,
+  mergeVscode,
+  deepLink,
+  redact,
+  main,
+  KEY_HIDDEN,
+  VSCODE_INPUT,
 } from '../m0s.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -28,9 +34,9 @@ const tmp = () => mkdtempSync(join(tmpdir(), 'm0s-'));
 
 // ---------------------------------------------------------------------------------------------
 describe('host catalogue', () => {
-  it('covers the nine hosts of the plan', () => {
+  it('covers the hosts of the plan (SPEC-DYSTRYBUCJA section 1, VS Code included)', () => {
     expect(Object.keys(HOSTS).sort()).toEqual(
-      ['claude-code', 'claude-desktop', 'codex', 'cursor', 'hermes', 'lovable', 'manus', 'openclaw', 'windsurf'].sort(),
+      ['claude-code', 'claude-desktop', 'codex', 'cursor', 'hermes', 'lovable', 'manus', 'openclaw', 'vscode', 'windsurf'].sort(),
     );
   });
 
@@ -59,6 +65,10 @@ describe('host catalogue', () => {
     const desk = JSON.parse(renderHost('claude-desktop')).mcpServers.mosadd;
     expect(desk.args[1]).toBe('mcp');
     expect(desk.env.MOSADD_KEY).toBe('<your m.0S key>');
+    const vs = JSON.parse(renderHost('vscode'));
+    expect(vs.servers.mosadd).toEqual({ type: 'http', url: DEFAULT_URL, headers: { Authorization: 'Bearer ${input:mosadd-key}' } });
+    expect(vs.inputs).toEqual([VSCODE_INPUT]);
+    expect(VSCODE_INPUT.password).toBe(true);
   });
 
   it('refuses plain http outside loopback', () => {
@@ -200,6 +210,34 @@ describe('install (files)', () => {
     expect(readFileSync(file, 'utf8')).toBe('{ // my notes\n "mcpServers": {} }');
   });
 
+  it('reports a replaced entry and what it pointed at (no silent takeover of an older mosadd entry)', () => {
+    const home = tmp();
+    const file = join(home, '.cursor', 'mcp.json');
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, JSON.stringify({ mcpServers: { mosadd: { command: 'npx', args: ['-y', '@mosadd/mcp@3.0.0-alpha.47'] } } }));
+    const [row] = install({ hosts: ['cursor'], env: { M0S_USER_HOME: home, PATH: '' } });
+    expect(row.status).toBe('written');
+    expect(row.detail).toContain('Replaced the existing "mosadd" entry (local command npx -y @mosadd/mcp@3.0.0-alpha.47)');
+    expect(readFileSync(row.backup, 'utf8')).toContain('@mosadd/mcp@3.0.0-alpha.47');
+  });
+
+  it('VS Code: writes servers.mosadd and the password input, keeps the rest, stores no key', () => {
+    const home = tmp();
+    const env = { M0S_USER_HOME: home, APPDATA: join(home, 'AppData', 'Roaming'), XDG_CONFIG_HOME: join(home, '.config'), MOSADD_KEY: 'm0s_tk_test_' + 'cd'.repeat(32), PATH: '' };
+    const file = HOSTS.vscode.files({ home, appData: env.APPDATA, xdg: env.XDG_CONFIG_HOME, plat: process.platform })[0];
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, JSON.stringify({ servers: { other: { type: 'stdio', command: 'x' } }, inputs: [{ id: 'other-token', type: 'promptString' }, { id: 'mosadd-key', type: 'promptString', description: 'old' }] }));
+    const [row] = install({ hosts: ['vscode'], env });
+    expect(row.status).toBe('written');
+    const doc = JSON.parse(readFileSync(file, 'utf8'));
+    expect(doc.servers.other).toEqual({ type: 'stdio', command: 'x' });
+    expect(doc.servers.mosadd.headers.Authorization).toBe('Bearer ${input:mosadd-key}');
+    expect(doc.inputs.map((i) => i.id)).toEqual(['other-token', 'mosadd-key']); // replaced by id, not duplicated
+    expect(doc.inputs[1]).toEqual(VSCODE_INPUT);
+    expect(readFileSync(file, 'utf8')).not.toContain(env.MOSADD_KEY);
+    expect(() => mergeVscode('{"inputs": {}}', 'mosadd', {})).toThrow(/inputs/);
+  });
+
   it('dry run writes nothing', () => {
     const home = tmp();
     const rows = install({ hosts: ['cursor', 'codex'], env: { M0S_USER_HOME: home, CODEX_HOME: join(home, '.codex'), PATH: '' }, dryRun: true });
@@ -220,14 +258,115 @@ describe('install (files)', () => {
       run: (b, args) => (calls.push(args), { ok: true, out: '' }),
     });
     expect(rows[0].status).toBe('written');
-    expect(calls[0]).toEqual(['mcp', 'remove', '--scope', 'user', 'mosadd']);
-    expect(calls[1]).toEqual(['mcp', 'add', '--transport', 'http', '--scope', 'user', 'mosadd', DEFAULT_URL, '--header', 'Authorization: Bearer ${MOSADD_KEY}']);
+    expect(calls[0]).toEqual(['mcp', 'get', 'mosadd']);
+    expect(calls[1]).toEqual(['mcp', 'remove', '--scope', 'user', 'mosadd']);
+    expect(calls[2]).toEqual(['mcp', 'add', '--transport', 'http', '--scope', 'user', 'mosadd', DEFAULT_URL, '--header', 'Authorization: Bearer ${MOSADD_KEY}']);
+    expect(rows[0].backup).toBeFalsy(); // nothing to save: `claude mcp get` printed nothing
+  });
+
+  it('Claude Code: an existing "mosadd" entry is saved before it is removed, and the report says so', () => {
+    const home = tmp();
+    const bin = join(home, 'bin');
+    mkdirSync(bin);
+    writeFileSync(join(bin, process.platform === 'win32' ? 'claude.exe' : 'claude'), '');
+    const old = 'mosadd:\n  Type: stdio\n  Command: npx\n  Args: -y @mosadd/mcp@3.0.0-alpha.47';
+    const calls = [];
+    const [row] = install({
+      hosts: ['claude-code'],
+      env: { M0S_USER_HOME: home, M0S_HOME: join(home, '.m0s'), PATH: bin, PATHEXT: '.EXE' },
+      run: (b, args) => (calls.push(args[1]), args[1] === 'get' ? { ok: true, out: old } : { ok: true, out: '' }),
+    });
+    expect(calls).toEqual(['get', 'remove', 'add']);
+    expect(row.status).toBe('written');
+    expect(row.backup).toMatch(/[\\/]\.m0s[\\/]backups[\\/]claude-code-mosadd-.*\.txt$/);
+    expect(readFileSync(row.backup, 'utf8')).toContain('@mosadd/mcp@3.0.0-alpha.47');
+    expect(row.detail).toMatch(/Replaced the existing "mosadd" entry/);
   });
 
   it('without the Claude Code CLI it prints the one command instead', () => {
     const [row] = install({ hosts: ['claude-code'], env: { M0S_USER_HOME: tmp(), PATH: '' } });
     expect(row.status).toBe('manual');
     expect(row.detail).toContain('claude mcp add --transport http');
+  });
+});
+
+// ---------------------------------------------------------------------------------------------
+describe('the key never reaches the terminal', () => {
+  const secret = 'm0s_tk_test_' + 'SECRETSECRET'.repeat(4);
+  const envFor = (home) => ({
+    M0S_USER_HOME: home,
+    APPDATA: join(home, 'AppData', 'Roaming'),
+    LOCALAPPDATA: join(home, 'AppData', 'Local'),
+    XDG_CONFIG_HOME: join(home, '.config'),
+    CODEX_HOME: join(home, '.codex'),
+    HERMES_HOME: join(home, 'hermes'),
+    MOSADD_KEY: secret,
+    PATH: '',
+  });
+
+  it('install --dry-run shows a placeholder where Claude Desktop would store the key', () => {
+    const home = tmp();
+    const rows = install({ hosts: ['claude-desktop', 'cursor', 'vscode', 'codex', 'hermes', 'claude-code'], env: envFor(home), dryRun: true });
+    expect(JSON.stringify(rows)).not.toContain(secret);
+    const desk = rows.find((r) => r.host === 'claude-desktop');
+    expect(JSON.parse(desk.detail.split('\nReplaced')[0]).mcpServers.mosadd.env.MOSADD_KEY).toBe(KEY_HIDDEN);
+    expect(readdirSync(home)).toEqual([]);
+  });
+
+  it('`m0s install --dry-run` (the CLI) prints no key, even with every host selected', async () => {
+    const home = tmp();
+    const saved = { ...process.env };
+    const out = [];
+    const orig = console.log;
+    Object.assign(process.env, envFor(home));
+    console.log = (...a) => out.push(a.join(' '));
+    try {
+      await main(['install', '--dry-run', '--host', Object.keys(HOSTS).join(',')]);
+    } finally {
+      console.log = orig;
+      for (const k of Object.keys(process.env)) if (!(k in saved)) delete process.env[k];
+      Object.assign(process.env, saved);
+      process.exitCode = 0;
+    }
+    const text = out.join('\n');
+    expect(text).toContain('[dry-run] Claude Desktop');
+    expect(text).toContain(KEY_HIDDEN);
+    expect(text).not.toContain(secret);
+  });
+
+  it('a real install stores the key only in the Claude Desktop file, and its report lines are redacted', () => {
+    const home = tmp();
+    const rows = install({ hosts: ['claude-desktop'], env: envFor(home) });
+    expect(readFileSync(rows[0].file, 'utf8')).toContain(secret);
+    expect(JSON.stringify(rows)).not.toContain(secret);
+    expect(redact(`x ${secret} y`, secret)).toBe(`x ${KEY_HIDDEN} y`);
+  });
+});
+
+// ---------------------------------------------------------------------------------------------
+describe('one-click links (Cursor, VS Code) point at the remote endpoint', () => {
+  it('Cursor: base64 config is the mcp.json entry, key by reference', () => {
+    const link = deepLink('cursor');
+    expect(link.startsWith('cursor://anysphere.cursor-deeplink/mcp/install?name=mosadd&config=')).toBe(true);
+    const config = JSON.parse(Buffer.from(new URL(link).searchParams.get('config'), 'base64').toString('utf8'));
+    expect(config).toEqual({ url: DEFAULT_URL, headers: { Authorization: 'Bearer ${env:MOSADD_KEY}' } });
+  });
+
+  it('VS Code: install redirect with the http config and the password input', () => {
+    const q = new URL(deepLink('vscode')).searchParams;
+    expect(q.get('name')).toBe('mosadd');
+    expect(JSON.parse(q.get('config'))).toEqual({ type: 'http', url: DEFAULT_URL, headers: { Authorization: 'Bearer ${input:mosadd-key}' } });
+    expect(JSON.parse(q.get('inputs'))).toEqual([VSCODE_INPUT]);
+    expect(() => deepLink('codex')).toThrow(/cursor, vscode/);
+  });
+
+  it('README and docs/hosts.md carry exactly the generated links (no local npx link anywhere)', () => {
+    for (const f of ['README.md', 'docs/hosts.md']) {
+      const md = readFileSync(join(repo, f), 'utf8');
+      expect(md, f).toContain(`](${deepLink('cursor')})`);
+      expect(md, f).toContain(`](${deepLink('vscode')})`);
+      for (const l of md.match(/cursor:\/\/[^)\s]+|vscode\.dev\/redirect\/mcp\/install[^)\s]+/g) || []) expect(l, f).not.toMatch(/npx/);
+    }
   });
 });
 
@@ -382,6 +521,21 @@ describe('one-line installers', () => {
     expect(r.stdout).toContain('[dry-run] Cursor');
     expect(existsSync(join(home, '.m0s', 'm0s.mjs'))).toBe(true);
   });
+
+  it.skipIf(ps.status !== 0)('install.ps1 stops on Node.js older than 18 (like install.sh) and writes nothing', () => {
+    const home = tmp();
+    const fake = join(home, 'oldnode');
+    mkdirSync(fake);
+    writeFileSync(join(fake, 'node.cmd'), '@echo 16\r\n');
+    const script = join(repo, 'install', 'install.ps1');
+    const r = spawnSync(
+      'powershell',
+      ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', `& ([scriptblock]::Create((Get-Content -Raw '${script}'))) --host cursor --dry-run`],
+      { encoding: 'utf8', env: { ...process.env, PATH: `${fake};${process.env.PATH}`, M0S_HOME: join(home, '.m0s'), M0S_USER_HOME: home } },
+    );
+    expect(r.stdout + r.stderr).toContain('Node.js >= 18 is required');
+    expect(existsSync(join(home, '.m0s'))).toBe(false);
+  });
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -397,16 +551,75 @@ describe('repository truth gates', () => {
     for (const l of links) expect(l, l).toMatch(/\/([0-9a-f]{40}|<commit>)\/install\/$/);
   });
 
-  it('PRICING.md is generated, never hand-typed', async () => {
-    const { renderPricing } = await import('../../../scripts/render-pricing.mjs');
-    const onDisk = readFileSync(join(repo, 'PRICING.md'), 'utf8');
-    expect(onDisk).toContain('GENERATED by scripts/render-pricing.mjs');
-    const md = renderPricing({ ok: true, status: 200, body: { prices: [{ meter_id: 'mcp.tool_call', unit: 'call', unit_price_micros: 100, per_units: 1 }] } }, '2026-09-29');
-    expect(md).toContain('| `mcp.tool_call` | call | 0.0001 USD |');
+  it('PRICING.md is generated from GET /v1/pricing, never hand-typed', async () => {
+    const { renderPricing, usd, PRICES_URL } = await import('../../../scripts/render-pricing.mjs');
+    expect(PRICES_URL).toBe('https://api.mosadd.dev/v1/pricing'); // /v1/prices answers 404 (measured 2026-09-29)
+    const fixture = JSON.parse(readFileSync(join(here, 'fixtures', 'pricing-2026-09-29.json'), 'utf8')); // the live answer that day
+    const md = renderPricing({ ok: true, status: 200, body: fixture }, '2026-09-29');
+    expect(md).toContain('| MCP tool call | 0.0001 USD per call | Every tools/call, reads included | `mcp.tool_call` |');
+    expect(md).toContain('| Push-to-talk with transcription | 0.012 USD per minute |');
+    expect(md).toContain('| Memory: query | 0.00005 USD per query |');
+    // "soon" meters are listed apart from what is billed today
+    const [billed, later] = md.split('## Priced, not billed yet');
+    expect(billed).not.toContain('`madd.turn_pro`');
+    expect(later).toContain('| mADD turn (pro model) | 0.03 USD per turn |');
+    expect(md).toContain('at least 10 USD unlocks'); // from min_topup_usd, not typed in
+    expect(usd(12000)).toBe('0.012 USD');
+    expect(usd(1000000)).toBe('1 USD');
+    expect(() => usd(1.5)).toThrow();
+    expect(() => renderPricing({ ok: true, status: 200, body: { prices: [] } })).toThrow(/items/);
     expect(renderPricing({ ok: false, status: 404 }, '2026-09-29')).toContain('answered HTTP 404 on 2026-09-29');
-    // no price numbers outside the generated table: the policy text carries only the 10 USD minimum
-    const hand = onDisk.replace(/\| `[^`]+` \|[^\n]*\n/g, '').match(/\d+(\.\d+)? USD/g) || [];
-    expect(hand).toEqual(['10 USD']);
+    // PRICING.md on disk is the generator's output for the 29.09 list (only the Source/date line may differ)
+    const onDisk = readFileSync(join(repo, 'PRICING.md'), 'utf8').replace(/\r\n/g, '\n');
+    expect(onDisk).toContain('GENERATED by scripts/render-pricing.mjs from https://api.mosadd.dev/v1/pricing');
+    const undated = (t) => t.replace(/^Source: .*$/m, '');
+    expect(undated(onDisk), 'PRICING.md is not the generator output - run: node scripts/render-pricing.mjs').toBe(undated(md));
+  });
+});
+
+describe('honesty rules (scripts/honesty-rules.mjs)', () => {
+  it('every rule fires on its own sample sentence (a rule that can never match is a dead guard)', async () => {
+    const { BANNED, violations } = await import('../../../scripts/honesty-rules.mjs');
+    expect(BANNED.length).toBeGreaterThan(30);
+    for (const rule of BANNED) {
+      expect(rule.sample, String(rule.re)).toBeTruthy();
+      expect(violations(rule.sample, 'README.md').map((v) => v.rule), `${rule.re} did not flag its sample`).toContain(rule);
+    }
+  });
+
+  it('flags the unpinned installs the 29.09 verifier found, passes the pinned ones', async () => {
+    const { violations } = await import('../../../scripts/honesty-rules.mjs');
+    for (const bad of ['npx -y @mosadd/mcp@alpha login', 'claude mcp add mosadd -- npx -y @mosadd/mcp@alpha', '"args": ["-y", "@mosadd/mcp@latest"]', '`npx @mosadd/mcp@alpha whoami`'])
+      expect(violations(bad, 'packages/mcp/README.md'), bad).toHaveLength(1);
+    expect(violations('npx -y @mosadd/mcp@3.0.0-alpha.55 login', 'packages/mcp/README.md')).toEqual([]);
+    expect(violations('a clean `npm i @mosadd/mcp@alpha` resolved', 'packages/mcp/CHANGELOG.md')).toEqual([]); // history, not advice
+  });
+
+  it('a negation right before the phrase is not a claim; a negation elsewhere in the line does not excuse it', async () => {
+    const { violations } = await import('../../../scripts/honesty-rules.mjs');
+    expect(violations('No self-host. The client is MIT.')).toEqual([]);
+    expect(violations('This is not a toy, and you can self-host it.')).toHaveLength(1);
+    expect(violations('There is no community room yet.')).toEqual([]);
+  });
+
+  it('gate scripts and public text carry no control characters (the byte that killed the dist-tag rule)', () => {
+    const roots = ['scripts', 'install', 'distribution', 'skills', 'docs', 'packages/m0s', 'README.md', 'PRICING.md', 'packages/mcp/README.md'];
+    const bad = [];
+    const walk = (rel) => {
+      const full = join(repo, rel);
+      if (!existsSync(full)) return;
+      if (statSync(full).isDirectory()) {
+        for (const e of readdirSync(full)) if (e !== 'node_modules') walk(`${rel}/${e}`);
+      } else if (/\.(mjs|js|ts|md|json|ya?ml|sh|ps1|txt)$/.test(rel) && /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(readFileSync(full, 'utf8'))) bad.push(rel);
+    };
+    roots.forEach(walk);
+    expect(bad).toEqual([]);
+  });
+
+  it('.gitattributes checks every text file out with LF (a core.autocrlf=true clone made 3 tests red)', () => {
+    const attrs = readFileSync(join(repo, '.gitattributes'), 'utf8');
+    expect(attrs).toMatch(/^\* text=auto eol=lf$/m);
+    expect(attrs).toMatch(/^skills\/mosadd-coordinate\/SKILL\.md -text$/m); // byte-identical contract with mosadd-agent
   });
 });
 
@@ -445,8 +658,8 @@ describe('distribution entries (prepared, not submitted)', () => {
 
   it('the ClawHub skill follows agentskills.io and gates on MOSADD_KEY', () => {
     const md = dist('clawhub/m0s/SKILL.md');
-    const fm = md.match(/^---\n([\s\S]*?)\n---/)[1];
-    const name = fm.match(/^name:\s*(\S+)$/m)[1];
+    const fm = md.match(/^---\r?\n([\s\S]*?)\r?\n---/)[1];
+    const name = fm.match(/^name:\s*(\S+)\s*$/m)[1];
     expect(name).toBe('m0s');
     expect(name).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
     expect(fm.match(/^description:\s*(.+)$/m)[1].length).toBeLessThanOrEqual(1024);

@@ -22,7 +22,7 @@
  *  - RECOMMENDED (LINEAR-2675/E6): server calls `mIRC_mint_channel_token` to
  *    exchange the hub key for a 5-min channel-scoped JWT, then the browser
  *    opens the WS with `Sec-WebSocket-Protocol: mosadd.v1, bearer.<jwt>`.
- *    The hub key never leaves the server. Recipe: `apps/edge/README.md`.
+ *    The hub key never leaves the server. (The edge Worker is part of the hosted service since 2026-09-29.)
  */
 
 import { z } from "zod";

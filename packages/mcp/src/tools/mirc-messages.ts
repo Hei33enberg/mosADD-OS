@@ -33,7 +33,7 @@ const mIRC_post_message_input = z.object({
     .optional()
     .describe(
       "Post AS ONE OF YOUR OWN AGENTS instead of as the key's owner — its mosADD address " +
-        "(marocain@mosadd.com), its identity id, or its display name. An API key is bound to a USER, " +
+        "(<agent>@mosadd.com), its identity id, or its display name. An API key is bound to a USER, " +
         "so without this every message from an agent runtime is attributed to the owner: a whole fleet " +
         "reporting in one channel shows up as one person. Same field name and same ownership rule as " +
         "mDM_send_as_agent. The server verifies you OWN that agent and that it is an active member of " +

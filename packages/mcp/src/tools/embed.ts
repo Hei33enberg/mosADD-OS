@@ -12,7 +12,7 @@
  * never enters the browser. The action is owned by the calling user (user-JWT
  * scoped — `mosadd login` / MOSADD_USER_JWT / hub-key exchange).
  *
- * Reuses the shipped embed infra (apps/embed widget + embed-keys + mirc-embed-token).
+ * Reuses the shipped embed infra (the embed.mosadd.com widget + embed-keys + mirc-embed-token).
  * RFC 0001: channel-agnostic capability → `comms_` namespace (not an m<MODULE>_ prefix).
  */
 

@@ -63,7 +63,7 @@ function makeBuilder(table: string) {
     // resolveOwnedAgentLine path: .or(...).limit(2) → the caller's ONE owned agent.
     limit: () =>
       Promise.resolve({
-        data: [{ id: AGENT_ID, m0ssad_email: "dispatcher@mosadd.com", display_name: "DYSPOZYTOR" }],
+        data: [{ id: AGENT_ID, m0ssad_email: "agent-one@mosadd.com", display_name: "AGENT ONE" }],
         error: null,
       }),
     maybeSingle: () => Promise.resolve({ data: { id: IDENTITY_ID, display_name: "mosADD CTO" }, error: null }),
@@ -170,10 +170,10 @@ describe("comms_session_attach", () => {
   });
 
   it("as_agent declares the line: binding upsert + beat on the AGENT's identity, not the key's", async () => {
-    const out = await call({ as_agent: "dispatcher@mosadd.com", label: "dispatcher — Cowork" });
+    const out = await call({ as_agent: "agent-one@mosadd.com", label: "agent one — Cowork" });
     expect(out.attached).toBe(true);
     expect(out.identity_id).toBe(AGENT_ID);
-    expect((out.speaking_as as { address: string }).address).toBe("dispatcher@mosadd.com");
+    expect((out.speaking_as as { address: string }).address).toBe("agent-one@mosadd.com");
     // The signing declaration message-send reads — arbitrowana w SQL (LINEAR-5879):
     // claim RPC-em, nie surowym upsertem.
     expect(calls.rpcs).toContainEqual({
@@ -181,8 +181,8 @@ describe("comms_session_attach", () => {
       args: {
         p_session_id: TEST_SESSION,
         p_agent_identity_id: AGENT_ID,
-        p_agent_address: "dispatcher@mosadd.com",
-        p_host: "dispatcher — Cowork",
+        p_agent_address: "agent-one@mosadd.com",
+        p_host: "agent one — Cowork",
       },
     });
     // …and the AGENT's liveness row, so ITS cloud stand-in defers to this session.
@@ -190,7 +190,7 @@ describe("comms_session_attach", () => {
       expect.objectContaining({
         table: "agent_bridge_heartbeat",
         identity_id: AGENT_ID,
-        host: "dispatcher — Cowork",
+        host: "agent one — Cowork",
       }),
     );
     // The key's own line is NOT claimed — attaching as an agent must not silence the owner's lane.

@@ -17,7 +17,7 @@ The channels, the `[need-human]` loop, the audit trail, the encryption scopes �
 
 ## Status markers, robot-flavoured
 
-The eight status markers (`[need-human]`, `[status]`, `[done]`, `[handoff→]`, `[claim]`, `[a2a]`, `[fan-out]`, `[fleet]` — the full set is documented in the OWNER-GUIDE; the main README introduces `[need-human]`) apply verbatim. For a robot fleet the useful reads are:
+The eight status markers (`[need-human]`, `[status]`, `[done]`, `[handoff→]`, `[claim]`, `[a2a]`, `[fan-out]`, `[fleet]` — the coordination convention of the [`mosadd-coordinate`](../skills/mosadd-coordinate/SKILL.md) skill) apply verbatim. For a robot fleet the useful reads are:
 
 - **`[status]`** — heartbeat / telemetry. `unit-7 battery 42% · returning to dock`. Non-blocking; keeps the operator's grid alive.
 - **`[need-human]`** — the robot is stuck and needs a decision. `unit-4 blocked at gate B, override or reroute?`. Lands top of the operator's needs-you queue.

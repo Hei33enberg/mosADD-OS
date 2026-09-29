@@ -32,7 +32,6 @@ const SURFACES: { file: string; re: RegExp; what: string }[] = [
   // green badge is the most confident-looking lie a repo can tell.
   // README rewritten 2026-09-29 (m.0S truth pass): the badge, the @alpha quickstart line and the long module
   // table are gone; the two sentences that carry the total are pinned instead.
-  { file: "README.md", re: /`https:\/\/mcp\.mosadd\.dev\/mcp`, with \*\*(\d+) tools\*\*/, what: "README intro line" },
   { file: "README.md", re: /^(\d+) tools in `@mosadd\/mcp`/m, what: "README tools section" },
   { file: "packages/mcp/server.json", re: /(\d+)\s+MCP tools/, what: "MCP registry manifest description" },
   // The npm-visible description — what `npm view @mosadd/mcp description` and the npmjs.com
@@ -50,9 +49,32 @@ const SURFACES: { file: string; re: RegExp; what: string }[] = [
   // Added 2026-09-04 (kanon 1.1 review, LINEAR-5870): three more public files hand-typed a total
   // and had sat at 77 through two bumps (82, 84) because nothing pinned them. Both realm llms.txt
   // lines are pinned separately — a single /(\d+) tools/ would only ever see the first.
+  // The package's own number, 85 on 2026-09-29, pinned where a text describes @mosadd/mcp itself.
+];
+
+// ── The HUB's number ────────────────────────────────────────────────────────
+// Added 2026-09-29 (verifier of the m.0S distribution pass): the public texts said "85 tools" for
+// https://mcp.mosadd.dev/mcp while the hub listed 88 — it serves every @mosadd/mcp tool plus tools of its
+// own (sms_send, call_start, call_status). Texts that describe the ENDPOINT carry the hub's count, taken
+// from distribution/hub-tools.json (a snapshot of the live tools/list; `node scripts/check-hub-tools.mjs`
+// compares it with the live hub, `--write` refreshes it).
+const hubSnapshot = JSON.parse(readFileSync(resolve(repoRoot, "distribution/hub-tools.json"), "utf8")) as {
+  count: number;
+  names: string[];
+  server_version: string;
+};
+const packageNames = allTools.map((t) => t.name);
+const HUB_ONLY = hubSnapshot.names.filter((n) => !packageNames.includes(n)).sort();
+const HUB_COUNT = hubSnapshot.count;
+
+const HUB_SURFACES: { file: string; re: RegExp; what: string }[] = [
+  { file: "README.md", re: /`https:\/\/mcp\.mosadd\.dev\/mcp`, with \*\*(\d+) tools\*\*/, what: "README intro line" },
+  { file: "README.md", re: /The hub lists \*\*(\d+) tools\*\*/, what: "README tools section (hub)" },
   // Added 2026-09-29 (m.0S distribution): the host guide, the skills and the prepared registry texts.
   // apps/dev, apps/realm, docs/OWNER-GUIDE.md and docs/registry-submissions/ were removed that day.
   { file: "docs/hosts.md", re: /`tools\/list` → (\d+) tools/, what: "host guide shim check" },
+  { file: "docs/hosts.md", re: /server, (\d+) tools, attach a line/, what: "host guide smoke-test steps" },
+  { file: "docs/roadmap.md", re: /(\d+) tools, `tools\/call` behind a line key/, what: "roadmap live line" },
   { file: "skills/m0s-quickstart/SKILL.md", re: /`https:\/\/mcp\.mosadd\.dev\/mcp`, with (\d+) tools/, what: "m0s-quickstart skill" },
   { file: "distribution/clawhub/m0s/SKILL.md", re: /`https:\/\/mcp\.mosadd\.dev\/mcp`, with (\d+)\s+tools/, what: "ClawHub skill" },
   { file: "distribution/pulsemcp.md", re: /hosted MCP endpoint with (\d+) tools/, what: "PulseMCP listing" },
@@ -75,6 +97,34 @@ describe("tool-count consistency (anti-drift gate)", () => {
         Number(m![1]),
         `${s.file} says ${m![1]} tools but TOOL_COUNT is ${TOOL_COUNT} — sync the surface or the registry`,
       ).toBe(TOOL_COUNT);
+    });
+  }
+});
+
+describe("hub tool count (texts about https://mcp.mosadd.dev/mcp)", () => {
+  it("the snapshot is the package plus the hub's own tools, nothing missing", () => {
+    expect(hubSnapshot.names).toHaveLength(hubSnapshot.count);
+    expect(packageNames.filter((n) => !hubSnapshot.names.includes(n)), "package tools the hub does not list").toEqual([]);
+    expect(HUB_COUNT).toBe(TOOL_COUNT + HUB_ONLY.length);
+  });
+
+  it("the README names every hub-only tool", () => {
+    const readme = readFileSync(resolve(repoRoot, "README.md"), "utf8");
+    const line = readme.match(/The hub lists \*\*\d+ tools\*\*[^\n]*(?:\n(?!\n)[^\n]*)*/)?.[0] ?? "";
+    for (const n of HUB_ONLY) expect(line, `README hub sentence does not name ${n}`).toContain(`\`${n}\``);
+    expect(line).toMatch(new RegExp(`plus (\\d+) of its own`));
+    expect(Number(line.match(/plus (\d+) of its own/)![1])).toBe(HUB_ONLY.length);
+  });
+
+  for (const s of HUB_SURFACES) {
+    it(`${s.what} (${s.file}) advertises the hub's count (${HUB_COUNT})`, () => {
+      const txt = readFileSync(resolve(repoRoot, s.file), "utf8");
+      const m = txt.match(s.re);
+      expect(m, `no tool-count number found in ${s.file} — did the surface change shape?`).toBeTruthy();
+      expect(
+        Number(m![1]),
+        `${s.file} says ${m![1]} tools but the hub lists ${HUB_COUNT} (distribution/hub-tools.json) — sync the text or re-measure`,
+      ).toBe(HUB_COUNT);
     });
   }
 });

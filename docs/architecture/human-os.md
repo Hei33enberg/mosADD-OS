@@ -13,7 +13,6 @@ four modules and their encryption scope, the hosted gateway, and BYOK.
 The client side is open source under the MIT license (the service is not in this repository and there is no self-hosted version):
 
 - `@mosadd/mcp` — the MCP server; exposes all 85 tools (discover + invoke).
-- `@mosadd/core` — channel primitives, identity, and routing logic.
 - `@mosadd/providers` — backend adapters (Supabase, LiveKit, Resend, …).
 - `@mosadd/ai` — framework adapters (Vercel AI SDK, LangChain, OpenAI, Anthropic).
 - `@mosadd/crypto` — the mDM end-to-end encryption (X3DH + Double Ratchet).
@@ -68,7 +67,7 @@ loop — the agent flags a thread for human attention instead of guessing.
                      │ in-process calls
                      ▼
 ┌─────────────────────────────────────────────────────────┐
-│  Core (@mosadd/core + @mosadd/providers)                 │
+│  Provider contracts (@mosadd/providers)                  │
 │  - Module primitives (mDM, mIRC, mURL, mAYL)             │
 │  - Capabilities (mTALK, mRAG, comms_)                    │
 │  - Identity (anonymous, passphrase-recoverable)          │

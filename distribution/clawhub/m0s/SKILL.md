@@ -16,7 +16,7 @@ metadata:
 
 # m.0S for OpenClaw
 
-m.0S is one MCP endpoint, `https://mcp.mosadd.dev/mcp`, with 85 tools. The key lives in `MOSADD_KEY`
+m.0S is one MCP endpoint, `https://mcp.mosadd.dev/mcp`, with 88 tools. The key lives in `MOSADD_KEY`
 (https://app.mosadd.dev: passkey account, first line, free test key `m0s_tk_test_…`; a 10 USD top-up unlocks the
 line key `m0s_lk_live_…`).
 
