@@ -18,4 +18,4 @@ Hosts: Claude Code, Claude Desktop, Codex, Cursor, Windsurf, Hermes Agent, OpenC
 Environment: `MOSADD_KEY` (the key), `M0S_MCP_URL` (another hub address), `M0S_HOME` (where the shim is copied,
 default `~/.m0s`).
 
-Not on npm yet; after publishing: `npx -y @mosadd/m0s@0.1.0 install`.
+Not on npm yet; after publishing: `npx -y @mosadd/m0s@0.2.0 install`.

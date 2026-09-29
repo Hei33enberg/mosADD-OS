@@ -491,6 +491,13 @@ describe('one-line installers', () => {
     expect(extractEmbedded(onDiskPs1, 'ps1')).toBe(js);
   });
 
+  it('one version: m0s.mjs VERSION, package.json and the README npx line agree', async () => {
+    const { VERSION } = await import('../m0s.mjs');
+    expect(JSON.parse(readFileSync(join(pkg, 'package.json'), 'utf8')).version).toBe(VERSION);
+    const pins = readFileSync(join(pkg, 'README.md'), 'utf8').match(/@mosadd\/m0s@(\d+\.\d+\.\d+)/g) || [];
+    for (const p of pins) expect(p).toBe(`@mosadd/m0s@${VERSION}`);
+  });
+
   it('m0s.mjs stays ASCII-only (it is embedded in sh and PowerShell)', () => {
     expect(readFileSync(join(pkg, 'm0s.mjs'), 'utf8')).not.toMatch(/[^\x00-\x7f]/);
   });
@@ -520,6 +527,18 @@ describe('one-line installers', () => {
     expect(r.status, r.stderr).toBe(0);
     expect(r.stdout).toContain('[dry-run] Cursor');
     expect(existsSync(join(home, '.m0s', 'm0s.mjs'))).toBe(true);
+  });
+
+  it.skipIf(ps.status !== 0)('install.ps1 keeps an unquoted --host a,b as one list (PowerShell makes it an array)', () => {
+    const home = tmp();
+    const script = join(repo, 'install', 'install.ps1');
+    const r = spawnSync(
+      'powershell',
+      ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', `& ([scriptblock]::Create((Get-Content -Raw '${script}'))) --host cursor,codex,vscode --dry-run`],
+      { encoding: 'utf8', env: { ...process.env, M0S_HOME: join(home, '.m0s'), M0S_USER_HOME: home, CODEX_HOME: join(home, '.codex'), APPDATA: join(home, 'AppData', 'Roaming') } },
+    );
+    expect(r.status, r.stderr).toBe(0);
+    for (const t of ['[dry-run] Cursor', '[dry-run] Codex', '[dry-run] VS Code']) expect(r.stdout, t).toContain(t);
   });
 
   it.skipIf(ps.status !== 0)('install.ps1 stops on Node.js older than 18 (like install.sh) and writes nothing', () => {

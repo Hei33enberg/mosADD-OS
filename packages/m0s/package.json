@@ -1,6 +1,6 @@
 {
   "name": "@mosadd/m0s",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "mcpName": "dev.mosadd/m0s",
   "description": "m.0S installer and stdio shim: puts the m.0S MCP endpoint (one key for messages, memory and identity) into Claude Code, Claude Desktop, Codex, Cursor, Windsurf, Hermes and OpenClaw. Zero dependencies.",
   "license": "MIT",
