@@ -293,14 +293,18 @@ describe("mDM_send z MCP — czytelne na kazdym kluczu, prawdziwe powody w aplik
     expect(await appReadOwn(kingSeed, kingApp, KING, row)).toEqual({ text: null, reason: "agent" });
   });
 
-  it("klucz czlowieka, notatka do siebie: aplikacja OTWIERA ja wlasnymi kluczami", async () => {
+  // 29.09 (ZERO SZYFROWANIA, rozkaz Krola 28.09): notatka do siebie z MCP idzie JAWNIE — do 28.09
+  // byla koperta E2EE, ktora aplikacja otwierala kluczami z ziarna; teraz nie ma czego otwierac.
+  it("klucz czlowieka, notatka do siebie: jawny txt — aplikacja czyta goly tekst na kazdym urzadzeniu", async () => {
     const b = new Backend();
-    const kingSeed = new Uint8Array(32).fill(7);
-    const kingApp = await appOf(b, KING, 7);
-    await tool("mDM_send")({ to: KING, text: "do siebie z MCP" }, gatewayRequest(b, KING, KEY_A));
+    await appOf(b, KING, 7);
+    const s = (await tool("mDM_send")({ to: KING, text: "do siebie z MCP" }, gatewayRequest(b, KING, KEY_A))) as SendOut;
+    expect(s).toMatchObject({ encrypted: false, mode: "plaintext_agent_lane", identity: "untouched" });
     const row = b.rows.at(-1)!;
-    expect(row.messageType).toBe("text");
-    expect(await appReadOwn(kingSeed, kingApp, KING, row)).toEqual({ text: "do siebie z MCP", reason: null });
+    expect(row.messageType).toBe("txt");
+    expect(row.selfPayload).toBeNull();
+    expect(appPlaintext(row)).toBe("do siebie z MCP");
+    expect(b.publishes).toBe(0);
   });
 
   it("czlowiek BEZ peku: MCP nie publikuje sam (ani mDM_send, ani autoPublishKeys); jawne mDM_publish_keys moze", async () => {

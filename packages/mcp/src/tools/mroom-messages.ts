@@ -13,6 +13,8 @@
 import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
 import { invokeFunction, readSupabaseEnv } from "../providers/supabase.js";
+import { formatVoiceIfAny } from "./voice-format.js";
+import { decodeStoredPayloadText } from "./channel-payload.js";
 
 const PROTOCOL_VERSION = "mosadd.chat.v1";
 
@@ -39,17 +41,6 @@ function packPlaintextPayload(text: string, replyToId?: string): string {
     sent_at: new Date().toISOString(),
   };
   return Buffer.from(JSON.stringify(envelope), "utf8").toString("base64");
-}
-
-function unpackPayload(payload: string): { text: string } {
-  try {
-    const json = Buffer.from(payload, "base64").toString("utf8");
-    const obj = JSON.parse(json);
-    if (typeof obj?.text === "string") return obj;
-  } catch {
-    /* fall through */
-  }
-  return { text: "<ciphertext>" };
 }
 
 async function mROOM_send_message(
@@ -115,7 +106,8 @@ async function mROOM_list_messages(
     messages: (data?.messages ?? []).map((m) => ({
       id: m.id,
       sender_identity_id: m.sender_identity_id,
-      text: unpackPayload(m.encrypted_payload).text,
+      // same decode as mIRC (29.09): plain text from the app reads as text, not "<ciphertext>"
+      text: formatVoiceIfAny(decodeStoredPayloadText(m.encrypted_payload)),
       timestamp: m.created_at,
     })),
     next_cursor: data?.next_cursor ?? null,

@@ -13,6 +13,7 @@ import type { MosaddTool, MosaddToolContext } from "../types.js";
 import { invokeFunction, readSupabaseEnv } from "../providers/supabase.js";
 import { formatVoiceIfAny } from "./voice-format.js";
 import { decryptChannelPayload, encryptChannelPayload, unwrapEnvelopeText } from "../crypto/channel-e2ee.js";
+import { decodeStoredPayloadText } from "./channel-payload.js";
 
 const PROTOCOL_VERSION = "mosadd.chat.v1";
 
@@ -64,21 +65,16 @@ function buildPlaintextEnvelope(text: string, replyToId?: string): string {
   return JSON.stringify(envelope);
 }
 
-function unpackPayload(payload: string): { text: string } {
-  try {
-    const obj = JSON.parse(Buffer.from(payload, "base64").toString("utf8"));
-    if (typeof obj?.text === "string") return obj;
-  } catch {
-    /* fall through */
-  }
-  return { text: "<ciphertext>" };
-}
-
-/** Stored payload → readable text. Group-key decrypt first; legacy base64 envelope second. */
+/**
+ * Stored payload → readable text. Group-key decrypt first; then the plain decode, which reads BOTH
+ * the toolkit's JSON envelope AND the app's raw UTF-8 text (29.09: the King's posts on the open
+ * #adm/#command used to come back as "<ciphertext>"). "<ciphertext>" is left only for a sealed
+ * envelope this line holds no key for (channel-payload.ts).
+ */
 async function payloadToText(channelId: string, payload: string): Promise<string> {
   const decrypted = await decryptChannelPayload(channelId, payload);
   if (decrypted !== null) return unwrapEnvelopeText(decrypted);
-  return unpackPayload(payload).text;
+  return decodeStoredPayloadText(payload);
 }
 
 /** Resolve a channel's backing space id (metadata.linked_space_id) via channel-manage. */
@@ -198,7 +194,7 @@ export const mircMessagesTools: MosaddTool[] = [
     annotations: { readOnlyHint: true },
     requires: "network",
     description:
-      "List recent text messages in a persistent channel (mIRC), newest first, cursor-paginated. Pass channel_id; the backing space is resolved automatically. ENCRYPTION: messages your line can decrypt (group-key channels — auto-provisioned key material) come back as readable text; anything else falls back to the legacy envelope/plaintext decode.",
+      "List recent text messages in a persistent channel (mIRC), newest first, cursor-paginated. Pass channel_id; the backing space is resolved automatically. ENCRYPTION: messages your line can decrypt (group-key channels — auto-provisioned key material) come back as readable text; everything else is decoded as written: the app's plain text and the toolkit's JSON envelope both come back as readable text (open channels such as #adm and #command are never encrypted). Only a sealed group-key envelope your line holds no key for reads <ciphertext>.",
     inputSchema: mIRC_list_messages_input,
     handler: mIRC_list_messages as MosaddTool["handler"],
   },

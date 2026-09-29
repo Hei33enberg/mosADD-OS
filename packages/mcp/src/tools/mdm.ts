@@ -180,6 +180,12 @@ type MdmSendResultOut = {
    * 20.09, same rule as the app's peerIsAgent). "e2ee": human to human, X3DH + Double Ratchet.
    */
   mode: "plaintext_agent_lane" | "e2ee";
+  /**
+   * WHY this mode (29.09, rozkaz Krola 28.09 „sciagnij szyfrowanie z naszych rozmow"):
+   * "fleet_plaintext" = an agent line is a party OR it is a note to self → always in the clear;
+   * "human_to_human" = two people, E2EE unchanged.
+   */
+  reason: "fleet_plaintext" | "human_to_human";
   /** the sender can read this message back from ANY process / ANY key of the same identity */
   sender_copy: boolean;
   /** the recipient can read it without a ratchet session */
@@ -204,14 +210,22 @@ async function mDM_send(
   // better key: an agent line NEVER uses E2EE (DECYZJE-KROLA 20.09 12:56Z: linie<->linie,
   // linie<->Krol, czlowiek->linia: jawnie). Plaintext is readable by every key of the line and by
   // the recipient's app on every device, and no bundle is needed, so nothing can flap.
+  //
+  // ⛔ 29.09.2026 (ZERO SZYFROWANIA, rozkaz Krola 28.09 „sciagnij te jebane szyfrowanie z naszych
+  // rozmow w kazdym kanale i w kazdej tozsamosci"): a note to SELF (to === selfId) goes in the
+  // clear too. MCP sessions on the King's key sealed his own thread (11 envelopes 21.09) and the
+  // server now refuses envelopes there (message-send `fleet_plaintext_only`). Kinds of BOTH sides
+  // are read from `identities.kind` before any sealing; only person↔person stays E2EE.
   const selfKind = await selfKindOf(dm);
-  const peerKind = selfKind === "agent" || input.to === selfId ? selfKind : await peerKindOf(dm, input.to);
-  if (selfKind === "agent" || peerKind === "agent") {
+  const noteToSelf = input.to === selfId;
+  const peerKind = selfKind === "agent" || noteToSelf ? selfKind : await peerKindOf(dm, input.to);
+  if (selfKind === "agent" || peerKind === "agent" || noteToSelf) {
     const payload = packPlaintextPayload(input.text);
-    ctx.log("debug", "mDM_send plaintext agent lane (rozkaz Krola 20.09)", {
+    ctx.log("debug", "mDM_send fleet plaintext (rozkaz Krola 20.09 + 28.09)", {
       thread_id: threadId,
       self_kind: selfKind,
       peer_kind: peerKind,
+      note_to_self: noteToSelf,
     });
     const plainArgs: DmSendArgsExt = {
       to: input.to,
@@ -227,6 +241,7 @@ async function mDM_send(
       thread_id: threadId,
       encrypted: false,
       mode: "plaintext_agent_lane",
+      reason: "fleet_plaintext",
       sender_copy: true,
       recipient_copy: true,
       identity: "untouched",
@@ -303,6 +318,7 @@ async function mDM_send(
     thread_id: threadId,
     encrypted: true,
     mode: "e2ee",
+    reason: "human_to_human",
     sender_copy: !!selfPayload,
     recipient_copy: !!recipientSelfPayload,
     identity,
@@ -313,15 +329,14 @@ async function mDM_send_unencrypted(
   input: z.infer<typeof mDM_send_input>,
   ctx: MosaddToolContext,
 ): Promise<{ message_id: string; delivered_at: string; thread_id: string; encrypted: false }> {
-  // DEPRECATED migration path: plaintext mosadd.chat.v1 envelope, no E2EE.
-  // Kept so peers who have not yet published prekeys can still be reached
-  // during the migration window. Will be removed once E2EE is universal.
+  // Plaintext send, no E2EE. ⛔ 29.09.2026: NOT deprecated — this is THE path for every
+  // conversation with a fleet line and with the King (rozkaz Krola 28.09). Stays forever.
   const dm = ctx.providers.dm;
   const selfId = await dm.selfId();
   const threadId = dmThreadId(selfId, input.to, input.thread_label);
   const payload = packPlaintextPayload(input.text);
 
-  ctx.log("warn", "mDM_send_unencrypted (deprecated, plaintext) via DmProvider", {
+  ctx.log("debug", "mDM_send_unencrypted (plaintext) via DmProvider", {
     thread_id: threadId,
     bytes: payload.byteLength,
   });
@@ -616,21 +631,21 @@ export const mdmTools: MosaddTool[] = [
   },
   {
     name: "mDM_send",
-    title: "Send encrypted DM",
+    title: "Send DM",
     annotations: { readOnlyHint: false },
     requires: "any",
     description:
-      "Send a direct message via mosadd mDM. Between two PEOPLE it is END-TO-END-ENCRYPTED; when either side is an agent line it goes in the clear (mosadd rule: agents must read their DMs), exactly like the mosadd app. Pass `to` as the recipient's mosadd identity_id (look it up with mDM_list_contacts). Establishes an X3DH + Double Ratchet session on first contact (the recipient must have run mDM_publish_keys). Optional thread_label puts the message in a named thread — mosadd USP: multiple threads per contact, unlike WhatsApp/Telegram. If the recipient has no published keys yet, use mDM_send_unencrypted.",
+      "Send a direct message via mosadd mDM. Conversations with fleet lines and with the King: ALWAYS in the clear — when either side is an agent line, or you write to yourself, the message goes as plain text (result `encrypted: false, reason: \"fleet_plaintext\"`), exactly like the mosadd app. Only between two PEOPLE is it END-TO-END-ENCRYPTED (X3DH + Double Ratchet; the recipient must have published keys). Pass `to` as the recipient's mosadd identity_id (look it up with mDM_list_contacts). Optional thread_label puts the message in a named thread — mosadd USP: multiple threads per contact, unlike WhatsApp/Telegram.",
     inputSchema: mDM_send_input,
     handler: mDM_send as MosaddTool["handler"],
   },
   {
     name: "mDM_send_unencrypted",
-    title: "Send unencrypted DM",
+    title: "Send plain-text DM",
     annotations: { readOnlyHint: false },
     requires: "any",
     description:
-      "DEPRECATED migration-window fallback: send a direct message WITHOUT end-to-end encryption (plaintext envelope). Only use when the recipient has not yet published prekeys (mDM_send fails with that hint). Prefer mDM_send. Will be removed once E2EE is universal.",
+      "Send a direct message as plain text, never encrypted. Conversations with fleet lines and with the King: ALWAYS in the clear — this is the path for every agent line writing to the King, to another line or to itself, and it is permanent. Pass `to` as the recipient's mosadd identity_id (look it up with mDM_list_contacts); optional thread_label puts it in a named thread. mDM_send picks the same plain-text path by itself whenever a fleet line is a party.",
     inputSchema: mDM_send_input,
     handler: mDM_send_unencrypted as MosaddTool["handler"],
   },

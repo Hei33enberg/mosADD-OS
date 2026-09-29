@@ -21,6 +21,30 @@ gateway (Phase 2) ships.
 
 Tool count **84 → 85** (mIRC **24 → 25**); `TOOL_COUNT` (`= allTools.length`) stays the truth.
 
+## [3.0.0-alpha.55] — 2026-09-29
+
+### Fixed
+- **Channel/room reader: the King's posts read as text, not `<ciphertext>`** (ZERO SZYFROWANIA,
+  rozkaz Krola 28.09). `mIRC_list_messages` and `mROOM_list_messages` understood only a JSON
+  `mosadd.chat.v1` envelope and stamped everything else `<ciphertext>` — including every post
+  the app writes (plain UTF-8 in base64, `ircApi.ts encodePayload`) on the OPEN, keyless #adm and
+  #command (measured 28–29.09: f159c8d7, 776b3e9a). New shared decoder `tools/channel-payload.ts`
+  (same rule as `mdm.ts unpackPayload` and the mKEEPER bridge `decodePayload.mjs`): envelope →
+  its `text`; plain UTF-8 → the text; other JSON (voice `{audio, mime, dur}`) → raw, so
+  `formatVoiceIfAny` shapes it (mROOM now too). `<ciphertext>` stays ONLY for a sealed envelope
+  the line cannot open — group-key `{iv, ciphertext, hmac}` without the key, `mosadd.e2ee.*` —
+  and for bytes that are not UTF-8 text.
+- **`mDM_send`: conversations with fleet lines and with the King always in the clear.** Besides
+  an agent line on either side (alpha.54), a note to SELF (`to === selfId`) now goes plain too
+  (MCP sessions on the King's key sealed his own thread; `message-send` refuses envelopes there
+  with `fleet_plaintext_only`). The result carries `reason: "fleet_plaintext"` (plain) or
+  `"human_to_human"` (E2EE). Person↔person stays X3DH + Double Ratchet, unchanged.
+- **Tool descriptions:** `mDM_send_unencrypted` is no longer "DEPRECATED / prefer mDM_send / will
+  be removed" — that text steered every LLM line to the sealing tool. Both DM send tools now say:
+  conversations with fleet lines and with the King are ALWAYS in the clear.
+- Lock `src/__tests__/flota-jawnie.test.ts` (13 tests): red on alpha.54 (7/13, the King's text →
+  `<ciphertext>`), red under five sabotages of the new rules, green after.
+
 ## [3.0.0-alpha.54] — 2026-09-27
 
 ### Fixed
