@@ -50,11 +50,11 @@ placeholder, never in clear), `--host cursor,codex` to pick hosts. An existing `
 the older mosadd.com endpoint, is replaced and reported; its file is backed up first.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/69639bd405c3c3face5f6f138e961eb4036ce779/install/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/63d067bd01291df14c43aef4e27bd8d5bdd8ac8f/install/install.sh | sh
 ```
 
 ```powershell
-irm https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/69639bd405c3c3face5f6f138e961eb4036ce779/install/install.ps1 | iex
+irm https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/63d067bd01291df14c43aef4e27bd8d5bdd8ac8f/install/install.ps1 | iex
 ```
 
 The links are pinned to a commit, never to a branch. From a clone: `node packages/m0s/m0s.mjs install`.
