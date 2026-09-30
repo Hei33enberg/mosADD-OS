@@ -12,12 +12,12 @@ The last column says what was checked instead, on 2026-09-29.
 
 ```bash
 # macOS / Linux (Node.js 18+)
-curl -fsSL https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/63d067bd01291df14c43aef4e27bd8d5bdd8ac8f/install/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/97421c0f3ba1f93fe86ddfb91a96751a4b7eaaba/install/install.sh | sh
 ```
 
 ```powershell
 # Windows PowerShell (Node.js 18+)
-irm https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/63d067bd01291df14c43aef4e27bd8d5bdd8ac8f/install/install.ps1 | iex
+irm https://raw.githubusercontent.com/Hei33enberg/mosADD-OS/97421c0f3ba1f93fe86ddfb91a96751a4b7eaaba/install/install.ps1 | iex
 ```
 
 The link is pinned to a commit, never to a branch, so it runs exactly the reviewed code. Options: `--dry-run`
