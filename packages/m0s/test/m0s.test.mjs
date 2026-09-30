@@ -642,6 +642,35 @@ describe('honesty rules (scripts/honesty-rules.mjs)', () => {
     expect(violations('Between two people the operator cannot read the content.')).toEqual([]);
   });
 
+  it('the LIVE registry card packages/mcp/server.registry.json (com.mosadd/mosadd-mcp) promises nothing agents lack', async () => {
+    // 30.09: this card, published to registry.modelcontextprotocol.io, said "E2EE DMs" and "private recall" (alpha.45).
+    const { violations } = await import('../../../scripts/honesty-rules.mjs');
+    const { checkManifest } = await import('../../../scripts/mcp-registry.mjs');
+    const card = JSON.parse(readFileSync(join(repo, 'packages', 'mcp', 'server.registry.json'), 'utf8'));
+    expect(card.name).toBe('com.mosadd/mosadd-mcp');
+    expect(await checkManifest(card)).toEqual([]);
+    for (const field of ['title', 'description']) {
+      expect(violations(card[field], 'packages/mcp/server.registry.json'), card[field]).toEqual([]);
+      expect(card[field]).not.toMatch(/end-to-end|E2EE|private (recall|memory)/i);
+    }
+    // the exact 03.09 sentence stays caught
+    expect(await checkManifest({ ...card, description: 'Command your AI agents by voice: PTT rooms, channels, E2EE DMs, agent email, private recall.' })).toHaveLength(2);
+  });
+
+  it('the registry login signs what the registry verifies (raw 32-byte key in p=, hex signature of the RFC3339 time)', async () => {
+    const { generateKeyPairSync } = await import('node:crypto');
+    const reg = await import('../../../scripts/mcp-registry.mjs');
+    const { privateKey } = generateKeyPairSync('ed25519');
+    const record = reg.proofRecord(privateKey);
+    expect(record).toMatch(/^v=MCPv1; k=ed25519; p=[A-Za-z0-9+/]{43}=$/); // 32 bytes -> 44 base64 characters
+    const ts = reg.rfc3339(Date.parse('2026-09-30T10:31:02.789Z'));
+    expect(ts).toBe('2026-09-30T10:31:02Z'); // Go time.RFC3339, whole seconds
+    const sig = reg.signTimestamp(privateKey, ts);
+    expect(sig).toMatch(/^[0-9a-f]{128}$/);
+    expect(reg.verifyTimestamp(reg.publicKeyFromProof(record), ts, sig)).toBe(true);
+    expect(reg.verifyTimestamp(reg.publicKeyFromProof(record), '2026-09-30T10:31:03Z', sig)).toBe(false);
+  });
+
   it('the older registry card packages/mcp/server.json makes no false claim and fits the 100-character rule', async () => {
     const { violations } = await import('../../../scripts/honesty-rules.mjs');
     const card = JSON.parse(readFileSync(join(repo, 'packages', 'mcp', 'server.json'), 'utf8'));

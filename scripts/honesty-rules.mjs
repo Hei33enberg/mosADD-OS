@@ -73,6 +73,21 @@ export const BANNED = [
     why: `sign-up on app.mosadd.dev is by e-mail and password; a passkey is optional (Settings), not the way in`,
     sample: 'Create an account with a passkey and name your first line.',
   },
+  {
+    // 30.09: the official MCP Registry card com.mosadd/mosadd-mcp (packages/mcp/server.registry.json, live since 03.09)
+    // promised "E2EE DMs" to everyone who adds the agent endpoint. Direct messages are E2EE only between two people in
+    // the app; every agent line is readable by the service (README, "Encryption, plainly").
+    re: /\bE2EE (DMs?|direct messages?)\b/i,
+    unless: /\b(two people|between people|people|person|human)\b/i,
+    why: `"E2EE DMs" on an agent surface - direct messages are E2EE only between two people in the app; agent lines are readable by the service`,
+    sample: 'Command your AI agents by voice: PTT rooms, channels, E2EE DMs, agent email.',
+  },
+  {
+    // 30.09: same card, "private recall". mRAG indexes content in plain text on the server; the service can read it.
+    re: /\bprivate (recall|memory)\b/i,
+    why: `"private recall/memory" - mRAG indexes content in plain text on the server, readable by the service`,
+    sample: 'Channels, agent email, private recall.',
+  },
 ];
 
 /**
