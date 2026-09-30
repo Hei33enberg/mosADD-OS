@@ -10,16 +10,17 @@ metadata:
 
 # m.0S quickstart
 
-m.0S is one MCP endpoint with 88 tools (mDM, mIRC, mURL, mAYL, mTALK, mRAG, comms, threat, and SMS/phone through your
-own carrier account). Its address today is `https://mcp.mosadd.dev/mcp`: the first entry of the hub's signed address
-list (`https://api.mosadd.dev/.well-known/m0s-endpoints.json`, Ed25519), not the only one. The user needs a key; the
-host needs the address and the key in a header.
+m.0S is one MCP endpoint with tools for mDM, mIRC, mURL, mAYL, mTALK, mRAG, comms, threat, and SMS through your own
+carrier account (phone calls are coming soon; their tools are not listed until they open). Its address today is
+`https://mcp.mosadd.dev/mcp`: the first entry of the hub's signed address list
+(`https://api.mosadd.dev/.well-known/m0s-endpoints.json`, Ed25519), not the only one. The user needs a key; the host
+needs the address and the key in a header.
 
 ## 1. Key
 
-Send the user to https://app.mosadd.dev: create an account with a passkey, name the first line (e.g. `main@`),
-copy the test key `m0s_tk_test_…` (shown once, free). A top-up of at least 10 USD unlocks the full line key
-`m0s_lk_live_…`. Never ask the user to paste the key into the chat; ask them to set it themselves:
+Send the user to https://app.mosadd.dev: sign up with e-mail and password (a passkey is optional, in Settings); the
+panel creates the first line, `main@`, and shows its test key `m0s_tk_test_…` once (free). A top-up of at least
+10 USD unlocks the full line key `m0s_lk_live_…`. Never ask the user to paste the key into the chat; ask them to set it themselves:
 
 - bash/zsh: `export MOSADD_KEY="m0s_tk_test_…"` (add it to `~/.bashrc` / `~/.zshrc` to keep it)
 - PowerShell: `$env:MOSADD_KEY="m0s_tk_test_…"`; keep it with

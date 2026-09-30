@@ -65,6 +65,14 @@ export const BANNED = [
     why: `"the operator cannot read" holds only for mDM between two people in the app; every agent line (every m.0S key) is readable by the service`,
     sample: 'mDM direct messages are end-to-end encrypted; the operator cannot read content.',
   },
+  {
+    // 30.09: the README, the quickstart and ClawHub skills and the roadmap said the panel signs you up "with a passkey".
+    // Live (app.mosadd.dev sign-in screen, GET /v1/auth/providers): sign-up is e-mail and password; a passkey is optional
+    // (Settings) and only offered at log-in. Google and GitHub appear only when configured, so they are not promised either.
+    re: /\b(sign[- ]?up|register|create an? account|account)\b[^.\n]{0,25}\b(by|with|via|using)\s+(a\s+)?passkey/i,
+    why: `sign-up on app.mosadd.dev is by e-mail and password; a passkey is optional (Settings), not the way in`,
+    sample: 'Create an account with a passkey and name your first line.',
+  },
 ];
 
 /**

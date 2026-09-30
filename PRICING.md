@@ -18,7 +18,6 @@ Usage per call: [app.mosadd.dev](https://app.mosadd.dev) → Usage.
 | Memory: ingest with graph | 0.4 USD per 1M characters |  | `mrag.ingest_graph_char` |
 | Memory: query | 0.00005 USD per query |  | `mrag.query` |
 | SMS through your Telnyx or Twilio | 0.001 USD per message | The SMS itself is billed by your provider | `sms_byoc.message` |
-| Phone call through your Telnyx or Twilio | 0.009 USD per minute | Billed per second; minutes billed by your provider | `pstn_byoc.second` |
 
 ## Priced, not billed yet
 
@@ -32,5 +31,6 @@ These meters have a price in the hub's list but are not live; nothing is charged
 | mADD turn (your own model key) | 0.001 USD per turn | Model tokens are billed by your provider | `madd.turn_byok` |
 | mKEEPER run | 0.001 USD per run | Scheduled job without a model | `mkeeper.execution` |
 | Call | 0.0015 USD per participant minute | Billed per second | `call.participant_second` |
+| Phone call through your Telnyx or Twilio | 0.009 USD per minute | Billed per second; minutes billed by your provider | `pstn_byoc.second` |
 
-Source: `GET https://api.mosadd.dev/v1/pricing` (2026-09-29; prices verified 2026-09-28). The hub's list wins over this file.
+Source: `GET https://api.mosadd.dev/v1/pricing` (2026-09-30; prices verified 2026-09-28). The hub's list wins over this file.

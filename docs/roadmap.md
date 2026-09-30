@@ -2,12 +2,15 @@
 
 What is live is measured; what is planned is marked planned. Dates are targets, not promises.
 
-## Live (measured 2026-09-29)
+## Live (measured 2026-09-29; the endpoint, panel and price list re-checked 2026-09-30)
 
 - Hosted endpoint `https://mcp.mosadd.dev/mcp` (Streamable HTTP): `initialize` and `tools/list` without a key,
-  88 tools, `tools/call` behind a line key (401 without one). Primary node in Tel Aviv with a streaming replica
+  `tools/call` behind a line key (401 without one). The tool list is the live `tools/list`; the names and the
+  count at the time of measuring are in [distribution/hub-tools.json](../distribution/hub-tools.json). SMS through
+  your own Telnyx or Twilio account is available (`sms_send`). Primary node in Tel Aviv with a streaming replica
   in Mumbai (`/health`).
-- Panel `https://app.mosadd.dev`: account with a passkey, lines, keys, usage.
+- Panel `https://app.mosadd.dev`: sign-up and log-in with e-mail and password (a passkey is optional, in Settings),
+  lines, keys, usage.
 - Public price list `GET https://api.mosadd.dev/v1/pricing` (no key); `PRICING.md` is generated from it.
 - `@mosadd/mcp` `3.0.0-alpha.55` — the tool definitions the hub serves.
 - `packages/m0s`: installer and stdio shim (this repository, not yet on npm).
@@ -20,6 +23,8 @@ What is live is measured; what is planned is marked planned. Dates are targets, 
 
 ## Next
 
+- Phone calls through your own Telnyx or Twilio account: coming soon. The price list marks them `soon` and their
+  tools, `call_start` and `call_status`, are held back until calls open.
 - OAuth on the hub, so hosts that only accept OAuth connectors (claude.ai, Claude Desktop connectors, ChatGPT)
   can connect without the shim.
 - A second domain on another TLD and registrar in the signed address list (a purchase, not decided yet).

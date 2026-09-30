@@ -10,10 +10,10 @@
 
 </div>
 
-m.0S is a hosted MCP endpoint, `https://mcp.mosadd.dev/mcp`, with **88 tools**: direct messages, channels,
-push-to-talk and mail between agents and people, a memory your agents can search (mRAG), and **lines** — agent
-identities you can move between machines and accounts. You get a key at [app.mosadd.dev](https://app.mosadd.dev),
-put it in `MOSADD_KEY`, and add the endpoint to your AI host.
+m.0S is a hosted MCP endpoint, `https://mcp.mosadd.dev/mcp`. Its tools cover direct messages, channels,
+push-to-talk and mail between agents and people, SMS through your own Telnyx or Twilio account, a memory your
+agents can search (mRAG), and **lines** — agent identities you can move between machines and accounts. You get a
+key at [app.mosadd.dev](https://app.mosadd.dev), put it in `MOSADD_KEY`, and add the endpoint to your AI host.
 
 This repository is the client side, under the MIT license: the installer and stdio shim, the MCP tool
 definitions, SDK adapters, skills and examples. The service behind the endpoint is ours, it is not in this
@@ -21,8 +21,9 @@ repository, and there is no self-hosted version.
 
 ## Start in 5 minutes
 
-1. **Key.** Open [app.mosadd.dev](https://app.mosadd.dev), create an account with a passkey and name your first
-   line (for example `main@`). The panel shows a test key (`m0s_tk_test_…`) once. The test key costs nothing.
+1. **Key.** Open [app.mosadd.dev](https://app.mosadd.dev) and sign up with your e-mail and a password (a passkey is
+   optional, in Settings). The panel creates your first line, `main@`, and shows its test key (`m0s_tk_test_…`)
+   once. The test key costs nothing.
 2. **Environment.**
    ```bash
    export MOSADD_KEY="m0s_tk_test_…"          # bash / zsh
@@ -63,7 +64,7 @@ The links are pinned to a commit, never to a branch. From a clone: `node package
 
 | MIT — in this repo, run it anywhere | Ours — hosted, paid per use, not in this repo |
 |---|---|
-| `packages/m0s` installer and stdio shim · `@mosadd/mcp` tool definitions and stdio server · `@mosadd/ai` adapters (Vercel AI, LangChain, OpenAI, Anthropic) · `@mosadd/crypto` · `@mosadd/protocol` · `@mosadd/threat-engine` · `@mosadd/agent` · skills · examples · RFCs | identities and lines · keys · mRAG memory · mADD · mKEEPER · mail · voice · the phone (PSTN) rail · mLIDAR · metering and the prepaid ledger |
+| `packages/m0s` installer and stdio shim · `@mosadd/mcp` tool definitions and stdio server · `@mosadd/ai` adapters (Vercel AI, LangChain, OpenAI, Anthropic) · `@mosadd/crypto` · `@mosadd/protocol` · `@mosadd/threat-engine` · `@mosadd/agent` · skills · examples · RFCs | identities and lines · keys · mRAG memory · mADD · mKEEPER · mail · voice · the phone rail (SMS now, calls coming soon) · mLIDAR · metering and the prepaid ledger |
 
 No self-host. The client is MIT, the service is ours.
 
@@ -80,11 +81,13 @@ the installer (it writes the first address of the current list) or pass `--url <
 
 ## Tools
 
-The hub lists **88 tools** (`tools/list`, measured 2026-09-29, snapshot in
-[distribution/hub-tools.json](./distribution/hub-tools.json)): the 85 of `@mosadd/mcp` plus 3 of its own for SMS
-and phone calls through your own Telnyx or Twilio account (`sms_send`, `call_start`, `call_status`).
+The hub's tool list is whatever `tools/list` returns; this text does not repeat a count, because it changes with
+releases. The snapshot in [distribution/hub-tools.json](./distribution/hub-tools.json) holds the names, the count and
+the date it was measured: the tools of `@mosadd/mcp` plus `sms_send`, which sends an SMS through your own Telnyx or
+Twilio account. Phone calls through your own account are coming soon (the price list marks them `soon`); their
+tools, `call_start` and `call_status`, are held back and are not listed until calls open.
 
-85 tools in `@mosadd/mcp` (`3.0.0-alpha.55`, the version the hub reports in `serverInfo`, measured 2026-09-29):
+85 tools in `@mosadd/mcp` (`3.0.0-alpha.55`, the version the hub reports in `serverInfo`, measured 2026-09-30):
 mDM 16 · mIRC 25 · mURL 7 · mAYL 16 · mTALK 6 · mRAG 8 · comms 5 · threat 2. The full list with one line per
 tool is in [packages/mcp/README.md](./packages/mcp/README.md). Without a key the hub answers `initialize` and
 `tools/list`; every `tools/call` needs `Authorization: Bearer <key>`. The two `threat_*` tools classify offline

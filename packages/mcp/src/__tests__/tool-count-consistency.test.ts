@@ -53,11 +53,14 @@ const SURFACES: { file: string; re: RegExp; what: string }[] = [
 ];
 
 // ── The HUB's number ────────────────────────────────────────────────────────
-// Added 2026-09-29 (verifier of the m.0S distribution pass): the public texts said "85 tools" for
+// 2026-09-29 (verifier of the m.0S distribution pass): the public texts said "85 tools" for
 // https://mcp.mosadd.dev/mcp while the hub listed 88 — it serves every @mosadd/mcp tool plus tools of its
-// own (sms_send, call_start, call_status). Texts that describe the ENDPOINT carry the hub's count, taken
-// from distribution/hub-tools.json (a snapshot of the live tools/list; `node scripts/check-hub-tools.mjs`
-// compares it with the live hub, `--write` refreshes it).
+// own. 2026-09-30: the hub lists 86, because the phone-call tools (call_start, call_status) are held back until
+// calls open (the price list marks them "soon"); the count moved 85 → 88 → 86 in two days. So texts about the
+// ENDPOINT carry no number at all: they point at distribution/hub-tools.json (a snapshot of the live tools/list;
+// `node scripts/check-hub-tools.mjs` compares it with the live hub, `--write` refreshes it), and this gate fails
+// when one of them states "<N> tools" for the endpoint again. A number that describes @mosadd/mcp itself (a line
+// that names `@mosadd/mcp`) stays and is pinned to TOOL_COUNT by SURFACES above.
 const hubSnapshot = JSON.parse(readFileSync(resolve(repoRoot, "distribution/hub-tools.json"), "utf8")) as {
   count: number;
   names: string[];
@@ -66,21 +69,24 @@ const hubSnapshot = JSON.parse(readFileSync(resolve(repoRoot, "distribution/hub-
 const packageNames = allTools.map((t) => t.name);
 const HUB_ONLY = hubSnapshot.names.filter((n) => !packageNames.includes(n)).sort();
 const HUB_COUNT = hubSnapshot.count;
+const HELD_BACK = ["call_start", "call_status"]; // phone calls through the user's own Telnyx/Twilio account: "soon"
 
-const HUB_SURFACES: { file: string; re: RegExp; what: string }[] = [
-  { file: "README.md", re: /`https:\/\/mcp\.mosadd\.dev\/mcp`, with \*\*(\d+) tools\*\*/, what: "README intro line" },
-  { file: "README.md", re: /The hub lists \*\*(\d+) tools\*\*/, what: "README tools section (hub)" },
-  // Added 2026-09-29 (m.0S distribution): the host guide, the skills and the prepared registry texts.
-  // apps/dev, apps/realm, docs/OWNER-GUIDE.md and docs/registry-submissions/ were removed that day.
-  { file: "docs/hosts.md", re: /`tools\/list` → (\d+) tools/, what: "host guide shim check" },
-  { file: "docs/hosts.md", re: /server, (\d+) tools, attach a line/, what: "host guide smoke-test steps" },
-  { file: "docs/roadmap.md", re: /(\d+) tools, `tools\/call` behind a line key/, what: "roadmap live line" },
-  { file: "skills/m0s-quickstart/SKILL.md", re: /`https:\/\/mcp\.mosadd\.dev\/mcp`, with (\d+) tools/, what: "m0s-quickstart skill" },
-  { file: "distribution/clawhub/m0s/SKILL.md", re: /`https:\/\/mcp\.mosadd\.dev\/mcp`, with (\d+)\s+tools/, what: "ClawHub skill" },
-  { file: "distribution/pulsemcp.md", re: /hosted MCP endpoint with (\d+) tools/, what: "PulseMCP listing" },
-  { file: "distribution/mcp-so.md", re: /Hosted MCP endpoint with (\d+) tools/, what: "mcp.so listing" },
-  { file: "distribution/awesome-mcp-servers.md", re: /endpoint with (\d+) tools/, what: "awesome-mcp-servers entry" },
+// Every public text that talks about the endpoint (not about the package).
+const HUB_TEXTS = [
+  "README.md",
+  "docs/hosts.md",
+  "docs/roadmap.md",
+  "skills/m0s-quickstart/SKILL.md",
+  "distribution/clawhub/m0s/SKILL.md",
+  "distribution/pulsemcp.md",
+  "distribution/mcp-so.md",
+  "distribution/awesome-mcp-servers.md",
 ];
+/** "88 tools", "88 MCP tools", "88 live tools" — a fixed count, in a line that is not about @mosadd/mcp. */
+const FIXED_COUNT = /\b\d+\s+(?:MCP\s+|live\s+|callable\s+)?tools\b/i;
+function fixedHubCounts(text: string): string[] {
+  return text.split(/\r?\n/).filter((l) => FIXED_COUNT.test(l) && !l.includes("@mosadd/mcp"));
+}
 
 describe("tool-count consistency (anti-drift gate)", () => {
   it("TOOL_COUNT is a positive integer", () => {
@@ -108,25 +114,38 @@ describe("hub tool count (texts about https://mcp.mosadd.dev/mcp)", () => {
     expect(HUB_COUNT).toBe(TOOL_COUNT + HUB_ONLY.length);
   });
 
-  it("the README names every hub-only tool", () => {
+  it("the README tools section points at the snapshot, names every hub-only tool and says which are held back", () => {
     const readme = readFileSync(resolve(repoRoot, "README.md"), "utf8");
-    const line = readme.match(/The hub lists \*\*\d+ tools\*\*[^\n]*(?:\n(?!\n)[^\n]*)*/)?.[0] ?? "";
-    for (const n of HUB_ONLY) expect(line, `README hub sentence does not name ${n}`).toContain(`\`${n}\``);
-    expect(line).toMatch(new RegExp(`plus (\\d+) of its own`));
-    expect(Number(line.match(/plus (\d+) of its own/)![1])).toBe(HUB_ONLY.length);
+    const para = readme.match(/[^\n]*distribution\/hub-tools\.json[^\n]*(?:\n(?!\n)[^\n]*)*/)?.[0] ?? "";
+    expect(para, "README has no paragraph pointing at distribution/hub-tools.json").not.toBe("");
+    for (const n of HUB_ONLY) expect(para, `README hub paragraph does not name ${n}`).toContain(`\`${n}\``);
+    const listed = HELD_BACK.filter((n) => hubSnapshot.names.includes(n));
+    if (listed.length === 0) {
+      // calls are not open: the README must say so, and name the tools it holds back
+      expect(para).toMatch(/coming soon/);
+      expect(para).toMatch(/held back/);
+      for (const n of HELD_BACK) expect(para, `README does not name the held-back ${n}`).toContain(`\`${n}\``);
+    } else {
+      expect(para, `the hub lists ${listed.join(", ")} now — the README still says they are held back`).not.toMatch(/held back/);
+    }
   });
 
-  for (const s of HUB_SURFACES) {
-    it(`${s.what} (${s.file}) advertises the hub's count (${HUB_COUNT})`, () => {
-      const txt = readFileSync(resolve(repoRoot, s.file), "utf8");
-      const m = txt.match(s.re);
-      expect(m, `no tool-count number found in ${s.file} — did the surface change shape?`).toBeTruthy();
+  for (const file of HUB_TEXTS) {
+    it(`${file} states no fixed number of hub tools (it points at distribution/hub-tools.json)`, () => {
+      const lines = fixedHubCounts(readFileSync(resolve(repoRoot, file), "utf8"));
       expect(
-        Number(m![1]),
-        `${s.file} says ${m![1]} tools but the hub lists ${HUB_COUNT} (distribution/hub-tools.json) — sync the text or re-measure`,
-      ).toBe(HUB_COUNT);
+        lines,
+        `${file} states a fixed tool count for the endpoint (the hub lists ${HUB_COUNT} today, and it changes): drop the number or point at distribution/hub-tools.json`,
+      ).toEqual([]);
     });
   }
+
+  it("the gate fires: a text that says '88 tools' for the endpoint is caught, one about @mosadd/mcp is not", () => {
+    expect(fixedHubCounts("m.0S is a hosted MCP endpoint with 88 tools.")).toHaveLength(1);
+    expect(fixedHubCounts("The hub lists **88 MCP tools** today.")).toHaveLength(1);
+    expect(fixedHubCounts("85 tools in `@mosadd/mcp` (`3.0.0-alpha.55`)")).toEqual([]);
+    expect(fixedHubCounts("The hub's tool list is whatever `tools/list` returns.")).toEqual([]);
+  });
 });
 
 // ── Per-MODULE anti-drift gate ───────────────────────────────────────────────

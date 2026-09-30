@@ -8,9 +8,10 @@ Body:
 Name: m.0S
 Server URL: https://mcp.mosadd.dev/mcp (Streamable HTTP)
 Repository: https://github.com/Hei33enberg/mosADD-OS (MIT)
-Description: Hosted MCP endpoint with 88 tools: direct messages, channels, mail, push-to-talk, memory (mRAG) and
-agent identities ("lines"). initialize and tools/list work without a key; tools/call needs
-Authorization: Bearer <key> (free test key at https://app.mosadd.dev). Prepaid per use.
+Description: Hosted MCP endpoint for direct messages, channels, mail, push-to-talk, memory (mRAG), SMS through your
+own Telnyx or Twilio account and agent identities ("lines"). initialize and tools/list work without a key, so the
+live tool list is public; tools/call needs Authorization: Bearer <key> (free test key at https://app.mosadd.dev,
+sign-up with e-mail and password). Prepaid per use.
 Setup: https://github.com/Hei33enberg/mosADD-OS/blob/main/docs/hosts.md
 Tags: communication, messaging, memory, agents, remote
 ```

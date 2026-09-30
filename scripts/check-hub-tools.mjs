@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 // What the hosted endpoint lists, as opposed to what @mosadd/mcp defines. The hub serves every @mosadd/mcp tool
-// plus tools of its own (29.09: sms_send, call_start, call_status), so the public texts carry the hub's number.
+// plus tools of its own (30.09: sms_send; call_start and call_status are held back until phone calls open, so the
+// count moved 88 -> 86). The public texts therefore state no count and point at distribution/hub-tools.json.
 //
 //   node scripts/check-hub-tools.mjs          exit 1 when the live tools/list differs from distribution/hub-tools.json
 //   node scripts/check-hub-tools.mjs --write  refresh distribution/hub-tools.json from the live endpoint
 //
 // Offline, packages/mcp/src/__tests__/tool-count-consistency.test.ts checks the snapshot against the registry and
-// pins every public sentence that states the hub's count; this script is the live half (network, no key needed:
+// fails when a public text states a fixed hub count again; this script is the live half (network, no key needed:
 // initialize and tools/list are public).
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';

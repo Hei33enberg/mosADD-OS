@@ -1,11 +1,9 @@
 {
-  "measured_at": "2026-09-29T22:41Z",
+  "measured_at": "2026-09-30T07:27Z",
   "endpoint": "https://mcp.mosadd.dev/mcp",
   "server_version": "3.0.0-alpha.55",
-  "count": 88,
+  "count": 86,
   "names": [
-    "call_start",
-    "call_status",
     "comms_action_create",
     "comms_action_frame_get",
     "comms_capabilities",
