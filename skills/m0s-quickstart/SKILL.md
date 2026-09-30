@@ -10,8 +10,10 @@ metadata:
 
 # m.0S quickstart
 
-m.0S is one MCP endpoint, `https://mcp.mosadd.dev/mcp`, with 88 tools (mDM, mIRC, mURL, mAYL, mTALK, mRAG,
-comms, threat, and SMS/phone through your own carrier account). The user needs a key; the host needs the endpoint and the key in a header.
+m.0S is one MCP endpoint with 88 tools (mDM, mIRC, mURL, mAYL, mTALK, mRAG, comms, threat, and SMS/phone through your
+own carrier account). Its address today is `https://mcp.mosadd.dev/mcp`: the first entry of the hub's signed address
+list (`https://api.mosadd.dev/.well-known/m0s-endpoints.json`, Ed25519), not the only one. The user needs a key; the
+host needs the address and the key in a header.
 
 ## 1. Key
 
@@ -37,8 +39,19 @@ copy the test key `m0s_tk_test_…` (shown once, free). A top-up of at least 10 
 | Lovable, Manus | their connector UI: URL above, auth "Bearer token", the key |
 
 All of it at once, with a backup of every file it touches: `node packages/m0s/m0s.mjs install` from a clone of
-https://github.com/Hei33enberg/mosADD-OS (`--dry-run` to preview). The host must be restarted after `MOSADD_KEY`
-changes.
+https://github.com/Hei33enberg/mosADD-OS (`--dry-run` to preview). The installer takes the address from the signed
+list, not from this page. The host must be restarted after `MOSADD_KEY` changes.
+
+## If the address stops answering (domain seized or blocked)
+
+- A host that stores only a URL (every row above except Claude Desktop) does not read the list. If `mcp.mosadd.dev`
+  is seized or blocked, that host must change its address: run the installer again (it writes the first address of
+  the current list) or switch the host to the shim.
+- The shim `node ~/.m0s/m0s.mjs mcp` (stdio, MIT) reads the signed list itself, refreshes it every 5 minutes and moves
+  to the next address when one is dead; a tool call keeps one Idempotency-Key across tries, so it never runs twice.
+  Any host that can start a local server can use it instead of the URL.
+- `node ~/.m0s/m0s.mjs endpoints` prints the verified list. A list is used only when the offline root key pinned in
+  `m0s.mjs` signed its addresses; never type an address from a message, a web page or a chat into a host config.
 
 ## 3. Check
 

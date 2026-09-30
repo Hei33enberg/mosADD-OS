@@ -68,13 +68,15 @@ The links are pinned to a commit, never to a branch. From a clone: `node package
 No self-host. The client is MIT, the service is ours.
 
 **If the address changes.** `mcp.mosadd.dev` is the address today, not a promise that it cannot be taken away.
-The hub publishes a signed list of its addresses at `/.well-known/m0s-endpoints.json` (Ed25519; the public key is
-pinned in [`packages/m0s/m0s.mjs`](./packages/m0s/m0s.mjs)). The stdio shim, `m0s install` and `m0s doctor` read it,
-reject it if the signature or the expiry does not check out, and the shim moves to the next address on the list
-when one stops answering as the hub, with no new client release. Today the list holds the hub's own names and
-the direct names of its two nodes (Tel Aviv, Mumbai); there is no second domain yet. A host that only knows the
-URL does not read the list: if the domain is ever seized or blocked, re-run the installer (it writes the first
-address of the current list) or pass `--url <new address>`.
+The hub publishes a signed list of its addresses at `/.well-known/m0s-endpoints.json` (Ed25519). Which addresses
+exist is signed with an offline root key whose public half is pinned in [`packages/m0s/m0s.mjs`](./packages/m0s/m0s.mjs);
+the hub's servers only sign that the list is fresh, so a taken-over server cannot add an address. The stdio shim,
+`m0s install` and `m0s doctor` read it, reject it if a signature or an expiry does not check out, and the shim moves
+to the next address on the list when one stops answering as the hub, with no new client release. Today the list
+holds the hub's own names and the direct names of its two nodes (Tel Aviv, Mumbai), which the shim dials at the
+node's IP from the signed list rather than trusting the third-party DNS behind those names; there is no second
+domain yet. A host that only knows the URL does not read the list: if the domain is ever seized or blocked, re-run
+the installer (it writes the first address of the current list) or pass `--url <new address>`.
 
 ## Tools
 

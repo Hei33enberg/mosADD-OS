@@ -11,10 +11,11 @@ What is live is measured; what is planned is marked planned. Dates are targets, 
 - Public price list `GET https://api.mosadd.dev/v1/pricing` (no key); `PRICING.md` is generated from it.
 - `@mosadd/mcp` `3.0.0-alpha.55` — the tool definitions the hub serves.
 - `packages/m0s`: installer and stdio shim (this repository, not yet on npm).
-- Signed list of hub addresses `/.well-known/m0s-endpoints.json` (Ed25519, public key pinned in `packages/m0s`),
-  measured 2026-09-30 on `api.mosadd.dev` and `mcp.mosadd.dev`. The shim and the installer verify it and the shim
-  fails over along it. It holds the hub's names and the two nodes' direct names; no second domain yet. Hosts that
-  keep only a URL do not read it.
+- Signed list of hub addresses `/.well-known/m0s-endpoints.json` (Ed25519; addresses signed with an offline root key
+  pinned in `packages/m0s` 0.3.1, freshness with the hub's online key), measured 2026-09-30 on `api.mosadd.dev` and
+  `mcp.mosadd.dev`. The shim and the installer verify it and the shim fails over along it, dialling the nodes'
+  direct names at the IP the list gives. It holds the hub's names and the two nodes' direct names; no second domain
+  yet. Hosts that keep only a URL do not read it.
 - Skills in the agentskills.io format and a Claude Code plugin (`skills/`).
 
 ## Next

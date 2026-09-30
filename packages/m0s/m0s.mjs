@@ -22,8 +22,11 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { createHash, createPublicKey, randomUUID, verify as verifySignature } from 'node:crypto';
+import { request as httpRequest } from 'node:http';
+import { request as httpsRequest } from 'node:https';
+import { isIP } from 'node:net';
 
-export const VERSION = '0.3.0';
+export const VERSION = '0.3.1';
 export const DEFAULT_URL = 'https://mcp.mosadd.dev/mcp';
 export const KEY_ENV = 'MOSADD_KEY';
 export const SERVER_NAME = 'mosadd';
@@ -490,20 +493,29 @@ function runCli(bin, args, { quiet = false } = {}) {
 //
 // The hub publishes GET /.well-known/m0s-endpoints.json on every name it answers on:
 //   { "m0s_endpoints": 1, "payload": "<JSON text>", "signatures": [{ "keyid", "alg": "ed25519", "sig": "<base64>" }] }
-// The Ed25519 signature covers the exact UTF-8 bytes of `payload` (no JSON canonicalisation, so any language checks
-// the same bytes). keyid = first 16 hex chars of sha256(raw 32-byte public key). The payload carries
-//   { type: "m0s-endpoints", format: 1, version, issued_at, expires_at, next_pubkey, endpoints: [{ url, service, family,
-//     region, role, weight }] }.
-// A list counts only when a key pinned below (or announced as next_pubkey by a list we already trusted) signed it,
-// it has not expired, and its version is not lower than the one we already hold. So when a domain is seized or
-// blocked, the hub publishes a new list and this client moves to another address without a new client release.
-// Where the list came from does not matter: an address that serves a forged or stale list is simply skipped.
+// Every Ed25519 signature covers the exact UTF-8 bytes of the signed text (no JSON canonicalisation, so any language checks
+// the same bytes). keyid = first 16 hex chars of sha256(raw 32-byte public key). Two keys sign, for two different things:
+//   * the ROOT key (pinned below, kept offline by the hub's operator) signs the CONTENT: which addresses exist and which
+//     online keys may vouch for freshness. The payload carries it verbatim in `content`:
+//       { "m0s_endpoints_content": 1, "content": "<JSON text>", "signatures": [...] }, content = { type:
+//       "m0s-endpoints-content", format: 1, version, issued_at, expires_at, online_keys: [...], next_root_pubkey,
+//       endpoints: [{ url, service, family, region, role, weight, ip? }] }
+//   * an ONLINE key on the hub's nodes signs the envelope every minute (freshness): { type: "m0s-endpoints", format: 1,
+//     version, issued_at, expires_at, endpoints, content }. It must be listed in content.online_keys.
+// Addresses are taken from the root-signed content ONLY. Whoever takes over a hub node gets the online key at most, which
+// cannot add an address; the worst it can do is keep serving our own current list until the content expires.
+// A list counts when both signatures hold, neither part has expired or comes from the future, each version is bound to
+// its issued_at, and neither version is lower than what we already hold. The newest valid list from all places we ask
+// wins, so one seized name replaying an old list does not hold the client back.
+// Addresses on a name that encodes an IP (1-2-3-4.sslip.io, nip.io) or that carry an `ip` field are reached at THAT IP:
+// the TLS name is still checked, but a hijacked third-party DNS cannot send us (and our key) somewhere else.
 
 /**
- * Ed25519 public keys (raw 32 bytes, base64) the hub signs its address list with. Pinned: nothing else is trusted.
- * ep1-20260930, keyid 2d44f0bda62da714: read over ssh from both hub nodes (Tel Aviv, Mumbai) on 2026-09-30.
+ * ROOT public keys (raw 32 bytes, base64) the hub's address content is signed with. Pinned: nothing else is trusted.
+ * root1-20260930, keyid 7324bf836b133f80: generated offline on 2026-09-30, held by the hub's operator (never on a server).
+ * The hub's online key (ep1-20260930, keyid 2d44f0bda62da714) is trusted only because this root lists it in online_keys.
  */
-export const ENDPOINTS_KEYS = Object.freeze(['RMLD4cVfMGHmvfC+14gljv7w1ELdVHHvornvUNT88FE=']);
+export const ENDPOINTS_KEYS = Object.freeze(['c/5Gg1IBB8wDjnRyEOrPGfU8s3C6s5zz99Yfk7aVam8=']);
 export const ENDPOINTS_PATH = '/.well-known/m0s-endpoints.json';
 /** Where to ask for the list before one is cached: the hub's names and its nodes' direct names (Tel Aviv, Mumbai). */
 export const ENDPOINTS_BOOTSTRAP = Object.freeze([
@@ -514,6 +526,8 @@ export const ENDPOINTS_BOOTSTRAP = Object.freeze([
 ]);
 export const ENDPOINTS_REFRESH_MS = 5 * 60_000;
 const LIST_SERVICES = new Set(['api', 'mcp', 'hub']);
+const BUCKET_S = 60;
+const FUTURE_SKEW_MS = 10 * 60_000;
 
 export class EndpointsError extends Error {
   constructor(reason) {
@@ -535,6 +549,15 @@ function edKey(pub) {
   return createPublicKey({ key: { kty: 'OKP', crv: 'Ed25519', x: raw.toString('base64url') }, format: 'jwk' });
 }
 
+const validKey = (k) => {
+  try {
+    edKey(k);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 const safeUrl = (u) => {
   try {
     resolveUrl(u); // https only (http on loopback): a key is never sent in clear
@@ -544,17 +567,17 @@ const safeUrl = (u) => {
   }
 };
 
-/** Check the signature (and nothing else) and return the parsed payload. Throws EndpointsError. */
-export function openEndpoints(doc, keys = ENDPOINTS_KEYS) {
-  if (!doc || doc.m0s_endpoints !== 1 || typeof doc.payload !== 'string' || !Array.isArray(doc.signatures)) throw new EndpointsError('bad_document');
-  const bytes = Buffer.from(doc.payload, 'utf8');
+/** True when one of `sigs` is a valid Ed25519 signature over `text` by a key in `keys`. */
+function signedBy(text, sigs, keys) {
+  if (!Array.isArray(sigs)) return false;
+  const bytes = Buffer.from(text, 'utf8');
   const trusted = [];
   for (const k of keys) {
     try {
       trusted.push({ id: endpointsKeyId(k), key: edKey(k) });
     } catch {}
   }
-  const signed = doc.signatures.some((s) => {
+  return sigs.some((s) => {
     const t = trusted.find((x) => x.id === s?.keyid);
     if (!t || s.alg !== 'ed25519' || typeof s.sig !== 'string') return false;
     try {
@@ -563,23 +586,106 @@ export function openEndpoints(doc, keys = ENDPOINTS_KEYS) {
       return false;
     }
   });
-  if (!signed) throw new EndpointsError('bad_signature');
+}
+
+/** Dates parse, and the version is not ahead of issued_at (+ one 60 s bucket): one bad list cannot lift our floor forever. */
+function checkVersion(version, issuedAt, expiresAt, prefix, bad) {
+  const iss = Date.parse(issuedAt);
+  if (!Number.isSafeInteger(version) || !Number.isFinite(iss) || !Number.isFinite(Date.parse(expiresAt))) throw new EndpointsError(bad);
+  if (version > Math.floor(iss / 1000) + BUCKET_S) throw new EndpointsError(`${prefix}version_ahead`);
+}
+
+/** The IP written into a sslip.io / nip.io name (64-177-66-61.sslip.io -> 64.177.66.61), else null. */
+export function ipFromName(hostname) {
+  const m = /^(\d{1,3})-(\d{1,3})-(\d{1,3})-(\d{1,3})\.(?:sslip|nip)\.io$/i.exec(String(hostname));
+  if (!m) return null;
+  const ip = m.slice(1, 5).map(Number);
+  return ip.every((o) => o <= 255) ? ip.join('.') : null;
+}
+
+/**
+ * The IP an address must be reached at: its `ip` field, or the IP its sslip.io / nip.io name encodes. null = an ordinary
+ * name (DNS). undefined = the name and the ip field disagree, or the ip is not an IP: the entry is dropped.
+ */
+export function endpointIp(url, ip) {
+  const fromName = ipFromName(new URL(url).hostname);
+  if (ip === undefined || ip === null || ip === '') return fromName;
+  if (typeof ip !== 'string' || !isIP(ip)) return undefined;
+  if (fromName && fromName !== ip) return undefined;
+  return ip;
+}
+
+function cleanEntry(e) {
+  if (!e || typeof e.url !== 'string' || typeof e.service !== 'string' || !safeUrl(e.url)) return null;
+  const ip = endpointIp(e.url, e.ip);
+  if (ip === undefined) return null;
+  const { ip: _drop, ...rest } = e;
+  return ip ? { ...rest, ip } : rest;
+}
+
+/** The root-signed content inside a payload. Throws EndpointsError. */
+function openContent(c, roots) {
+  if (!c) throw new EndpointsError('no_content');
+  if (c.m0s_endpoints_content !== 1 || typeof c.content !== 'string' || !Array.isArray(c.signatures)) throw new EndpointsError('bad_content');
+  if (!signedBy(c.content, c.signatures, roots)) throw new EndpointsError('content_bad_signature');
+  let x;
+  try {
+    x = JSON.parse(c.content);
+  } catch {
+    throw new EndpointsError('bad_content');
+  }
+  if (x?.type !== 'm0s-endpoints-content' || x.format !== 1 || !Array.isArray(x.endpoints) || !Array.isArray(x.online_keys)) throw new EndpointsError('bad_content');
+  checkVersion(x.version, x.issued_at, x.expires_at, 'content_', 'bad_content');
+  const online = x.online_keys.filter(validKey);
+  if (!online.length) throw new EndpointsError('bad_content');
+  return {
+    version: x.version,
+    issued_at: x.issued_at,
+    expires_at: x.expires_at,
+    online_keys: online,
+    next_root_pubkey: validKey(x.next_root_pubkey) ? x.next_root_pubkey : null,
+    endpoints: x.endpoints.map(cleanEntry).filter(Boolean),
+  };
+}
+
+/**
+ * Check both signatures (and nothing time-related) and return the list: envelope fields plus the addresses of the
+ * root-signed content. `keys` = trusted ROOT keys. Throws EndpointsError.
+ */
+export function openEndpoints(doc, keys = ENDPOINTS_KEYS) {
+  if (!doc || doc.m0s_endpoints !== 1 || typeof doc.payload !== 'string' || !Array.isArray(doc.signatures)) throw new EndpointsError('bad_document');
   let p;
   try {
     p = JSON.parse(doc.payload);
   } catch {
     throw new EndpointsError('bad_payload');
   }
-  if (p?.type !== 'm0s-endpoints' || p.format !== 1 || !Number.isSafeInteger(p.version) || !Array.isArray(p.endpoints)) throw new EndpointsError('bad_payload');
-  if (!Number.isFinite(Date.parse(p.expires_at)) || !Number.isFinite(Date.parse(p.issued_at))) throw new EndpointsError('bad_payload');
-  return { ...p, endpoints: p.endpoints.filter((e) => e && typeof e.url === 'string' && typeof e.service === 'string' && safeUrl(e.url)) };
+  const c = openContent(p?.content, keys);
+  // the envelope: an online key the root vouched for (or the root itself, for an emergency re-sign)
+  if (!signedBy(doc.payload, doc.signatures, [...c.online_keys, ...keys])) throw new EndpointsError('bad_signature');
+  if (p?.type !== 'm0s-endpoints' || p.format !== 1) throw new EndpointsError('bad_payload');
+  checkVersion(p.version, p.issued_at, p.expires_at, '', 'bad_payload');
+  return {
+    type: p.type,
+    format: p.format,
+    version: p.version,
+    issued_at: p.issued_at,
+    expires_at: p.expires_at,
+    content_version: c.version,
+    content_issued_at: c.issued_at,
+    content_expires_at: c.expires_at,
+    next_root_pubkey: c.next_root_pubkey,
+    endpoints: c.endpoints, // addresses come from the root-signed content only, never from the envelope
+  };
 }
 
-/** Full check: signature by a trusted key, not expired, not issued in the future. Returns the payload. */
+/** Full check: both signatures, neither part expired, neither issued in the future. Returns the list. */
 export function verifyEndpoints(doc, { keys = ENDPOINTS_KEYS, now = Date.now() } = {}) {
   const p = openEndpoints(doc, keys);
   if (Date.parse(p.expires_at) <= now) throw new EndpointsError('expired');
-  if (Date.parse(p.issued_at) > now + 10 * 60_000) throw new EndpointsError('not_yet_valid');
+  if (Date.parse(p.issued_at) > now + FUTURE_SKEW_MS) throw new EndpointsError('not_yet_valid');
+  if (Date.parse(p.content_expires_at) <= now) throw new EndpointsError('content_expired');
+  if (Date.parse(p.content_issued_at) > now + FUTURE_SKEW_MS) throw new EndpointsError('content_not_yet_valid');
   return p;
 }
 
@@ -589,6 +695,25 @@ const byPreference = (a, b) => (a.role === b.role ? 0 : a.role === 'primary' ? -
 export function mcpCandidates(list, fallback = DEFAULT_URL) {
   const urls = list ? [...list.endpoints].filter((e) => e.service === 'mcp').sort(byPreference).map((e) => e.url) : [];
   return urls.length ? [...new Set(urls)] : [fallback];
+}
+
+/**
+ * The IP to reach `url` at, or null for plain DNS: the `ip` of a list entry on the same host, else the IP a sslip.io /
+ * nip.io name encodes (bootstrap names, --url).
+ */
+export function pinFor(url, list) {
+  const u = new URL(url);
+  const hit = list?.endpoints?.find((e) => e.ip && new URL(e.url).host === u.host);
+  return hit ? hit.ip : ipFromName(u.hostname);
+}
+
+/**
+ * MCP addresses a host that only stores a URL may get: addresses reached through ordinary DNS. A pinned address
+ * (sslip.io, ip field) is safe only through the m0s shim, which dials the pinned IP; a host would trust whatever
+ * third-party DNS says and send the key there.
+ */
+export function hostCandidates(list) {
+  return mcpCandidates(list, null).filter((u) => u && !pinFor(u, list));
 }
 
 /** Where the list itself can be fetched: every api/mcp/hub name of the list, preferred first. */
@@ -602,12 +727,63 @@ export function listSources(list) {
   return out;
 }
 
+/**
+ * fetch() to a fixed IP: the TCP connection goes to `ip`, while the TLS name check (SNI) and the Host header stay those
+ * of the URL. Resolves to a standard Response. `requestImpl` replaces node:http(s).request (tests).
+ */
+export function pinnedFetch(url, init = {}, ip, { requestImpl } = {}) {
+  const u = new URL(url);
+  const family = isIP(ip);
+  if (!family) return Promise.reject(new Error(`not an IP: ${ip}`));
+  const request = requestImpl || (u.protocol === 'https:' ? httpsRequest : httpRequest);
+  const headers = { ...(init.headers || {}) };
+  if (init.body != null && !Object.keys(headers).some((h) => h.toLowerCase() === 'content-length')) headers['content-length'] = Buffer.byteLength(init.body);
+  return new Promise((resolvePromise, reject) => {
+    const req = request(
+      u,
+      {
+        method: init.method || 'GET',
+        headers,
+        signal: init.signal,
+        lookup: (_host, opts, cb) => {
+          if (typeof opts === 'function') [cb, opts] = [opts, {}];
+          if (opts && opts.all) cb(null, [{ address: ip, family }]);
+          else cb(null, ip, family);
+        },
+      },
+      (res) => {
+        const chunks = [];
+        res.on('data', (c) => chunks.push(c));
+        res.on('error', reject);
+        res.on('end', () => {
+          const status = res.statusCode || 502;
+          const h = new Headers();
+          for (const [k, v] of Object.entries(res.headers)) if (v !== undefined) h.set(k, Array.isArray(v) ? v.join(', ') : String(v));
+          const empty = [204, 205, 304].includes(status);
+          resolvePromise(new Response(empty ? null : Buffer.concat(chunks), { status: status >= 200 && status <= 599 ? status : 502, headers: h }));
+        });
+      },
+    );
+    req.on('error', reject);
+    if (init.body != null) req.write(init.body);
+    req.end();
+  });
+}
+
+/** A fetch that dials the pinned IP for pinned addresses (see pinFor) and uses `fetchImpl` for everything else. */
+export function routedFetch(fetchImpl = globalThis.fetch, listOf = () => null, { requestImpl } = {}) {
+  return (url, init) => {
+    const ip = pinFor(url, listOf());
+    return ip ? pinnedFetch(url, init, ip, { requestImpl }) : fetchImpl(url, init);
+  };
+}
+
 export function endpointsCacheFile(env = process.env) {
   return join(envPaths(env).m0sHome, 'endpoints.json');
 }
 
 /**
- * The last good list on disk ({ doc, trusted_next }). Its signature is checked again on every load; an expired list
+ * The last good list on disk ({ doc, trusted_next }). Its signatures are checked again on every load; an expired list
  * is still returned (expired: true) as a version floor and as places to ask, never as addresses to send a key to.
  */
 export function loadEndpointsCache(file, { keys = ENDPOINTS_KEYS, now = Date.now() } = {}) {
@@ -620,7 +796,7 @@ export function loadEndpointsCache(file, { keys = ENDPOINTS_KEYS, now = Date.now
   const trust = [...new Set([...keys, ...(Array.isArray(j?.trusted_next) ? j.trusted_next.filter((k) => typeof k === 'string') : [])])];
   try {
     const list = openEndpoints(j?.doc, trust);
-    return { doc: j.doc, list, trust, expired: Date.parse(list.expires_at) <= now };
+    return { doc: j.doc, list, trust, expired: Date.parse(list.expires_at) <= now || Date.parse(list.content_expires_at) <= now };
   } catch {
     return null;
   }
@@ -628,12 +804,7 @@ export function loadEndpointsCache(file, { keys = ENDPOINTS_KEYS, now = Date.now
 
 function saveEndpointsCache(file, doc, list, trust, keys) {
   const next = [];
-  if (list.next_pubkey) {
-    try {
-      edKey(list.next_pubkey); // announced by a list we trust: trusted from now on (key rotation without a release)
-      next.push(list.next_pubkey);
-    } catch {}
-  }
+  if (list.next_root_pubkey && validKey(list.next_root_pubkey)) next.push(list.next_root_pubkey); // announced by a root we trust
   const trusted_next = [...new Set([...trust.filter((k) => !keys.includes(k)), ...next])];
   try {
     mkdirSync(dirname(file), { recursive: true });
@@ -641,10 +812,13 @@ function saveEndpointsCache(file, doc, list, trust, keys) {
   } catch {}
 }
 
+const newer = (a, b) => a.version - b.version || a.content_version - b.content_version;
+
 /**
- * Fetch the list from the first place that answers with a valid one: `sources`, then the cached list's own names,
- * then `bootstrap`. Keeps the cache when nothing better turns up. Never throws.
- * Returns { list, source, updated, tried: [{ source, reason }] }; list = null when no valid list is known.
+ * Ask every place at once (`sources`, then the cached list's own names, then `bootstrap`) and keep the NEWEST valid list
+ * (ties: the earlier place). A list older than the cached one is a rollback and is refused. Keeps the cache when nothing
+ * better turns up. Never throws. Returns { list, source, updated, tried: [{ source, reason }] }; list = null when no
+ * valid list is known. Pinned names (sslip.io, ip field) are dialled at their IP.
  */
 export async function refreshEndpoints({
   keys = ENDPOINTS_KEYS,
@@ -652,52 +826,58 @@ export async function refreshEndpoints({
   sources = [],
   bootstrap = ENDPOINTS_BOOTSTRAP,
   fetchImpl = globalThis.fetch,
+  requestImpl,
   now = () => Date.now(),
   timeoutMs = 5000,
 } = {}) {
   const cache = file ? loadEndpointsCache(file, { keys, now: now() }) : null;
   const trust = cache ? cache.trust : [...keys];
-  const floor = cache ? cache.list.version : -1;
+  const floor = cache ? cache.list : null;
   const where = [...new Set([...sources, ...listSources(cache?.list), ...bootstrap.map((b) => new URL(ENDPOINTS_PATH, b).href)])];
-  const tried = [];
-  for (const source of where) {
-    let doc;
-    try {
-      const r = await fetchImpl(source, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(timeoutMs) });
-      const text = await r.text();
-      if (r.status !== 200) {
-        tried.push({ source, reason: `http_${r.status}` });
-        continue;
+  const get = routedFetch(fetchImpl, () => cache?.list, { requestImpl });
+  const results = await Promise.all(
+    where.map(async (source) => {
+      let doc;
+      try {
+        const r = await get(source, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(timeoutMs) });
+        const text = await r.text();
+        if (r.status !== 200) return { source, reason: `http_${r.status}` };
+        doc = JSON.parse(text);
+      } catch (e) {
+        return { source, reason: e instanceof SyntaxError ? 'not_json' : 'unreachable' };
       }
-      doc = JSON.parse(text);
-    } catch (e) {
-      tried.push({ source, reason: e instanceof SyntaxError ? 'not_json' : 'unreachable' });
-      continue;
-    }
-    let list;
-    try {
-      list = verifyEndpoints(doc, { keys: trust, now: now() });
-    } catch (e) {
-      tried.push({ source, reason: e.reason || 'bad_document' });
-      continue;
-    }
-    if (list.version < floor) {
-      tried.push({ source, reason: 'rollback' });
-      continue;
-    }
-    const updated = list.version > floor;
-    if (updated && file) saveEndpointsCache(file, doc, list, trust, keys);
-    return { list, source, updated, tried };
+      try {
+        const list = verifyEndpoints(doc, { keys: trust, now: now() });
+        if (floor && (list.version < floor.version || list.content_version < floor.content_version)) return { source, reason: 'rollback' };
+        return { source, list, doc };
+      } catch (e) {
+        return { source, reason: e.reason || 'bad_document' };
+      }
+    }),
+  );
+  const tried = results.filter((r) => !r.list).map(({ source, reason }) => ({ source, reason }));
+  let best = null;
+  for (const r of results) if (r.list && (!best || newer(r.list, best.list) > 0)) best = r;
+  if (best) {
+    const updated = !floor || newer(best.list, floor) > 0;
+    if (updated && file) saveEndpointsCache(file, best.doc, best.list, trust, keys);
+    return { list: best.list, source: best.source, updated, tried };
   }
   const live = cache && !cache.expired;
   return { list: live ? cache.list : null, source: live ? 'cache' : null, updated: false, tried };
 }
 
-/** The MCP address to write into host configs: first address of a fresh verified list, else the default. */
+/**
+ * The MCP address to write into a host config: the first address of a fresh verified list that the host can reach
+ * through ordinary DNS (hostCandidates), else the default. pinnedOnly = the list had only pinned addresses left (the
+ * hub's names are gone): such a host should run the m0s shim instead.
+ */
 export async function chooseEndpoint({ env = process.env, ...opts } = {}) {
-  if (!listEnabled(env)) return { url: DEFAULT_URL, list: null, source: null, tried: [] };
+  if (!listEnabled(env)) return { url: DEFAULT_URL, list: null, source: null, tried: [], pinnedOnly: false };
   const r = await refreshEndpoints({ file: endpointsCacheFile(env), ...opts });
-  return { url: mcpCandidates(r.list)[0], list: r.list, source: r.source, tried: r.tried };
+  const plain = hostCandidates(r.list);
+  const pinnedOnly = !!r.list && !plain.length && mcpCandidates(r.list, null).some(Boolean);
+  return { url: plain[0] || DEFAULT_URL, list: r.list, source: r.source, tried: r.tried, pinnedOnly };
 }
 
 // --- stdio shim ---------------------------------------------------------------------------------
@@ -743,12 +923,15 @@ export async function runShim({
   output = process.stdout,
   errors = process.stderr,
   fetchImpl = globalThis.fetch,
+  requestImpl,
   list = {},
   env = process.env,
 } = {}) {
   const explicit = url || env.M0S_MCP_URL;
   const pinned = explicit ? resolveUrl(explicit) : listEnabled(env) ? null : DEFAULT_URL;
-  const route = { urls: [pinned || DEFAULT_URL], at: 0 };
+  const route = { urls: [pinned || DEFAULT_URL], at: 0, list: null };
+  // addresses with a pinned IP (sslip.io names, ip field of the list) are dialled at that IP, never at what DNS says
+  const send = routedFetch(fetchImpl, () => route.list, { requestImpl: list.requestImpl || requestImpl });
   const state = { session: null, sessionUrl: null, protocol: null };
   const write = (s) => output.write(s.endsWith('\n') ? s : s + '\n');
   if (!key) errors.write(`m0s: ${KEY_ENV} is not set - the hub lists tools without a key, but every tools/call returns 401. Get a key at ${KEY_PAGE}.\n`);
@@ -757,9 +940,10 @@ export async function runShim({
   let refreshing = null;
   let timer = null;
   if (!pinned) {
-    const opts = { file: endpointsCacheFile(env), fetchImpl, ...list };
+    const opts = { file: endpointsCacheFile(env), fetchImpl, requestImpl, ...list };
     const take = (l) => {
       if (!l) return;
+      route.list = l;
       route.urls = mcpCandidates(l);
       route.at = 0; // back to the preferred address after every refresh
     };
@@ -789,7 +973,7 @@ export async function runShim({
         const h = { ...headers, ...(state.session && state.sessionUrl === target ? { 'mcp-session-id': state.session } : {}) };
         let res;
         try {
-          res = await fetchImpl(target, { method: 'POST', headers: h, body: line });
+          res = await send(target, { method: 'POST', headers: h, body: line });
         } catch (e) {
           error = `${target}: ${e.message}`;
           continue;
@@ -872,7 +1056,7 @@ export async function runShim({
   if (timer) clearInterval(timer);
   if (state.session) {
     try {
-      await fetchImpl(state.sessionUrl, {
+      await send(state.sessionUrl, {
         method: 'DELETE',
         headers: { 'mcp-session-id': state.session, ...(key ? { authorization: `Bearer ${key}` } : {}) },
         signal: AbortSignal.timeout(2000),
@@ -887,8 +1071,9 @@ export async function runShim({
 export async function doctor({ url = DEFAULT_URL, env = process.env, fetchImpl = globalThis.fetch, log = console.log, list = {} } = {}) {
   url = resolveUrl(url);
   const rows = [];
+  const get = routedFetch(fetchImpl, () => null, { requestImpl: list.requestImpl });
   const call = async (body) => {
-    const r = await fetchImpl(url, {
+    const r = await get(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream' },
       body: JSON.stringify(body),
@@ -909,7 +1094,7 @@ export async function doctor({ url = DEFAULT_URL, env = process.env, fetchImpl =
     const r = await refreshEndpoints({ file: endpointsCacheFile(env), fetchImpl, ...list });
     if (r.list) {
       const n = r.list.endpoints.filter((e) => e.service === 'mcp').length;
-      rows.push(['list', 'ok', `signed address list v${r.list.version} (expires ${r.list.expires_at}) from ${r.source}: ${n} MCP addresses, first ${mcpCandidates(r.list)[0]}`]);
+      rows.push(['list', 'ok', `signed address list v${r.list.version}, content v${r.list.content_version} (expires ${r.list.expires_at}, content ${r.list.content_expires_at}) from ${r.source}: ${n} MCP addresses, first ${mcpCandidates(r.list)[0]}`]);
     } else {
       rows.push(['list', 'warn', `no valid signed address list (${r.tried.map((t) => `${t.source}: ${t.reason}`).join('; ') || 'nowhere to ask'})`]);
     }
@@ -945,7 +1130,7 @@ const HELP = `m0s ${VERSION} - m.0S: one key for your agents' messages, memory a
   m0s print <host>      show one host's config, write nothing
   m0s link <cursor|vscode>  one-click install link for that editor (remote endpoint, key by reference)
   m0s mcp               stdio shim (reads ${KEY_ENV}); follows the hub's signed address list, fails over on a dead address
-  m0s endpoints         fetch and verify the hub's signed address list (Ed25519, pinned key), print it
+  m0s endpoints         fetch and verify the hub's signed address list (Ed25519, pinned offline root key), print it
   m0s doctor            check the hub, the address list and your key (never prints the key)
   m0s hosts             list supported hosts
 
@@ -967,7 +1152,8 @@ export async function main(argv = process.argv.slice(2)) {
       return;
     }
     console.log(`list  v${r.list.version} issued ${r.list.issued_at}, expires ${r.list.expires_at}, from ${r.source}${r.updated ? ' (saved)' : ''}`);
-    for (const e of [...r.list.endpoints].sort(byPreference)) console.log(`${e.role.padEnd(8)}${e.service.padEnd(5)}${String(e.weight).padStart(4)}  ${e.url}  (${e.family}/${e.region})`);
+    console.log(`root  content v${r.list.content_version} signed offline, expires ${r.list.content_expires_at}`);
+    for (const e of [...r.list.endpoints].sort(byPreference)) console.log(`${e.role.padEnd(8)}${e.service.padEnd(5)}${String(e.weight).padStart(4)}  ${e.url}  (${e.family}/${e.region}${e.ip ? `, dialled at ${e.ip}` : ''})`);
     return;
   }
   if (cmd === 'hosts') return console.log(Object.entries(HOSTS).map(([id, h]) => `${id.padEnd(15)} ${h.title} (${h.kind})`).join('\n'));
@@ -986,6 +1172,7 @@ export async function main(argv = process.argv.slice(2)) {
       const pick = await chooseEndpoint();
       url = pick.url;
       console.log(pick.list ? `address: ${url} (signed address list v${pick.list.version}, from ${pick.source})` : `address: ${url} (no valid signed address list reachable; default)`);
+      if (pick.pinnedOnly) console.log(`note: the list has only backup addresses on a pinned IP, which a host that stores a URL cannot dial safely. Hosts that keep only a URL stay on ${url}; if that name is seized, use the m0s shim (Claude Desktop does already) or run this installer again later.`);
     }
     const rows = install({ hosts: a.hosts, url, dryRun: a.dryRun, fromList: !a.url });
     for (const r of rows) {

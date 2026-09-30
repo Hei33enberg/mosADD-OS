@@ -20,4 +20,12 @@ Environment: `MOSADD_KEY` (the key), `M0S_MCP_URL` (one fixed hub address, no li
 (never fetch the address list), `M0S_HOME` (where the shim and the last verified list, `endpoints.json`, live;
 default `~/.m0s`).
 
-Not on npm yet; after publishing: `npx -y @mosadd/m0s@0.3.0 install`.
+Signed address list (0.3.1): the hub's operator signs WHICH addresses exist with an offline root key pinned in
+`m0s.mjs` (`ENDPOINTS_KEYS`, keyid `7324bf836b133f80`); the hub's nodes sign only the list's freshness, with an online key
+that the root names. A taken-over node cannot add an address. The shim asks every known place and keeps the newest valid
+list. Backup addresses on a name that encodes an IP (`64-177-66-61.sslip.io`) are dialled at that IP, so a hijacked
+third-party DNS cannot collect your key; for the same reason `m0s install` never writes such an address into a host that
+stores only a URL. A host that stores only a URL (Claude Code, Cursor, Codex, Windsurf, VS Code, Hermes, OpenClaw,
+Lovable, Manus) does not read the list: if that domain is seized or blocked, run the installer again or use the shim.
+
+Not on npm yet; after publishing: `npx -y @mosadd/m0s@0.3.1 install`.
