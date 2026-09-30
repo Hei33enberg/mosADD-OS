@@ -472,7 +472,8 @@ describe('stdio shim', () => {
 
   it('doctor reports the hub and never prints the key', async () => {
     const lines = [];
-    const rows = await doctor({ url, env: { MOSADD_KEY: 'm0s_tk_test_' + 'cd'.repeat(32) }, log: (l) => lines.push(l) });
+    // M0S_ENDPOINTS=off: no live address list here (test/endpoints.test.mjs covers the list row with local servers)
+    const rows = await doctor({ url, env: { MOSADD_KEY: 'm0s_tk_test_' + 'cd'.repeat(32), M0S_ENDPOINTS: 'off' }, log: (l) => lines.push(l) });
     expect(rows.map((r) => r[1])).toEqual(['ok', 'ok', 'ok']);
     expect(lines.join('\n')).not.toContain('cdcd');
   });

@@ -68,9 +68,13 @@ The links are pinned to a commit, never to a branch. From a clone: `node package
 No self-host. The client is MIT, the service is ours.
 
 **If the address changes.** `mcp.mosadd.dev` is the address today, not a promise that it cannot be taken away.
-A host that only knows the URL has to be given a new one if the domain is ever seized or blocked: re-run the
-installer with `--url <new address>`, or set `M0S_MCP_URL` for the stdio shim. The shim does not yet read a signed
-list of alternative addresses; the hub does not publish one yet.
+The hub publishes a signed list of its addresses at `/.well-known/m0s-endpoints.json` (Ed25519; the public key is
+pinned in [`packages/m0s/m0s.mjs`](./packages/m0s/m0s.mjs)). The stdio shim, `m0s install` and `m0s doctor` read it,
+reject it if the signature or the expiry does not check out, and the shim moves to the next address on the list
+when one stops answering as the hub, with no new client release. Today the list holds the hub's own names and
+the direct names of its two nodes (Tel Aviv, Mumbai); there is no second domain yet. A host that only knows the
+URL does not read the list: if the domain is ever seized or blocked, re-run the installer (it writes the first
+address of the current list) or pass `--url <new address>`.
 
 ## Tools
 
