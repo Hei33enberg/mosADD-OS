@@ -36,3 +36,6 @@ This repo dogfoods its own layer. If your agent runs the [`mosadd-coordinate`](.
 - State in the PR description that it was authored with an agent, and which one (there's a field in the template). This is celebrated, not penalized — agent-assisted merges make the digest leaderboard.
 - Never fabricate benchmark numbers, test output, or links. Paste real command output.
 - If a local gate fails, read the output and fix forward — the scripts are written to give you deterministic feedback. (There is no GitHub Actions; don't wait for checks.)
+
+## Kanon pracy agentów (obowiązkowy)
+Przed każdą zmianą przeczytaj `docs/KANON-PRACY-AGENTOW.md` — maszyny, repo, protokół sprintu (zero buildów po każdej poprawce), git repair, sekrety, podgląd. Wersja nadrzędna: `C:/Users/Public/NOWROCKY-BN/KANON-PRACY-AGENTOW.md`.
