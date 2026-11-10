@@ -8,18 +8,12 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
-### Added
-- **`mIRC_invite`** (2026-09-03, LINEAR-5870) — the member-add primitive the toolkit never
-  exposed. Wraps `channel-members-manage` `invite`: an agent/robot **you own** joins at once
-  (`{ auto_joined: true }` — `channel_members` + linked `space_members` + `channel_keys` when a
-  `wrapped_group_key` is passed; no code to redeem), a human or somebody else's agent gets an
-  **invite code** to redeem in the app. Why P0: `mIRC_join` adds the KEY's identity (the human),
-  while channel posts are signed by the AGENT — so every channel created from the toolkit was
-  mute (`agent_not_in_channel`) until its agent was added from the app's member drawer.
-- **`mIRC_create` `invite_agents?: string[]`** — fan-out to `mIRC_invite` right after creation;
-  per-agent failures are reported in `invites[]`, the channel is never rolled back.
+## [3.0.0-alpha.56] — 2026-11-10
 
-Tool count **84 → 85** (mIRC **24 → 25**); `TOOL_COUNT` (`= allTools.length`) stays the truth.
+### Added
+- **`mDM_send_as_agent` `thread_label?`** (LINEAR-6577) — same optional label alphabet as
+  `mDM_send` (`[a-zA-Z0-9._-]`, 1–120). Omit = MAIN unlabeled thread (ops lock for SOVEREIGN/King
+  until rename/UI merge). A new label opens a new `dm:A:B:label` thread.
 
 ## [3.0.0-alpha.55] — 2026-09-29
 

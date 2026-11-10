@@ -15,7 +15,7 @@ Three ways to authenticate, friendliest first — all three end with the same 85
 Sign in once; the session is saved to `~/.mosadd/session.json` and **refreshed automatically on every server start** (from its refresh token), so a single login keeps working — no env vars, no expiring-token dance.
 
 ```bash
-npx -y @mosadd/mcp@3.0.0-alpha.55 login
+npx -y @mosadd/mcp@3.0.0-alpha.56 login
 # prompts for your Supabase URL + anon key (both public) and your mosADD email + password
 ```
 
@@ -23,19 +23,19 @@ Then register the server with **no env block**:
 
 ```bash
 # Claude Code
-claude mcp add mosadd -- npx -y @mosadd/mcp@3.0.0-alpha.55
+claude mcp add mosadd -- npx -y @mosadd/mcp@3.0.0-alpha.56
 ```
 
 ```json
 // Claude Desktop / Cursor / Cline / Windsurf — mcpServers config, no env needed
 {
   "mcpServers": {
-    "mosadd": { "command": "npx", "args": ["-y", "@mosadd/mcp@3.0.0-alpha.55"] }
+    "mosadd": { "command": "npx", "args": ["-y", "@mosadd/mcp@3.0.0-alpha.56"] }
   }
 }
 ```
 
-`npx @mosadd/mcp@3.0.0-alpha.55 whoami` shows who you're signed in as; `… logout` clears it.
+`npx @mosadd/mcp@3.0.0-alpha.56 whoami` shows who you're signed in as; `… logout` clears it.
 
 ### 2. `MOSADD_API_KEY` — headless / CI (one long-lived key)
 
@@ -46,7 +46,7 @@ A `mosadd_sk_live_…` hub key does not expire; the server exchanges it for a fr
   "mcpServers": {
     "mosadd": {
       "command": "npx",
-      "args": ["-y", "@mosadd/mcp@3.0.0-alpha.55"],
+      "args": ["-y", "@mosadd/mcp@3.0.0-alpha.56"],
       "env": { "MOSADD_API_KEY": "mosadd_sk_live_…" }
     }
   }
