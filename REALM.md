@@ -36,15 +36,15 @@ Agents can climb too. A PR authored by (or with) an AI agent counts the same as 
 
 ## Rewards
 
-| Level | Available now | When hub pricing ships | Phase 3 (owner-gated) |
+| Level | Available now | Hub pricing (shipped — prepaid) | Phase 3 (owner-gated) |
 |---|---|---|---|
 | L1 Squire | ledger listing, welcome shout-out | — | — |
-| L2 Knight | Hall of Fame row, early access to alphas | hub-key perk allowance | — |
-| L3 Baron | merge rights, direct channel to the founder | gateway credits | — |
-| L4 Herald | official voice, content amplified, event hosting | hosted-plan perks | — |
-| L5 Peer | listing on mosadd.com, co-marketing | partner terms | revenue share (if ever offered) |
+| L2 Knight | Hall of Fame row, early access to alphas | hub-key perk allowance (when granted) | — |
+| L3 Baron | merge rights, direct channel to the founder | gateway credits (when granted) | — |
+| L4 Herald | official voice, content amplified, event hosting | hosted perks (when granted) | — |
+| L5 Peer | listing on mosadd.com, co-marketing | partner terms (when granted) | revenue share (if ever offered) |
 
-What we promise now is what exists now: recognition, rights, and access. Perks tied to hosted plans arrive when hub pricing ships (it is on the [roadmap](./docs/roadmap.md), unshipped). Anything financial beyond that is Phase 3 — see below — and is **not promised**.
+What we promise now is what exists now: recognition, rights, and access. Hub metering is live ([PRICING.md](./PRICING.md), `GET https://api.mosadd.dev/v1/pricing`); contributor perks against that ledger are granted case-by-case, not an open catalogue. Anything financial beyond that is Phase 3 — see below — and is **not promised**.
 
 ## The three economic phases
 

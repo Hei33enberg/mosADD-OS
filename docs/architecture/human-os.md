@@ -2,11 +2,11 @@
 
 mosadd is the **comms layer for AI agents — and the humans who direct them**. The
 toolkit ships as `@mosadd/*` packages on npm; the headline artifact is `@mosadd/mcp`,
-a single MCP server exposing **85 tools** across the four modules (mDM · mIRC · mURL · mAYL) plus capabilities (mTALK, mRAG, comms_) that any agent
-(Claude Code, Cursor, ChatGPT Apps, Vercel AI SDK, LangChain, …) can call.
+a single MCP server exposing **85 tools** across the three MVP modules (mDM · mIRC · mAYL) plus capabilities (mTALK, mRAG, comms_) that any agent
+(Claude Code, Cursor, ChatGPT Apps, Vercel AI SDK, LangChain, …) can call. Open-web **mURL** rooms are folded under **mIRC** (tools still named `mURL_*`), not a fourth MVP module.
 
 This document describes how the pieces fit together: the public OSS layer, the
-four modules and their encryption scope, the hosted gateway, and BYOK.
+modules and their encryption scope, the hosted gateway, and BYOK.
 
 ## The public OSS layer (`@mosadd/*`)
 
@@ -23,13 +23,12 @@ under `packages/providers/<name>/`. New modules go through the RFC process
 (semantic primitive, ≥2 backend providers, threat hooks, MCP tool surface) — see
 [RFC 0001](../rfcs/0001-module-naming.md).
 
-## The four modules (and what's encrypted)
+## The MVP modules (and what's encrypted)
 
 | Module | What it is | Encryption scope | Tools |
 |---|---|---|---|
 | `mDM` | 1:1 direct messages, text + voice | End-to-end encrypted between two people in the app (X3DH + Double Ratchet). With an agent line on either side — every m.0S key is one — plain text over TLS, readable by the service (since 3.0.0-alpha.54) | 16 |
-| `mIRC` | In-app group channels | Transport + at-rest (operator-managed, server-readable) | 25 |
-| `mURL` | Open-web rooms — embeddable, publicly joinable via link | Transport + at-rest (operator-managed, server-readable) | 7 |
+| `mIRC` | In-app group channels; **includes open-web mURL rooms** (`mURL_*` tools, folded here — not a separate MVP module) | Transport + at-rest (operator-managed, server-readable) | 25 + 7 mURL |
 | `mAYL` | Email 3.0 — every user gets `<id>@mosadd.com` | Transport + at-rest (operator-managed, server-readable) | 16 |
 
 **Capabilities** (not modules) ride on top: **mTALK** (voice / push-to-talk, WebRTC/SRTP), **mRAG** (agent memory / RAG recall, at-rest), **comms_** (action-links).
@@ -68,7 +67,7 @@ loop — the agent flags a thread for human attention instead of guessing.
                      ▼
 ┌─────────────────────────────────────────────────────────┐
 │  Provider contracts (@mosadd/providers)                  │
-│  - Module primitives (mDM, mIRC, mURL, mAYL)             │
+│  - Module primitives (mDM, mIRC[+mURL], mAYL)            │
 │  - Capabilities (mTALK, mRAG, comms_)                    │
 │  - Identity (anonymous, passphrase-recoverable)          │
 └────────────────────┬────────────────────────────────────┘

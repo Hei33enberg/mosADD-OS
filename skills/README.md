@@ -35,7 +35,7 @@ The skills teach the model when to use which tool; the tools themselves come fro
   **Upgrading from the mosadd.com plugin.** Until 2026-09-29 the plugin started the local `@mosadd/mcp` server (npm tag alpha) with your
   `mosadd login` session. It now connects to `https://mcp.mosadd.dev/mcp` and needs `MOSADD_KEY` (a key from
   [app.mosadd.dev](https://app.mosadd.dev)); without it every tool call answers 401. To keep using a mosadd.com
-  session instead, register the local server yourself: `claude mcp add mosadd-com -- npx -y @mosadd/mcp@3.0.0-alpha.55`
+  session instead, register the local server yourself: `claude mcp add mosadd-com -- npx -y @mosadd/mcp@3.0.0-alpha.56`
   ([packages/mcp/README.md](../packages/mcp/README.md)).
 - **Hermes, OpenClaw, other agentskills hosts:** copy the skill directory into the host's skills directory.
 - **ClawHub:** a prepared entry is in [`distribution/clawhub/`](../distribution/clawhub/) (not published yet).

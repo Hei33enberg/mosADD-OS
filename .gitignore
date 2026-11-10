@@ -62,19 +62,17 @@ apps/dev/public/v1.js.map
 # Vercel CLI pulls project config into a local .vercel/ on manual deploys — never commit it
 **/.vercel/
 
-# ⛔ SKRYPTY ROBOCZE W REPO PUBLICZNYM (2026-09-01).
-# Zmierzone: 11 plikow packages/mcp/*.mjs zawieralo ZYWE klucze mosadd_sk_live_ w jawnym tekscie.
-# Nie byly sledzone przez git, wiec nie wyciekly — ale lezaly w katalogu, ktory sie commituje,
-# wiec dzielilo je od publikacji jedno "git add .". Skrypty jednorazowe nie mieszkaja w repo,
-# ktore czyta caly swiat.
+# One-shot work scripts must not live next to publishable sources (2026-09-01).
+# Measured: 11 packages/mcp/*.mjs files held live mosadd_sk_live_ keys in clear text.
+# They were untracked, so they did not leak — but they sat in a commit-prone tree.
 packages/mcp/*.mjs
 !packages/mcp/scripts/*.mjs
 
-# Artefakt builda agenta (generowany, 1.9 MB) — nie commitujemy
+# Generated agent build artifact — do not commit
 packages/agent/dist-bundle/
-# vendor-drop: verbatim kopia mDM E2EE z PRYWATNEGO Hei33enberg/mosADD (drop dla CYMRU).
-# Nie publikujemy kodu wlasciwosciowego do repo publicznego; miejsce na drop = repo CYMRU.
+# vendor-drop: verbatim mDM E2EE copy from private Hei33enberg/mosADD (CYMRU drop only).
+# Do not publish proprietary product code into this public client repo.
 vendor-drop/
 
-# sekrety lokalne (general3, 16.09)
+# Local secrets
 .env.local.txt

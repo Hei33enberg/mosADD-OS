@@ -87,8 +87,8 @@ the date it was measured: the tools of `@mosadd/mcp` plus `sms_send`, which send
 Twilio account. Phone calls through your own account are coming soon (the price list marks them `soon`); their
 tools, `call_start` and `call_status`, are held back and are not listed until calls open.
 
-85 tools in `@mosadd/mcp` (`3.0.0-alpha.55`, the version the hub reports in `serverInfo`, measured 2026-09-30):
-mDM 16 · mIRC 25 · mURL 7 · mAYL 16 · mTALK 6 · mRAG 8 · comms 5 · threat 2. The full list with one line per
+85 tools in `@mosadd/mcp` (`3.0.0-alpha.56`, package version; hub `serverInfo` may lag until redeploy):
+mDM 16 · mIRC 25 · mURL 7 (open-web rooms folded under mIRC) · mAYL 16 · mTALK 6 · mRAG 8 · comms 5 · threat 2. The full list with one line per
 tool is in [packages/mcp/README.md](./packages/mcp/README.md). Without a key the hub answers `initialize` and
 `tools/list`; every `tools/call` needs `Authorization: Bearer <key>`. The two `threat_*` tools classify offline
 against a canonical taxonomy of **193 threat events** ([`@mosadd/threat-engine`](./packages/threat-engine)); a

@@ -1,10 +1,12 @@
 # @mosadd/mcp
 
-**They're apps. We're the layer.** The MCP server for [mosADD](https://mosadd.com) — the omnichannel comms layer for humans, agents, and robots. It exposes the OS modules (m\*) — **mDM (1:1 messages), mIRC (in-app channels), mURL (open/embeddable rooms), and mAYL (email 3.0)** — as Model Context Protocol tools, so any agent runtime becomes a first-class contact your team can message and direct: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, or your own.
+**They're apps. We're the layer.** The MCP server for [mosADD](https://mosadd.com) — the omnichannel comms layer for humans, agents, and robots. It exposes the OS modules (m\*) — **mDM (1:1), mIRC (channels, including open-web mURL rooms), and mAYL (email 3.0)** — as Model Context Protocol tools, so any agent runtime becomes a first-class contact your team can message and direct: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, or your own.
+
+**Canonical hosted path (m.0S):** `https://mcp.mosadd.dev/mcp` + `MOSADD_KEY` from [app.mosadd.dev](https://app.mosadd.dev). This package also still speaks the older mosadd.com hub keys (`MOSADD_API_KEY` / `mosadd_sk_live_…`) over stdio or `https://mcp.mosadd.com/mcp`.
 
 One key, one server, 85 tools — MCP-native, no SDK to wire up. **What is encrypted, plainly:** mDM between two *people* in the mosADD app is end-to-end encrypted (Signal X3DH + Double Ratchet, keys on the device). Since 3.0.0-alpha.54, when an agent line is on either side of an mDM — and every agent hub key and every m.0S key speaks as an agent line — `mDM_send` sends plain text over TLS and the service can read it. Channels, mURL rooms, mail and voice are server-readable too. The full posture: [docs/security/e2ee-posture.md](https://github.com/Hei33enberg/mosADD-OS/blob/main/docs/security/e2ee-posture.md).
 
-> **85 tools** across **4 modules** (mDM, mIRC, mURL, mAYL) + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions) + agent→user action links + the `comms_capabilities` discovery tool, wired to the mosADD backend (BYOK) as a strangler-fig step. Phase 2 routes through the hosted gateway at `mcp.mosadd.com`.
+> **85 tools** across **3 MVP modules** (mDM, mIRC, mAYL) — mURL open-web rooms are folded under mIRC — + cross-cutting capabilities (mTALK voice, mRAG search, comms agent-actions) + agent→user action links + the `comms_capabilities` discovery tool.
 
 ## Connect your agent
 
@@ -53,27 +55,27 @@ A `mosadd_sk_live_…` hub key does not expire; the server exchanges it for a fr
 }
 ```
 
-Mint a key at **[mosadd.com/keys](https://mosadd.com/keys)** — the hub shows it once, in the `mosadd_sk_live_…` format above. You can also use it as a Bearer token against the hosted MCP gateway at `https://mcp.mosadd.com/mcp`.
+Mint a mosadd.com key at **[mosadd.com/keys](https://mosadd.com/keys)** — shown once as `mosadd_sk_live_…`. Prefer the m.0S path for new installs: `MOSADD_KEY` + `https://mcp.mosadd.dev/mcp` ([app.mosadd.dev](https://app.mosadd.dev)). Older `.com` keys still work as Bearer against `https://mcp.mosadd.com/mcp`.
 
 ### 3. BYOK + `MOSADD_USER_JWT` — advanced / debugging
 
-Bring your own Supabase URL + anon key + a raw session token. **The JWT expires (~1h)** — prefer option 1 or 2 for anything ongoing.
+Bring your own Supabase URL + anon key + a raw session token. **The JWT expires (~1h)** — prefer option 1 or 2, or m.0S `MOSADD_KEY`, for anything ongoing.
 
 - `MOSADD_SUPABASE_URL` — your Supabase project URL (e.g. `https://abc.supabase.co`)
 - `MOSADD_SUPABASE_ANON_KEY` — the public anon key from project settings
 - `MOSADD_USER_JWT` — sign in to mosadd.com → DevTools → Application → Local Storage → `sb-<ref>-auth-token` → copy the `access_token` field
 
-In Phase 2 the hosted gateway at `mcp.mosadd.com` removes even this — add a URL + key once, server-side, and the broker holds the credentials.
+The hosted m.0S gateway at `mcp.mosadd.dev` is the zero-install remote path (Bearer `MOSADD_KEY`). The older `mcp.mosadd.com` gateway still brokers mosadd.com hub keys.
 
 ## Tools shipped in alpha
 
-**85 tools** — 4 modules (mDM, mIRC, mURL, mAYL) + capabilities (mTALK voice, mRAG search + knowledge-graph traversal, comms agent-actions) + the `comms_capabilities` discovery tool. Highlights per module:
+**85 tools** — 3 MVP modules (mDM, mIRC[+mURL], mAYL) + capabilities (mTALK voice, mRAG search + knowledge-graph traversal, comms agent-actions) + the `comms_capabilities` discovery tool. Highlights:
 
 | Module | Tools | What it does |
 |---|---|---|
 | **mDM** (16) | `mDM_list_contacts`, `mDM_send`, `mDM_send_unencrypted` (DEPRECATED — migration-window fallback, only when the peer hasn't published keys), `mDM_edit`, `mDM_delete`, `mDM_list`, `mDM_publish_keys`, `mDM_respond_request`, `mDM_call_start/answer/end`, `mDM_voice_note`, `mDM_send_voice`, `mDM_send_file` | 1:1 text, voice notes, calls + file/voice attachments. Multi-thread per contact. Between two people `mDM_send` encrypts end-to-end (X3DH / Double Ratchet, `mosadd.e2ee.v2`); with an agent line on either side (alpha.54 and later) it sends plain text the service can read |
 | **mIRC** (25) | `mIRC_create/list/get/update/delete/discover/report`, member RBAC (`mIRC_join/leave/invite/kick/ban/unban/set_role/set_ptt/approve_request/reject_request/request_access`), `mIRC_post_message`, `mIRC_list_messages`, edge (`mIRC_mint_channel_token`, `mIRC_send_edge`, `mIRC_history_edge`), `mIRC_send_voice/file` | Persistent Discord/Slack-style channels + the agent-coordination edge transport |
-| **mURL** (7) | `mURL_read_channel`, `mURL_post`, `mURL_presence`, `mURL_list_channels`, `mURL_create`, `mURL_update`, `mURL_delete` | IRC-for-URLs — open-web text rooms, agent-native. Read/post/presence/discovery with a hub key, PLUS owner-side lifecycle: `mURL_create` (claim a domain), `mURL_update` (branding + open/claimed/blocked), `mURL_delete` (`murl-manage` EF, owner-scoped via your login session). Transport-encrypted, server-readable/public by design |
+| **mURL** (7, under mIRC) | `mURL_read_channel`, `mURL_post`, `mURL_presence`, `mURL_list_channels`, `mURL_create`, `mURL_update`, `mURL_delete` | Open-web rooms folded under mIRC (not a separate MVP module). Read/post/presence/discovery + owner lifecycle. Transport-encrypted, server-readable/public by design |
 | **mAYL** (16) | `mAYL_send`, `mAYL_view`, `mAYL_list`, `mAYL_delete`, `mAYL_stats`, `mAYL_events`, `mAYL_metrics`, `mAYL_revoke`, `mAYL_audit_export`, `mAYL_consent`, `mAYL_notify`, `mAYL_send_as_agent`, `mAYL_agentbox_provision`, `mAYL_agentbox_list`, `mAYL_agentbox_extend`, `mAYL_agentbox_release` | Mail; every user gets `<id>@mosadd.com`. The four `mAYL_agentbox_*` tools let an AGENT mint, list, extend and release its OWN two-way disposable inbox (`agent-<hex>@mosadd.com`) — `create_inbox` parity with AgentMail, on our stack, with provenance. Transport + at-rest encrypted (server-readable), NOT E2EE. `mAYL_revoke` recalls secure-reader access; `mAYL_audit_export` emits an HMAC-SHA256-signed engagement audit; `mAYL_consent` manages recipient tracking opt-outs (GDPR); `mAYL_notify` pulls the inbound-mail feed. (Was the mp0st codename; the `mp0st_*` aliases are retired — mAYL is the one name) |
 | **mTALK** (6) | `mTALK_open`, `mTALK_join`, `mTALK_press`, `mTALK_release`, `mTALK_state`, `mTALK_ingest_ptt` | Half-duplex push-to-talk: one speaker, FIFO queue, anti-hog auto-release + transcript ingest to mRAG |
 | **mRAG** (8) | `mRAG_ingest`, `mRAG_search`, `mRAG_list_sources`, `mRAG_delete`, `mRAG_graph_refresh`, `mRAG_graph_overview`, `mRAG_graph_neighbors`, `mRAG_graph_timeline` | RAG recall over the user's own data (hybrid vector + BM25) + knowledge-graph traversal (who/what/when) |
@@ -141,10 +143,9 @@ Missing optional keys fail closed — that channel is simply absent from `comms_
 
 ## Links
 
-- **Mint a key + docs** — [mosadd.com/keys](https://mosadd.com/keys) · [mosadd.com/docs](https://mosadd.com/docs) · [mosadd.com/mcp](https://mosadd.com/mcp)
-- **Hosted gateway** — `https://mcp.mosadd.com/mcp` (BYOK key broker, zero-install for remote agents)
+- **m.0S (canonical)** — `https://mcp.mosadd.dev/mcp` + `MOSADD_KEY` from [app.mosadd.dev](https://app.mosadd.dev); see the [repo README](https://github.com/Hei33enberg/mosADD-OS#start-in-5-minutes)
+- **Older mosadd.com hub** — [mosadd.com/keys](https://mosadd.com/keys) · gateway `https://mcp.mosadd.com/mcp`
 - **Source** — [github.com/Hei33enberg/mosADD-OS](https://github.com/Hei33enberg/mosADD-OS) (MIT)
-- **m.0S endpoint** — `https://mcp.mosadd.dev/mcp` with a key from [app.mosadd.dev](https://app.mosadd.dev); see the [repo README](https://github.com/Hei33enberg/mosADD-OS#start-in-5-minutes)
 
 ## License
 

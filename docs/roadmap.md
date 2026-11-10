@@ -12,7 +12,7 @@ What is live is measured; what is planned is marked planned. Dates are targets, 
 - Panel `https://app.mosadd.dev`: sign-up and log-in with e-mail and password (a passkey is optional, in Settings),
   lines, keys, usage.
 - Public price list `GET https://api.mosadd.dev/v1/pricing` (no key); `PRICING.md` is generated from it.
-- `@mosadd/mcp` `3.0.0-alpha.55` — the tool definitions the hub serves.
+- `@mosadd/mcp` `3.0.0-alpha.56` — the tool definitions published for the hub.
 - `packages/m0s`: installer and stdio shim (this repository, not yet on npm).
 - Signed list of hub addresses `/.well-known/m0s-endpoints.json` (Ed25519; addresses signed with an offline root key
   pinned in `packages/m0s` 0.3.1, freshness with the hub's online key), measured 2026-09-30 on `api.mosadd.dev` and

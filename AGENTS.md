@@ -37,5 +37,6 @@ This repo dogfoods its own layer. If your agent runs the [`mosadd-coordinate`](.
 - Never fabricate benchmark numbers, test output, or links. Paste real command output.
 - If a local gate fails, read the output and fix forward — the scripts are written to give you deterministic feedback. (There is no GitHub Actions; don't wait for checks.)
 
-## Kanon pracy agentów (obowiązkowy)
-Przed każdą zmianą przeczytaj `docs/KANON-PRACY-AGENTOW.md` — maszyny, repo, protokół sprintu (zero buildów po każdej poprawce), git repair, sekrety, podgląd. Wersja nadrzędna: `C:/Users/Public/NOWROCKY-BN/KANON-PRACY-AGENTOW.md`.
+## Maintainer ops canon (not public product copy)
+
+Fleet / machine protocol lives **outside this repo**: `C:/Users/Public/NOWROCKY-BN/KANON-PRACY-AGENTOW.md` (sprint rules, git repair, secrets, preview). Do **not** commit that file under `docs/` or publish it on GitHub Pages — public surfaces here are English tech product copy only.

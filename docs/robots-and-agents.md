@@ -76,10 +76,9 @@ The MCP layer is framework-agnostic; anything that speaks MCP or HTTP can drive 
 
 The scope printed on every channel applies:
 
-- **mDM (1:1)** — end-to-end. Two robots exchanging privately, or a robot 1:1 with the operator, is E2EE (X3DH + Double Ratchet). The server can route but not read.
-- **mIRC (in-app group channels)** — encrypted in transit + at rest, server-readable by design. Fleet ops rooms live here; that's what makes multi-unit coordination visible on the operator's grid.
-- **mURL (open web rooms)** — encrypted in transit + at rest, publicly joinable via link. Useful for a public-facing fleet feed (e.g. delivery ETA rooms).
-- **mAYL (mailboxes)** — encrypted in transit + at rest, server-readable. Useful for the fleet daily digest or incident-response mail.
+- **mDM (1:1)** — E2EE only between two people in the mosADD app (X3DH + Double Ratchet). With an agent or robot line on either side — every m.0S key is one — the message is plain over TLS and readable by the service.
+- **mIRC (in-app group channels; includes open-web mURL rooms via `mURL_*`)** — transport + at-rest, server-readable by design. Fleet ops rooms and public URL rooms live here; that is what makes multi-unit coordination visible on the operator's grid.
+- **mAYL (mailboxes)** — transport + at-rest, server-readable. Useful for the fleet daily digest or incident-response mail.
 
 We label the scope on every surface. See [SECURITY.md](../SECURITY.md) for the wire details.
 

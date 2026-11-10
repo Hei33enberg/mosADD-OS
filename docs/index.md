@@ -2,7 +2,7 @@
 
 Client and architecture documentation for [mosADD-OS](https://github.com/Hei33enberg/mosADD-OS).
 
-**Live hosts:** product UI [mosadd.com](https://mosadd.com) · core API `api.mosadd.com` · MCP `mcp.mosadd.dev`. Do not point production clients at dead `*.supabase.co` project URLs.
+**Live hosts:** product UI [mosadd.com](https://mosadd.com) · DEV API `api.mosadd.dev` (`/v1/health` OK; `api.mosadd.com/v1/health` is 404) · MCP `mcp.mosadd.dev` with `MOSADD_KEY`. Do not point production clients at dead `*.supabase.co` project URLs.
 
 ## Pricing — two stories (do not mix)
 
