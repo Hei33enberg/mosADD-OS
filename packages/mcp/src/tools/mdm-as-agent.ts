@@ -59,6 +59,16 @@ const mDM_send_as_agent_input = z.object({
       "Recipient identity id or mosADD address. Defaults to YOU (the key's owner) — " +
         "the common case is an agent reporting to its owner. Must be a person, not another agent.",
     ),
+  thread_label: z
+    .string()
+    .min(1)
+    .max(120)
+    .regex(/^[a-zA-Z0-9._-]+$/)
+    .optional()
+    .describe(
+      "Optional thread label (same as mDM_send). Omit for the MAIN unlabeled thread — required for " +
+        "SOVEREIGN/King traffic until rename/UI merge (LINEAR-6577). A new label opens a new thread.",
+    ),
   silent: z
     .boolean()
     .optional()
@@ -78,11 +88,12 @@ async function mDM_send_as_agent(
   input: z.infer<typeof mDM_send_as_agent_input>,
   ctx: MosaddToolContext,
 ): Promise<SendResult> {
-  ctx.log("debug", "mDM_send_as_agent", { agent: input.agent });
+  ctx.log("debug", "mDM_send_as_agent", { agent: input.agent, thread_label: input.thread_label });
   return await invokeFunction<SendResult>("mdm-send-as-agent", {
     agent: input.agent,
     text: input.text,
     ...(input.to ? { to: input.to } : {}),
+    ...(input.thread_label ? { thread_label: input.thread_label } : {}),
     ...(input.silent ? { silent: true } : {}),
   });
 }
@@ -105,9 +116,10 @@ export const mdmAsAgentTools: MosaddTool[] = [
       "Send a direct message AS ONE OF YOUR OWN AGENTS instead of as yourself. Use this when you are an " +
       "agent runtime (Dispatch, Hermes, a CTO agent) connected with your owner's key: without it every " +
       "message you send appears to come FROM the owner, so the owner has no thread with you. Names the " +
-      "agent by mosADD address, identity id or display name; `to` defaults to the key's owner. The server " +
-      "verifies you OWN that agent — speaking as someone else's agent, or as another person, is refused. " +
-      "Recipient must be a person: agent-to-agent DM stays blocked.",
+      "agent by mosADD address, identity id or display name; `to` defaults to the key's owner. Optional " +
+      "`thread_label` selects a named thread (omit = MAIN unlabeled — required for King/SOVEREIGN until " +
+      "rename lands). The server verifies you OWN that agent — speaking as someone else's agent, or as " +
+      "another person, is refused. Recipient must be a person: agent-to-agent DM stays blocked.",
     inputSchema: mDM_send_as_agent_input,
     handler: mDM_send_as_agent as MosaddTool["handler"],
   },
