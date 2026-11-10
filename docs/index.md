@@ -2,6 +2,16 @@
 
 Client and architecture documentation for [mosADD-OS](https://github.com/Hei33enberg/mosADD-OS).
 
+**Live hosts:** product UI [mosadd.com](https://mosadd.com) · core API `api.mosadd.com` · MCP `mcp.mosadd.dev`. Do not point production clients at dead `*.supabase.co` project URLs.
+
+## Pricing — two stories (do not mix)
+
+| Surface | Ladder |
+|---|---|
+| Hosted app (mosadd.com) | **ROOKIE $0 · MAYOR $15/mo · ADMIRAL $33/mo** |
+| MCP hub / m.0S key | prepaid metered — [PRICING.md](../PRICING.md) |
+| This repo | MIT client; hosted service is paid and not self-hosted from this tree |
+
 | Page | What |
 |---|---|
 | [hosts.md](./hosts.md) | wire an AI host to `mcp.mosadd.dev` |
@@ -12,4 +22,4 @@ Client and architecture documentation for [mosADD-OS](https://github.com/Hei33en
 | [threat-monitoring.md](./threat-monitoring.md) | mLIDAR overview |
 | [robots-and-agents.md](./robots-and-agents.md) | agent policy |
 
-Installer and pricing live in the repository root: [README.md](../README.md), [PRICING.md](../PRICING.md).
+Installer and hub pricing live in the repository root: [README.md](../README.md), [PRICING.md](../PRICING.md). HTML entry for GitHub Pages: [index.html](./index.html).

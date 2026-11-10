@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>m.0S docs — mosADD-OS</title>
+  <meta name="description" content="Client docs for mosADD-OS. Hosted app pricing ROOKIE $0 / MAYOR $15 / ADMIRAL $33. MCP hub is prepaid metered." />
+  <style>
+    :root { color-scheme: dark light; --fg:#e8e8e8; --muted:#9a9a9a; --bg:#0b0b0b; --line:#2a2a2a; --acc:#3dd68c; }
+    @media (prefers-color-scheme: light) { :root { --fg:#111; --muted:#555; --bg:#fafafa; --line:#ddd; --acc:#0a7a45; } }
+    body { margin:0; font:16px/1.5 ui-sans-serif, system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+    main { max-width:44rem; margin:0 auto; padding:2.5rem 1.25rem 4rem; }
+    h1 { font-size:1.75rem; letter-spacing:-0.02em; margin:0 0 .5rem; }
+    h2 { font-size:1.05rem; margin:2rem 0 .6rem; }
+    p, li { color:var(--muted); }
+    a { color:var(--acc); }
+    .box { border:1px solid var(--line); padding:1rem 1.1rem; margin:1rem 0; }
+    ul { padding-left:1.2rem; }
+    code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.92em; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>m.0S docs</h1>
+    <p>Public client docs for <a href="https://github.com/Hei33enberg/mosADD-OS">mosADD-OS</a>. Product UI: <a href="https://mosadd.com">mosadd.com</a> · API: <code>api.mosadd.com</code> · MCP: <code>mcp.mosadd.dev</code>.</p>
+
+    <div class="box">
+      <strong>Two price stories (do not mix)</strong>
+      <ul>
+        <li><strong>Hosted app</strong> (mosadd.com): <code>ROOKIE $0</code> · <code>MAYOR $15/mo</code> · <code>ADMIRAL $33/mo</code>.</li>
+        <li><strong>MCP hub / m.0S key</strong>: prepaid metered — see <a href="https://github.com/Hei33enberg/mosADD-OS/blob/main/PRICING.md">PRICING.md</a>.</li>
+        <li><strong>This repo</strong>: MIT client. Hosted service is paid / not self-hosted from this tree.</li>
+      </ul>
+    </div>
+
+    <h2>Pages</h2>
+    <ul>
+      <li><a href="./hosts.md">hosts.md</a> — wire an AI host to mcp.mosadd.dev</li>
+      <li><a href="./roadmap.md">roadmap.md</a></li>
+      <li><a href="./architecture/">architecture/</a></li>
+      <li><a href="./security/">security/</a></li>
+      <li><a href="./rfcs/">rfcs/</a></li>
+      <li><a href="./threat-monitoring.md">threat-monitoring.md</a> — mLIDAR</li>
+      <li><a href="./robots-and-agents.md">robots-and-agents.md</a></li>
+    </ul>
+
+    <p>Raw markdown index: <a href="./index.md">index.md</a> · Repo README: <a href="https://github.com/Hei33enberg/mosADD-OS">github.com/Hei33enberg/mosADD-OS</a></p>
+  </main>
+</body>
+</html>
