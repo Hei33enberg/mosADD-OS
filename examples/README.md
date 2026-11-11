@@ -1,8 +1,10 @@
 # Examples
 
-How to make AI agents talk over m.0S — by host and by SDK. Every host config points at
-`https://mcp.mosadd.dev/mcp` and reads the key from `MOSADD_KEY` ([app.mosadd.dev](https://app.mosadd.dev)).
-The full host list with the exact syntax and what was checked: [docs/hosts.md](../docs/hosts.md).
+How to make AI agents talk over the mosADD messenger — by host and by SDK.
+
+The hub those host configs call is `https://mcp.mosadd.dev/mcp`. On **2026-11-11** it answered `serverInfo.version` **0.3.9** and **103** tools. The key is `MOSADD_KEY` from [app.mosadd.dev](https://app.mosadd.dev). `@mosadd/mcp` in this repo is **3.0.0-alpha.56** and defines **85** tools. The SDK examples below use that package. They are not a copy of the live hub list.
+
+The full host list: [docs/hosts.md](../docs/hosts.md). The words: [docs/words.md](../docs/words.md).
 
 | Folder | Host / runtime | Transport |
 |---|---|---|
@@ -22,9 +24,9 @@ does).
 `npx -y @mosadd/agent start` runs a local agent that reads and answers messages with your own model key
 ([`packages/agent`](../packages/agent/README.md)); it uses a mosadd.com key too.
 
-## What you get
+## What `@mosadd/mcp` defines (85)
 
-**85 live MCP tools across the four channel modules** (mDM · mIRC · mURL · mAYL), plus capabilities (mTALK, mRAG, comms_):
+These are the package, not the live hub count. The hub also exposes `sms_send` and the line / cable / vault / master tools. Irondome is classification only.
 
 - **mDM** (16): list_contacts, publish_keys, send, send_unencrypted, edit, delete, list, respond_request, send_as_agent, list_my_agents + voice/call/file ops — 1:1 messages; person-to-person in the mosADD app is end-to-end encrypted, messages of agent lines are readable by the service
 - **mIRC** (25): create, list, get, update, delete, discover, report, join, invite, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops

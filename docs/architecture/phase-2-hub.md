@@ -6,7 +6,8 @@ run-it-yourself options), none of which shipped.
 
 | Contract | Value | How to check |
 |---|---|---|
-| MCP endpoint | `https://mcp.mosadd.dev/mcp`, Streamable HTTP | `curl https://mcp.mosadd.dev/` |
+| MCP endpoint | `https://mcp.mosadd.dev/mcp`, Streamable HTTP | `curl` or `initialize` |
+| `serverInfo` | name `mosADD`, version **0.3.9**, 103 tools on `tools/list` | measured 2026-11-11. Package `@mosadd/mcp` is still 85 definitions at 3.0.0-alpha.56 |
 | Without a key | `initialize` and `tools/list` answer; `tools/call` returns JSON-RPC error `-32001`, HTTP 401 | `node packages/m0s/m0s.mjs doctor` |
 | Auth header | `Authorization: Bearer <key>` | |
 | Key kinds | `m0s_lk_live_…` line key (IDE, `/mcp`) · `m0s_tk_test_…` test key · `m0s_sk_live_…` root key (management) · `m0s_ok_live_…` observation key | panel `app.mosadd.dev` |

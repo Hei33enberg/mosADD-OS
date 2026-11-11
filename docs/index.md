@@ -1,25 +1,34 @@
 # m.0S docs
 
-Client and architecture documentation for [mosADD-OS](https://github.com/Hei33enberg/mosADD-OS).
+Client documentation for [mosADD-OS](https://github.com/Hei33enberg/mosADD-OS). mosADD is an agentic messenger. This repository is the MIT client (installer, tool definitions, Irondome). It is not the mosadd.com marketing page.
 
-**Live hosts:** product UI [mosadd.com](https://mosadd.com) · DEV API `api.mosadd.dev` (`/v1/health` OK; `api.mosadd.com/v1/health` is 404) · MCP `mcp.mosadd.dev` with `MOSADD_KEY`. Do not point production clients at dead `*.supabase.co` project URLs.
+**Measured 2026-11-11**
 
-## Pricing — two stories (do not mix)
-
-| Surface | Ladder |
+| Surface | What answered |
 |---|---|
-| Hosted app (mosadd.com) | **ROOKIE $0 · MAYOR $15/mo · ADMIRAL $33/mo** |
-| MCP hub / m.0S key | prepaid metered — [PRICING.md](../PRICING.md) |
-| This repo | MIT client; hosted service is paid and not self-hosted from this tree |
+| Hub `https://mcp.mosadd.dev/mcp` | `serverInfo` **0.3.9**, **103** tools |
+| API `https://api.mosadd.dev/v1/health` | `ok: true` |
+| `@mosadd/mcp` in this repo | **3.0.0-alpha.56**, 85 definitions — not the live list |
+| Installer `@mosadd/m0s` | **0.3.1** |
+
+Irondome is `threat_catalog` and `threat_classify`. The catalog has 193 event types. That is not a count of detectors.
+
+## Two bills
+
+The hub is prepaid. The list is [PRICING.md](../PRICING.md), generated from `GET https://api.mosadd.dev/v1/pricing`.
+
+The hosted app has its own plan names in the product. This repo does not publish that page. Do not mix the two.
 
 | Page | What |
 |---|---|
-| [hosts.md](./hosts.md) | wire an AI host to `mcp.mosadd.dev` |
-| [roadmap.md](./roadmap.md) | public roadmap |
-| [architecture/](./architecture/) | hub guarantees and module map |
-| [security/](./security/) | threat model and E2EE posture |
-| [rfcs/](./rfcs/) | design RFCs |
-| [threat-monitoring.md](./threat-monitoring.md) | mLIDAR overview |
+| [words.md](./words.md) | messenger, Irondome, versions |
+| [architecture/](./architecture/) | client vs hub |
+| [realm.md](./realm.md) | contributor ladder |
+| [hosts.md](./hosts.md) | wire an AI host |
+| [security/](./security/) | threat model and encryption posture |
+| [threat-monitoring.md](./threat-monitoring.md) | mLIDAR, and what it does not detect |
+| [roadmap.md](./roadmap.md) | what is live, what is only planned |
+| [rfcs/](./rfcs/) | design records |
 | [robots-and-agents.md](./robots-and-agents.md) | agent policy |
 
-Installer and hub pricing live in the repository root: [README.md](../README.md), [PRICING.md](../PRICING.md). HTML entry for GitHub Pages: [index.html](./index.html).
+GitHub Pages entry: [index.html](./index.html).

@@ -10,10 +10,23 @@
 
 </div>
 
-m.0S is a hosted MCP endpoint, `https://mcp.mosadd.dev/mcp`. Its tools cover direct messages, channels,
-push-to-talk and mail between agents and people, SMS through your own Telnyx or Twilio account, a memory your
-agents can search (mRAG), and **lines** — agent identities you can move between machines and accounts. You get a
-key at [app.mosadd.dev](https://app.mosadd.dev), put it in `MOSADD_KEY`, and add the endpoint to your AI host.
+mosADD is an agentic messenger: people and agents are contacts on one layer. m.0S is the hosted MCP for it, `https://mcp.mosadd.dev/mcp`.
+The tools cover direct messages, channels, push-to-talk, mail, SMS through your own Telnyx or Twilio account,
+memory an agent can search (mRAG), and **lines** — agent identities you can move between machines. **Irondome**
+(`threat_catalog`, `threat_classify`) classifies events you hand it. It does not watch a network, and its catalog
+of 193 event types is not a detector count.
+
+You get a key at [app.mosadd.dev](https://app.mosadd.dev), put it in `MOSADD_KEY`, and add the endpoint to your AI host.
+This repository does not publish the mosadd.com marketing page. The app's own plans and the hub's prepaid meters
+are different bills; the hub's list is [PRICING.md](./PRICING.md).
+
+| What | Version | Read on |
+|---|---|---|
+| Live hub `mcp.mosadd.dev` | **0.3.9**, **103** tools | `initialize` and `tools/list`, 2026-11-11 |
+| `@mosadd/mcp` in this repo | **3.0.0-alpha.56**, **85** tool definitions | `packages/mcp/package.json` |
+| Installer `@mosadd/m0s` | **0.3.1** | `packages/m0s/package.json` |
+
+The installer points a host at the hub. It does not install 0.3.9. The 85 names are not the live list: that day the hub also returned `sms_send` and the line, cable, vault, and `master_check` tools. Tomorrow, call `tools/list`.
 
 This repository is the client side, under the MIT license: the installer and stdio shim, the MCP tool
 definitions, SDK adapters, skills and examples. The service behind the endpoint is ours, it is not in this
@@ -81,18 +94,11 @@ the installer (it writes the first address of the current list) or pass `--url <
 
 ## Tools
 
-The hub's tool list is whatever `tools/list` returns; this text does not repeat a count, because it changes with
-releases. The snapshot in [distribution/hub-tools.json](./distribution/hub-tools.json) holds the names, the count and
-the date it was measured: the tools of `@mosadd/mcp` plus `sms_send`, which sends an SMS through your own Telnyx or
-Twilio account. Phone calls through your own account are coming soon (the price list marks them `soon`); their
-tools, `call_start` and `call_status`, are held back and are not listed until calls open.
+The hub's tool list is whatever `tools/list` returns. On **2026-11-11** that was **103** names and `serverInfo.version` **0.3.9**.
 
-85 tools in `@mosadd/mcp` (`3.0.0-alpha.56`, package version; hub `serverInfo` may lag until redeploy):
-mDM 16 · mIRC 25 · mURL 7 (open-web rooms folded under mIRC) · mAYL 16 · mTALK 6 · mRAG 8 · comms 5 · threat 2. The full list with one line per
-tool is in [packages/mcp/README.md](./packages/mcp/README.md). Without a key the hub answers `initialize` and
-`tools/list`; every `tools/call` needs `Authorization: Bearer <key>`. The two `threat_*` tools classify offline
-against a canonical taxonomy of **193 threat events** ([`@mosadd/threat-engine`](./packages/threat-engine)); a
-taxonomy entry is not a detector.
+`@mosadd/mcp` **3.0.0-alpha.56** defines **85** of them: mDM 16 · mIRC 25 · mURL 7 (open-web rooms folded under mIRC) · mAYL 16 · mTALK 6 · mRAG 8 · comms 5 · Irondome 2. One line per tool: [packages/mcp/README.md](./packages/mcp/README.md). The same day's hub list added `sms_send` (your Telnyx or Twilio account) and 17 line, cable, vault, and master tools that this package does not define. Phone calls through your own account are not open: the price list marks them `soon`, and `call_start` / `call_status` stay unregistered until they are.
+
+Without a key the hub answers `initialize` and `tools/list`. Every `tools/call` needs `Authorization: Bearer <key>`. Irondome classifies offline against **193** event types ([`@mosadd/threat-engine`](./packages/threat-engine)). A taxonomy entry is not a detector. Words: [docs/words.md](./docs/words.md). How the pieces sit: [docs/architecture](./docs/architecture/).
 
 ## Encryption, plainly
 
@@ -119,7 +125,10 @@ Prepaid, no plans. The test key is free. A top-up of at least 10 USD unlocks the
 | `packages/mcp` | `@mosadd/mcp`: the 85 tool definitions; also a stdio server for the older mosadd.com keys |
 | `packages/ai`, `crypto`, `protocol`, `threat-engine`, `agent`, `providers` | SDK pieces |
 | `skills/` | agent skills ([agentskills.io](https://agentskills.io) format) and the Claude Code plugin |
-| `examples/` | host configs and SDK examples |
+| `examples/` | host configs and SDK examples — [examples/README.md](./examples/README.md) |
+| `install/` | one-line installer — [install/README.md](./install/README.md) |
+| `community/` | ledger and how to take part — [community/README.md](./community/README.md) |
+| `docs/` | [words](./docs/words.md), [architecture](./docs/architecture/), [realm](./docs/realm.md), hosts, security |
 | `distribution/` | prepared registry entries (not submitted) |
 | `apps/` | notes only: the gateway (`mcp-http`), the chat widget (`embed`) and the edge Worker (`edge`) are part of the service and left this repository on 2026-09-29 |
 

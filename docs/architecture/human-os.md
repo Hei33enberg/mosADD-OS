@@ -2,7 +2,7 @@
 
 mosadd is the **comms layer for AI agents — and the humans who direct them**. The
 toolkit ships as `@mosadd/*` packages on npm; the headline artifact is `@mosadd/mcp`,
-a single MCP server exposing **85 tools** across the three MVP modules (mDM · mIRC · mAYL) plus capabilities (mTALK, mRAG, comms_) that any agent
+a single MCP server. The package defines **85 tools** across the three MVP modules (mDM · mIRC · mAYL) plus capabilities (mTALK, mRAG, comms_, Irondome). The live hub listed **103** on 2026-11-11 — call `tools/list`, do not treat 85 as that number. Any agent
 (Claude Code, Cursor, ChatGPT Apps, Vercel AI SDK, LangChain, …) can call. Open-web **mURL** rooms are folded under **mIRC** (tools still named `mURL_*`), not a fourth MVP module.
 
 This document describes how the pieces fit together: the public OSS layer, the
@@ -13,7 +13,7 @@ modules and their encryption scope, the hosted gateway, and BYOK.
 The client side is open source under the MIT license (the service is not in this repository and there is no self-hosted version):
 
 - `@mosadd/mcp` — the MCP server; exposes all 85 tools (discover + invoke).
-- `@mosadd/providers` — backend adapters (Supabase, LiveKit, Resend, …).
+- `@mosadd/providers` — interfaces for voice and DM delivery. No vendor adapter is shipped in this package.
 - `@mosadd/ai` — framework adapters (Vercel AI SDK, LangChain, OpenAI, Anthropic).
 - `@mosadd/crypto` — the mDM end-to-end encryption (X3DH + Double Ratchet).
 
@@ -68,21 +68,20 @@ loop — the agent flags a thread for human attention instead of guessing.
 ┌─────────────────────────────────────────────────────────┐
 │  Provider contracts (@mosadd/providers)                  │
 │  - Module primitives (mDM, mIRC[+mURL], mAYL)            │
-│  - Capabilities (mTALK, mRAG, comms_)                    │
-│  - Identity (anonymous, passphrase-recoverable)          │
+│  - Capabilities (mTALK, mRAG, comms_, Irondome)          │
+│  - Interfaces only. No anonymous-account implementation. │
 └────────────────────┬────────────────────────────────────┘
                      │ network I/O
                      ▼
 ┌─────────────────────────────────────────────────────────┐
-│  Backend providers                                       │
-│  - Supabase — data + auth                                │
-│  - LiveKit — voice transport (SFU)                       │
-│  - Resend — email delivery                               │
+│  Hosted data plane — not in this repository              │
+│  @mosadd/providers is interfaces only. It does not ship  │
+│  a Supabase, LiveKit, or Resend adapter.                 │
 └─────────────────────────────────────────────────────────┘
 ```
 
-Each channel primitive can be backed by more than one provider, so you can swap
-the transport behind a tool without changing your agent code.
+The hosted service is outside this tree. Naming a vendor here would be a guess.
+`@mosadd/providers` says so in its own package description: interfaces only.
 
 ## Hosted endpoint (`mcp.mosadd.dev`)
 
@@ -103,6 +102,6 @@ service.
 - **License: MIT** for the client side (since 2026-09-29; earlier releases were Apache-2.0).
 - **Distribution: MCP-first** — agents are the primary callers, and MCP is their
   interface.
-- **Identity: anonymous-native** — no email/phone required to start.
+- **Identity: e-mail and a password** at [app.mosadd.dev](https://app.mosadd.dev). A passkey is optional, in Settings. This client does not create an anonymous account.
 - **Encryption honesty** — person-to-person mDM in the mosADD app is E2EE; agent-line traffic and the other modules are readable by the service.
   We never overstate it.
