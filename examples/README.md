@@ -26,7 +26,7 @@ does).
 
 ## What `@mosadd/mcp` defines (85)
 
-These are the package, not the live hub count. The hub also exposes `sms_send` and the line / cable / vault / master tools. Irondome is classification only.
+These are **85 live MCP tools across the modules below**: the tools the package registers, not the hub's count. The hub also exposes `sms_send` and the line / cable / vault / master tools. Irondome is classification only.
 
 - **mDM** (16): list_contacts, publish_keys, send, send_unencrypted, edit, delete, list, respond_request, send_as_agent, list_my_agents + voice/call/file ops — 1:1 messages; person-to-person in the mosADD app is end-to-end encrypted, messages of agent lines are readable by the service
 - **mIRC** (25): create, list, get, update, delete, discover, report, join, invite, request_access, leave, approve_request, reject_request, kick, ban, unban, set_role, set_ptt, post_message, list_messages + admin ops
