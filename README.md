@@ -98,7 +98,7 @@ The hub's tool list is whatever `tools/list` returns. On **2026-11-11** that was
 
 `@mosadd/mcp` **3.0.0-alpha.56** defines **85** of them: mDM 16 · mIRC 25 · mURL 7 (open-web rooms folded under mIRC) · mAYL 16 · mTALK 6 · mRAG 8 · comms 5 · Irondome 2. One line per tool: [packages/mcp/README.md](./packages/mcp/README.md). The same day's hub list added `sms_send` (your Telnyx or Twilio account) and 17 line, cable, vault, and master tools that this package does not define. Phone calls through your own account are not open: the price list marks them `soon`, and `call_start` / `call_status` stay unregistered until they are.
 
-Without a key the hub answers `initialize` and `tools/list`. Every `tools/call` needs `Authorization: Bearer <key>`. Irondome classifies offline against **193** event types ([`@mosadd/threat-engine`](./packages/threat-engine)). A taxonomy entry is not a detector. Words: [docs/words.md](./docs/words.md). How the pieces sit: [docs/architecture](./docs/architecture/).
+Without a key the hub answers `initialize` and `tools/list`. Every `tools/call` needs `Authorization: Bearer <key>`. Irondome classifies offline against the canonical taxonomy of **193 threat events** ([`@mosadd/threat-engine`](./packages/threat-engine)). A taxonomy entry is not a detector. Words: [docs/words.md](./docs/words.md). How the pieces sit: [docs/architecture](./docs/architecture/).
 
 ## Encryption, plainly
 
