@@ -12,9 +12,17 @@ import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { mkdtempSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const MCP_BIN = join(__dirname, "..", "..", "dist", "bin", "mcp.js");
+
+// Every test boots a fresh node process (dist/bin/mcp.js) and waits for it on stdout. On a busy machine (this package's
+// other test files in parallel, the other packages' suites under `pnpm -r test`, antivirus scanning node's module loads)
+// that boot took more than 7 s on 2026-11-14: two of the three tests timed out at 5 s in each of two full runs, and
+// passed in about 2 s each when this file ran alone, and in about 14 s each in a full run that gave them the time.
+// The assertions are unchanged; only how long they may wait is. A server that never answers still fails.
+const REQUEST_TIMEOUT_MS = 45_000;
+vi.setConfig({ testTimeout: 120_000, hookTimeout: 30_000 });
 
 /**
  * The child server runs with an EMPTY home and no MOSADD_* variables.
@@ -91,7 +99,7 @@ class McpClient {
     await new Promise<void>((resolve) => this.proc.on("close", () => resolve()));
   }
 
-  async send(method: string, params?: unknown, timeoutMs = 5000): Promise<JsonRpcMessage> {
+  async send(method: string, params?: unknown, timeoutMs = REQUEST_TIMEOUT_MS): Promise<JsonRpcMessage> {
     const id = this.nextId++;
     const req: JsonRpcMessage = { jsonrpc: "2.0", id, method, params };
     return new Promise((resolve, reject) => {
