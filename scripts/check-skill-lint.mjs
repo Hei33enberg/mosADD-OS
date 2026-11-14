@@ -146,11 +146,20 @@ try {
 } catch (e) {
   fail(`package.json: ${e.message}`);
 }
-// distribution/hub-tools.json is the measured tools/list of the hub; its server version is the one README cites.
+// distribution/hub-tools.json is a MEASUREMENT of the hosted hub: the serverInfo.version it reported and its tools/list on
+// `measured_at`. It is not a copy of anything in this repo, so its version is NOT compared with packages/mcp. The two are
+// separate version lines (docs/words.md, "Versions that must stay apart"): on 2026-09-30 the hub reported the package
+// version (3.0.0-alpha.55), by 2026-11-10 it reports its own (0.3.9, see cb18443). The old `hub == package` check could
+// from then on only be satisfied by rewriting a measurement to a number nobody measured, and a genuine re-measure
+// (`--write`) would have kept it red. What this lint keeps is that the file is still a dated measurement. Whether the live
+// hub still matches it is the live half, `node scripts/check-hub-tools.mjs` (network); the tool list itself is pinned
+// against the registry by packages/mcp/src/__tests__/tool-count-consistency.test.ts.
 try {
   const hub = JSON.parse(read("distribution/hub-tools.json"));
-  if (hub.server_version !== mcpVersion)
-    fail(`distribution/hub-tools.json server_version '${hub.server_version}' != packages/mcp '${mcpVersion}' — re-measure: node scripts/check-hub-tools.mjs --write`);
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}Z$/.test(String(hub.measured_at ?? "")))
+    fail(`distribution/hub-tools.json measured_at '${hub.measured_at}' is not a UTC timestamp (YYYY-MM-DDTHH:MMZ) — the file is a dated measurement, node scripts/check-hub-tools.mjs --write sets it`);
+  if (typeof hub.server_version !== "string" || hub.server_version.trim() === "")
+    fail(`distribution/hub-tools.json server_version is missing — it records the serverInfo.version the hub reported when it was measured`);
 } catch (e) {
   fail(`distribution/hub-tools.json: ${e.message}`);
 }
