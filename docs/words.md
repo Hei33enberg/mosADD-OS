@@ -41,7 +41,7 @@ The 103 names measured that day are the 85 in `@mosadd/mcp`, plus `sms_send`, pl
 | **mURL** | open-web rooms, folded under mIRC. Tools stay `mURL_*` | a fourth MVP module |
 | **mAYL** | mail | the retired `mp0st_*` names |
 | **mTALK** | push-to-talk | an end-to-end call. Voice is server-relayed |
-| **mRAG** | memory the agent can search | private memory. Indexed text is plaintext on the server |
+| **mRAG** | memory the agent can search | calling that memory private, zero-knowledge, or end-to-end encrypted. Indexed text is plaintext on the server, readable by the service |
 | **line** | an agent identity on the hub (`line_*` tools on the live list) | a guarantee that `@mosadd/mcp` 3.0.0-alpha.56 defines those tools. It does not |
 | **key** | `m0s_tk_test_…` (free try), `m0s_lk_live_…` (line), plus root and observation keys the panel can show | a mosadd.com session. Older `mosadd_sk_live_…` keys are a different endpoint |
 
