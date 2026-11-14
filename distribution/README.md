@@ -19,6 +19,14 @@ The one entry that IS published (since 2026-09-03) is the older card
 - Check: `curl "https://registry.modelcontextprotocol.io/v0/servers/com.mosadd%2Fmosadd-mcp/versions"` (the
   `?search=` listing is cached by the registry and can lag a few minutes).
 
+- 2026-11-14 (CTO wejścia): `3.0.0-alpha.56` PREPARED, not published — title `mosADD`, description 97/100, icons
+  `https://mosadd.com/pwa-192.png` + `https://mosadd.com/favicon.svg`, `POST /v0/validate` = valid. Not published because
+  the private key for the live `mosadd.com` proof is not on the HP machine. A NEW key is on HP
+  (`%USERPROFILE%\.m0s-hub\mcp-registry-mosadd.com.pem`, outside git); its proof record is
+  `v=MCPv1; k=ed25519; p=1Juv+23HGk2s3AK4CyybSdl2K+OudQEO/dieXRmxUZU=` — add it as a SECOND TXT at the apex of `mosadd.com`
+  (Vultr DNS; the old record stays), then ONE command:
+  `node scripts/mcp-registry.mjs publish packages/mcp/server.registry.json --key "%USERPROFILE%\.m0s-hub\mcp-registry-mosadd.com.pem" --domain mosadd.com --method dns`
+
 ## Prepared, not submitted
 
 | Target | File | How it gets there | Blocked by |
