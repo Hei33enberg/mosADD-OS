@@ -1,0 +1,1122 @@
+{
+  "$id": "https://mosadd.dev/schema/messenger/1.json",
+  "title": "mosADD messenger description",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "format": {
+      "type": "string",
+      "const": "mosadd.messenger"
+    },
+    "formatVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "appVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "template": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+@\\d+$"
+    },
+    "brand": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30
+        },
+        "shortName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "icon": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_./-]+\\.png$"
+        },
+        "splash": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_./-]+\\.png$"
+        },
+        "languages": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]{2}(?:-[A-Z]{2})?$"
+          }
+        },
+        "defaultLanguage": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(?:-[A-Z]{2})?$"
+        },
+        "website": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https:\\/\\/.*"
+        },
+        "privacyPolicy": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https:\\/\\/.*"
+        },
+        "supportContact": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "poweredBy": {
+          "default": "about",
+          "type": "string",
+          "enum": [
+            "splash",
+            "about"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "shortName",
+        "description",
+        "icon",
+        "languages",
+        "defaultLanguage",
+        "privacyPolicy"
+      ],
+      "additionalProperties": false
+    },
+    "core": {
+      "type": "object",
+      "properties": {
+        "line": {
+          "type": "string",
+          "const": "mosadd-core@1"
+        },
+        "channel": {
+          "default": "stable",
+          "type": "string",
+          "enum": [
+            "stable",
+            "beta"
+          ]
+        }
+      },
+      "required": [
+        "line"
+      ],
+      "additionalProperties": false
+    },
+    "blocks": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "const": "identity"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "settings": {
+                "type": "object",
+                "properties": {
+                  "login": {
+                    "default": [
+                      "email-code"
+                    ],
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "email-code",
+                        "device-key"
+                      ]
+                    }
+                  },
+                  "namespace": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$"
+                  },
+                  "joining": {
+                    "default": "invite-only",
+                    "type": "string",
+                    "enum": [
+                      "invite-only",
+                      "link",
+                      "open"
+                    ]
+                  }
+                },
+                "required": [
+                  "namespace"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "enabled",
+              "settings"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "const": "mtalk"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "settings": {
+                "default": {
+                  "button": "large-bottom",
+                  "queue": true,
+                  "recordings": true,
+                  "transcripts": false,
+                  "maxSeconds": 60,
+                  "inChannels": true
+                },
+                "type": "object",
+                "properties": {
+                  "button": {
+                    "default": "large-bottom",
+                    "type": "string",
+                    "enum": [
+                      "large-bottom",
+                      "floating"
+                    ]
+                  },
+                  "queue": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "recordings": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "transcripts": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "maxSeconds": {
+                    "default": 60,
+                    "type": "integer",
+                    "minimum": 5,
+                    "maximum": 300
+                  },
+                  "inChannels": {
+                    "default": true,
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "enabled"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "const": "mirc"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "settings": {
+                "default": {
+                  "startChannels": [],
+                  "whoCreatesChannels": "admins"
+                },
+                "type": "object",
+                "properties": {
+                  "startChannels": {
+                    "default": [],
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^#[a-z0-9][a-z0-9_-]{0,31}$"
+                    }
+                  },
+                  "whoCreatesChannels": {
+                    "default": "admins",
+                    "type": "string",
+                    "enum": [
+                      "admins",
+                      "everyone"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "enabled"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "const": "mdm"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "settings": {
+                "default": {
+                  "calls": true,
+                  "files": true,
+                  "disappearingHours": 0
+                },
+                "type": "object",
+                "properties": {
+                  "calls": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "files": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "disappearingHours": {
+                    "default": 0,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 8760
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "enabled"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "const": "madd"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "settings": {
+                "default": {
+                  "homeAgents": [],
+                  "usersBringOwnAgents": false
+                },
+                "type": "object",
+                "properties": {
+                  "homeAgents": {
+                    "default": [],
+                    "maxItems": 10,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 30
+                        },
+                        "role": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200
+                        },
+                        "model": {
+                          "default": "mosadd/flash",
+                          "type": "string",
+                          "enum": [
+                            "mosadd/flash",
+                            "mosadd/pro",
+                            "own-key"
+                          ]
+                        },
+                        "voice": {
+                          "type": "string",
+                          "maxLength": 40
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "role"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "usersBringOwnAgents": {
+                    "default": false,
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "enabled"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "const": "mkeeper"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "settings": {
+                "default": {
+                  "jobs": []
+                },
+                "type": "object",
+                "properties": {
+                  "jobs": {
+                    "default": [],
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "pattern": "^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$"
+                        },
+                        "cron": {
+                          "type": "string",
+                          "pattern": "^(\\S+\\s+){4}\\S+$"
+                        },
+                        "does": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "cron",
+                        "does"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "enabled"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "const": "mrag"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "settings": {
+                "default": {
+                  "scope": "team-channels",
+                  "limitMbPerUser": 100
+                },
+                "type": "object",
+                "properties": {
+                  "scope": {
+                    "default": "team-channels",
+                    "type": "string",
+                    "enum": [
+                      "team-channels",
+                      "off"
+                    ]
+                  },
+                  "limitMbPerUser": {
+                    "default": 100,
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2000
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "enabled"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "const": "mayl"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "settings": {
+                "default": {},
+                "type": "object",
+                "properties": {},
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "enabled"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "const": "murl"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "settings": {
+                "default": {},
+                "type": "object",
+                "properties": {},
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "enabled"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "const": "offline"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "settings": {
+                "default": {
+                  "storeAndForward": true,
+                  "localNetwork": false,
+                  "bluetooth": false,
+                  "lora": false
+                },
+                "type": "object",
+                "properties": {
+                  "storeAndForward": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "localNetwork": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "bluetooth": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "lora": {
+                    "default": false,
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "enabled"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "layout": {
+      "type": "object",
+      "properties": {
+        "tabs": {
+          "minItems": 1,
+          "maxItems": 5,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "identity",
+              "mtalk",
+              "mirc",
+              "mdm",
+              "madd",
+              "mkeeper",
+              "mrag",
+              "mayl",
+              "murl",
+              "offline"
+            ]
+          }
+        },
+        "home": {
+          "type": "string",
+          "enum": [
+            "identity",
+            "mtalk",
+            "mirc",
+            "mdm",
+            "madd",
+            "mkeeper",
+            "mrag",
+            "mayl",
+            "murl",
+            "offline"
+          ]
+        }
+      },
+      "required": [
+        "tabs",
+        "home"
+      ],
+      "additionalProperties": false
+    },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "base": {
+          "default": "mosadd-august",
+          "type": "string",
+          "enum": [
+            "mosadd-august"
+          ]
+        },
+        "defaultMode": {
+          "type": "string",
+          "enum": [
+            "dark",
+            "light"
+          ]
+        },
+        "modes": {
+          "minItems": 1,
+          "maxItems": 2,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "dark",
+              "light"
+            ]
+          }
+        },
+        "tokens": {
+          "type": "object",
+          "properties": {
+            "dark": {
+              "type": "object",
+              "properties": {
+                "background": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "surface": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "border": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "text": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "textMuted": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "accent": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "onAccent": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "warning": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "error": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "pttTransmit": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "pttListen": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                }
+              },
+              "required": [
+                "background",
+                "surface",
+                "border",
+                "text",
+                "textMuted",
+                "accent",
+                "onAccent",
+                "warning",
+                "error",
+                "pttTransmit",
+                "pttListen"
+              ],
+              "additionalProperties": false
+            },
+            "light": {
+              "type": "object",
+              "properties": {
+                "background": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "surface": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "border": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "text": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "textMuted": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "accent": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "onAccent": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "warning": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "error": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "pttTransmit": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "pttListen": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                }
+              },
+              "required": [
+                "background",
+                "surface",
+                "border",
+                "text",
+                "textMuted",
+                "accent",
+                "onAccent",
+                "warning",
+                "error",
+                "pttTransmit",
+                "pttListen"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "fonts": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "enum": [
+                "Inter",
+                "IBM Plex Sans",
+                "IBM Plex Mono",
+                "Space Grotesk",
+                "JetBrains Mono",
+                "Atkinson Hyperlegible",
+                "Nunito",
+                "Noto Sans"
+              ]
+            },
+            "headings": {
+              "type": "string",
+              "enum": [
+                "Inter",
+                "IBM Plex Sans",
+                "IBM Plex Mono",
+                "Space Grotesk",
+                "JetBrains Mono",
+                "Atkinson Hyperlegible",
+                "Nunito",
+                "Noto Sans"
+              ]
+            }
+          },
+          "required": [
+            "text",
+            "headings"
+          ],
+          "additionalProperties": false
+        },
+        "radius": {
+          "default": "soft",
+          "type": "string",
+          "enum": [
+            "square",
+            "soft",
+            "round"
+          ]
+        },
+        "density": {
+          "default": "comfortable",
+          "type": "string",
+          "enum": [
+            "compact",
+            "comfortable"
+          ]
+        },
+        "css": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_./-]+\\.css$"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "defaultMode",
+        "modes",
+        "tokens",
+        "fonts"
+      ],
+      "additionalProperties": false
+    },
+    "releases": {
+      "type": "object",
+      "properties": {
+        "android": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "package": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*){1,}$"
+            },
+            "shell": {
+              "default": "bundled",
+              "type": "string",
+              "enum": [
+                "bundled",
+                "remote"
+              ]
+            },
+            "signing": {
+              "default": "creator-key",
+              "type": "string",
+              "enum": [
+                "creator-key",
+                "creator-local"
+              ]
+            },
+            "autoSignSecurityPatches": {
+              "default": false,
+              "type": "boolean"
+            },
+            "channels": {
+              "default": [
+                "direct-apk"
+              ],
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "direct-apk",
+                  "mosadd-store",
+                  "store-pack"
+                ]
+              }
+            },
+            "push": {
+              "default": "unifiedpush",
+              "type": "string",
+              "enum": [
+                "unifiedpush",
+                "fcm",
+                "none"
+              ]
+            }
+          },
+          "required": [
+            "enabled",
+            "package"
+          ],
+          "additionalProperties": false
+        },
+        "desktop": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "systems": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "windows",
+                  "linux",
+                  "macos"
+                ]
+              }
+            },
+            "signing": {
+              "default": "mosadd",
+              "type": "string",
+              "enum": [
+                "mosadd",
+                "creator-certificate"
+              ]
+            }
+          },
+          "required": [
+            "enabled",
+            "systems"
+          ],
+          "additionalProperties": false
+        },
+        "web": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$"
+            },
+            "customDomain": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(?=.{1,253}$)([a-z0-9-]{1,63}\\.)+[a-z]{2,63}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "enabled",
+            "address"
+          ],
+          "additionalProperties": false
+        },
+        "channel": {
+          "default": "beta",
+          "type": "string",
+          "enum": [
+            "stable",
+            "beta"
+          ]
+        }
+      },
+      "required": [
+        "android",
+        "desktop",
+        "web"
+      ],
+      "additionalProperties": false
+    },
+    "instance": {
+      "type": "object",
+      "properties": {
+        "hosting": {
+          "default": "mosadd",
+          "type": "string",
+          "enum": [
+            "mosadd",
+            "anywhere",
+            "mixed"
+          ]
+        },
+        "network": {
+          "type": "object",
+          "properties": {
+            "listedInMosaddDirectory": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "cloudServices": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "madd",
+              "ptt-transcripts",
+              "mrag",
+              "mail",
+              "push-relay"
+            ]
+          }
+        }
+      },
+      "required": [
+        "network"
+      ],
+      "additionalProperties": false
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "monthlyUsd": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "overBudget": {
+          "default": "text-only",
+          "type": "string",
+          "enum": [
+            "text-only",
+            "pause-agents",
+            "stop"
+          ]
+        }
+      },
+      "required": [
+        "monthlyUsd"
+      ],
+      "additionalProperties": false
+    },
+    "privacy": {
+      "type": "object",
+      "properties": {
+        "telemetry": {
+          "default": "none",
+          "type": "string",
+          "enum": [
+            "none",
+            "anonymous-counts"
+          ]
+        },
+        "crashReports": {
+          "default": "opt-in",
+          "type": "string",
+          "enum": [
+            "off",
+            "opt-in"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "format",
+    "formatVersion",
+    "id",
+    "revision",
+    "appVersion",
+    "brand",
+    "core",
+    "blocks",
+    "layout",
+    "theme",
+    "releases",
+    "instance",
+    "budget",
+    "privacy"
+  ],
+  "additionalProperties": false
+}

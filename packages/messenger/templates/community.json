@@ -1,0 +1,75 @@
+{
+  "$schema": "https://mosadd.dev/schema/messenger/1.json",
+  "_comment": "Template: a community — channels first, direct messages, a welcome agent, a room on the website.",
+  "format": "mosadd.messenger",
+  "formatVersion": 1,
+  "id": "running-club",
+  "revision": 1,
+  "appVersion": "1.0.0",
+  "template": "community@1",
+  "brand": {
+    "name": "Running Club",
+    "shortName": "RunClub",
+    "description": "Channels, direct messages and a welcome agent for a running club.",
+    "icon": "assets/icon-1024.png",
+    "languages": ["en"],
+    "defaultLanguage": "en",
+    "privacyPolicy": "https://example.org/privacy",
+    "poweredBy": "about"
+  },
+  "core": { "line": "mosadd-core@1", "channel": "stable" },
+  "blocks": [
+    { "id": "identity", "enabled": true, "settings": { "login": ["email-code"], "namespace": "runclub", "joining": "link" } },
+    { "id": "mirc", "enabled": true, "settings": { "startChannels": ["#welcome", "#sunday-long-run", "#races"], "whoCreatesChannels": "everyone" } },
+    { "id": "mdm", "enabled": true, "settings": { "calls": true, "files": true, "disappearingHours": 0 } },
+    { "id": "mtalk", "enabled": true, "settings": { "button": "floating", "queue": true, "recordings": true, "transcripts": false, "maxSeconds": 30, "inChannels": true } },
+    {
+      "id": "madd",
+      "enabled": true,
+      "settings": {
+        "homeAgents": [ { "name": "Pacer", "role": "Welcomes new members, answers questions about meeting points and the race calendar", "model": "mosadd/flash" } ],
+        "usersBringOwnAgents": false
+      }
+    },
+    { "id": "murl", "enabled": true },
+    { "id": "mrag", "enabled": false, "settings": { "scope": "off", "limitMbPerUser": 1 } },
+    { "id": "mayl", "enabled": false },
+    { "id": "mkeeper", "enabled": false }
+  ],
+  "layout": { "tabs": ["mirc", "mdm", "mtalk", "madd"], "home": "mirc" },
+  "theme": {
+    "id": "track-day",
+    "version": "1.0.0",
+    "base": "mosadd-august",
+    "defaultMode": "light",
+    "modes": ["light", "dark"],
+    "tokens": {
+      "light": {
+        "background": "#f7f7f2", "surface": "#ffffff", "border": "#d6d6cc",
+        "text": "#16181d", "textMuted": "#4b5260",
+        "accent": "#5b3fd1", "onAccent": "#ffffff",
+        "warning": "#8a5a00", "error": "#b42318",
+        "pttTransmit": "#8f1a12", "pttListen": "#2e8b57"
+      },
+      "dark": {
+        "background": "#111216", "surface": "#1a1c22", "border": "#2c2f38",
+        "text": "#f1f2f5", "textMuted": "#a3a9b6",
+        "accent": "#a993ff", "onAccent": "#16112e",
+        "warning": "#f0b429", "error": "#ff7a6b",
+        "pttTransmit": "#e5484d", "pttListen": "#4cc38a"
+      }
+    },
+    "fonts": { "text": "Atkinson Hyperlegible", "headings": "Space Grotesk" },
+    "radius": "round",
+    "density": "comfortable"
+  },
+  "releases": {
+    "android": { "enabled": true, "package": "org.example.runclub", "shell": "bundled", "signing": "creator-key", "autoSignSecurityPatches": false, "channels": ["direct-apk"], "push": "unifiedpush" },
+    "desktop": { "enabled": false, "systems": ["windows"], "signing": "mosadd" },
+    "web": { "enabled": true, "address": "runclub", "customDomain": null },
+    "channel": "beta"
+  },
+  "instance": { "hosting": "mosadd", "network": { "listedInMosaddDirectory": false }, "cloudServices": ["madd"] },
+  "budget": { "monthlyUsd": 25, "overBudget": "pause-agents" },
+  "privacy": { "telemetry": "none", "crashReports": "opt-in" }
+}

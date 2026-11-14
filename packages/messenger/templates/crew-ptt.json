@@ -1,0 +1,86 @@
+{
+  "$schema": "https://mosadd.dev/schema/messenger/1.json",
+  "_comment": "Template: a walkie-talkie for a crew, with an on-duty agent. Replace the brand, channels and package name.",
+  "format": "mosadd.messenger",
+  "formatVersion": 1,
+  "id": "port-radio",
+  "revision": 1,
+  "appVersion": "1.0.0",
+  "template": "crew-ptt@1",
+  "brand": {
+    "name": "Port Radio",
+    "shortName": "PortRadio",
+    "description": "Push-to-talk and channels for a port crew, with an on-duty agent that summarises every shift.",
+    "icon": "assets/icon-1024.png",
+    "languages": ["en", "pl"],
+    "defaultLanguage": "en",
+    "privacyPolicy": "https://example.org/privacy",
+    "poweredBy": "about"
+  },
+  "core": { "line": "mosadd-core@1", "channel": "stable" },
+  "blocks": [
+    { "id": "identity", "enabled": true, "settings": { "login": ["email-code", "device-key"], "namespace": "portradio", "joining": "invite-only" } },
+    { "id": "mtalk", "enabled": true, "settings": { "button": "large-bottom", "queue": true, "recordings": true, "transcripts": true, "maxSeconds": 60, "inChannels": true } },
+    { "id": "mirc", "enabled": true, "settings": { "startChannels": ["#quay-1", "#dispatch"], "whoCreatesChannels": "admins" } },
+    { "id": "mdm", "enabled": true, "settings": { "calls": true, "files": true, "disappearingHours": 0 } },
+    {
+      "id": "madd",
+      "enabled": true,
+      "settings": {
+        "homeAgents": [
+          { "name": "Bosun", "role": "On duty: summarises channels, takes push-to-talk reports, keeps the shift rota", "model": "mosadd/flash", "voice": "calm-en" }
+        ],
+        "usersBringOwnAgents": false
+      }
+    },
+    { "id": "mkeeper", "enabled": true, "settings": { "jobs": [ { "name": "shift-change", "cron": "0 6,14,22 * * *", "does": "Bosun announces the shift change on #quay-1" } ] } },
+    { "id": "mrag", "enabled": true, "settings": { "scope": "team-channels", "limitMbPerUser": 100 } },
+    { "id": "mayl", "enabled": false },
+    { "id": "murl", "enabled": false },
+    { "id": "offline", "enabled": true, "settings": { "storeAndForward": true, "localNetwork": false, "bluetooth": false, "lora": false } }
+  ],
+  "layout": { "tabs": ["mtalk", "mirc", "mdm", "madd"], "home": "mtalk" },
+  "theme": {
+    "id": "port-night",
+    "version": "1.0.0",
+    "base": "mosadd-august",
+    "defaultMode": "dark",
+    "modes": ["dark", "light"],
+    "tokens": {
+      "dark": {
+        "background": "#0b1220", "surface": "#121b2e", "border": "#24324d",
+        "text": "#e8eef8", "textMuted": "#9aa8bf",
+        "accent": "#ffb020", "onAccent": "#1a1200",
+        "warning": "#f5a524", "error": "#ff6b6b",
+        "pttTransmit": "#ff4d4f", "pttListen": "#2ecc71"
+      },
+      "light": {
+        "background": "#f6f8fb", "surface": "#ffffff", "border": "#cbd5e1",
+        "text": "#0f172a", "textMuted": "#475569",
+        "accent": "#b45309", "onAccent": "#ffffff",
+        "warning": "#a16207", "error": "#b91c1c",
+        "pttTransmit": "#9b1515", "pttListen": "#15803d"
+      }
+    },
+    "fonts": { "text": "Inter", "headings": "Space Grotesk" },
+    "radius": "soft",
+    "density": "comfortable"
+  },
+  "releases": {
+    "android": {
+      "enabled": true,
+      "package": "org.example.portradio",
+      "shell": "bundled",
+      "signing": "creator-key",
+      "autoSignSecurityPatches": true,
+      "channels": ["direct-apk", "mosadd-store"],
+      "push": "unifiedpush"
+    },
+    "desktop": { "enabled": true, "systems": ["windows", "linux"], "signing": "mosadd" },
+    "web": { "enabled": true, "address": "portradio", "customDomain": null },
+    "channel": "beta"
+  },
+  "instance": { "hosting": "mosadd", "network": { "listedInMosaddDirectory": false }, "cloudServices": ["madd", "ptt-transcripts"] },
+  "budget": { "monthlyUsd": 120, "overBudget": "text-only" },
+  "privacy": { "telemetry": "none", "crashReports": "opt-in" }
+}
