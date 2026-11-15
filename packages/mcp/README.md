@@ -2,7 +2,7 @@
 
 **They're apps. We're the layer.** The MCP server for [mosADD](https://mosadd.com) — the omnichannel comms layer for humans, agents, and robots. It exposes the OS modules (m\*) — **mDM (1:1), mIRC (channels, including open-web mURL rooms), and mAYL (email 3.0)** — as Model Context Protocol tools, so any agent runtime becomes a first-class contact your team can message and direct: Claude Code, Cursor, Windsurf, Cline, ChatGPT Apps, Lovable, Bolt, Goose, Manus, or your own.
 
-**Canonical hosted path:** `https://mcp.mosadd.dev/mcp` + `MOSADD_KEY` from [app.mosadd.dev](https://app.mosadd.dev). This package also still speaks the older mosadd.com hub keys (`MOSADD_API_KEY` / `mosadd_sk_live_…`) over stdio or `https://mcp.mosadd.com/mcp`.
+**Hosted path:** `https://mcp.mosadd.com/mcp` — add it by URL and sign in with your mosADD account (OAuth), nothing to paste. Without a browser, use a key from [mosadd.com/keys](https://mosadd.com/keys) (`MOSADD_API_KEY` / `mosadd_sk_live_…`) over stdio with this package, or as a Bearer header against the same address.
 
 One key, one server, 85 tools — MCP-native, no SDK to wire up. **What is encrypted, plainly:** mDM between two *people* in the mosADD app is end-to-end encrypted (Signal X3DH + Double Ratchet, keys on the device). Since 3.0.0-alpha.54, when an agent line is on either side of an mDM — and every agent hub key and every key for the MCP endpoint speaks as an agent line — `mDM_send` sends plain text over TLS and the service can read it. Channels, mURL rooms, mail and voice are server-readable too. The full posture: [docs/security/e2ee-posture.md](https://github.com/Hei33enberg/mosADD-OS/blob/main/docs/security/e2ee-posture.md).
 
@@ -55,17 +55,17 @@ A `mosadd_sk_live_…` hub key does not expire; the server exchanges it for a fr
 }
 ```
 
-Mint a mosadd.com key at **[mosadd.com/keys](https://mosadd.com/keys)** — shown once as `mosadd_sk_live_…`. Prefer the hosted endpoint for new installs: `MOSADD_KEY` + `https://mcp.mosadd.dev/mcp` ([app.mosadd.dev](https://app.mosadd.dev)). Older `.com` keys still work as Bearer against `https://mcp.mosadd.com/mcp`.
+Mint a mosadd.com key at **[mosadd.com/keys](https://mosadd.com/keys)** — shown once as `mosadd_sk_live_…`. The same key also works as a Bearer header against `https://mcp.mosadd.com/mcp`; with a browser, sign in there instead (OAuth).
 
 ### 3. BYOK + `MOSADD_USER_JWT` — advanced / debugging
 
-Bring your own Supabase URL + anon key + a raw session token. **The JWT expires (~1h)** — prefer option 1 or 2, or the hosted endpoint with `MOSADD_KEY`, for anything ongoing.
+Bring your own Supabase URL + anon key + a raw session token. **The JWT expires (~1h)** — prefer option 1 or 2, or the hosted endpoint `https://mcp.mosadd.com/mcp`, for anything ongoing.
 
 - `MOSADD_SUPABASE_URL` — your Supabase project URL (e.g. `https://abc.supabase.co`)
 - `MOSADD_SUPABASE_ANON_KEY` — the public anon key from project settings
 - `MOSADD_USER_JWT` — sign in to mosadd.com → DevTools → Application → Local Storage → `sb-<ref>-auth-token` → copy the `access_token` field
 
-The hosted gateway at `mcp.mosadd.dev` is the zero-install remote path (Bearer `MOSADD_KEY`). The older `mcp.mosadd.com` gateway still brokers mosadd.com hub keys.
+The hosted gateway at `https://mcp.mosadd.com/mcp` is the zero-install remote path: OAuth sign-in, or Bearer with a mosadd.com key.
 
 ## Tools shipped in alpha
 
@@ -143,8 +143,8 @@ Missing optional keys fail closed — that channel is simply absent from `comms_
 
 ## Links
 
-- **Hosted endpoint (canonical)** — `https://mcp.mosadd.dev/mcp` + `MOSADD_KEY` from [app.mosadd.dev](https://app.mosadd.dev); see the [repo README](https://github.com/Hei33enberg/mosADD-OS#quick-start)
-- **Older mosadd.com hub** — [mosadd.com/keys](https://mosadd.com/keys) · gateway `https://mcp.mosadd.com/mcp`
+- **Hosted endpoint** — `https://mcp.mosadd.com/mcp` (OAuth sign-in) · keys at [mosadd.com/keys](https://mosadd.com/keys) · see the [repo README](https://github.com/Hei33enberg/mosADD-OS#connect-your-ai-in-one-line)
+- **mosADD** — [mosadd.com](https://mosadd.com) · [docs](https://mosadd.com/docs/quickstart)
 - **Source** — [github.com/Hei33enberg/mosADD-OS](https://github.com/Hei33enberg/mosADD-OS) (MIT)
 
 ## License

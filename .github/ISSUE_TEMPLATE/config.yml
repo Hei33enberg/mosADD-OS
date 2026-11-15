@@ -6,6 +6,6 @@ contact_links:
   - name: Security vulnerability
     url: https://github.com/Hei33enberg/mosADD-OS/security/advisories/new
     about: Report privately. Please do not open a public issue.
-  - name: Connect an AI host
-    url: https://github.com/Hei33enberg/mosADD-OS/blob/main/docs/hosts.md
-    about: Setup for Claude Code, Codex, Cursor, VS Code, Windsurf, Hermes, OpenClaw and more.
+  - name: Connect your AI
+    url: https://mosadd.com/docs/quickstart
+    about: Setup for Claude Code, Codex, Cursor, Windsurf and any MCP host.

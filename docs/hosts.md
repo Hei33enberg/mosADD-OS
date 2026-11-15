@@ -1,5 +1,10 @@
 # Hosts — how to connect each one, and what we actually checked
 
+> **Start at [mosadd.com/docs/quickstart](https://mosadd.com/docs/quickstart).** The address on mosadd.com is
+> `https://mcp.mosadd.com/mcp`: add it by URL and sign in with your mosADD account. This page documents the
+> key-based setup that the one-line installer writes, at `https://mcp.mosadd.dev/mcp` — another name of the same
+> server, with keys from its own panel.
+
 Endpoint: `https://mcp.mosadd.dev/mcp` (Streamable HTTP). Key: `MOSADD_KEY` from [app.mosadd.dev](https://app.mosadd.dev)
 (`m0s_tk_test_…` free test key, `m0s_lk_live_…` line key). Every request needs `Authorization: Bearer <key>`;
 hosts that support MCP sign-in (OAuth) can add the URL alone and sign in in the browser.

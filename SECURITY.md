@@ -18,8 +18,8 @@ the advisory unless they prefer otherwise. There is no paid bug bounty and no sw
 
 In scope:
 - this repository (mosADD OS) and the `@mosadd/*` npm packages built from it
-- the hosted endpoints `mcp.mosadd.dev`, `api.mosadd.dev`, `app.mosadd.dev`
-- the older endpoint `mcp.mosadd.com`
+- mosadd.com and the MCP endpoint `mcp.mosadd.com` (the same server also answers as `mcp.mosadd.dev`)
+- `api.mosadd.dev` and the key panel `app.mosadd.dev`
 
 Out of scope: applications we do not run, social engineering, physical attacks, issues already disclosed publicly
 without coordination.
