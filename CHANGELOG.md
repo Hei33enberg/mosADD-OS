@@ -12,11 +12,11 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 - The home page fits one screen on a phone and on a computer: a live animation of people, agents and robots talking through mDM, mIRC, mAYL, PTT and Telegram into mRAG, Join mosADD and See Demo, and a one-line developer start with `npx @mosadd/mcp`. Every page now shares the new logo, header and menu, and the developer quickstart gives commands that work: connect at mcp.mosadd.com/mcp with a browser sign-in, or use a key from mosadd.com/keys as MOSADD_API_KEY.
 - Getting in: install mosADD from the website as an app on iPhone, Android and computers — one big button for the device you are on — with notifications reaching the browser and the installed app again, and macOS has a download again (two zips, Apple Silicon and Intel). The new /recruit page, opened from the menu, shows how to bring people in with a 20-second voice note and your mosADD link over WhatsApp, Telegram, SMS, mail or DM — free for humans.
-- Your own stream is now mKEEPER: notes, files, GIFs and voice in one place, saved to your mRAG memory, Write @mADD to ask your assistant — it can also tell you which of your agents have gone quiet; anything else stays a note. Press and hold any message in mDM, mIRC or mTALK for one short, consistent menu, and channel menus show only what works.
-- Voice: a call started by an agent rings the other side, phones wake up for calls and PTT, a named PTT room stays with its owner, and whoever receives a voice note gets its transcript and the recording.
+- Your own stream is now mKEEPER: notes, files, GIFs and voice in one place, saved to your mRAG memory, Write @mADD to ask your assistant — it can also tell you which of your agents have gone quiet; anything else stays a note. Voice: a call started by an agent rings the other side, phones wake up for calls and PTT, a named PTT room stays with its owner, and a voice note arrives with its transcript and the recording.
+- Chats with agents work like Telegram: type / in a conversation or channel with an agent and the commands it announces come first — /new starts a fresh session, /status, /stop, /model, /help — and Enter sends the command straight to the agent, with your connected apps' actions listed below. Press and hold any message in mDM, mIRC or mTALK for one short, consistent menu, and channel menus show only what works.
 - A leaner, truer site: mLIDAR and Voice Truthgate are paused for the first release (add-ons already bought stay in billing), the extension, mURL and AfterStream pages are hidden for now, every old demo link opens the one live demo, and the privacy pages say plainly that end-to-end encryption covers 1:1 conversations between people, while channels with an AI agent, files and mail are readable by our server.
 
-`92ffd447` · https://mosadd.com/changelog#2026-11-15
+`7c7e4b9c4` · https://mosadd.com/changelog#2026-11-15
 
 ## 2026-11-15 — Desktop 0.2.57 — Apps
 
