@@ -1,6 +1,6 @@
-# Contributing to mosadd
+# Contributing to mosADD OS
 
-We're building **the comms layer for AI agents — and the humans who direct them**. We welcome contributions of any size — bug reports, feature ideas, code, docs, RFCs, providers, skills, examples.
+mosADD OS is the open-source (MIT) part of [mosADD](https://mosadd.com), the messenger for people and AI agents. We welcome contributions of any size — bug reports, feature ideas, code, docs, RFCs, providers, skills, examples.
 
 ## Code of Conduct
 
@@ -10,10 +10,10 @@ This project follows the [Contributor Covenant v2.1](./CODE_OF_CONDUCT.md). By p
 
 ```bash
 git clone https://github.com/Hei33enberg/mosADD-OS.git
-cd mosadd-os
-pnpm install
-pnpm build
-pnpm test
+cd mosADD-OS
+pnpm install --frozen-lockfile
+pnpm -r build
+pnpm -r test --if-present
 ```
 
 You need Node ≥20 and pnpm ≥9.
@@ -25,7 +25,7 @@ You need Node ≥20 and pnpm ≥9.
 Open an issue using the **Bug Report** template. Include:
 - Reproduction steps
 - Expected vs actual behavior
-- mosadd version (`pnpm list @mosadd/mcp`)
+- the version of the package you use (`pnpm list @mosadd/mcp`)
 - Node version and OS
 
 ### Proposing a new `m*` module
@@ -44,7 +44,8 @@ This is a **major contribution**. Follow the RFC process:
 - **Call out public-API changes** explicitly in the PR description. (A [Changesets](https://github.com/changesets/changesets) flow is planned; the tooling is not wired into this repo yet, so semver decisions are made by maintainers at release time.)
 - **DCO sign-off.** Add `Signed-off-by: Your Name <email>` to commits (use `git commit -s`).
 - **Tests required** for new code — cover the lines you changed. There is no automated coverage gate yet; reviewers check.
-- **Gates clean.** `pnpm -r build && pnpm -r typecheck && pnpm -r test --if-present && node scripts/check-skill-lint.mjs` must pass **locally**. This repository has no GitHub Actions: maintainers run the gates locally on every PR before merging; don't wait for GitHub checks, there are none.
+- **Gates clean.** `pnpm -r build && pnpm -r typecheck && pnpm -r test --if-present && pnpm lint && node scripts/check-skill-lint.mjs` must pass **locally**. No tests run on GitHub Actions: maintainers run the gates locally on every PR before merging; don't wait for GitHub checks.
+- **Written with an AI agent?** Say so in the PR, and which one. Agents are welcome contributors here — [AGENTS.md](./AGENTS.md) is their brief.
 
 ### Adding a provider
 
@@ -62,8 +63,9 @@ Additional architecture docs (control-data-plane, fork-strategy, identity-recove
 
 ## Communication
 
-- **GitHub Discussions** — design questions, ideas
-- **GitHub Issues** — bugs, RFCs, concrete proposals
+- [**GitHub Discussions**](https://github.com/Hei33enberg/mosADD-OS/discussions) — design questions, ideas
+- [**GitHub Issues**](https://github.com/Hei33enberg/mosADD-OS/issues) — bugs, RFCs, concrete proposals
+- **Security reports** — never in a public issue; see [SECURITY.md](./SECURITY.md)
 
 ## License
 

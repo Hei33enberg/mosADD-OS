@@ -38,7 +38,7 @@ Reviewers can approve PRs in their area but cannot merge unilaterally. Promotion
 
 1. Land 5+ substantive PRs in one area
 2. Show good judgement in code review (comments on others' PRs)
-3. Be active in the [community channels](./README.md#contributing) — GitHub Discussions and Issues
+3. Be active in the [community channels](./README.md#community) — GitHub Discussions and Issues
 4. Open an issue tagged `maintainer-track` with your case
 5. Nominated by an existing maintainer and ratified by the Sovereign (see [GOVERNANCE.md](./GOVERNANCE.md))
 

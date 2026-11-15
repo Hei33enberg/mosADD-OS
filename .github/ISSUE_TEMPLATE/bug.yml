@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a bug in mosadd
+description: Report a bug in mosADD OS (packages, installer, skills, docs)
 labels: [bug, triage]
 body:
   - type: textarea
@@ -25,8 +25,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: mosadd version
-      description: 'Output of: pnpm list @mosadd/mcp'
+      label: Package and version
+      description: 'For example the output of: pnpm list @mosadd/mcp'
     validations:
       required: true
   - type: input

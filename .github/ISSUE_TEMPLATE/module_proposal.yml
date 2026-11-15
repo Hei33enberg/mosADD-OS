@@ -1,12 +1,12 @@
 name: New m* module proposal
-description: Propose a new mosadd OS module
+description: Propose a new mosADD module (m*)
 labels: [rfc, module-proposal]
 body:
   - type: markdown
     attributes:
       value: |
         Adding a new `m*` module is a substantive change and requires an RFC.
-        Read [RFC 0001 — module naming](../docs/rfcs/0001-module-naming.md) first.
+        Read [RFC 0001 — module naming](https://github.com/Hei33enberg/mosADD-OS/blob/main/docs/rfcs/0001-module-naming.md) first.
         This issue is for **early-stage discussion**. The RFC PR comes next.
   - type: input
     id: module

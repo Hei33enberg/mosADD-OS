@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Question or idea
+    url: https://github.com/Hei33enberg/mosADD-OS/discussions
+    about: Ask and discuss in GitHub Discussions.
+  - name: Security vulnerability
+    url: https://github.com/Hei33enberg/mosADD-OS/security/advisories/new
+    about: Report privately. Please do not open a public issue.
+  - name: Connect an AI host
+    url: https://github.com/Hei33enberg/mosADD-OS/blob/main/docs/hosts.md
+    about: Setup for Claude Code, Codex, Cursor, VS Code, Windsurf, Hermes, OpenClaw and more.

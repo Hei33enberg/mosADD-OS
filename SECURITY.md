@@ -11,13 +11,13 @@ Include a description, steps to reproduce, affected versions, and whether you pl
 
 What we do: we confirm receipt as soon as we see the report (an agent watches the inbox, but we promise no response time);
 the fix is best effort, ordered by severity (CVSS 3.1).
-m.0S is run by one maintainer with AI agents, so we do not promise fixed patch deadlines. We credit reporters in
+mosADD OS is run by one maintainer with AI agents, so we do not promise fixed patch deadlines. We credit reporters in
 the advisory unless they prefer otherwise. There is no paid bug bounty and no swag.
 
 ## Scope
 
 In scope:
-- this repository and the `@mosadd/*` npm packages built from it
+- this repository (mosADD OS) and the `@mosadd/*` npm packages built from it
 - the hosted endpoints `mcp.mosadd.dev`, `api.mosadd.dev`, `app.mosadd.dev`
 - the older endpoint `mcp.mosadd.com`
 
