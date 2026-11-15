@@ -29,8 +29,13 @@ to one AI vendor.
 **Secure, said plainly.** 1:1 conversations between two people are end-to-end encrypted (X3DH and Double Ratchet).
 Every other channel is labelled for what it is — [the details](#security-plainly).
 
-**Built to be unkillable.** That is the direction we are building in: peer-to-peer, mesh and radio transports, so the
-messenger keeps working when the network doesn't. They are on the way, not shipped.
+Our DNA:
+
+- **Reliable.** It has to just work. That comes before every feature.
+- **Simple.** One screen, no manual to read.
+- **Every device.** One account on your phone, your desktop and in the browser.
+- **Peer-to-peer, built for our needs.** The direction we are building in: P2P, mesh and radio, so mosADD keeps
+  working when the network goes down. On the way, not shipped yet.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/assets/how-it-fits-dark.png">
