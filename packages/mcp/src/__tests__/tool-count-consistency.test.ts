@@ -72,8 +72,12 @@ const HUB_COUNT = hubSnapshot.count;
 const HELD_BACK = ["call_start", "call_status"]; // phone calls through the user's own Telnyx/Twilio account: "soon"
 
 // Every public text that talks about the endpoint (not about the package).
+// 2026-11-14 (README rewrite for the mosADD OS name): the hub paragraph left README.md for docs/tools.md, so the
+// snapshot test below reads HUB_PARAGRAPH_FILE; README.md stays here, so it still may not state a hub count.
+const HUB_PARAGRAPH_FILE = "docs/tools.md";
 const HUB_TEXTS = [
   "README.md",
+  HUB_PARAGRAPH_FILE,
   "docs/hosts.md",
   "docs/roadmap.md",
   "skills/m0s-quickstart/SKILL.md",
@@ -114,19 +118,19 @@ describe("hub tool count (texts about https://mcp.mosadd.dev/mcp)", () => {
     expect(HUB_COUNT).toBe(TOOL_COUNT + HUB_ONLY.length);
   });
 
-  it("the README tools section points at the snapshot, names every hub-only tool and says which are held back", () => {
-    const readme = readFileSync(resolve(repoRoot, "README.md"), "utf8");
-    const para = readme.match(/[^\n]*distribution\/hub-tools\.json[^\n]*(?:\n(?!\n)[^\n]*)*/)?.[0] ?? "";
-    expect(para, "README has no paragraph pointing at distribution/hub-tools.json").not.toBe("");
-    for (const n of HUB_ONLY) expect(para, `README hub paragraph does not name ${n}`).toContain(`\`${n}\``);
+  it(`the hub paragraph (${HUB_PARAGRAPH_FILE}) points at the snapshot, names every hub-only tool and says which are held back`, () => {
+    const doc = readFileSync(resolve(repoRoot, HUB_PARAGRAPH_FILE), "utf8");
+    const para = doc.match(/[^\n]*distribution\/hub-tools\.json[^\n]*(?:\n(?!\n)[^\n]*)*/)?.[0] ?? "";
+    expect(para, `${HUB_PARAGRAPH_FILE} has no paragraph pointing at distribution/hub-tools.json`).not.toBe("");
+    for (const n of HUB_ONLY) expect(para, `${HUB_PARAGRAPH_FILE} hub paragraph does not name ${n}`).toContain(`\`${n}\``);
     const listed = HELD_BACK.filter((n) => hubSnapshot.names.includes(n));
     if (listed.length === 0) {
-      // calls are not open: the README must say so, and name the tools it holds back
+      // calls are not open: the hub paragraph must say so, and name the tools it holds back
       expect(para).toMatch(/coming soon/);
       expect(para).toMatch(/held back/);
-      for (const n of HELD_BACK) expect(para, `README does not name the held-back ${n}`).toContain(`\`${n}\``);
+      for (const n of HELD_BACK) expect(para, `${HUB_PARAGRAPH_FILE} does not name the held-back ${n}`).toContain(`\`${n}\``);
     } else {
-      expect(para, `the hub lists ${listed.join(", ")} now — the README still says they are held back`).not.toMatch(/held back/);
+      expect(para, `the hub lists ${listed.join(", ")} now — ${HUB_PARAGRAPH_FILE} still says they are held back`).not.toMatch(/held back/);
     }
   });
 

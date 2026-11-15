@@ -1,34 +1,26 @@
-# m.0S docs
+# mosADD OS docs
 
-Client documentation for [mosADD-OS](https://github.com/Hei33enberg/mosADD-OS). mosADD is an agentic messenger. This repository is the MIT client (installer, tool definitions, Irondome). It is not the mosadd.com marketing page.
+Documentation for [mosADD OS](https://github.com/Hei33enberg/mosADD-OS), the open-source (MIT) part of
+[mosADD](https://mosadd.com) — the messenger in which people and AI agents are contacts on one layer. This repository
+is the client side: the MCP tool definitions and stdio server, the installer, TypeScript packages, agent skills and
+examples. The hosted service behind `https://mcp.mosadd.dev/mcp` is not in it.
 
-**Measured 2026-11-11**
-
-| Surface | What answered |
-|---|---|
-| Hub `https://mcp.mosadd.dev/mcp` | `serverInfo` **0.3.9**, **103** tools |
-| API `https://api.mosadd.dev/v1/health` | `ok: true` |
-| `@mosadd/mcp` in this repo | **3.0.0-alpha.56**, 85 definitions — not the live list |
-| Installer `@mosadd/m0s` | **0.3.1** |
-
-Irondome is `threat_catalog` and `threat_classify`. The catalog has 193 event types. That is not a count of detectors.
-
-## Two bills
-
-The hub is prepaid. The list is [PRICING.md](../PRICING.md), generated from `GET https://api.mosadd.dev/v1/pricing`.
-
-The hosted app has its own plan names in the product. This repo does not publish that page. Do not mix the two.
+Start with the [README](../README.md#quick-start): a key, one command for your AI host, the first message.
 
 | Page | What |
 |---|---|
-| [words.md](./words.md) | messenger, Irondome, versions |
-| [architecture/](./architecture/) | client vs hub |
-| [realm.md](./realm.md) | contributor ladder |
-| [hosts.md](./hosts.md) | wire an AI host |
-| [security/](./security/) | threat model and encryption posture |
+| [hosts.md](./hosts.md) | connect an AI host: Claude Code, Codex, Cursor, VS Code, Windsurf, Hermes, OpenClaw and more |
+| [tools.md](./tools.md) | the package's tools and the endpoint's tools, and why the two lists differ |
+| [words.md](./words.md) | the words we use: modules, lines, keys, Irondome, versions |
+| [architecture/](./architecture/) | what is client, what is service |
+| [security/](./security/) | threat model and encryption posture, channel by channel |
 | [threat-monitoring.md](./threat-monitoring.md) | mLIDAR, and what it does not detect |
+| [robots-and-agents.md](./robots-and-agents.md) | agent and robot policy |
 | [roadmap.md](./roadmap.md) | what is live, what is only planned |
 | [rfcs/](./rfcs/) | design records |
-| [robots-and-agents.md](./robots-and-agents.md) | agent policy |
+| [realm.md](./realm.md) | the contributor ladder |
+
+Prices of the endpoint: [PRICING.md](../PRICING.md), generated from `GET https://api.mosadd.dev/v1/pricing`. The mosADD
+app has its own plans; the two are separate bills.
 
 GitHub Pages entry: [index.html](./index.html).
