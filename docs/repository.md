@@ -62,7 +62,7 @@ Channel by channel: [security/e2ee-posture.md](./security/e2ee-posture.md). Foun
 Create a key on [mosadd.com/keys](https://mosadd.com/keys) (`mosadd_sk_live_…`) and run the server locally:
 
 ```bash
-claude mcp add mosadd --env MOSADD_API_KEY=mosadd_sk_live_… -- npx -y @mosadd/mcp@3.0.0-alpha.56
+claude mcp add mosadd --env MOSADD_API_KEY=mosadd_sk_live_… -- npx -y @mosadd/mcp@3.0.0-alpha.57
 ```
 
 Cursor, Codex, Windsurf and the rest: [mosadd.com/docs/quickstart](https://mosadd.com/docs/quickstart).

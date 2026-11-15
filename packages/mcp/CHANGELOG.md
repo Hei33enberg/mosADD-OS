@@ -8,6 +8,16 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+## [3.0.0-alpha.57] — 2026-11-15
+
+### Fixed
+- **`mTALK_open {label}` opens a room you own.** The room id is now `mosadd-room-<your identity id>-<label>`;
+  you and your accepted contacts can join it, a stranger cannot (before: one shared `mosadd-room-<label>` for every
+  account, refused to everyone, including its creator).
+- **`mDM_list` returns voice notes with their transcript and recording.** Voice/PTT messages carry
+  `voice: { transcript, audio_url, duration_ms }` (signed URL, read with the caller's own permissions) instead of a
+  bare caption.
+
 ## [3.0.0-alpha.56] — 2026-11-10
 
 ### Added
