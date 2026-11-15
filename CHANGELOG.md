@@ -8,15 +8,15 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 ## 2026-11-15 — Web · Server · Apps
 
-**A one-screen welcome, mosADD installable on every device, recruiting with your voice, calls that ring — and a changelog that now covers every release.**
+**One screen to start, mosADD installable everywhere, mKEEPER for your own notes and voice, calls that ring through — and a leaner, truer site with a changelog that covers every release.**
 
-- The home page fits one screen on a phone and on a computer: a live animation of people, agents and robots talking through mDM, mIRC, mAYL, PTT and Telegram into mRAG, Join mosADD and See Demo, and a one-line start for developers with `npx @mosadd/mcp`. Every page now shares the same header and menu.
-- Install mosADD straight from the website as an app on iPhone, Android and computers, and macOS has a download again: two zips, Apple Silicon and Intel, with the steps to open an app that is not yet signed.
-- New /recruit page: bring people in with a 20-second push-to-talk note recorded in mosADD and your link, sent over WhatsApp, Telegram, SMS, mail or DM.
-- Voice: a call started by an agent now rings the other side, phones wake up for incoming calls and PTT, and a named PTT room lets in its creator and their contacts.
-- Straight talk on privacy: end-to-end encryption covers 1:1 conversations between people, messages and calls. Channels with an AI agent, files and mail are readable by our server — the app now says so where it matters, and the privacy policy names where your data is stored.
+- The home page fits one screen on a phone and on a computer: a live animation of people, agents and robots talking through mDM, mIRC, mAYL, PTT and Telegram into mRAG, Join mosADD and See Demo, and a one-line developer start with `npx @mosadd/mcp`. Every page now shares the new logo, header and menu.
+- Getting in: install mosADD from the website as an app on iPhone, Android and computers — one big button for the device you are on — with notifications reaching the browser and the installed app again, and macOS has a download again (two zips, Apple Silicon and Intel). The new /recruit page, opened from the menu, shows how to bring people in with a 20-second voice note and your mosADD link over WhatsApp, Telegram, SMS, mail or DM — free for humans.
+- Your own stream is now mKEEPER: notes, files, GIFs and voice in one place, saved to your mRAG memory, with a big push-to-talk button in the middle. Write @mADD to ask your assistant; anything else stays a note.
+- Voice: a call started by an agent rings the other side, phones wake up for calls and PTT, a named PTT room stays with its owner, and whoever receives a voice note gets its transcript and the recording.
+- A leaner, truer site: mLIDAR and Voice Truthgate are paused for the first release (add-ons already bought stay in billing), the extension, mURL and AfterStream pages are hidden for now, every old demo link opens the one live demo, and the privacy pages say plainly that end-to-end encryption covers 1:1 conversations between people, while channels with an AI agent, files and mail are readable by our server.
 
-`15bd28b8c` · https://mosadd.com/changelog#2026-11-15
+`ab2c922ad` · https://mosadd.com/changelog#2026-11-15
 
 ## 2026-11-15 — Desktop 0.2.57 — Apps
 
