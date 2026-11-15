@@ -12,13 +12,13 @@ The full host list: [docs/hosts.md](../docs/hosts.md). The words: [docs/words.md
 | [`claude-code/`](claude-code/) | Claude Code | Streamable HTTP |
 | [`cursor/`](cursor/) | Cursor | Streamable HTTP |
 | [`hermes/`](hermes/) | Hermes Agent | Streamable HTTP |
-| [`chatgpt-apps/`](chatgpt-apps/) | ChatGPT / claude.ai connectors | needs OAuth — not offered by the m.0S hub yet |
+| [`chatgpt-apps/`](chatgpt-apps/) | ChatGPT / claude.ai connectors | OAuth connector (MCP sign-in) — not smoke-tested yet |
 | [`vercel-ai/`](vercel-ai/) | Vercel AI SDK (Node.js) | in-process via `@mosadd/ai/vercel` |
 | [`langchain/`](langchain/) | LangChain (Node.js) | in-process via `@mosadd/ai/langchain` |
 | [`anthropic/`](anthropic/) | Anthropic SDK (Node.js) | in-process via `@mosadd/ai/anthropic` |
 
 The three SDK examples run the tools in-process through `@mosadd/mcp`, which talks to the older mosadd.com backend
-and needs a mosadd.com session or key. With an m.0S key, connect to the MCP endpoint instead (as `first-message/`
+and needs a mosadd.com session or key. With a key for the MCP endpoint, connect to the MCP endpoint instead (as `first-message/`
 does).
 
 `npx -y @mosadd/agent start` runs a local agent that reads and answers messages with your own model key

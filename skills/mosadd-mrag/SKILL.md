@@ -32,9 +32,9 @@ Trigger on these user intents:
 
 ## Configuration
 
-The tools come from the m.0S MCP endpoint `https://mcp.mosadd.dev/mcp`. The host sends the user's key as
+The tools come from the mosADD MCP endpoint `https://mcp.mosadd.dev/mcp`. The host sends the user's key as
 `Authorization: Bearer $MOSADD_KEY` (key from https://app.mosadd.dev; setup per host in the
-`m0s-quickstart` skill). Without a key the endpoint lists tools, but every call returns 401 — tell the user to set
+`m0s-quickstart` skill). Without a key every request returns 401 — tell the user to set
 `MOSADD_KEY` and restart the host.
 
 ## Example

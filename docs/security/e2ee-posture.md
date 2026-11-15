@@ -8,16 +8,16 @@
 ## Update 2026-09-29 — what changed since the June snapshot (read this first)
 
 - **Agent lines talk in the clear.** Since `@mosadd/mcp` 3.0.0-alpha.54/55, `mDM_send` sends plain text whenever
-  either side is an agent line, and for notes to yourself. Every m.0S key (`m0s_lk_live_…`, `m0s_tk_test_…`)
+  either side is an agent line, and for notes to yourself. Every mosADD key (`m0s_lk_live_…`, `m0s_tk_test_…`)
   speaks as an agent line, so **everything sent through `https://mcp.mosadd.dev/mcp` is readable by the
   service**. It is protected by TLS in transit only.
-- **The m.0S hub reads what it meters.** Metering, mRAG and audit work on the content of calls; that is a
+- **The mosADD hub reads what it meters.** Metering, mRAG and audit work on the content of calls; that is a
   property of the hosted service, not a bug.
 - **Unchanged:** 1:1 mDM between two *people* in the mosADD app stays end-to-end encrypted (X3DH + Double
   Ratchet). Open channels, mURL rooms, mail and all voice stay server-readable. Private channels of agent lines
   are readable by the service because it holds the line keys (caveat 2 below).
-- Allowed copy for m.0S: "Your host talks to the hub over TLS. Agent traffic is readable by the service; it is not
-  end-to-end encrypted." Not allowed: any end-to-end claim for agent or m.0S traffic.
+- Allowed copy for the MCP endpoint: "Your host talks to the hub over TLS. Agent traffic is readable by the service; it is not
+  end-to-end encrypted." Not allowed: any end-to-end claim for agent traffic or traffic of the MCP endpoint.
 
 The sections below are the June 2026 snapshot for the mosadd.com app and the toolkit; where they say "the toolkit
 encrypts mDM by default", read them together with the update above.
@@ -34,7 +34,7 @@ the app peer, and vice versa.
 
 ## Honest posture in one line
 
-- **mDM (1:1 DM) between two people** — **end-to-end encrypted by DEFAULT** (X3DH + Double Ratchet, `mosadd.e2ee.v2`). The server/operator **cannot read message content**. With an agent line on either side (every m.0S key; `@mosadd/mcp` 3.0.0-alpha.54 and later) the message is plain text over TLS and the service can read it (see the 2026-09-29 update above).
+- **mDM (1:1 DM) between two people** — **end-to-end encrypted by DEFAULT** (X3DH + Double Ratchet, `mosadd.e2ee.v2`). The server/operator **cannot read message content**. With an agent line on either side (every key for the MCP endpoint; `@mosadd/mcp` 3.0.0-alpha.54 and later) the message is plain text over TLS and the service can read it (see the 2026-09-29 update above).
 - **mIRC private/password channels** — **group-key-encrypted TEXT on supported clients** (the mosadd.com app AND agent lines using the toolkit — the toolkit auto-provisions persistent line keys and publishes them to `identities.signed_prekey_pub`, so app-side invites wrap the channel group key to the line; see caveat 2). Open channels stay server-readable by design.
 - **mIRC open channels + mURL (open rooms) + mAYL (mail)** — **transport-encrypted in flight and at rest, but server-readable by design** (not E2EE).
 - **All channel/room voice & PTT** — **server-relayed via the LiveKit SFU** (transport-encrypted to the SFU, NEVER end-to-end between participants).
@@ -100,7 +100,7 @@ encrypted message paths above — not to the search index.
 
 ## What copy is allowed to say
 - ✅ "mDM 1:1 messages between two people are end-to-end encrypted (X3DH + Double Ratchet) — the operator cannot read message content."
-- ❌ Any end-to-end claim for a message to or from an agent line, or for anything sent with an m.0S key.
+- ❌ Any end-to-end claim for a message to or from an agent line, or for anything sent with a key for the MCP endpoint.
 - ✅ "The app and the toolkit share the same mDM wire format (`mosadd.e2ee.v2`) and interoperate end-to-end on 1:1 DMs."
 - ✅ "No phone number or email required for mDM."
 - ✅ "mIRC channels are encrypted with a per-channel group key on supported clients."

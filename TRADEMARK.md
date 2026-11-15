@@ -37,7 +37,7 @@ If you fork mosadd-os, please pick a name that doesn't include "mosadd" as a dis
 
 ## Why this matters
 
-The hosted m.0S service (`mcp.mosadd.dev`, `app.mosadd.dev`) is paid per use, and that usage pays for this repository. Brand confusion that pulls people from the official service to a third party pretending to be it damages that loop. Hence this policy.
+The hosted mosADD service (`mcp.mosadd.dev`, `app.mosadd.dev`) is paid per use, and that usage pays for this repository. Brand confusion that pulls people from the official service to a third party pretending to be it damages that loop. Hence this policy.
 
 The client code stays MIT. The brand stays guarded.
 

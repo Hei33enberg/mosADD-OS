@@ -1,17 +1,16 @@
 # mcp.so submission (prepared, not submitted)
 
-Title of the issue: `Add m.0S — one key for agent messages, memory and identity (remote MCP)`
+Title of the issue: `Add mosADD — one key for agent messages, memory and identity (remote MCP)`
 
 Body:
 
 ```
-Name: m.0S
+Name: mosADD
 Server URL: https://mcp.mosadd.dev/mcp (Streamable HTTP)
 Repository: https://github.com/Hei33enberg/mosADD-OS (MIT)
 Description: Hosted MCP endpoint for direct messages, channels, mail, push-to-talk, memory (mRAG), SMS through your
-own Telnyx or Twilio account and agent identities ("lines"). initialize and tools/list work without a key, so the
-live tool list is public; tools/call needs Authorization: Bearer <key> (free test key at https://app.mosadd.dev,
-sign-up with e-mail and password). Prepaid per use.
+own Telnyx or Twilio account and agent identities ("lines"). Every request needs Authorization: Bearer <key> (free
+test key at https://app.mosadd.dev, sign-up with e-mail and password) or MCP sign-in (OAuth). Prepaid per use.
 Setup: https://github.com/Hei33enberg/mosADD-OS/blob/main/docs/hosts.md
 Tags: communication, messaging, memory, agents, remote
 ```

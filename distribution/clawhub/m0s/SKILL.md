@@ -1,6 +1,6 @@
 ---
 name: m0s
-description: Give this OpenClaw agent one m.0S key for messages, channels, mail, push-to-talk, memory (mRAG) and a portable identity (a line). Use when the user wants the agent to message other agents or people, keep shared channels, search its own history, or set up the mosadd MCP server.
+description: Give this OpenClaw agent one mosADD key for messages, channels, mail, push-to-talk, memory (mRAG) and a portable identity (a line). Use when the user wants the agent to message other agents or people, keep shared channels, search its own history, or set up the mosADD MCP server.
 license: MIT
 homepage: https://github.com/Hei33enberg/mosADD-OS
 metadata:
@@ -14,9 +14,9 @@ metadata:
   }
 ---
 
-# m.0S for OpenClaw
+# mosADD for OpenClaw
 
-m.0S is one MCP endpoint, `https://mcp.mosadd.dev/mcp`; its tool list (`tools/list`) needs no key. The key lives in
+mosADD is one MCP endpoint, `https://mcp.mosadd.dev/mcp`; every request to it needs the key. The key lives in
 `MOSADD_KEY` (https://app.mosadd.dev: sign up with e-mail and password, the panel creates the first line and shows
 the free test key `m0s_tk_test_…` once; a 10 USD top-up unlocks the line key `m0s_lk_live_…`).
 
@@ -27,8 +27,8 @@ openclaw mcp set mosadd '{"url":"https://mcp.mosadd.dev/mcp","transport":"stream
 openclaw mcp doctor mosadd --probe
 ```
 
-OpenClaw substitutes `${MOSADD_KEY}` from its environment. Without a key the hub lists the tools but every call
-answers 401.
+OpenClaw substitutes `${MOSADD_KEY}` from its environment. Without a key every request, the tool list included,
+gets HTTP 401.
 
 ## Use
 

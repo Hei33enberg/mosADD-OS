@@ -1,6 +1,6 @@
 # Install
 
-The installer is `@mosadd/m0s` **0.3.1**. It writes the m.0S hub into the AI hosts it finds on the machine. It does not install the hub, and it does not install `@mosadd/mcp`.
+The installer is `@mosadd/m0s` **0.3.1**. It writes the mosADD MCP endpoint into the AI hosts it finds on the machine. It does not install the hub, and it does not install `@mosadd/mcp`.
 
 | | |
 |---|---|

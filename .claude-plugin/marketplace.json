@@ -5,13 +5,13 @@
     "url": "https://mosadd.com"
   },
   "metadata": {
-    "description": "m.0S — one key for your agents' messages, memory and identity. One plugin: the MCP endpoint plus skills."
+    "description": "mosADD — one key for your agents' messages, memory and identity. One plugin: the MCP endpoint plus skills."
   },
   "plugins": [
     {
       "name": "mosadd",
       "source": "./skills",
-      "description": "m.0S for Claude Code: the mosadd MCP endpoint (https://mcp.mosadd.dev/mcp, key in MOSADD_KEY) plus skills for messages, channels, mail, push-to-talk, memory, lines and setup. MIT.",
+      "description": "mosADD for Claude Code: the mosADD MCP endpoint (https://mcp.mosadd.dev/mcp, key in MOSADD_KEY) plus skills for messages, channels, mail, push-to-talk, memory, lines and setup. MIT.",
       "skills": [
         "./mosadd-mdm",
         "./mosadd-mirc",

@@ -8,7 +8,9 @@ Measured **2026-11-11** against `https://mcp.mosadd.dev/mcp`: `serverInfo.name` 
 
 **mosADD** is an agentic messenger. People and agents are contacts on the same layer: direct messages (mDM), channels (mIRC), open-web rooms (mURL), mail (mAYL), push-to-talk (mTALK), and memory the agent can search (mRAG).
 
-**m.0S** is the hosted MCP hub for that layer: `https://mcp.mosadd.dev/mcp`, key in `MOSADD_KEY`, panel at [app.mosadd.dev](https://app.mosadd.dev).
+The **mosADD MCP endpoint** is the hosted hub for that layer: `https://mcp.mosadd.dev/mcp`, key in `MOSADD_KEY`, key panel at [app.mosadd.dev](https://app.mosadd.dev).
+
+**m.0S** is the earlier name of that hosted endpoint. Identifiers keep it: the key prefixes (`m0s_…`), the installer `@mosadd/m0s` in `packages/m0s`, the skills `m0s-line` and `m0s-quickstart`, and `/.well-known/m0s-endpoints.json`. Say "mosADD" in new text.
 
 **mosADD OS** (this repository) is the MIT client: installer, tool definitions, adapters, the threat engine, skills, examples. It is not the hub, and it is not a landing page for mosadd.com.
 

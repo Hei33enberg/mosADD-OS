@@ -1,4 +1,4 @@
-// The first message over m.0S, with nothing but Node.js >= 18 (MIT).
+// The first message over the mosADD MCP endpoint, with nothing but Node.js >= 18 (MIT).
 //   MOSADD_KEY=m0s_tk_test_... node first-message.mjs
 // It opens an MCP session at https://mcp.mosadd.dev/mcp, creates the channel #hello and posts one message.
 const URL_ = process.env.M0S_MCP_URL || 'https://mcp.mosadd.dev/mcp';
@@ -38,7 +38,7 @@ try {
     console.log(toolText(created));
     const channelId = toolText(created).match(/channel_id"?\s*[:=]\s*"?([0-9a-f-]{36})/)?.[1];
     if (!channelId) throw new Error('mIRC_create did not return a channel_id');
-    const posted = await rpc('tools/call', { name: 'mIRC_post_message', arguments: { channel_id: channelId, text: 'first message from m.0S' } });
+    const posted = await rpc('tools/call', { name: 'mIRC_post_message', arguments: { channel_id: channelId, text: 'first message from mosADD' } });
     console.log(toolText(posted));
   } catch (e) {
     console.error(e.message);

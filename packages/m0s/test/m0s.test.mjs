@@ -730,7 +730,7 @@ describe('distribution entries (prepared, not submitted)', () => {
   });
 
   it('the awesome-mcp-servers line has the list format', () => {
-    expect(dist('awesome-mcp-servers.md')).toMatch(/^- \[Hei33enberg\/mosADD-OS\]\(https:\/\/github\.com\/Hei33enberg\/mosADD-OS\) 📇 ☁️ - m\.0S: .+$/m);
+    expect(dist('awesome-mcp-servers.md')).toMatch(/^- \[Hei33enberg\/mosADD-OS\]\(https:\/\/github\.com\/Hei33enberg\/mosADD-OS\) 📇 ☁️ - mosADD: .+$/m); // the hosted endpoint was called m.0S until 2026-11-14
   });
 
   it('the ClawHub skill follows agentskills.io and gates on MOSADD_KEY', () => {

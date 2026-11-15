@@ -1,7 +1,7 @@
 {
   "name": "mosadd-os",
   "private": true,
-  "description": "m.0S client (MIT): installer and stdio shim, MCP tool definitions, SDK adapters, skills. The hosted service is not in this repository.",
+  "description": "mosADD OS — the MIT client of mosADD: installer and stdio shim, MCP tool definitions, SDK adapters, skills. The hosted service is not in this repository.",
   "homepage": "https://github.com/Hei33enberg/mosADD-OS",
   "repository": {
     "type": "git",

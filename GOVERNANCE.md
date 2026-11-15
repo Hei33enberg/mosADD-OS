@@ -61,7 +61,7 @@ Vulnerability disclosure: see [SECURITY.md](./SECURITY.md).
 
 ## Funding
 
-m.0S is **self-funded**: the hosted service at `mcp.mosadd.dev` is paid per use, and that usage funds the work. One maintainer plus AI agents maintain it today. We take **no venture capital, no private equity, no public-market money — ever** ([MANIFESTO.md](./MANIFESTO.md)). Money that can outvote the mission is money we do not take.
+mosADD is **self-funded**: the hosted service at `mcp.mosadd.dev` is paid per use, and that usage funds the work. One maintainer plus AI agents maintain it today. We take **no venture capital, no private equity, no public-market money — ever** ([MANIFESTO.md](./MANIFESTO.md)). Money that can outvote the mission is money we do not take.
 
 Open source contributions are welcomed and credited in the open ledger ([REALM.md](./REALM.md), [HALL_OF_FAME.md](./HALL_OF_FAME.md)) but unpaid today; see REALM.md for what is (and is not yet) promisable.
 

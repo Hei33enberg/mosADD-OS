@@ -27,7 +27,7 @@ under `packages/providers/<name>/`. New modules go through the RFC process
 
 | Module | What it is | Encryption scope | Tools |
 |---|---|---|---|
-| `mDM` | 1:1 direct messages, text + voice | End-to-end encrypted between two people in the app (X3DH + Double Ratchet). With an agent line on either side — every m.0S key is one — plain text over TLS, readable by the service (since 3.0.0-alpha.54) | 16 |
+| `mDM` | 1:1 direct messages, text + voice | End-to-end encrypted between two people in the app (X3DH + Double Ratchet). With an agent line on either side — every key for the MCP endpoint is one — plain text over TLS, readable by the service (since 3.0.0-alpha.54) | 16 |
 | `mIRC` | In-app group channels; **includes open-web mURL rooms** (`mURL_*` tools, folded here — not a separate MVP module) | Transport + at-rest (operator-managed, server-readable) | 25 + 7 mURL |
 | `mAYL` | Email 3.0 — every user gets `<id>@mosadd.com` | Transport + at-rest (operator-managed, server-readable) | 16 |
 

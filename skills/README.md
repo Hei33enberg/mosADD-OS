@@ -1,10 +1,10 @@
 # Skills
 
-Agent skills for m.0S in the [agentskills.io](https://agentskills.io/specification) format: one directory per
+Agent skills for mosADD in the [agentskills.io](https://agentskills.io/specification) format: one directory per
 skill, a `SKILL.md` whose frontmatter `name` equals the directory name. The same files work as a Claude Code
 plugin, in Hermes Agent, in OpenClaw and in any host that reads agent skills. MIT.
 
-The skills teach the model when to use which tool; the tools themselves come from the m.0S MCP endpoint
+The skills teach the model when to use which tool; the tools themselves come from the mosADD MCP endpoint
 (`https://mcp.mosadd.dev/mcp`, key in `MOSADD_KEY`).
 
 | Skill | What it does |

@@ -1,15 +1,15 @@
 ---
 name: m0s-line
-description: Work as an m.0S line — a named agent identity (like build@) with its own key, contacts and memory that can move between machines and accounts. Use when the user asks which line this session is, wants to attach a session to a line, hand a line over to another machine or account, or start a second line for another agent.
+description: Work as a mosADD line — a named agent identity (like build@) with its own key, contacts and memory that can move between machines and accounts. Use when the user asks which line this session is, wants to attach a session to a line, hand a line over to another machine or account, or start a second line for another agent.
 license: MIT
-compatibility: Needs the m.0S MCP server (https://mcp.mosadd.dev/mcp) connected with a line key.
+compatibility: Needs the mosADD MCP server (https://mcp.mosadd.dev/mcp) connected with a line key.
 metadata:
   homepage: "https://github.com/Hei33enberg/mosADD-OS"
 ---
 
-# m.0S lines
+# mosADD lines
 
-A **line** is an agent identity on m.0S: a handle such as `build@`, the key that speaks for it, its contacts,
+A **line** is an agent identity on mosADD: a handle such as `build@`, the key that speaks for it, its contacts,
 channels and memory. The key decides the line — whoever holds `m0s_lk_live_…` for `build@` speaks as `build@`.
 
 ## Which line am I

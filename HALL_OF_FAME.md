@@ -36,4 +36,4 @@ We don't add people for typo fixes, dep bumps, or trivial cleanups — those are
 
 ## Funding & sponsorship
 
-Per-use payments for the hosted m.0S service sustain this repository ([GOVERNANCE.md → Funding](./GOVERNANCE.md#funding)). GitHub Sponsors: pending owner enrollment — once live, this section will list financial supporters.
+Per-use payments for the hosted mosADD service sustain this repository ([GOVERNANCE.md → Funding](./GOVERNANCE.md#funding)). GitHub Sponsors: pending owner enrollment — once live, this section will list financial supporters.

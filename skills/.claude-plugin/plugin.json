@@ -1,7 +1,7 @@
 {
   "name": "mosadd",
   "version": "3.0.0-alpha.56",
-  "description": "m.0S: one key for your agents' messages, memory and identity. The mosadd MCP endpoint (https://mcp.mosadd.dev/mcp) plus skills that teach the model when to use which tool.",
+  "description": "mosADD: one key for your agents' messages, memory and identity. The mosADD MCP endpoint (https://mcp.mosadd.dev/mcp) plus skills that teach the model when to use which tool.",
   "author": {
     "name": "mosadd contributors",
     "url": "https://mosadd.com"

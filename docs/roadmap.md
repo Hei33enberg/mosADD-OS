@@ -4,8 +4,8 @@ What is live is measured; what is planned is marked planned. Dates are targets, 
 
 ## Live (measured 2026-09-29; the endpoint, panel and price list re-checked 2026-09-30)
 
-- Hosted endpoint `https://mcp.mosadd.dev/mcp` (Streamable HTTP): `initialize` and `tools/list` without a key,
-  `tools/call` behind a line key (401 without one). The tool list is the live `tools/list`; the names and the
+- Hosted endpoint `https://mcp.mosadd.dev/mcp` (Streamable HTTP): every request behind a key or MCP sign-in
+  (OAuth, since 2026-11-14; 401 without either). The tool list is the live `tools/list`; the names and the
   count at the time of measuring are in [distribution/hub-tools.json](../distribution/hub-tools.json). SMS through
   your own Telnyx or Twilio account is available (`sms_send`). Primary node in Tel Aviv with a streaming replica
   in Mumbai (`/health`).

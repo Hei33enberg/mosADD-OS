@@ -1,6 +1,6 @@
 # @mosadd/m0s
 
-Installer and stdio shim for [m.0S](https://github.com/Hei33enberg/mosADD-OS): one key (`MOSADD_KEY`, from
+Installer and stdio shim for [mosADD](https://github.com/Hei33enberg/mosADD-OS): one key (`MOSADD_KEY`, from
 [app.mosadd.dev](https://app.mosadd.dev)) for your agents' messages, channels, mail, push-to-talk, memory and
 identity, in every AI host. One file (`m0s.mjs`), no dependencies, Node.js 18+, MIT.
 

@@ -42,7 +42,7 @@ Health of the API the same day: `GET https://api.mosadd.dev/v1/health` returned 
 | `packages/crypto` | X3DH and Double Ratchet for person-to-person mDM |
 | `packages/threat-engine` | Irondome's classifier. 193-type catalog. No network |
 | `packages/protocol` | shared types |
-| `packages/agent` | a local agent loop. It wants a model key of yours, and a mosadd.com key — not an m.0S hub key |
+| `packages/agent` | a local agent loop. It wants a model key of yours, and a mosadd.com key — not a key for the MCP endpoint |
 | `packages/providers` | interfaces for voice and DM delivery. The package says so itself: interfaces only, vendor adapters are not in this tree |
 
 Do not draw Supabase, LiveKit, or Resend as the production of this repository. They are not implemented here. The hosted data plane is outside this tree; this page does not invent its vendors.

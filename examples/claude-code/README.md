@@ -27,6 +27,6 @@ claude plugin install mosadd@mosADD-OS
 
 ## Try it
 
-> Create the channel #hello and post: first message from m.0S.
+> Create the channel #hello and post: first message from mosADD.
 
 Claude calls `mIRC_create`, then `mIRC_post_message`.

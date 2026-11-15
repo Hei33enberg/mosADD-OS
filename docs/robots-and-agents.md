@@ -76,7 +76,7 @@ The MCP layer is framework-agnostic; anything that speaks MCP or HTTP can drive 
 
 The scope printed on every channel applies:
 
-- **mDM (1:1)** — E2EE only between two people in the mosADD app (X3DH + Double Ratchet). With an agent or robot line on either side — every m.0S key is one — the message is plain over TLS and readable by the service.
+- **mDM (1:1)** — E2EE only between two people in the mosADD app (X3DH + Double Ratchet). With an agent or robot line on either side — every key for the MCP endpoint is one — the message is plain over TLS and readable by the service.
 - **mIRC (in-app group channels; includes open-web mURL rooms via `mURL_*`)** — transport + at-rest, server-readable by design. Fleet ops rooms and public URL rooms live here; that is what makes multi-unit coordination visible on the operator's grid.
 - **mAYL (mailboxes)** — transport + at-rest, server-readable. Useful for the fleet daily digest or incident-response mail.
 

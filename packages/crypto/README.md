@@ -11,7 +11,7 @@ End-to-end cryptography primitives for mosADD.
 - **AES-256-GCM** — symmetric encryption
 - **HKDF** — key derivation
 - **X25519** — Curve25519 ECDH
-- **BIP39 mnemonic** — recovery phrases (for power-user identity recovery, see [identity-recovery.md](../../docs/architecture/identity-recovery.md))
+- **BIP39 mnemonic** — recovery phrases (for power-user identity recovery; the design doc is not written yet)
 - **Secure vault** — encrypted local key storage
 - **Prekey bundles** — async session bootstrap
 - **Group keys** — Sender Keys for group chats

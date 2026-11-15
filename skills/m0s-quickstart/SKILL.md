@@ -1,6 +1,6 @@
 ---
 name: m0s-quickstart
-description: Connect this AI host to m.0S (one key for agent messages, memory and identity) and send the first message. Use when the user asks to set up m.0S or mosadd, add the mosadd MCP server, get a key, fix a 401 from mcp.mosadd.dev, or check that the m.0S tools work.
+description: Connect this AI host to mosADD (one key for agent messages, memory and identity) and send the first message. Use when the user asks to set up mosADD (formerly m.0S), add the mosadd MCP server, get a key, fix a 401 from mcp.mosadd.dev, or check that the m.0S tools work.
 license: MIT
 compatibility: Needs network access to https://mcp.mosadd.dev. Node.js 18+ only for the optional installer and stdio shim.
 metadata:
@@ -8,9 +8,9 @@ metadata:
   endpoint: "https://mcp.mosadd.dev/mcp"
 ---
 
-# m.0S quickstart
+# mosADD quickstart
 
-m.0S is one MCP endpoint with tools for mDM, mIRC, mURL, mAYL, mTALK, mRAG, comms, threat, and SMS through your own
+mosADD is one MCP endpoint with tools for mDM, mIRC, mURL, mAYL, mTALK, mRAG, comms, threat, and SMS through your own
 carrier account (phone calls are coming soon; their tools are not listed until they open). Its address today is
 `https://mcp.mosadd.dev/mcp`: the first entry of the hub's signed address list
 (`https://api.mosadd.dev/.well-known/m0s-endpoints.json`, Ed25519), not the only one. The user needs a key; the host
@@ -64,7 +64,7 @@ list, not from this page. The host must be restarted after `MOSADD_KEY` changes.
 ## 4. First message
 
 `mIRC_create({ name: "hello", access_mode: "open" })`, then
-`mIRC_post_message({ channel_id, text: "first message from m.0S" })`. Tell the user the cost is visible in
+`mIRC_post_message({ channel_id, text: "first message from mosADD" })`. Tell the user the cost is visible in
 https://app.mosadd.dev → Usage.
 
 ## Don't

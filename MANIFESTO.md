@@ -1,4 +1,4 @@
-<p align="center"><img src=".github/assets/icon-512.png" width="120" alt="m.0S" /></p>
+<p align="center"><img src=".github/assets/icon-512.png" width="120" alt="mosADD" /></p>
 
 # The mosADD™ Manifesto
 
@@ -16,13 +16,13 @@ We think the moment demands the opposite: communication as **infrastructure** �
 Telegram, Slack, Gmail, and Discord are apps. mosADD is the layer underneath them — semantic, MCP-native primitives any human, agent, or robot can plug into. An agent is a contact, not a bot. A robot is a contact, not an endpoint. A human is pulled in the instant a machine needs a decision, through the `[need-human]` loop.
 
 **2. Encrypted where it counts, honest where it isn't.**
-1:1 messages between two people in the mosADD app are end-to-end encrypted (X3DH + Double Ratchet) — the operator cannot read their content. Traffic of agent lines, including every call made with an m.0S key, is readable by the service: metering, memory and audit need it. Open mIRC channels, mURL rooms and mAYL mail are transport-encrypted but **server-readable by design**; private channels of agent lines are readable too, because the service holds the line keys; **all channel voice is server-relayed** (never end-to-end). We label encryption per channel, in the tools themselves. Our differentiator is not that everything is encrypted. It is that **we never lie about what is**. The full posture lives in this repo: [docs/security/e2ee-posture.md](./docs/security/e2ee-posture.md). Check us.
+1:1 messages between two people in the mosADD app are end-to-end encrypted (X3DH + Double Ratchet) — the operator cannot read their content. Traffic of agent lines, including every call made with a key for the MCP endpoint, is readable by the service: metering, memory and audit need it. Open mIRC channels, mURL rooms and mAYL mail are transport-encrypted but **server-readable by design**; private channels of agent lines are readable too, because the service holds the line keys; **all channel voice is server-relayed** (never end-to-end). We label encryption per channel, in the tools themselves. Our differentiator is not that everything is encrypted. It is that **we never lie about what is**. The full posture lives in this repo: [docs/security/e2ee-posture.md](./docs/security/e2ee-posture.md). Check us.
 
 **3. We will not build scanning backdoors.**
 Chat Control and its siblings — in the EU, the US, or anywhere else — ask operators to scan what people say before it is sealed. We refuse. If a law requires us to scan or weaken mDM's end-to-end encryption, we will withdraw from that market before we break the seal. We designed person-to-person mDM so that we hold no message content to hand over. We do not claim to be beyond the reach of any law — no one is — but we can promise what we control: **we will not build the scanner.**
 
 **4. Grassroots, self-funded, sovereign.**
-There are no billions from the US or China behind this project. No venture capital, no private equity, no public markets — ever. m.0S is funded by the per-use payments for its hosted service. Money that can outvote the mission is money we do not take.
+There are no billions from the US or China behind this project. No venture capital, no private equity, no public markets — ever. mosADD is funded by the per-use payments for its hosted service. Money that can outvote the mission is money we do not take.
 
 **5. A kingdom, honestly.**
 mosADD is governed by one founder who holds the vision and the final word — the way Satoshi set Bitcoin's direction, the way a BDFL steers a project. The community proposes, builds, and is credited in the open ledger; the crown decides. We say this openly because pretending a project this young is a democracy would be the dishonest version. The rules are written down: [GOVERNANCE.md](./GOVERNANCE.md) · [REALM.md](./REALM.md).

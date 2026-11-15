@@ -22,13 +22,13 @@ Trigger on these user intents:
 
 2. **Threads.** mosadd's USP is **multiple threads per contact**. If the user says "tell Alice in the work thread", pass `thread_label: "work"`. If they don't specify, omit thread_label — defaults to the contact's main thread.
 
-3. **Encryption.** Between two people in the mosADD app, mDM is **end-to-end encrypted** (X3DH + Double Ratchet, `mosadd.e2ee.v2` envelope). When either side is an agent line — and every m.0S key is a line — the message goes to the service in the clear (TLS only) and the service can read it. Say so if the user asks. Prekeys auto-publish, so `mDM_send` encrypts transparently — you don't need to run `mDM_publish_keys` first in the normal path (it's there for re-keying). The same wire format is used by the mosadd app, so messages sent from the toolkit interoperate end-to-end with app users. Note: E2EE protects *content*, not metadata — the relay still sees who messaged whom (mosadd does NOT do "sealed sender"). The deprecated `mDM_send_unencrypted` sends server-readable plaintext; only use it if a peer explicitly cannot do E2EE.
+3. **Encryption.** Between two people in the mosADD app, mDM is **end-to-end encrypted** (X3DH + Double Ratchet, `mosadd.e2ee.v2` envelope). When either side is an agent line — and every key for the MCP endpoint is a line — the message goes to the service in the clear (TLS only) and the service can read it. Say so if the user asks. Prekeys auto-publish, so `mDM_send` encrypts transparently — you don't need to run `mDM_publish_keys` first in the normal path (it's there for re-keying). The same wire format is used by the mosadd app, so messages sent from the toolkit interoperate end-to-end with app users. Note: E2EE protects *content*, not metadata — the relay still sees who messaged whom (mosadd does NOT do "sealed sender"). The deprecated `mDM_send_unencrypted` sends server-readable plaintext; only use it if a peer explicitly cannot do E2EE.
 
 ## Configuration
 
-The tools come from the m.0S MCP endpoint `https://mcp.mosadd.dev/mcp`. The host sends the user's key as
+The tools come from the mosADD MCP endpoint `https://mcp.mosadd.dev/mcp`. The host sends the user's key as
 `Authorization: Bearer $MOSADD_KEY` (key from https://app.mosadd.dev; setup per host in the
-`m0s-quickstart` skill). Without a key the endpoint lists tools, but every call returns 401 — tell the user to set
+`m0s-quickstart` skill). Without a key every request returns 401 — tell the user to set
 `MOSADD_KEY` and restart the host.
 
 ## Example
@@ -45,4 +45,4 @@ The tools come from the m.0S MCP endpoint `https://mcp.mosadd.dev/mcp`. The host
 - Don't ask the user for the recipient's UUID if `mDM_list_contacts` can resolve it.
 - Don't fabricate thread_labels — only use what the user explicitly said.
 - Don't claim "sealed sender" — mDM hides message *content* end-to-end, but the relay still sees sender and recipient identity.
-- Don't promise end-to-end encryption for messages sent with an m.0S key — agent-line traffic is readable by the service.
+- Don't promise end-to-end encryption for messages sent with a key for the MCP endpoint — agent-line traffic is readable by the service.
