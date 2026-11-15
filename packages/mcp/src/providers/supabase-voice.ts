@@ -45,7 +45,7 @@ export class SupabaseVoiceProvider implements VoiceProvider {
 
   async createRoom(label?: string): Promise<{ roomId: string }> {
     const self = await this.selfId();
-    const roomId = `${ROOM_PREFIX}${label ? slug(label) : self}`;
+    const roomId = labelRoomId(self, label);
     // Floor row is created lazily by mtalk-floor on first request; nothing to do
     // here beyond returning the canonical id.
     return { roomId };
@@ -80,6 +80,18 @@ export class SupabaseVoiceProvider implements VoiceProvider {
     });
     return data.snapshot;
   }
+}
+
+/**
+ * 15.11.2026 — nazwa pokoju PTT. Bez etykiety: pokój osobisty `mosadd-room-<id>`. Z etykietą:
+ * `mosadd-room-<id otwierającego>-<etykieta>` — właściciel jest w nazwie, więc bramka
+ * (mosADD `livekit-token/labelRoom.ts`) wpuszcza właściciela i jego kontakty, a obcy nie przejmie
+ * pokoju wejściem jako pierwszy. Dawne `mosadd-room-<etykieta>` było jedną nazwą dla wszystkich
+ * kont bez właściciela → 403 dla każdego.
+ */
+export function labelRoomId(selfIdentityId: string, label?: string): string {
+  if (!label) return `${ROOM_PREFIX}${selfIdentityId}`;
+  return `${ROOM_PREFIX}${selfIdentityId}-${slug(label) || "room"}`;
 }
 
 function slug(s: string): string {

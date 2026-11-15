@@ -84,7 +84,7 @@ export const mtalkTools: MosaddTool[] = [
     annotations: { readOnlyHint: false },
     requires: "any",
     description:
-      "Open (or get) a push-to-talk room. Returns a stable room_id. Pass an optional label to share a named room (e.g. 'ops'); omit it for a personal room. Works over network (LiveKit) or off-grid radio depending on the host.",
+      "Open (or get) a push-to-talk room. Returns a stable room_id. Pass an optional label for a named room (e.g. 'ops') that you own: you and your accepted contacts can join it; omit the label for a personal room. Works over network (LiveKit) or off-grid radio depending on the host.",
     inputSchema: mTALK_open_input,
     handler: mTALK_open as MosaddTool["handler"],
   },
