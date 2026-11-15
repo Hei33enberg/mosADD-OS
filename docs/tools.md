@@ -5,7 +5,7 @@ Two lists, and they are not the same:
 - **`@mosadd/mcp`** defines the tools of every mosADD module. Its total and the count per module are pinned by a
   test (`packages/mcp/src/__tests__/tool-count-consistency.test.ts`) and stated in the [README](../README.md#tools).
   One line per tool: [packages/mcp/README.md](../packages/mcp/README.md).
-- **The hosted endpoint** `https://mcp.mosadd.dev/mcp` serves every tool in `@mosadd/mcp` and tools of its own. Its
+- **The hosted endpoint** `https://mcp.mosadd.com/mcp` serves every tool in `@mosadd/mcp` and tools of its own. Its
   list is whatever `tools/list` returns to you, and it changes without a release of this repository.
 
 ## Asking the endpoint

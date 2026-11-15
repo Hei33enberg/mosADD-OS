@@ -360,12 +360,19 @@ describe('one-click links (Cursor, VS Code) point at the remote endpoint', () =>
     expect(() => deepLink('codex')).toThrow(/cursor, vscode/);
   });
 
-  it('README and docs/hosts.md carry exactly the generated links (no local npx link anywhere)', () => {
+  // 2026-11-15: the README leads with https://mcp.mosadd.com/mcp (OAuth) and no longer carries the installer's
+  // one-click links (they point at DEFAULT_URL). docs/hosts.md, the installer's page, must carry them; any one-click
+  // link that a text does carry must be exactly the generated one, so a hand-made link cannot drift.
+  it('docs/hosts.md carries exactly the generated links; no text carries a hand-made one (no local npx link anywhere)', () => {
+    const hosts = readFileSync(join(repo, 'docs/hosts.md'), 'utf8');
+    expect(hosts).toContain(`](${deepLink('cursor')})`);
+    expect(hosts).toContain(`](${deepLink('vscode')})`);
     for (const f of ['README.md', 'docs/hosts.md']) {
       const md = readFileSync(join(repo, f), 'utf8');
-      expect(md, f).toContain(`](${deepLink('cursor')})`);
-      expect(md, f).toContain(`](${deepLink('vscode')})`);
-      for (const l of md.match(/cursor:\/\/[^)\s]+|vscode\.dev\/redirect\/mcp\/install[^)\s]+/g) || []) expect(l, f).not.toMatch(/npx/);
+      for (const l of md.match(/cursor:\/\/[^)\s]+|https:\/\/vscode\.dev\/redirect\/mcp\/install[^)\s]+/g) || []) {
+        expect(l, f).not.toMatch(/npx/);
+        expect([deepLink('cursor'), deepLink('vscode')], `${f} carries a one-click link the installer did not generate`).toContain(l);
+      }
     }
   });
 });
