@@ -26,3 +26,18 @@ export function formatVoiceIfAny(text: string): string {
   }
   return text;
 }
+
+/**
+ * 15.11.2026 — głosówka niesie transkrypt i adres nagrania. message-list (mosADD) dokłada do
+ * wiadomości voice/ptt pola transcript / audio_url / duration_ms (RLS czytającego); tu
+ * przekazujemy je odbiorcy jako `voice`. Wcześniej agent widział sam podpis.
+ */
+export function voiceFields(m: {
+  messageType?: string;
+  transcript?: string | null;
+  audioUrl?: string | null;
+  durationMs?: number | null;
+}): { voice?: { transcript: string | null; audio_url: string | null; duration_ms: number | null } } {
+  if (m.messageType !== "voice" && m.messageType !== "ptt") return {};
+  return { voice: { transcript: m.transcript ?? null, audio_url: m.audioUrl ?? null, duration_ms: m.durationMs ?? null } };
+}

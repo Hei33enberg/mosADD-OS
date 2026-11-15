@@ -62,6 +62,10 @@ export interface DmMessageExt extends DmMessage {
   selfPayload?: string | null;
   recipientSelfPayload?: string | null;
   messageType?: string;
+  /** 15.11: z message-list dla voice/ptt (voiceEnrich.ts w mosADD). */
+  transcript?: string | null;
+  audioUrl?: string | null;
+  durationMs?: number | null;
 }
 
 export class SupabaseDmProvider implements DmProvider {
@@ -171,6 +175,9 @@ export class SupabaseDmProvider implements DmProvider {
         message_type?: string | null;
         self_payload?: string | null;
         recipient_self_payload?: string | null;
+        transcript?: string | null;
+        audio_url?: string | null;
+        duration_ms?: number | null;
       }>;
       cursor?: string | null;
       has_more?: boolean;
@@ -194,6 +201,9 @@ export class SupabaseDmProvider implements DmProvider {
         messageType: m.message_type ?? undefined,
         selfPayload: m.self_payload ?? null,
         recipientSelfPayload: m.recipient_self_payload ?? null,
+        transcript: m.transcript ?? null,
+        audioUrl: m.audio_url ?? null,
+        durationMs: m.duration_ms ?? null,
       })),
       // history mode (`before`) returns `next_before`; incremental (`since`) returns `cursor`+`has_more`.
       nextCursor: data?.next_before ?? (data?.has_more ? (data?.cursor ?? null) : null),

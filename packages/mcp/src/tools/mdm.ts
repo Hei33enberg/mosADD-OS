@@ -16,7 +16,7 @@
 
 import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
-import { formatVoiceIfAny } from "./voice-format.js";
+import { formatVoiceIfAny, voiceFields } from "./voice-format.js";
 import { invokeFunction, getSupabase, readSupabaseEnv } from "../providers/supabase.js";
 import {
   encryptForPeer,
@@ -402,6 +402,7 @@ async function mDM_list(
     timestamp: string;
     thread_id: string;
     encrypted: boolean;
+    voice?: { transcript: string | null; audio_url: string | null; duration_ms: number | null };
   }>;
   next_cursor: string | null;
   threads: string[];
@@ -434,6 +435,7 @@ async function mDM_list(
         sender_identity_id: m.senderId,
         timestamp: m.timestamp,
         thread_id: m.threadId,
+        ...voiceFields(m),
       };
       // Legacy plaintext envelope (deprecated path) — unpack directly.
       if (!isE2eeEnvelope(m.payload)) {
