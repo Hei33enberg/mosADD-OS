@@ -13,6 +13,9 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { createClient } from "@supabase/supabase-js";
 import { createMosaddServer } from "../server.js";
 import { loadSession, saveSession, isSessionExpired } from "../config.js";
+import { allTools } from "../tools/index.js";
+import { PKG_VERSION } from "../version.js";
+import { parseCli, renderHelp, renderTools, renderVersion } from "../cli.js";
 
 const DEFAULT_EXCHANGE =
   "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-key-exchange";
@@ -95,11 +98,25 @@ async function bootstrapFromSavedSession(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  // Auth subcommands: `mosadd login | logout | whoami`. Everything else starts the server.
-  const sub = process.argv[2];
-  if (sub === "login" || sub === "logout" || sub === "whoami") {
+  // CLI: `--version`, `--help`, `tools` print and exit (they must NEVER start the stdio server — a bare
+  // `npx @mosadd/mcp --version` used to hang waiting for an MCP client). Auth subcommands: login | logout | whoami.
+  // Everything else starts the server.
+  const action = parseCli(process.argv.slice(2));
+  if (action.kind === "version") {
+    process.stdout.write(renderVersion(PKG_VERSION));
+    return;
+  }
+  if (action.kind === "help") {
+    process.stdout.write(renderHelp(PKG_VERSION));
+    return;
+  }
+  if (action.kind === "tools") {
+    process.stdout.write(renderTools(allTools));
+    return;
+  }
+  if (action.kind === "auth") {
     const { runAuthCommand } = await import("./login.js");
-    await runAuthCommand(sub, process.argv.slice(3));
+    await runAuthCommand(action.sub, action.rest);
     return;
   }
 
@@ -126,7 +143,7 @@ async function main(): Promise<void> {
     JSON.stringify({
       level: "info",
       msg: "mosadd MCP server ready",
-      version: "3.0.0-alpha.0",
+      version: PKG_VERSION,
       ts: new Date().toISOString(),
     }) + "\n",
   );

@@ -123,6 +123,19 @@ mosadd.com app (receiver)
 
 For PTT / CALL (real-time media), the architecture separates **control plane** (MCP) from **data plane** (WebRTC daemon). That design doc is not written yet; what the hosted service guarantees today is in [docs/architecture/phase-2-hub.md](https://github.com/Hei33enberg/mosADD-OS/blob/main/docs/architecture/phase-2-hub.md).
 
+## CLI
+
+`npx @mosadd/mcp` with no arguments starts the MCP server over stdio (what your agent runtime runs). These commands print and exit instead:
+
+| Command | What it does |
+|---|---|
+| `npx @mosadd/mcp --version` (`-v`) | prints the installed version (from `package.json`) |
+| `npx @mosadd/mcp --help` (`-h`) | prints the commands and the environment variables, including `MOSADD_API_KEY` |
+| `npx @mosadd/mcp tools` | lists every registered tool, grouped by module |
+| `npx @mosadd/mcp login` / `logout` / `whoami` | save, delete, or show the signed-in session |
+
+The server's `serverInfo.version` and its "ready" log line use the same `package.json` version.
+
 ## Configuration via env vars
 
 | Env | Description | Required |
