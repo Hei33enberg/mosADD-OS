@@ -159,6 +159,7 @@ function wirePtt(btn: HTMLElement, maxSeconds: number): void {
   btn.addEventListener("pointercancel", stop);
 }
 
+let userBuild = false;
 function build(text: string, key?: string): void {
   const r = key
     ? { template: key, reasons: [`${TEMPLATE_INFO.find((t) => t.key === key)?.label} template`], doc: JSON.parse(JSON.stringify(TEMPLATES[key])) }
@@ -169,6 +170,8 @@ function build(text: string, key?: string): void {
   activeTab = doc.layout.home;
   $("reasons").innerHTML = r.reasons.map((x) => `<li>${esc(x)}</li>`).join("");
   render();
+  // On a phone the preview sits below the form: bring it into view after an explicit build.
+  if (key !== undefined || text) { if (window.matchMedia("(max-width: 959px)").matches && userBuild) $("stage").scrollIntoView({ block: "start" }); }
 }
 
 function ship(): void {
@@ -190,12 +193,12 @@ function init(): void {
   $("chips").innerHTML = TEMPLATE_INFO.map((t) => `<button type="button" data-key="${t.key}" aria-pressed="false">${esc(t.label)}</button>`).join("");
   $("chips").addEventListener("click", (e) => {
     const b = (e.target as HTMLElement).closest("button");
-    if (b) build("", b.dataset.key);
+    if (b) { userBuild = true; build("", b.dataset.key); }
   });
   $("form").addEventListener("submit", (e) => {
     e.preventDefault();
     const text = ($("desc") as HTMLTextAreaElement).value.trim();
-    if (text) build(text);
+    if (text) { userBuild = true; build(text); }
   });
   $("ship").addEventListener("click", ship);
   document.querySelectorAll<HTMLButtonElement>(".modes button").forEach((b) =>
@@ -214,6 +217,7 @@ function init(): void {
     build(q);
     const tab = params.get("tab");
     if (tab && doc.layout.tabs.includes(tab)) { activeTab = tab; renderPhone(); }
+    if (params.get("view") === "preview") $("stage").scrollIntoView({ block: "start" });
   }
 }
 init();
