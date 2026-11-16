@@ -3,10 +3,13 @@
 All notable changes to `@mosadd/mcp` are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project follows the `3.0.0-alpha.N` pre-release line until the hosted
-gateway (Phase 2) ships.
+and this project follows [Semantic Versioning](https://semver.org/). The `3.0.0-alpha.N` pre-releases led up to the stable 3.0.0.
 
 ## [Unreleased]
+
+## [3.0.0] — 2026-11-16
+
+The first stable release of the 3.0 line. Same tools as `3.0.0-alpha.59`: default host `https://api.mosadd.com`, `mRAG_search` with `answer`. `latest` on npm now points here; install with `npx -y @mosadd/mcp`.
 
 ## [3.0.0-alpha.59] — 2026-11-16
 
