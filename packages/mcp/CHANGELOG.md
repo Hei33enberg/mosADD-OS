@@ -13,6 +13,9 @@ gateway (Phase 2) ships.
 ### Added
 - **`mRAG_search` accepts `answer: boolean`** (default `false`). It is forwarded to `rag-query`: by default the tool returns the ranked sources only; pass `answer: true` to also get a generated answer grounded in them.
 
+### Fixed
+- **Default backend host.** `MOSADD_API_KEY` login (`hub-key-exchange`) and the mail-provenance / mIRC edge defaults pointed at the retired cloud `rooffhgbxafyjcwmwpsy.supabase.co`, which no longer answers. They now default to `https://api.mosadd.com` (`MOSADD_HUB_URL` still overrides). A test fails if any source file carries the old host again.
+
 ## [3.0.0-alpha.58] — 2026-11-16
 
 ### Added

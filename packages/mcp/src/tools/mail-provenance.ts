@@ -23,7 +23,7 @@
 import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
 
-const DEFAULT_SUPABASE_URL = "https://rooffhgbxafyjcwmwpsy.supabase.co";
+const DEFAULT_SUPABASE_URL = "https://api.mosadd.com";
 
 function supabaseUrl(): string {
   return (

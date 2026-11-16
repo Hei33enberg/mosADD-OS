@@ -29,7 +29,7 @@ import { z } from "zod";
 import type { MosaddTool, MosaddToolContext } from "../types.js";
 
 const DEFAULT_EDGE_URL = "https://mosadd-edge.mr-brics-33.workers.dev";
-const DEFAULT_SUPABASE_URL = "https://rooffhgbxafyjcwmwpsy.supabase.co";
+const DEFAULT_SUPABASE_URL = "https://api.mosadd.com";
 
 function edgeUrl(): string {
   return process.env.MOSADD_EDGE_URL?.replace(/\/$/, "") ?? DEFAULT_EDGE_URL;

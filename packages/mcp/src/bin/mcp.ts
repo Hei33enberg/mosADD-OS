@@ -18,7 +18,7 @@ import { PKG_VERSION } from "../version.js";
 import { parseCli, renderHelp, renderTools, renderVersion } from "../cli.js";
 
 const DEFAULT_EXCHANGE =
-  "https://rooffhgbxafyjcwmwpsy.supabase.co/functions/v1/hub-key-exchange";
+  "https://api.mosadd.com/functions/v1/hub-key-exchange";
 
 /**
  * Hosted-hub path: when MOSADD_API_KEY is set, exchange it for a short-lived
