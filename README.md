@@ -28,6 +28,11 @@ Run `/mcp`, pick `mosadd`, sign in. Codex · Cursor · Windsurf · Hermes · any
 | **mTALK** | push-to-talk |
 | **mRAG** | one memory for all of it |
 
+## Tools
+
+85 tools in `@mosadd/mcp` (run `npx @mosadd/mcp tools` for the full list):
+mDM 16 · mIRC 25 · mURL 7 · mAYL 16 · mTALK 6 · mRAG 8 · comms 5 · threat 2
+
 ## This repo
 
 The open part of mosADD — MCP server, SDKs, agent skills. MIT. **[What's inside →](./docs/repository.md)**
