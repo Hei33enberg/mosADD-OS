@@ -10,11 +10,13 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 **The dashboard is back to your conversation threads only, push-to-talk lives in the mKEEPER window, and the writing bar keeps one order everywhere.**
 
-- The dashboard is back to your conversation threads only: yesterday's NEEDS YOU tab and band, the row of agents above the wall, the push-to-talk bar under the wall, the Approve button on cards and the shorter card previews are gone, and the + button is back in its corner.
+- The live demo now looks and fits like the real app on every screen, from a small phone to a 1920 monitor: smaller text, as many columns as fit, an open thread standing beside the wall instead of covering it, and no red card backgrounds, glow or radar rings. The demo bar now says what to do — watch the army work live, or open a thread, hold PTT and give an order.
+- The dashboard is back to your conversation threads only: yesterday's NEEDS YOU tab and band, the row of agents above the wall, the push-to-talk bar under the wall, the Approve button on cards and the shorter card previews are gone, the + button is back in its corner, and the cards lost their outline frames to sit directly on the deep radar background.
 - Inside the conversation windows the writing bar has one order everywhere: ATTACH first, then push-to-talk or the text field, then the switch between them, then SEND — in mKEEPER, in every direct chat (which can now switch to push-to-talk too) and in mTALK, where MUTE moved to its own row above the bar.
 - The mosADD logo is back to the familiar dotted wordmark with its small green light, in the header and footer of the home page and across the app.
+- In the demo, mADD in the mKEEPER window answers "@mADD who is waiting for me" with the names of the threads waiting for you within a second, however a phone keyboard typed the @, and its reply is never an empty bubble.
 
-`b729c7354` · https://mosadd.com/changelog#2026-11-16
+`fab7817c0` · https://mosadd.com/changelog#2026-11-16
 
 ## 2026-11-15 — Web · Server · Apps
 
