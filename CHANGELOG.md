@@ -12,8 +12,10 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 - The push-to-talk bar on the computer dashboard stands under the column with mKEEPER and the agents waiting for you, instead of taking the bottom of the whole screen.
 - That column now ends just above the bar, so no waiting card hides underneath it.
+- The writing bar has one order everywhere: ATTACH first, then push-to-talk or the text field, then the switch between them, then SEND — in mKEEPER, in every direct chat (which can now switch to push-to-talk too) and in mTALK, where MUTE moved to its own row above the bar.
+- The mosADD logo is back to the familiar dotted wordmark with its small green light, in the header and footer of the home page and across the app.
 
-`73dda0ca6` · https://mosadd.com/changelog#2026-11-16
+`739d9c180` · https://mosadd.com/changelog#2026-11-16
 
 ## 2026-11-15 — Web · Server · Apps
 
