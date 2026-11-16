@@ -5,7 +5,7 @@ Remote endpoint for all of them: `https://mcp.mosadd.com/mcp` (MCP sign-in, no k
 ## Gemini CLI
 
 ```bash
-gemini extensions install https://github.com/Hei33enberg/mosADD-OS
+gemini extensions install https://github.com/Hei33enberg/mosADD-OS --ref main
 ```
 
 The extension manifest is [`gemini-extension.json`](../gemini-extension.json). On first use Gemini CLI opens the
