@@ -1,7 +1,7 @@
-import { CONTRAST_PAIRS, contrastRatio } from "./contrast";
+import { AA_INTERFACE, CONTRAST_PAIRS, contrastRatio } from "./contrast";
 import { copyViolations, usesMosaddName } from "./honesty";
 import { migrateMessenger } from "./migrate";
-import { Messenger, type BlockId } from "./schema";
+import { Messenger, type BlockId, type Theme } from "./schema";
 
 export interface Issue {
   /** An error blocks a release; a warning does not. */
@@ -129,14 +129,18 @@ function consistency(m: Messenger): Issue[] {
 }
 
 function accessibility(m: Messenger): Issue[] {
+  return themeIssues(m.theme);
+}
+
+/** Accessibility checks of one theme (mode listed, WCAG contrast pairs, PTT state gap). Paths start at `base`. */
+export function themeIssues(t: Theme, base = "/theme"): Issue[] {
   const issues: Issue[] = [];
-  const t = m.theme;
   if (!t.modes.includes(t.defaultMode))
-    issues.push({ level: "error", path: "/theme/defaultMode", code: "MODE_NOT_LISTED", message: `defaultMode "${t.defaultMode}" is not in modes` });
+    issues.push({ level: "error", path: `${base}/defaultMode`, code: "MODE_NOT_LISTED", message: `defaultMode "${t.defaultMode}" is not in modes` });
   for (const mode of t.modes) {
     const tokens = t.tokens[mode];
     if (!tokens) {
-      issues.push({ level: "error", path: `/theme/tokens/${mode}`, code: "TOKENS_MISSING", message: `mode "${mode}" is listed but has no tokens` });
+      issues.push({ level: "error", path: `${base}/tokens/${mode}`, code: "TOKENS_MISSING", message: `mode "${mode}" is listed but has no tokens` });
       continue;
     }
     for (const [fg, bg, min] of CONTRAST_PAIRS) {
@@ -144,18 +148,40 @@ function accessibility(m: Messenger): Issue[] {
       if (ratio < min) {
         issues.push({
           level: "error",
-          path: `/theme/tokens/${mode}/${fg}`,
+          path: `${base}/tokens/${mode}/${fg}`,
           code: "CONTRAST",
           message: `${fg} on ${bg} is ${ratio.toFixed(2)}:1, below the WCAG AA minimum of ${min}:1`,
           hint: `Darken or lighten ${fg} until the ratio reaches ${min}:1.`,
         });
       }
     }
+    const ch = t.channels?.[mode];
+    if (ch) {
+      for (const [name, colour] of Object.entries(ch)) {
+        const ratio = contrastRatio(colour, tokens.background);
+        if (ratio < AA_INTERFACE)
+          issues.push({
+            level: "error",
+            path: `${base}/channels/${mode}/${name}`,
+            code: "CHANNEL_CONTRAST",
+            message: `channel colour ${name} on background is ${ratio.toFixed(2)}:1, below the WCAG AA minimum of ${AA_INTERFACE}:1`,
+            hint: `Darken or lighten ${name} until the ratio reaches ${AA_INTERFACE}:1.`,
+          });
+      }
+    }
+    if (t.backdrop.kind === "image")
+      issues.push({
+        level: "warning",
+        path: `${base}/backdrop`,
+        code: "IMAGE_CONTRAST_UNMEASURED",
+        message: "text contrast over an image cannot be measured; the dim value and the plain background colour are what keep text readable",
+        hint: "Raise dim, or choose an image with little detail behind text.",
+      });
     const pttGap = contrastRatio(tokens.pttTransmit, tokens.pttListen);
     if (pttGap < 1.3)
       issues.push({
         level: "warning",
-        path: `/theme/tokens/${mode}/pttTransmit`,
+        path: `${base}/tokens/${mode}/pttTransmit`,
         code: "PTT_STATES_CLOSE",
         message: `transmitting and listening colours differ by only ${pttGap.toFixed(2)}:1 in lightness`,
         hint: "The client also shows the state as an icon and text, but distinct lightness helps colour-blind users.",

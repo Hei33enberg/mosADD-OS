@@ -857,6 +857,125 @@
             "comfortable"
           ]
         },
+        "channels": {
+          "type": "object",
+          "properties": {
+            "dark": {
+              "type": "object",
+              "properties": {
+                "mDM": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "mIRC": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "mAYL": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "mURL": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                }
+              },
+              "required": [
+                "mDM",
+                "mIRC",
+                "mAYL",
+                "mURL"
+              ],
+              "additionalProperties": false
+            },
+            "light": {
+              "type": "object",
+              "properties": {
+                "mDM": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "mIRC": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "mAYL": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "mURL": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                }
+              },
+              "required": [
+                "mDM",
+                "mIRC",
+                "mAYL",
+                "mURL"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "backdrop": {
+          "default": {
+            "kind": "lidar"
+          },
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "lidar"
+                }
+              },
+              "required": [
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "plain"
+                }
+              },
+              "required": [
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "image"
+                },
+                "asset": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_./-]+\\.(png|jpe?g)$"
+                },
+                "dim": {
+                  "default": 0.5,
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 0.9
+                }
+              },
+              "required": [
+                "kind",
+                "asset"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
         "css": {
           "type": "string",
           "pattern": "^[A-Za-z0-9_./-]+\\.css$"

@@ -192,6 +192,23 @@ export type ThemeTokens = z.infer<typeof ThemeTokens>;
 
 const Mode = z.enum(["dark", "light"]);
 
+/** The four channel accents the app draws (mDM, mIRC, mAYL, mURL), one set per mode. */
+export const ChannelColors = z.strictObject({ mDM: hex, mIRC: hex, mAYL: hex, mURL: hex });
+export type ChannelColors = z.infer<typeof ChannelColors>;
+
+/** What sits behind the screens: the lidar/radar field, a plain fill, or an image from the project. */
+export const Backdrop = z.discriminatedUnion("kind", [
+  z.strictObject({ kind: z.literal("lidar") }),
+  z.strictObject({ kind: z.literal("plain") }),
+  z.strictObject({
+    kind: z.literal("image"),
+    asset: z.string().regex(/^[A-Za-z0-9_./-]+\.(png|jpe?g)$/, "a relative .png or .jpg path inside the project"),
+    /** How much of the theme background is laid over the image, 0 to 0.9. */
+    dim: z.number().min(0).max(0.9).default(0.5),
+  }),
+]);
+export type Backdrop = z.infer<typeof Backdrop>;
+
 export const Theme = z.strictObject({
   id: slug,
   version: semver,
@@ -202,6 +219,8 @@ export const Theme = z.strictObject({
   fonts: z.strictObject({ text: z.enum(FONT_ALLOWLIST), headings: z.enum(FONT_ALLOWLIST) }),
   radius: z.enum(["square", "soft", "round"]).default("soft"),
   density: z.enum(["compact", "comfortable"]).default("comfortable"),
+  channels: z.strictObject({ dark: ChannelColors.optional(), light: ChannelColors.optional() }).optional(),
+  backdrop: Backdrop.default({ kind: "lidar" }),
   css: z.string().regex(/^[A-Za-z0-9_./-]+\.css$/).optional(),
 });
 export type Theme = z.infer<typeof Theme>;

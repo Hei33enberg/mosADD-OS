@@ -1,0 +1,361 @@
+{
+  "$id": "https://mosadd.dev/schema/skin/1.json",
+  "title": "mosADD skin",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "format": {
+      "type": "string",
+      "const": "mosadd.skin"
+    },
+    "formatVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "logo": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_./-]+\\.(png|jpe?g|svg|woff2)$"
+    },
+    "defaultMode": {
+      "type": "string",
+      "enum": [
+        "dark",
+        "light"
+      ]
+    },
+    "modes": {
+      "minItems": 1,
+      "maxItems": 2,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "dark",
+          "light"
+        ]
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "properties": {
+        "dark": {
+          "type": "object",
+          "properties": {
+            "background": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "surface": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "border": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "text": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "textMuted": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "accent": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "onAccent": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "warning": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "error": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "pttTransmit": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "pttListen": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            }
+          },
+          "required": [
+            "background",
+            "surface",
+            "border",
+            "text",
+            "textMuted",
+            "accent",
+            "onAccent",
+            "warning",
+            "error",
+            "pttTransmit",
+            "pttListen"
+          ],
+          "additionalProperties": false
+        },
+        "light": {
+          "type": "object",
+          "properties": {
+            "background": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "surface": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "border": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "text": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "textMuted": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "accent": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "onAccent": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "warning": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "error": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "pttTransmit": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "pttListen": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            }
+          },
+          "required": [
+            "background",
+            "surface",
+            "border",
+            "text",
+            "textMuted",
+            "accent",
+            "onAccent",
+            "warning",
+            "error",
+            "pttTransmit",
+            "pttListen"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "channels": {
+      "type": "object",
+      "properties": {
+        "dark": {
+          "type": "object",
+          "properties": {
+            "mDM": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "mIRC": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "mAYL": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "mURL": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            }
+          },
+          "required": [
+            "mDM",
+            "mIRC",
+            "mAYL",
+            "mURL"
+          ],
+          "additionalProperties": false
+        },
+        "light": {
+          "type": "object",
+          "properties": {
+            "mDM": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "mIRC": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "mAYL": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "mURL": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            }
+          },
+          "required": [
+            "mDM",
+            "mIRC",
+            "mAYL",
+            "mURL"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "fonts": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "enum": [
+            "Inter",
+            "IBM Plex Sans",
+            "IBM Plex Mono",
+            "Space Grotesk",
+            "JetBrains Mono",
+            "Atkinson Hyperlegible",
+            "Nunito",
+            "Noto Sans"
+          ]
+        },
+        "headings": {
+          "type": "string",
+          "enum": [
+            "Inter",
+            "IBM Plex Sans",
+            "IBM Plex Mono",
+            "Space Grotesk",
+            "JetBrains Mono",
+            "Atkinson Hyperlegible",
+            "Nunito",
+            "Noto Sans"
+          ]
+        }
+      },
+      "required": [
+        "text",
+        "headings"
+      ],
+      "additionalProperties": false
+    },
+    "radius": {
+      "default": "soft",
+      "type": "string",
+      "enum": [
+        "square",
+        "soft",
+        "round"
+      ]
+    },
+    "density": {
+      "default": "comfortable",
+      "type": "string",
+      "enum": [
+        "compact",
+        "comfortable"
+      ]
+    },
+    "backdrop": {
+      "default": {
+        "kind": "lidar"
+      },
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "lidar"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "plain"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "image"
+            },
+            "asset": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_./-]+\\.(png|jpe?g)$"
+            },
+            "dim": {
+              "default": 0.5,
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0.9
+            }
+          },
+          "required": [
+            "kind",
+            "asset"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": [
+    "format",
+    "formatVersion",
+    "name",
+    "defaultMode",
+    "modes",
+    "tokens",
+    "fonts"
+  ],
+  "additionalProperties": false
+}
