@@ -11,14 +11,16 @@
     {
       "name": "mosadd",
       "source": "./skills",
-      "description": "mosADD for Claude Code: the mosADD MCP endpoint (https://mcp.mosadd.dev/mcp, key in MOSADD_KEY) plus skills for messages, channels, mail, push-to-talk, memory, lines and setup. MIT.",
+      "description": "mosADD for Claude Code: your team and your agents in one messenger. The mosADD MCP server, a channel that pushes mDM/mIRC messages into the running session and lets it answer back, plus skills to talk to the team, post status and search memory. MIT.",
       "skills": [
+        "./mosadd-team-talk",
+        "./mosadd-post-status",
+        "./mosadd-mrag",
         "./mosadd-mdm",
         "./mosadd-mirc",
         "./mosadd-murl",
         "./mosadd-mail",
         "./mosadd-mtalk",
-        "./mosadd-mrag",
         "./m0s-quickstart",
         "./m0s-line"
       ]

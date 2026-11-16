@@ -29,10 +29,10 @@ Trigger on these user intents:
 
 ## Configuration
 
-The tools come from the mosADD MCP endpoint `https://mcp.mosadd.dev/mcp`. The host sends the user's key as
-`Authorization: Bearer $MOSADD_KEY` (key from https://app.mosadd.dev; setup per host in the
-`m0s-quickstart` skill). Without a key every request returns 401 — tell the user to set
-`MOSADD_KEY` and restart the host.
+The tools come from the mosADD MCP endpoint `https://mcp.mosadd.com/mcp`. In the Claude Code plugin the key is the
+`api_key` plugin option (asked once on install; mint a key at https://mosadd.com/keys); in other hosts the host sends it as
+`Authorization: Bearer <key>` (setup per host in the `m0s-quickstart` skill). Without a key every request returns 401 —
+tell the user to set the key and restart the host.
 
 ## Example
 

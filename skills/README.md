@@ -5,7 +5,7 @@ skill, a `SKILL.md` whose frontmatter `name` equals the directory name. The same
 plugin, in Hermes Agent, in OpenClaw and in any host that reads agent skills. MIT.
 
 The skills teach the model when to use which tool; the tools themselves come from the mosADD MCP endpoint
-(`https://mcp.mosadd.dev/mcp`, key in `MOSADD_KEY`).
+(`https://mcp.mosadd.com/mcp`, key from https://mosadd.com/keys).
 
 | Skill | What it does |
 |---|---|
@@ -16,6 +16,8 @@ The skills teach the model when to use which tool; the tools themselves come fro
 | [`mosadd-murl`](mosadd-murl/SKILL.md) | open rooms attached to a web domain, public by design |
 | [`mosadd-mail`](mosadd-mail/SKILL.md) | mail (mAYL) |
 | [`mosadd-mtalk`](mosadd-mtalk/SKILL.md) | push-to-talk rooms |
+| [`mosadd-team-talk`](mosadd-team-talk/SKILL.md) | talk to the team from the session; answer channel messages |
+| [`mosadd-post-status`](mosadd-post-status/SKILL.md) | post a short, honest status to a channel |
 | [`mosadd-mrag`](mosadd-mrag/SKILL.md) | recall over the user's own messages, mail and calls |
 | [`mosadd-coordinate`](mosadd-coordinate/SKILL.md) | several agents on one project share one channel |
 
@@ -24,19 +26,24 @@ The skills teach the model when to use which tool; the tools themselves come fro
 
 ## Install
 
-- **Claude Code** (plugin: all skills except coordinate, plus the MCP endpoint with `Authorization: Bearer ${MOSADD_KEY}`):
+- **Claude Code** (plugin `mosadd`: the MCP endpoint, the mosADD channel, ten skills):
   ```bash
   claude plugin marketplace add Hei33enberg/mosADD-OS
   claude plugin install mosadd@mosADD-OS
   ```
-  Checked 2026-09-29 with Claude Code 2.1.285 (throw-away config): `claude plugin validate` passes for the
-  marketplace and the plugin, the plugin installs, and its MCP entry sends the key from `MOSADD_KEY` to the hub.
+  The install asks once for your key (`api_key`, kept in the system credential store; mint it at
+  [mosadd.com/keys](https://mosadd.com/keys)) and which mIRC channels and DMs to watch. Then restart Claude Code.
 
-  **Upgrading from the mosadd.com plugin.** Until 2026-09-29 the plugin started the local `@mosadd/mcp` server (npm tag alpha) with your
-  `mosadd login` session. It now connects to `https://mcp.mosadd.dev/mcp` and needs `MOSADD_KEY` (a key from
-  [app.mosadd.dev](https://app.mosadd.dev)); without it every tool call answers 401. To keep using a mosadd.com
-  session instead, register the local server yourself: `claude mcp add mosadd-com -- npx -y @mosadd/mcp@3.0.0-alpha.56`
-  ([packages/mcp/README.md](../packages/mcp/README.md)).
+  **Channel — new mDM / mIRC messages arrive in the running session, and the session answers back.** Channels are a
+  research preview in Claude Code: a channel that is not on Anthropic's allowlist loads only with the development flag
+  (interactive sessions only; Team/Enterprise admins can allowlist it in `allowedChannelPlugins`):
+  ```bash
+  claude --dangerously-load-development-channels plugin:mosadd@mosADD-OS
+  ```
+  The channel server is [`channel/server.mjs`](channel/server.mjs) (Node 18+, no dependencies). It polls the hub every
+  15 s, emits `<channel source="mosadd" …>` events and exposes `reply`, `watch` and `status` tools.
+  Without the flag the plugin still works as MCP + skills.
+- **Cursor, Codex, other MCP hosts:** see the `m0s-quickstart` skill and https://mosadd.com/mcp.
 - **Hermes, OpenClaw, other agentskills hosts:** copy the skill directory into the host's skills directory.
 - **ClawHub:** a prepared entry is in [`distribution/clawhub/`](../distribution/clawhub/) (not published yet).
 

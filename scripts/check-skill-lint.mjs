@@ -28,7 +28,8 @@ const read = (p) => readFileSync(join(ROOT, p), "utf8");
 // ── 1. skill frontmatter ─────────────────────────────────────────────────────
 const SKILLS_DIR = join(ROOT, "skills");
 const skillDirs = readdirSync(SKILLS_DIR).filter(
-  (d) => statSync(join(SKILLS_DIR, d)).isDirectory() && !d.startsWith(".")
+  // `channel/` is the Claude Code channel server shipped in the plugin (not a skill).
+  (d) => statSync(join(SKILLS_DIR, d)).isDirectory() && !d.startsWith(".") && d !== "channel"
 );
 const skillNames = new Map(); // dir -> frontmatter name
 for (const dir of skillDirs) {
@@ -101,11 +102,15 @@ try {
 } catch (e) {
   fail(`skills/.claude-plugin/plugin.json: ${e.message}`);
 }
-try {
-  const mcpJson = JSON.parse(read("skills/.mcp.json"));
-  if (!mcpJson.mcpServers?.mosadd) fail(`skills/.mcp.json: no mcpServers.mosadd entry`);
-} catch (e) {
-  fail(`skills/.mcp.json: ${e.message}`);
+// Since the plugin got a channel + a key prompt (userConfig), its MCP servers live inline in plugin.json.
+if (pluginManifest) {
+  const inline = pluginManifest.mcpServers ?? {};
+  if (!inline.mosadd) fail(`skills/.claude-plugin/plugin.json: no mcpServers.mosadd entry`);
+  if (!inline["mosadd-channel"]) fail(`skills/.claude-plugin/plugin.json: no mcpServers["mosadd-channel"] entry`);
+  if (!existsSync(join(ROOT, "skills/channel/server.mjs"))) fail(`skills/channel/server.mjs is missing`);
+  if (!(pluginManifest.channels ?? []).some((c) => c.server === "mosadd-channel"))
+    fail(`skills/.claude-plugin/plugin.json: channels[] has no entry bound to 'mosadd-channel'`);
+  if (!pluginManifest.userConfig?.api_key?.sensitive) fail(`skills/.claude-plugin/plugin.json: userConfig.api_key must be sensitive`);
 }
 
 // ── 3. version triple-check ──────────────────────────────────────────────────
@@ -118,8 +123,9 @@ for (const v of readmeVersions) {
   if (v !== mcpVersion)
     fail(`README.md mentions version '${v}' but packages/mcp/package.json is '${mcpVersion}'`);
 }
-if (pluginManifest && pluginManifest.version !== mcpVersion)
-  fail(`skills/.claude-plugin/plugin.json version '${pluginManifest.version}' != packages/mcp '${mcpVersion}'`);
+// The plugin is its own version line (it ships the channel server + skills, not the npm package): semver, bumped on any change.
+if (pluginManifest && !/^\d+\.\d+\.\d+$/.test(String(pluginManifest.version ?? "")))
+  fail(`skills/.claude-plugin/plugin.json version '${pluginManifest.version}' is not x.y.z`);
 try {
   const server = JSON.parse(read("packages/mcp/server.json"));
   if (server.version !== mcpVersion)

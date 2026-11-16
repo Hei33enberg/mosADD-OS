@@ -1,12 +1,59 @@
 {
   "name": "mosadd",
-  "version": "3.0.0-alpha.56",
-  "description": "mosADD: one key for your agents' messages, memory and identity. The mosADD MCP endpoint (https://mcp.mosadd.dev/mcp) plus skills that teach the model when to use which tool.",
+  "displayName": "mosADD",
+  "version": "3.1.0",
+  "description": "mosADD for Claude Code: your team and your agents in one messenger. The mosADD MCP server (85 tools), a channel that delivers mDM/mIRC messages into the running session and lets it answer back, and skills for talking to the team, posting status and searching memory.",
   "author": {
     "name": "mosadd contributors",
     "url": "https://mosadd.com"
   },
-  "homepage": "https://mosadd.com",
+  "homepage": "https://mosadd.com/mcp",
   "repository": "https://github.com/Hei33enberg/mosADD-OS",
-  "license": "MIT"
+  "license": "MIT",
+  "keywords": ["mosadd", "messaging", "channel", "mcp", "agents", "mirc", "mdm", "mrag", "push-to-talk"],
+  "userConfig": {
+    "api_key": {
+      "type": "string",
+      "title": "mosADD API key",
+      "description": "Your hub key (mosadd_sk_live_…). Mint one at https://mosadd.com/keys after signing in.",
+      "sensitive": true,
+      "required": true
+    }
+  },
+  "mcpServers": {
+    "mosadd": {
+      "type": "http",
+      "url": "https://mcp.mosadd.com/mcp",
+      "headers": { "Authorization": "Bearer ${user_config.api_key}" }
+    },
+    "mosadd-channel": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/channel/server.mjs"],
+      "env": {
+        "MOSADD_API_KEY": "${user_config.api_key}",
+        "MOSADD_CHANNELS": "${user_config.channels}",
+        "MOSADD_DM": "${user_config.dm}"
+      }
+    }
+  },
+  "channels": [
+    {
+      "server": "mosadd-channel",
+      "displayName": "mosADD",
+      "userConfig": {
+        "channels": {
+          "type": "string",
+          "title": "mIRC channels to watch",
+          "description": "Comma-separated channel names you are a member of, e.g. team,ops. Leave empty to watch none (you can add one later with the watch tool).",
+          "default": ""
+        },
+        "dm": {
+          "type": "string",
+          "title": "Direct messages",
+          "description": "all = your accepted contacts, off = no DMs, or a comma-separated list of identity ids.",
+          "default": "all"
+        }
+      }
+    }
+  ]
 }
