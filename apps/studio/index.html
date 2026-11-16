@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mosADD Studio</title>
+<meta name="description" content="Describe a messenger in one sentence. Get a validated messenger.json and a live phone preview.">
+<link rel="stylesheet" href="studio.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">mosADD<i>.</i></span><span class="sub">/ STUDIO</span></div>
+  <button class="ship" id="ship" type="button" disabled>[ SHIP ]</button>
+</header>
+
+<main>
+  <section class="build" aria-label="Build">
+    <p class="kicker">BE LIKE MARK.</p>
+    <h1>Build your own messenger</h1>
+    <p class="lede">Describe it. We assemble it from mosADD blocks: push-to-talk, channels, encrypted DMs, agents.</p>
+
+    <form id="form" class="prompt">
+      <label class="sr" for="desc">Describe your messenger</label>
+      <textarea id="desc" rows="3" placeholder="A walkie-talkie for my port crew, with an on-duty agent that summarises every shift…"></textarea>
+      <button type="submit" class="go" aria-label="Build">Build →</button>
+    </form>
+    <div class="chips" id="chips" role="group" aria-label="Start from a template"></div>
+
+    <div id="result" hidden>
+      <h2>Studio agent</h2>
+      <ul class="checks" id="reasons"></ul>
+
+      <h2>Blocks</h2>
+      <p class="hint">Every block is the same audited mosADD code. Switch it on or off; the checks run again.</p>
+      <div class="blocks" id="blocks"></div>
+
+      <h2>Checks</h2>
+      <div id="issues"></div>
+      <table class="contrast" id="contrast"></table>
+
+      <h2>messenger.json</h2>
+      <pre id="json" class="json" tabindex="0"></pre>
+    </div>
+  </section>
+
+  <section class="stage" aria-label="Preview">
+    <div class="modes" role="group" aria-label="Preview mode">
+      <button type="button" data-mode="dark" class="on">Dark</button>
+      <button type="button" data-mode="light">Light</button>
+    </div>
+    <div class="phone" id="phone" hidden>
+      <div class="screen" id="screen"></div>
+    </div>
+    <p class="empty" id="empty">Your app appears here. Describe it, or pick a template.</p>
+    <div class="shipnote" id="shipnote" hidden></div>
+  </section>
+</main>
+
+<footer>
+  <span>Runs on the mosADD core. 1:1 DMs are end-to-end encrypted; channels, voice and agents are server-relayed.</span>
+  <span>mosadd.dev · studio preview · nothing leaves this page</span>
+</footer>
+<script src="studio.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "@mosadd/studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "mosadd.dev Studio: describe a messenger in one sentence, get a validated messenger.json and a phone preview. Static page, runs locally, no backend.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "serve": "node scripts/build.mjs --serve",
+    "test": "node scripts/smoke.mjs"
+  }
+}

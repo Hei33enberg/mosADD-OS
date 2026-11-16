@@ -1,0 +1,92 @@
+/* mosADD Studio — August classes: flat fills, no borders around elements, one green accent. */
+:root{
+  --bg:#000;--panel:#0d0d0d;--raise:#141414;
+  --text:#f2f2f2;--soft:#d9d9d9;--mute:#9a9a9a;--green:#20c568;--green-hi:#5fe39a;--amber:#f7be3b;
+  font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text)}
+body{min-height:100vh;display:flex;flex-direction:column;font-size:13px;line-height:1.55}
+button,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 16px 12px}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.logo{font-size:18px;font-weight:700;letter-spacing:.02em}.logo i{color:var(--green);font-style:normal}
+.sub{color:var(--mute);font-size:11px;letter-spacing:.14em}
+.ship{background:var(--green);color:#00140a;border:0;padding:12px 18px;font-weight:700;letter-spacing:.08em;cursor:pointer;min-height:44px}
+.ship:disabled{background:var(--raise);color:var(--mute);cursor:not-allowed}
+.ship:not(:disabled):hover{background:var(--green-hi)}
+
+main{flex:1;display:grid;grid-template-columns:minmax(0,1fr);gap:24px;padding:8px 16px 32px}
+@media(min-width:960px){main{grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:48px;padding:8px 32px 48px}}
+.kicker{margin:16px 0 4px;color:var(--green);font-size:11px;letter-spacing:.2em}
+h1{margin:0 0 8px;font-size:clamp(26px,6vw,40px);line-height:1.1;letter-spacing:.02em;text-transform:uppercase}
+h2{margin:28px 0 8px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);font-weight:500}
+.lede{margin:0 0 16px;color:var(--soft);max-width:48ch}
+.hint{margin:0 0 10px;color:var(--mute)}
+
+.prompt{background:var(--panel);padding:12px;display:flex;flex-direction:column;gap:10px}
+.prompt textarea{width:100%;resize:vertical;background:transparent;border:0;padding:6px;min-height:76px;color:var(--text)}
+.prompt textarea::placeholder{color:#8c8c8c}
+.go{align-self:flex-end;background:var(--green);color:#00140a;border:0;padding:10px 18px;font-weight:700;cursor:pointer;min-height:44px}
+.go:hover{background:var(--green-hi)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chips button{background:var(--panel);border:0;padding:10px 12px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;color:var(--soft);min-height:44px}
+.chips button:hover{background:var(--raise)}
+.chips button[aria-pressed=true]{background:var(--raise);color:var(--text)}
+
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.checks li::before{content:"✓";color:var(--green);margin-right:10px}
+.blocks{display:grid;gap:6px}
+.block{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--panel);padding:12px 14px}
+.block b{display:block;font-weight:500}
+.block small{color:var(--mute)}
+.tag{font-size:10px;letter-spacing:.1em;padding:3px 7px;background:var(--raise);color:var(--soft);white-space:nowrap;margin-left:8px}
+.switch{width:44px;height:24px;border-radius:12px;background:#333;border:0;position:relative;cursor:pointer;flex:none}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#bbb;transition:left .12s}
+.switch[aria-checked=true]{background:var(--green)}.switch[aria-checked=true]::after{left:23px;background:#fff}
+.switch:disabled{opacity:.45;cursor:not-allowed}
+
+.issue{padding:10px 12px;margin-bottom:6px;background:var(--panel)}
+.issue.error{color:#ffb4b4}.issue.warning{color:var(--amber)}.issue.pass{color:var(--green)}
+.issue code{color:var(--mute);margin-right:8px}
+.contrast{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}
+.contrast td,.contrast th{padding:7px 8px;text-align:left;background:var(--panel)}
+.contrast tr:nth-child(even) td{background:#101010}
+.contrast th{color:var(--mute);font-weight:500;letter-spacing:.1em;font-size:10px;text-transform:uppercase}
+.sw{display:inline-block;width:12px;height:12px;vertical-align:-1px;margin-right:6px}
+.json{margin:0;background:var(--panel);padding:14px;overflow:auto;max-height:420px;font-size:11px;color:var(--soft)}
+
+.stage{display:flex;flex-direction:column;align-items:center;gap:16px}
+.modes{display:flex;gap:6px}
+.modes button{background:var(--panel);border:0;padding:10px 16px;cursor:pointer;color:var(--mute);min-height:44px}
+.modes button.on{background:var(--raise);color:var(--text)}
+.empty{color:var(--mute);max-width:36ch;text-align:center;margin-top:40px}
+.shipnote{width:min(100%,420px);background:var(--panel);padding:14px 16px}
+.shipnote h3{margin:0 0 8px;font-size:11px;letter-spacing:.2em;color:var(--green);font-weight:500}
+.shipnote dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0}
+.shipnote dt{color:var(--mute)}.shipnote dd{margin:0}
+.shipnote p{margin:10px 0 0;color:var(--amber)}
+
+footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding:16px;color:var(--mute);font-size:11px}
+
+/* The phone is coloured only by the app's own tokens, set as variables on .phone. */
+.phone{width:min(100%,340px);height:640px;background:#000;padding:10px;border-radius:34px}
+.screen{height:100%;display:flex;flex-direction:column;overflow:hidden;border-radius:26px;background:var(--p-bg);color:var(--p-text);font-family:var(--p-font),system-ui,sans-serif}
+.p-bar{padding:18px 16px 10px;display:flex;align-items:center;justify-content:space-between;background:var(--p-surface)}
+.p-bar b{font-family:var(--p-head),system-ui,sans-serif;font-size:16px}
+.p-bar span{color:var(--p-muted);font-size:11px}
+.p-body{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.p-card{background:var(--p-surface);padding:12px 14px;border-radius:var(--p-r)}
+.p-card small{display:block;color:var(--p-muted)}
+.p-label{color:var(--p-muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin:2px 0}
+.p-talk{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.ptt{width:156px;height:156px;border-radius:50%;border:0;cursor:pointer;background:var(--p-listen);color:#00140a;font-weight:700;font-size:13px;letter-spacing:.08em;touch-action:none;user-select:none}
+.ptt.tx{background:var(--p-tx);color:#fff}
+.p-state{color:var(--p-muted);font-size:12px}
+.p-tabs{display:flex;background:var(--p-surface)}
+.p-tabs button{flex:1;border:0;background:transparent;color:var(--p-muted);padding:12px 4px 14px;font-size:11px;cursor:pointer;min-height:44px}
+.p-tabs button.on{color:var(--p-accent);font-weight:700}
+.dens-compact .p-body{gap:6px;padding:10px}.dens-compact .p-card{padding:8px 12px}
