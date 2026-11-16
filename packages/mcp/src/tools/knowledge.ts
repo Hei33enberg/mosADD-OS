@@ -82,6 +82,12 @@ const mRAG_search_input = z.object({
     .string()
     .optional()
     .describe("Optional: restrict retrieval to a single thread id (e.g. a dm:/chat: thread)."),
+  answer: z
+    .boolean()
+    .optional()
+    .describe(
+      "Set true to also get a generated answer (answer field) grounded in the returned sources. Default false: ranked sources only, answer is empty.",
+    ),
 });
 
 interface RagSource {
@@ -110,6 +116,7 @@ async function mRAG_search(
     top_k: input.top_k ?? 8,
     source_types: input.source_types ?? null,
     thread_id: input.thread_id ?? null,
+    answer: input.answer ?? false,
   });
 
   return {
@@ -317,7 +324,7 @@ export const knowledgeTools: MosaddTool[] = [
     annotations: { readOnlyHint: true },
     requires: "network",
     description:
-      "Search and answer questions over the USER'S OWN mosadd data (messages, emails, calls, notes) with a private per-user RAG index — hybrid vector + keyword retrieval, reranked, grounded in cited sources (no fabrication). Use it to recall 'what did X say about Y', summarize a thread, or pull facts the user has received. Returns an answer plus the source snippets it used. This is agent memory (mRAG = RAG over your own data) over the user's communications, available outside the mosadd app. NOTE: RAG requires content to be indexed server-side in plaintext, so anything searchable here is NOT covered by the zero-knowledge / E2EE guarantee — only data the user has explicitly opted into indexing is searchable. See docs/security/e2ee-posture.md.",
+      "Search and answer questions over the USER'S OWN mosadd data (messages, emails, calls, notes) with a private per-user RAG index — hybrid vector + keyword retrieval, reranked, grounded in cited sources (no fabrication). Use it to recall 'what did X say about Y', summarize a thread, or pull facts the user has received. By DEFAULT (via MCP) it returns the ranked source snippets only and `answer` is an empty string (answer_mode retrieve_only): fast, no model call. Pass answer:true to also get a generated answer grounded in those sources (slower, uses the model budget). If the index search runs out of time the call still succeeds and carries partial:true with partial_reason, instead of failing. This is agent memory (mRAG = RAG over your own data) over the user's communications, available outside the mosadd app. NOTE: RAG requires content to be indexed server-side in plaintext, so anything searchable here is NOT covered b",
     inputSchema: mRAG_search_input,
     handler: mRAG_search as MosaddTool["handler"],
   },

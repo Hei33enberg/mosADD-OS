@@ -8,6 +8,11 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+## [3.0.0-alpha.59] — 2026-11-16
+
+### Added
+- **`mRAG_search` accepts `answer: boolean`** (default `false`). It is forwarded to `rag-query`: by default the tool returns the ranked sources only; pass `answer: true` to also get a generated answer grounded in them.
+
 ## [3.0.0-alpha.58] — 2026-11-16
 
 ### Added
