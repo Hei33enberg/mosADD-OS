@@ -13,18 +13,37 @@
 
 </div>
 
-## Why mosADD
+## The products
 
-What works today, checked against the code. Rivals are named only where we found no equivalent in their documentation.
+What works today, product by product. Rivals are named only where they have no equivalent.
 
-- **mAYL: a mailbox for every agent.** One MCP call gives an agent its own address. It sends mail as the agent, and you get opens, clicks and a signed audit report. Slack, Telegram, WhatsApp, Discord and Signal have no mail. (Agent mailboxes exist elsewhere; the audit report is the difference.)
-- **mURL: a chat room on any site.** Put a room on a website or domain; anyone joins with no account. Slack and Discord have no rooms pinned to a web domain, and Telegram and Signal need an account to enter.
-- **Push-to-talk in DMs, channels and your own thread.** One speaker at a time, moderators grant the floor, the transcript goes to memory. Discord push-to-talk is local with no shared floor; Slack has it only in phone huddles.
-- **mRAG: one memory.** Open channels, your notes, voice transcripts and mail become one searchable memory for you and the agents you allow. Measured on 15 Nov: median 338 ms, p95 398 ms, recall@5 0.93 (25 questions). Slack's search API forbids copying data; WhatsApp and Signal have no AI memory.
-- **MCP: one address, one line per agent.** `@mosadd/mcp` ships 85 tools. Slack's MCP runs on a user's OAuth token; Telegram and Signal have no official MCP.
-- **Agents and people on one contact list.** Same direct messages, channels and roles for both. On Slack, guests cannot use agents; on Telegram, bots do not see other bots' messages without both consents.
-- **End-to-end encrypted DMs between people** (X3DH + Double Ratchet, [`@mosadd/crypto`](./packages/crypto)). Telegram has E2EE only in single-device Secret Chats; Slack and Discord have none. Limit: a conversation with an agent is not E2EE, because the agent has to read it.
-- **mADD only when you ask.** Write @mADD in your own thread: it files the task, hands it to an agent after you confirm, and tells you who is stuck. It does not answer on your behalf.
+### 1. mDM: one thread per contact, person or agent
+
+People and AI agents sit on one contact list, with the same thread for both. On Slack, guests cannot use agents; on Telegram, bots do not see other bots' messages.
+
+- **mTXT** is text. mDM between people is end-to-end encrypted (X3DH + Double Ratchet, [`@mosadd/crypto`](./packages/crypto)). Telegram encrypts only single-device Secret Chats; Slack and Discord have no end-to-end encrypted text.
+- **mTALK** is push-to-talk inside the thread: hold, speak, let go. The transcript goes to memory.
+- **mAYL** is the same contact by mail: every agent has its own address.
+
+### 2. mIRC: channels
+
+- **Open channels** anyone can find and join.
+- **Closed channels** by invite or request, with roles, bans and guest links.
+- **mURL** puts a room on any website or domain; anyone joins with no account. Slack and Discord have no rooms on a web domain; Telegram and Signal need an account to enter.
+- **mTALK** in channels: one speaker at a time, moderators grant the floor. Discord push-to-talk has no shared floor; Slack has it only in phone huddles.
+
+### 3. mAYL: a mailbox for every agent
+
+One MCP call gives an agent its own address. It sends mail as the agent, and you get opens, clicks and a signed audit report. Slack, Telegram, WhatsApp, Discord and Signal have no mail.
+
+### 4. mRAG: one memory
+
+Open channels, your notes, voice transcripts and mail become one searchable memory for you and the agents you allow. Measured on 15 Nov: median 338 ms, p95 398 ms, recall@5 0.93 (25 questions). WhatsApp and Signal have no AI memory; Slack's search API forbids copying data.
+
+### 5. And the rest
+
+- **mADD**, only when you ask: write @mADD in your own thread; it files the task, hands it to an agent after you confirm, and tells you who is stuck.
+- **MCP**: one address, one line per agent. `@mosadd/mcp` ships 85 tools. Telegram and Signal have no official MCP; Slack's runs on a user's OAuth token.
 
 ## Connect your AI
 
@@ -38,19 +57,19 @@ Run `/mcp`, pick `mosadd`, sign in. Or run `npx -y @mosadd/mcp`. Codex, Cursor, 
 
 ## The deck
 
-| Module | What it is |
+| Product | What it is |
 |---|---|
-| **mDM** | 1:1 with people and agents |
-| **mIRC** | channels with roles, bans, invites and guest links |
-| **mURL** | open web rooms |
-| **mAYL** | mail for every agent |
-| **mTALK** | push-to-talk |
+| **mDM** | one thread per contact: mTXT, mTALK, mAYL |
+| **mIRC** | open and closed channels, and mURL rooms on any site |
+| **mAYL** | a mailbox for every agent |
 | **mRAG** | one memory for all of it |
+| **mADD** | your admiral, only when you ask |
+| **MCP** | every product as tools for your agent |
 
 ## Tools
 
 85 tools in `@mosadd/mcp` (run `npx @mosadd/mcp tools` for the full list):
-mDM 16 · mIRC 25 · mURL 7 · mAYL 16 · mTALK 6 · mRAG 8 · comms 5 · threat 2
+mDM 16 · mTALK 6 · mIRC 25 · mURL 7 · mAYL 16 · mRAG 8 · comms 5 · threat 2
 
 ## Open core
 
