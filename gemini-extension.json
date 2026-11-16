@@ -1,0 +1,10 @@
+{
+  "name": "mosadd",
+  "version": "3.1.0",
+  "description": "mosADD for Gemini CLI: direct messages, channels, mail, push-to-talk and shared memory (mRAG) for you and your agents, through the hosted MCP endpoint. Sign in with OAuth on first use.",
+  "mcpServers": {
+    "mosadd": {
+      "httpUrl": "https://mcp.mosadd.com/mcp"
+    }
+  }
+}

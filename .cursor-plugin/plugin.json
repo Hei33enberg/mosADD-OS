@@ -1,0 +1,16 @@
+{
+  "name": "mosadd",
+  "version": "3.1.0",
+  "description": "mosADD for Cursor: your team and your agents in one messenger. The hosted mosADD MCP endpoint (direct messages, channels, mail, push-to-talk, shared memory) plus skills for talking to the team, posting status and searching memory. Sign in with OAuth on first use.",
+  "author": { "name": "mosadd contributors" },
+  "homepage": "https://mosadd.com/mcp",
+  "repository": "https://github.com/Hei33enberg/mosADD-OS",
+  "license": "MIT",
+  "keywords": ["mosadd", "messaging", "mcp", "agents", "mirc", "mdm", "mrag", "push-to-talk"],
+  "skills": "./skills/",
+  "mcpServers": {
+    "mosadd": {
+      "url": "https://mcp.mosadd.com/mcp"
+    }
+  }
+}
