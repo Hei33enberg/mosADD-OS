@@ -1,0 +1,197 @@
+{
+  "$schema": "https://mosadd.dev/schema/messenger/1.json",
+  "_comment": "Template: Messages and push-to-talk that keep working when the internet does not: store-and-forward first, local links as they arrive. Replace the brand, channels and package name.",
+  "format": "mosadd.messenger",
+  "formatVersion": 1,
+  "id": "no-signal",
+  "revision": 1,
+  "appVersion": "1.0.0",
+  "template": "crisis-offline@1",
+  "brand": {
+    "name": "No Signal",
+    "shortName": "NoSignal",
+    "description": "Messages and push-to-talk that keep working when the internet does not: store-and-forward first, local links as they arrive.",
+    "icon": "assets/icon-1024.png",
+    "languages": [
+      "en"
+    ],
+    "defaultLanguage": "en",
+    "privacyPolicy": "https://example.org/privacy",
+    "poweredBy": "about"
+  },
+  "core": {
+    "line": "mosadd-core@1",
+    "channel": "stable"
+  },
+  "blocks": [
+    {
+      "id": "identity",
+      "enabled": true,
+      "settings": {
+        "login": [
+          "email-code",
+          "device-key"
+        ],
+        "namespace": "nosignal",
+        "joining": "link"
+      }
+    },
+    {
+      "id": "mtalk",
+      "enabled": true,
+      "settings": {
+        "button": "large-bottom",
+        "queue": true,
+        "recordings": true,
+        "transcripts": false,
+        "maxSeconds": 30,
+        "inChannels": true
+      }
+    },
+    {
+      "id": "mirc",
+      "enabled": true,
+      "settings": {
+        "startChannels": [
+          "#crisis-team",
+          "#status"
+        ],
+        "whoCreatesChannels": "admins"
+      }
+    },
+    {
+      "id": "mdm",
+      "enabled": true,
+      "settings": {
+        "calls": true,
+        "files": true,
+        "disappearingHours": 0
+      }
+    },
+    {
+      "id": "madd",
+      "enabled": false
+    },
+    {
+      "id": "mkeeper",
+      "enabled": false
+    },
+    {
+      "id": "mrag",
+      "enabled": false
+    },
+    {
+      "id": "mayl",
+      "enabled": false
+    },
+    {
+      "id": "murl",
+      "enabled": false
+    },
+    {
+      "id": "offline",
+      "enabled": true,
+      "settings": {
+        "storeAndForward": true,
+        "localNetwork": true,
+        "bluetooth": true,
+        "lora": true
+      }
+    }
+  ],
+  "layout": {
+    "tabs": [
+      "mdm",
+      "mirc",
+      "mtalk"
+    ],
+    "home": "mdm"
+  },
+  "theme": {
+    "id": "no-signal-dusk",
+    "version": "1.0.0",
+    "base": "mosadd-august",
+    "defaultMode": "dark",
+    "modes": [
+      "dark",
+      "light"
+    ],
+    "tokens": {
+      "dark": {
+        "background": "#080c12",
+        "surface": "#101722",
+        "border": "#233146",
+        "text": "#eef2f7",
+        "textMuted": "#a3b2c7",
+        "accent": "#5ab0ff",
+        "onAccent": "#001428",
+        "warning": "#f5a524",
+        "error": "#ff6b6b",
+        "pttTransmit": "#ff4d4f",
+        "pttListen": "#2ecc71"
+      },
+      "light": {
+        "background": "#f4f7fb",
+        "surface": "#ffffff",
+        "border": "#cbd5e1",
+        "text": "#0f172a",
+        "textMuted": "#475569",
+        "accent": "#0b5cad",
+        "onAccent": "#ffffff",
+        "warning": "#a16207",
+        "error": "#b91c1c",
+        "pttTransmit": "#9b1515",
+        "pttListen": "#15803d"
+      }
+    },
+    "fonts": {
+      "text": "Atkinson Hyperlegible",
+      "headings": "Atkinson Hyperlegible"
+    },
+    "radius": "soft",
+    "density": "comfortable"
+  },
+  "releases": {
+    "android": {
+      "enabled": true,
+      "package": "org.example.nosignal",
+      "shell": "bundled",
+      "signing": "creator-key",
+      "autoSignSecurityPatches": true,
+      "channels": [
+        "direct-apk",
+        "mosadd-store"
+      ],
+      "push": "unifiedpush"
+    },
+    "desktop": {
+      "enabled": true,
+      "systems": [
+        "windows",
+        "linux"
+      ],
+      "signing": "mosadd"
+    },
+    "web": {
+      "enabled": true,
+      "address": "nosignal",
+      "customDomain": null
+    },
+    "channel": "beta"
+  },
+  "instance": {
+    "hosting": "mosadd",
+    "network": {
+      "listedInMosaddDirectory": false
+    },
+    "cloudServices": []
+  },
+  "budget": {
+    "monthlyUsd": 40,
+    "overBudget": "text-only"
+  },
+  "privacy": {
+    "telemetry": "none",
+    "crashReports": "opt-in"
+  }
+}

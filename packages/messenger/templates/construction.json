@@ -1,0 +1,226 @@
+{
+  "$schema": "https://mosadd.dev/schema/messenger/1.json",
+  "_comment": "Template: A big talk button for gloves, site channels and an agent that keeps the daily log. Replace the brand, channels and package name.",
+  "format": "mosadd.messenger",
+  "formatVersion": 1,
+  "id": "site-talk",
+  "revision": 1,
+  "appVersion": "1.0.0",
+  "template": "construction@1",
+  "brand": {
+    "name": "Site Talk",
+    "shortName": "SiteTalk",
+    "description": "A big talk button for gloves, site channels and an agent that keeps the daily log.",
+    "icon": "assets/icon-1024.png",
+    "languages": [
+      "en"
+    ],
+    "defaultLanguage": "en",
+    "privacyPolicy": "https://example.org/privacy",
+    "poweredBy": "about"
+  },
+  "core": {
+    "line": "mosadd-core@1",
+    "channel": "stable"
+  },
+  "blocks": [
+    {
+      "id": "identity",
+      "enabled": true,
+      "settings": {
+        "login": [
+          "email-code",
+          "device-key"
+        ],
+        "namespace": "sitetalk",
+        "joining": "invite-only"
+      }
+    },
+    {
+      "id": "mtalk",
+      "enabled": true,
+      "settings": {
+        "button": "large-bottom",
+        "queue": true,
+        "recordings": true,
+        "transcripts": true,
+        "maxSeconds": 30,
+        "inChannels": true
+      }
+    },
+    {
+      "id": "mirc",
+      "enabled": true,
+      "settings": {
+        "startChannels": [
+          "#site-main",
+          "#deliveries",
+          "#safety"
+        ],
+        "whoCreatesChannels": "admins"
+      }
+    },
+    {
+      "id": "mdm",
+      "enabled": true,
+      "settings": {
+        "calls": true,
+        "files": true,
+        "disappearingHours": 0
+      }
+    },
+    {
+      "id": "madd",
+      "enabled": true,
+      "settings": {
+        "homeAgents": [
+          {
+            "name": "Foreman",
+            "role": "Writes the daily site log from voice reports, reminds crews of deliveries and safety briefings",
+            "model": "mosadd/flash",
+            "voice": "calm-en"
+          }
+        ],
+        "usersBringOwnAgents": false
+      }
+    },
+    {
+      "id": "mkeeper",
+      "enabled": true,
+      "settings": {
+        "jobs": [
+          {
+            "name": "daily-log",
+            "cron": "0 16 * * 1-5",
+            "does": "Foreman posts the daily site log on #site-main"
+          }
+        ]
+      }
+    },
+    {
+      "id": "mrag",
+      "enabled": true,
+      "settings": {
+        "scope": "team-channels",
+        "limitMbPerUser": 100
+      }
+    },
+    {
+      "id": "mayl",
+      "enabled": false
+    },
+    {
+      "id": "murl",
+      "enabled": false
+    },
+    {
+      "id": "offline",
+      "enabled": true,
+      "settings": {
+        "storeAndForward": true,
+        "localNetwork": false,
+        "bluetooth": false,
+        "lora": false
+      }
+    }
+  ],
+  "layout": {
+    "tabs": [
+      "mtalk",
+      "mirc",
+      "mdm",
+      "madd"
+    ],
+    "home": "mtalk"
+  },
+  "theme": {
+    "id": "site-hivis",
+    "version": "1.0.0",
+    "base": "mosadd-august",
+    "defaultMode": "dark",
+    "modes": [
+      "dark",
+      "light"
+    ],
+    "tokens": {
+      "dark": {
+        "background": "#0d0d0b",
+        "surface": "#1a1a16",
+        "border": "#3a3a2c",
+        "text": "#eef2f7",
+        "textMuted": "#b4b49c",
+        "accent": "#ffd400",
+        "onAccent": "#1a1500",
+        "warning": "#f5a524",
+        "error": "#ff6b6b",
+        "pttTransmit": "#ff4d4f",
+        "pttListen": "#2ecc71"
+      },
+      "light": {
+        "background": "#faf9f2",
+        "surface": "#ffffff",
+        "border": "#cbd5e1",
+        "text": "#0f172a",
+        "textMuted": "#475569",
+        "accent": "#8a6a00",
+        "onAccent": "#ffffff",
+        "warning": "#a16207",
+        "error": "#b91c1c",
+        "pttTransmit": "#9b1515",
+        "pttListen": "#15803d"
+      }
+    },
+    "fonts": {
+      "text": "Atkinson Hyperlegible",
+      "headings": "Space Grotesk"
+    },
+    "radius": "square",
+    "density": "comfortable"
+  },
+  "releases": {
+    "android": {
+      "enabled": true,
+      "package": "org.example.sitetalk",
+      "shell": "bundled",
+      "signing": "creator-key",
+      "autoSignSecurityPatches": true,
+      "channels": [
+        "direct-apk",
+        "mosadd-store"
+      ],
+      "push": "unifiedpush"
+    },
+    "desktop": {
+      "enabled": true,
+      "systems": [
+        "windows",
+        "linux"
+      ],
+      "signing": "mosadd"
+    },
+    "web": {
+      "enabled": true,
+      "address": "sitetalk",
+      "customDomain": null
+    },
+    "channel": "beta"
+  },
+  "instance": {
+    "hosting": "mosadd",
+    "network": {
+      "listedInMosaddDirectory": false
+    },
+    "cloudServices": [
+      "madd",
+      "ptt-transcripts"
+    ]
+  },
+  "budget": {
+    "monthlyUsd": 80,
+    "overBudget": "text-only"
+  },
+  "privacy": {
+    "telemetry": "none",
+    "crashReports": "opt-in"
+  }
+}

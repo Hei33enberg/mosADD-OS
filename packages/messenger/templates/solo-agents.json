@@ -1,0 +1,216 @@
+{
+  "$schema": "https://mosadd.dev/schema/messenger/1.json",
+  "_comment": "Template: One person, a team of AI agents: direct lines to each, a shared channel and a scheduled daily brief. Replace the brand, channels and package name.",
+  "format": "mosadd.messenger",
+  "formatVersion": 1,
+  "id": "agent-crew",
+  "revision": 1,
+  "appVersion": "1.0.0",
+  "template": "solo-agents@1",
+  "brand": {
+    "name": "Agent Crew",
+    "shortName": "AgentCrew",
+    "description": "One person, a team of AI agents: direct lines to each, a shared channel and a scheduled daily brief.",
+    "icon": "assets/icon-1024.png",
+    "languages": [
+      "en"
+    ],
+    "defaultLanguage": "en",
+    "privacyPolicy": "https://example.org/privacy",
+    "poweredBy": "about"
+  },
+  "core": {
+    "line": "mosadd-core@1",
+    "channel": "stable"
+  },
+  "blocks": [
+    {
+      "id": "identity",
+      "enabled": true,
+      "settings": {
+        "login": [
+          "email-code",
+          "device-key"
+        ],
+        "namespace": "agentcrew",
+        "joining": "invite-only"
+      }
+    },
+    {
+      "id": "mtalk",
+      "enabled": false
+    },
+    {
+      "id": "mirc",
+      "enabled": true,
+      "settings": {
+        "startChannels": [
+          "#daily",
+          "#ideas"
+        ],
+        "whoCreatesChannels": "admins"
+      }
+    },
+    {
+      "id": "mdm",
+      "enabled": true,
+      "settings": {
+        "calls": true,
+        "files": true,
+        "disappearingHours": 0
+      }
+    },
+    {
+      "id": "madd",
+      "enabled": true,
+      "settings": {
+        "homeAgents": [
+          {
+            "name": "Chief",
+            "role": "Your first agent: routes tasks to your other agents, reports in #daily, keeps notes",
+            "model": "mosadd/flash",
+            "voice": "calm-en"
+          }
+        ],
+        "usersBringOwnAgents": true
+      }
+    },
+    {
+      "id": "mkeeper",
+      "enabled": true,
+      "settings": {
+        "jobs": [
+          {
+            "name": "daily-brief",
+            "cron": "0 8 * * *",
+            "does": "Chief posts what each agent did yesterday on #daily"
+          }
+        ]
+      }
+    },
+    {
+      "id": "mrag",
+      "enabled": true,
+      "settings": {
+        "scope": "team-channels",
+        "limitMbPerUser": 100
+      }
+    },
+    {
+      "id": "mayl",
+      "enabled": false
+    },
+    {
+      "id": "murl",
+      "enabled": false
+    },
+    {
+      "id": "offline",
+      "enabled": true,
+      "settings": {
+        "storeAndForward": true,
+        "localNetwork": false,
+        "bluetooth": false,
+        "lora": false
+      }
+    }
+  ],
+  "layout": {
+    "tabs": [
+      "madd",
+      "mdm",
+      "mirc"
+    ],
+    "home": "madd"
+  },
+  "theme": {
+    "id": "crew-ink",
+    "version": "1.0.0",
+    "base": "mosadd-august",
+    "defaultMode": "dark",
+    "modes": [
+      "dark",
+      "light"
+    ],
+    "tokens": {
+      "dark": {
+        "background": "#090b10",
+        "surface": "#10141c",
+        "border": "#232a3a",
+        "text": "#eef2f7",
+        "textMuted": "#9aa6bd",
+        "accent": "#5fd38d",
+        "onAccent": "#04170c",
+        "warning": "#f5a524",
+        "error": "#ff6b6b",
+        "pttTransmit": "#ff4d4f",
+        "pttListen": "#2ecc71"
+      },
+      "light": {
+        "background": "#f6f8fb",
+        "surface": "#ffffff",
+        "border": "#cbd5e1",
+        "text": "#0f172a",
+        "textMuted": "#475569",
+        "accent": "#126b3c",
+        "onAccent": "#ffffff",
+        "warning": "#a16207",
+        "error": "#b91c1c",
+        "pttTransmit": "#9b1515",
+        "pttListen": "#15803d"
+      }
+    },
+    "fonts": {
+      "text": "JetBrains Mono",
+      "headings": "Space Grotesk"
+    },
+    "radius": "soft",
+    "density": "comfortable"
+  },
+  "releases": {
+    "android": {
+      "enabled": true,
+      "package": "org.example.agentcrew",
+      "shell": "bundled",
+      "signing": "creator-key",
+      "autoSignSecurityPatches": true,
+      "channels": [
+        "direct-apk",
+        "mosadd-store"
+      ],
+      "push": "unifiedpush"
+    },
+    "desktop": {
+      "enabled": true,
+      "systems": [
+        "windows",
+        "linux"
+      ],
+      "signing": "mosadd"
+    },
+    "web": {
+      "enabled": true,
+      "address": "agentcrew",
+      "customDomain": null
+    },
+    "channel": "beta"
+  },
+  "instance": {
+    "hosting": "mosadd",
+    "network": {
+      "listedInMosaddDirectory": false
+    },
+    "cloudServices": [
+      "madd",
+      "ptt-transcripts"
+    ]
+  },
+  "budget": {
+    "monthlyUsd": 60,
+    "overBudget": "text-only"
+  },
+  "privacy": {
+    "telemetry": "none",
+    "crashReports": "opt-in"
+  }
+}

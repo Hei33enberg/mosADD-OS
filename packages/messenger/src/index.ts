@@ -18,3 +18,4 @@ export { AA_INTERFACE, AA_TEXT, CONTRAST_PAIRS, contrastRatio, relativeLuminance
 export { COPY_RULES, copyViolations, usesMosaddName, type CopyRule } from "./honesty";
 export { MIGRATIONS, migrateMessenger, type MigrateResult } from "./migrate";
 export { stripComments, validateMessenger, type Issue, type ValidationResult } from "./validate";
+export { TEMPLATE_INFO, fitMessenger, nameFromDescription, scoreTemplates, type FitOptions, type FitResult, type TemplateInfo } from "./fit";
