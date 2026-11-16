@@ -34,7 +34,7 @@ describe("mRAG_search answer flag", () => {
   });
 
   it("the input schema accepts answer and documents it", () => {
-    const shape = (search.inputSchema as { shape: Record<string, { description?: string }> }).shape;
+    const shape = (search.inputSchema as unknown as { shape: Record<string, { description?: string }> }).shape;
     expect(shape.answer).toBeDefined();
     expect(shape.answer.description).toMatch(/generated answer/);
     expect(search.description).toMatch(/answer:true/);
