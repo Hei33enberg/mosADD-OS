@@ -1,0 +1,47 @@
+{
+  "format": "mosadd.skin",
+  "formatVersion": 1,
+  "name": "Gate Watch",
+  "defaultMode": "dark",
+  "modes": [
+    "dark",
+    "light"
+  ],
+  "tokens": {
+    "dark": {
+      "background": "#0c1118",
+      "surface": "#141c27",
+      "border": "#26334a",
+      "text": "#eef2f7",
+      "textMuted": "#9fb0c8",
+      "accent": "#ff8a1f",
+      "onAccent": "#1c0e00",
+      "warning": "#f5a524",
+      "error": "#ff6b6b",
+      "pttTransmit": "#ff4d4f",
+      "pttListen": "#2ecc71"
+    },
+    "light": {
+      "background": "#f5f7fa",
+      "surface": "#ffffff",
+      "border": "#cbd5e1",
+      "text": "#0f172a",
+      "textMuted": "#475569",
+      "accent": "#b3440a",
+      "onAccent": "#ffffff",
+      "warning": "#a16207",
+      "error": "#b91c1c",
+      "pttTransmit": "#9b1515",
+      "pttListen": "#15803d"
+    }
+  },
+  "fonts": {
+    "text": "Inter",
+    "headings": "Space Grotesk"
+  },
+  "radius": "square",
+  "density": "compact",
+  "backdrop": {
+    "kind": "lidar"
+  }
+}

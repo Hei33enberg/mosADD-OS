@@ -1,0 +1,47 @@
+{
+  "format": "mosadd.skin",
+  "formatVersion": 1,
+  "name": "Club Room",
+  "defaultMode": "dark",
+  "modes": [
+    "dark",
+    "light"
+  ],
+  "tokens": {
+    "dark": {
+      "background": "#0e1020",
+      "surface": "#171a30",
+      "border": "#2c3152",
+      "text": "#eef2f7",
+      "textMuted": "#a9b0d0",
+      "accent": "#ffb454",
+      "onAccent": "#1d1100",
+      "warning": "#f5a524",
+      "error": "#ff6b6b",
+      "pttTransmit": "#ff4d4f",
+      "pttListen": "#2ecc71"
+    },
+    "light": {
+      "background": "#f7f7fc",
+      "surface": "#ffffff",
+      "border": "#cbd5e1",
+      "text": "#0f172a",
+      "textMuted": "#475569",
+      "accent": "#a14d00",
+      "onAccent": "#ffffff",
+      "warning": "#a16207",
+      "error": "#b91c1c",
+      "pttTransmit": "#9b1515",
+      "pttListen": "#15803d"
+    }
+  },
+  "fonts": {
+    "text": "Nunito",
+    "headings": "Nunito"
+  },
+  "radius": "round",
+  "density": "comfortable",
+  "backdrop": {
+    "kind": "lidar"
+  }
+}

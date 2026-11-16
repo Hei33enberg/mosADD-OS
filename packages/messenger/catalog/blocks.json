@@ -1,0 +1,197 @@
+{
+  "format": "mosadd.blocks-catalog",
+  "version": 1,
+  "note": "Blocks as they exist in the mosADD app. A skin changes how they look (the tokens listed), never what they do. sourceHint is where to start reading in the mosADD repo; it was not traced file by file.",
+  "functionalBlocks": [
+    {
+      "id": "identity",
+      "name": "Identity",
+      "does": "Accounts, devices, joining. Always on."
+    },
+    {
+      "id": "mtalk",
+      "name": "Push-to-talk",
+      "does": "Queue, recordings, transcripts; relayed by the server, never end-to-end encrypted."
+    },
+    {
+      "id": "mirc",
+      "name": "Channels",
+      "does": "Rooms for teams; readable by the service."
+    },
+    {
+      "id": "mdm",
+      "name": "Direct messages",
+      "does": "Between two people; end-to-end encrypted 1:1."
+    },
+    {
+      "id": "madd",
+      "name": "Agents",
+      "does": "Home agents, labelled as agents."
+    },
+    {
+      "id": "mkeeper",
+      "name": "Scheduled jobs / own stream",
+      "does": "An agent that acts on a timetable."
+    },
+    {
+      "id": "mrag",
+      "name": "Team memory",
+      "does": "Indexes team channels only, never 1:1 DMs."
+    },
+    {
+      "id": "mayl",
+      "name": "Mail",
+      "does": "Inboxes for people and agents."
+    },
+    {
+      "id": "murl",
+      "name": "Room on a website",
+      "does": "A live room embedded on a domain."
+    },
+    {
+      "id": "offline",
+      "name": "Works without signal",
+      "does": "Store-and-forward; local links as the core gains them."
+    }
+  ],
+  "uiBlocks": [
+    {
+      "id": "thread-wall",
+      "name": "Thread wall (cards)",
+      "screenshot": "klocki/sciana-watkow-karty.png",
+      "describes": "Cards of conversations with sender/channel, preview line, time, pin and menu.",
+      "skinTokens": [
+        "background",
+        "surface",
+        "border",
+        "text",
+        "textMuted",
+        "channels",
+        "radius",
+        "density"
+      ],
+      "sourceHint": "ChatPanel / SphereOverlay (wall of cards)"
+    },
+    {
+      "id": "chat-window",
+      "name": "Conversation window",
+      "screenshot": "klocki/okno-rozmowy.png",
+      "describes": "Header, message bubbles, voice notes, composer.",
+      "skinTokens": [
+        "background",
+        "surface",
+        "text",
+        "textMuted",
+        "accent",
+        "radius",
+        "density",
+        "fonts"
+      ],
+      "sourceHint": "apps/web/src/components/overlays/sphere/ChatPanel.tsx"
+    },
+    {
+      "id": "composer",
+      "name": "Composer bar (ATTACH · PTT or field · switch · SEND)",
+      "screenshot": "klocki/pasek-pisania-attach-ptt-txt.png",
+      "describes": "Attach button, push-to-talk or text field, mode switch, send.",
+      "skinTokens": [
+        "surface",
+        "accent",
+        "onAccent",
+        "pttTransmit",
+        "pttListen",
+        "radius"
+      ],
+      "sourceHint": "ChatPanel.tsx; apps/web/src/hooks/usePttControls.ts, usePttLayout.ts"
+    },
+    {
+      "id": "mtalk-ptt",
+      "name": "mTALK push-to-talk button",
+      "screenshot": "klocki/mtalk-ptt-przycisk.png",
+      "describes": "The talk button with queue and floor states.",
+      "skinTokens": [
+        "pttTransmit",
+        "pttListen",
+        "accent",
+        "onAccent"
+      ],
+      "sourceHint": "apps/web/src/hooks/useMtalkFloor.ts, usePttFlash.ts"
+    },
+    {
+      "id": "mirc-channel",
+      "name": "mIRC channel header",
+      "screenshot": "klocki/mirc-kanal-naglowek.png",
+      "describes": "Channel name, access label (server-readable), members, talk-target strip.",
+      "skinTokens": [
+        "surface",
+        "text",
+        "textMuted",
+        "channels.mIRC",
+        "warning"
+      ],
+      "sourceHint": "apps/web/src/components/ChannelView.tsx"
+    },
+    {
+      "id": "header-switcher",
+      "name": "Header with module switcher and filters",
+      "screenshot": "klocki/naglowek-przelacznik-filtry.png",
+      "describes": "Module dropdown (mDM, mIRC, mAYL), search, filter tabs.",
+      "skinTokens": [
+        "surface",
+        "text",
+        "textMuted",
+        "accent",
+        "channels"
+      ],
+      "sourceHint": "apps/web/src/components/overlays/SphereOverlay.tsx; sphere/sphereTypes.ts MODULES"
+    },
+    {
+      "id": "add-button",
+      "name": "\"+\" button",
+      "screenshot": "klocki/przycisk-plus.png",
+      "describes": "Start a new conversation.",
+      "skinTokens": [
+        "accent",
+        "onAccent",
+        "radius"
+      ],
+      "sourceHint": "SphereOverlay.tsx"
+    },
+    {
+      "id": "lidar-backdrop",
+      "name": "Lidar / radar backdrop",
+      "screenshot": "klocki/tlo-lidara-radar.png",
+      "describes": "Radar rings over the background; the skin may swap it for a plain fill or an image (theme.backdrop).",
+      "skinTokens": [
+        "background",
+        "backdrop"
+      ],
+      "sourceHint": "apps/web/src/components/HubRadar.tsx, DashboardRadar.tsx"
+    },
+    {
+      "id": "mayl-inbox",
+      "name": "mAYL inbox",
+      "screenshot": "klocki/mayl-skrzynka.jpg",
+      "describes": "Mail cards with sender, state tabs (inbox, sent, drafts…).",
+      "skinTokens": [
+        "surface",
+        "text",
+        "channels.mAYL",
+        "radius"
+      ],
+      "sourceHint": "apps/web/src/components/mayl/"
+    },
+    {
+      "id": "mkeeper-stream",
+      "name": "mKEEPER (own stream)",
+      "screenshot": null,
+      "describes": "Own notes, files and voice in one place. NO SCREENSHOT YET: the demo has no direct link to it.",
+      "skinTokens": [
+        "surface",
+        "text",
+        "accent"
+      ],
+      "sourceHint": "SphereOverlay panel dm:self; KeeperModeBar.tsx"
+    }
+  ]
+}

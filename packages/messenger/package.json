@@ -28,6 +28,9 @@
     "src",
     "schema",
     "templates",
+    "brands",
+    "skins",
+    "catalog",
     "README.md",
     "LICENSE"
   ],

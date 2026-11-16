@@ -1,0 +1,43 @@
+{
+  "id": "mosadd",
+  "name": "mosADD",
+  "logo": {
+    "src": "/brands/mosadd/logo.svg",
+    "alt": "mosADD"
+  },
+  "mode": "light",
+  "tokens": {
+    "bg": "hsl(150 9% 87%)",
+    "ink": "hsl(160 30% 8%)",
+    "text": "hsl(160 30% 8%)",
+    "muted": "hsl(160 14% 28%)",
+    "soft": "hsl(160 22% 18%)",
+    "faint": "hsl(160 14% 43%)",
+    "line": "hsl(155 12% 62%)",
+    "line-strong": "hsl(155 12% 54%)",
+    "chip": "hsl(155 12% 88%)",
+    "chip-hover": "hsl(150 14% 86%)",
+    "card": "hsl(0 0% 100%)",
+    "accent": "hsl(145 100% 28%)",
+    "ok": "hsl(145 100% 28%)",
+    "danger": "hsl(0 88% 36%)",
+    "warn": "hsl(38 100% 34%)",
+    "shadow-card": "none",
+    "shadow-soft": "none",
+    "radius": "0.25rem",
+    "font": "\"Space Grotesk\", \"IBM Plex Mono\", ui-sans-serif, system-ui, sans-serif",
+    "mono": "\"IBM Plex Mono\", \"JetBrains Mono\", ui-monospace, monospace",
+    "aurora": []
+  },
+  "copy": {
+    "heroTitle": "Build your own messenger",
+    "heroLede": "Dress the mosADD messenger in your own skin: colours, type, corners, backdrop, name and logo. Same blocks, same encryption, your look.",
+    "omnibarPlaceholder": "Dark navy, port at night, amber accent, fewer rounded corners…",
+    "chips": [
+      "Port at night",
+      "Event security",
+      "Club",
+      "Fleet desk"
+    ]
+  }
+}

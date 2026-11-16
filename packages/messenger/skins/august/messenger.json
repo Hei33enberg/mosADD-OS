@@ -1,0 +1,198 @@
+{
+  "$schema": "https://mosadd.dev/schema/messenger/1.json",
+  "format": "mosadd.messenger",
+  "formatVersion": 1,
+  "id": "skin-august",
+  "revision": 1,
+  "appVersion": "1.0.0",
+  "template": "community@1",
+  "brand": {
+    "name": "August",
+    "shortName": "RunClub",
+    "description": "Channels, direct messages and a welcome agent for a running club.",
+    "icon": "assets/icon-1024.png",
+    "languages": [
+      "en"
+    ],
+    "defaultLanguage": "en",
+    "privacyPolicy": "https://example.org/privacy",
+    "poweredBy": "about"
+  },
+  "core": {
+    "line": "mosadd-core@1",
+    "channel": "stable"
+  },
+  "blocks": [
+    {
+      "id": "identity",
+      "enabled": true,
+      "settings": {
+        "login": [
+          "email-code"
+        ],
+        "namespace": "runclub",
+        "joining": "link"
+      }
+    },
+    {
+      "id": "mirc",
+      "enabled": true,
+      "settings": {
+        "startChannels": [
+          "#welcome",
+          "#sunday-long-run",
+          "#races"
+        ],
+        "whoCreatesChannels": "everyone"
+      }
+    },
+    {
+      "id": "mdm",
+      "enabled": true,
+      "settings": {
+        "calls": true,
+        "files": true,
+        "disappearingHours": 0
+      }
+    },
+    {
+      "id": "mtalk",
+      "enabled": true,
+      "settings": {
+        "button": "floating",
+        "queue": true,
+        "recordings": true,
+        "transcripts": false,
+        "maxSeconds": 30,
+        "inChannels": true
+      }
+    },
+    {
+      "id": "madd",
+      "enabled": true,
+      "settings": {
+        "homeAgents": [
+          {
+            "name": "Pacer",
+            "role": "Welcomes new members, answers questions about meeting points and the race calendar",
+            "model": "mosadd/flash"
+          }
+        ],
+        "usersBringOwnAgents": false
+      }
+    },
+    {
+      "id": "murl",
+      "enabled": true
+    },
+    {
+      "id": "mrag",
+      "enabled": false,
+      "settings": {
+        "scope": "off",
+        "limitMbPerUser": 1
+      }
+    },
+    {
+      "id": "mayl",
+      "enabled": false
+    },
+    {
+      "id": "mkeeper",
+      "enabled": false
+    }
+  ],
+  "layout": {
+    "tabs": [
+      "mirc",
+      "mdm",
+      "mtalk",
+      "madd"
+    ],
+    "home": "mirc"
+  },
+  "theme": {
+    "id": "august",
+    "version": "1.0.0",
+    "base": "mosadd-august",
+    "defaultMode": "dark",
+    "modes": [
+      "dark"
+    ],
+    "tokens": {
+      "dark": {
+        "background": "#000000",
+        "surface": "#080808",
+        "border": "#1f1f1f",
+        "text": "#f2f2f2",
+        "textMuted": "#8c8c8c",
+        "accent": "#20c568",
+        "onAccent": "#050505",
+        "warning": "#eba314",
+        "error": "#d53434",
+        "pttTransmit": "#d53434",
+        "pttListen": "#4ddb8a"
+      }
+    },
+    "fonts": {
+      "text": "Space Grotesk",
+      "headings": "Space Grotesk"
+    },
+    "radius": "square",
+    "density": "comfortable",
+    "backdrop": {
+      "kind": "lidar"
+    },
+    "channels": {
+      "dark": {
+        "mDM": "#4ddb8a",
+        "mIRC": "#e75f5f",
+        "mAYL": "#f7bf3b",
+        "mURL": "#40bbe7"
+      }
+    }
+  },
+  "releases": {
+    "android": {
+      "enabled": true,
+      "package": "org.example.runclub",
+      "shell": "bundled",
+      "signing": "creator-key",
+      "autoSignSecurityPatches": false,
+      "channels": [
+        "direct-apk"
+      ],
+      "push": "unifiedpush"
+    },
+    "desktop": {
+      "enabled": false,
+      "systems": [
+        "windows"
+      ],
+      "signing": "mosadd"
+    },
+    "web": {
+      "enabled": true,
+      "address": "runclub",
+      "customDomain": null
+    },
+    "channel": "beta"
+  },
+  "instance": {
+    "hosting": "mosadd",
+    "network": {
+      "listedInMosaddDirectory": false
+    },
+    "cloudServices": [
+      "madd"
+    ]
+  },
+  "budget": {
+    "monthlyUsd": 25,
+    "overBudget": "pause-agents"
+  },
+  "privacy": {
+    "telemetry": "none",
+    "crashReports": "opt-in"
+  }
+}

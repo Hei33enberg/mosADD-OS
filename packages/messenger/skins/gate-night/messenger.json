@@ -1,0 +1,228 @@
+{
+  "$schema": "https://mosadd.dev/schema/messenger/1.json",
+  "format": "mosadd.messenger",
+  "formatVersion": 1,
+  "id": "skin-gate-night",
+  "revision": 1,
+  "appVersion": "1.0.0",
+  "template": "security-events@1",
+  "brand": {
+    "name": "Gate Watch",
+    "shortName": "GateWatch",
+    "description": "Push-to-talk, post channels and a duty agent for event security: posts, incidents and shift handover.",
+    "icon": "assets/icon-1024.png",
+    "languages": [
+      "en"
+    ],
+    "defaultLanguage": "en",
+    "privacyPolicy": "https://example.org/privacy",
+    "poweredBy": "about"
+  },
+  "core": {
+    "line": "mosadd-core@1",
+    "channel": "stable"
+  },
+  "blocks": [
+    {
+      "id": "identity",
+      "enabled": true,
+      "settings": {
+        "login": [
+          "email-code",
+          "device-key"
+        ],
+        "namespace": "gatewatch",
+        "joining": "invite-only"
+      }
+    },
+    {
+      "id": "mtalk",
+      "enabled": true,
+      "settings": {
+        "button": "large-bottom",
+        "queue": true,
+        "recordings": true,
+        "transcripts": true,
+        "maxSeconds": 45,
+        "inChannels": true
+      }
+    },
+    {
+      "id": "mirc",
+      "enabled": true,
+      "settings": {
+        "startChannels": [
+          "#gate-a",
+          "#control-room",
+          "#incidents"
+        ],
+        "whoCreatesChannels": "admins"
+      }
+    },
+    {
+      "id": "mdm",
+      "enabled": true,
+      "settings": {
+        "calls": true,
+        "files": true,
+        "disappearingHours": 0
+      }
+    },
+    {
+      "id": "madd",
+      "enabled": true,
+      "settings": {
+        "homeAgents": [
+          {
+            "name": "Marshal",
+            "role": "On duty: logs incident reports from push-to-talk, summarises each post at shift change, keeps the rota",
+            "model": "mosadd/flash",
+            "voice": "calm-en"
+          }
+        ],
+        "usersBringOwnAgents": false
+      }
+    },
+    {
+      "id": "mkeeper",
+      "enabled": true,
+      "settings": {
+        "jobs": [
+          {
+            "name": "shift-handover",
+            "cron": "0 7,15,23 * * *",
+            "does": "Marshal posts the shift handover summary on #control-room"
+          }
+        ]
+      }
+    },
+    {
+      "id": "mrag",
+      "enabled": true,
+      "settings": {
+        "scope": "team-channels",
+        "limitMbPerUser": 100
+      }
+    },
+    {
+      "id": "mayl",
+      "enabled": false
+    },
+    {
+      "id": "murl",
+      "enabled": false
+    },
+    {
+      "id": "offline",
+      "enabled": true,
+      "settings": {
+        "storeAndForward": true,
+        "localNetwork": false,
+        "bluetooth": false,
+        "lora": false
+      }
+    }
+  ],
+  "layout": {
+    "tabs": [
+      "mtalk",
+      "mirc",
+      "mdm",
+      "madd"
+    ],
+    "home": "mtalk"
+  },
+  "theme": {
+    "id": "gate-night",
+    "version": "1.0.0",
+    "base": "mosadd-august",
+    "defaultMode": "dark",
+    "modes": [
+      "dark",
+      "light"
+    ],
+    "tokens": {
+      "dark": {
+        "background": "#0c1118",
+        "surface": "#141c27",
+        "border": "#26334a",
+        "text": "#eef2f7",
+        "textMuted": "#9fb0c8",
+        "accent": "#ff8a1f",
+        "onAccent": "#1c0e00",
+        "warning": "#f5a524",
+        "error": "#ff6b6b",
+        "pttTransmit": "#ff4d4f",
+        "pttListen": "#2ecc71"
+      },
+      "light": {
+        "background": "#f5f7fa",
+        "surface": "#ffffff",
+        "border": "#cbd5e1",
+        "text": "#0f172a",
+        "textMuted": "#475569",
+        "accent": "#b3440a",
+        "onAccent": "#ffffff",
+        "warning": "#a16207",
+        "error": "#b91c1c",
+        "pttTransmit": "#9b1515",
+        "pttListen": "#15803d"
+      }
+    },
+    "fonts": {
+      "text": "Inter",
+      "headings": "Space Grotesk"
+    },
+    "radius": "square",
+    "density": "compact",
+    "backdrop": {
+      "kind": "lidar"
+    }
+  },
+  "releases": {
+    "android": {
+      "enabled": true,
+      "package": "org.example.gatewatch",
+      "shell": "bundled",
+      "signing": "creator-key",
+      "autoSignSecurityPatches": true,
+      "channels": [
+        "direct-apk",
+        "mosadd-store"
+      ],
+      "push": "unifiedpush"
+    },
+    "desktop": {
+      "enabled": true,
+      "systems": [
+        "windows",
+        "linux"
+      ],
+      "signing": "mosadd"
+    },
+    "web": {
+      "enabled": true,
+      "address": "gatewatch",
+      "customDomain": null
+    },
+    "channel": "beta"
+  },
+  "instance": {
+    "hosting": "mosadd",
+    "network": {
+      "listedInMosaddDirectory": false
+    },
+    "cloudServices": [
+      "madd",
+      "ptt-transcripts"
+    ]
+  },
+  "budget": {
+    "monthlyUsd": 150,
+    "overBudget": "text-only"
+  },
+  "privacy": {
+    "telemetry": "none",
+    "crashReports": "opt-in"
+  }
+}

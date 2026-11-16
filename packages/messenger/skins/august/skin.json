@@ -1,0 +1,41 @@
+{
+  "format": "mosadd.skin",
+  "formatVersion": 1,
+  "name": "August",
+  "defaultMode": "dark",
+  "modes": [
+    "dark"
+  ],
+  "tokens": {
+    "dark": {
+      "background": "#000000",
+      "surface": "#080808",
+      "border": "#1f1f1f",
+      "text": "#f2f2f2",
+      "textMuted": "#8c8c8c",
+      "accent": "#20c568",
+      "onAccent": "#050505",
+      "warning": "#eba314",
+      "error": "#d53434",
+      "pttTransmit": "#d53434",
+      "pttListen": "#4ddb8a"
+    }
+  },
+  "channels": {
+    "dark": {
+      "mDM": "#4ddb8a",
+      "mIRC": "#e75f5f",
+      "mAYL": "#f7bf3b",
+      "mURL": "#40bbe7"
+    }
+  },
+  "fonts": {
+    "text": "Space Grotesk",
+    "headings": "Space Grotesk"
+  },
+  "radius": "square",
+  "density": "comfortable",
+  "backdrop": {
+    "kind": "lidar"
+  }
+}

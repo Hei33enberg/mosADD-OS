@@ -1,0 +1,47 @@
+{
+  "format": "mosadd.skin",
+  "formatVersion": 1,
+  "name": "Fleet Desk",
+  "defaultMode": "dark",
+  "modes": [
+    "dark",
+    "light"
+  ],
+  "tokens": {
+    "dark": {
+      "background": "#0a1416",
+      "surface": "#112024",
+      "border": "#24424a",
+      "text": "#eef2f7",
+      "textMuted": "#9db8bd",
+      "accent": "#2bd0c0",
+      "onAccent": "#02201d",
+      "warning": "#f5a524",
+      "error": "#ff6b6b",
+      "pttTransmit": "#ff4d4f",
+      "pttListen": "#2ecc71"
+    },
+    "light": {
+      "background": "#f3f8f8",
+      "surface": "#ffffff",
+      "border": "#cbd5e1",
+      "text": "#0f172a",
+      "textMuted": "#475569",
+      "accent": "#0b6b63",
+      "onAccent": "#ffffff",
+      "warning": "#a16207",
+      "error": "#b91c1c",
+      "pttTransmit": "#9b1515",
+      "pttListen": "#15803d"
+    }
+  },
+  "fonts": {
+    "text": "IBM Plex Sans",
+    "headings": "IBM Plex Sans"
+  },
+  "radius": "soft",
+  "density": "comfortable",
+  "backdrop": {
+    "kind": "lidar"
+  }
+}

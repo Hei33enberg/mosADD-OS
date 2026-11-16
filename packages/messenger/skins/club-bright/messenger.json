@@ -1,0 +1,218 @@
+{
+  "$schema": "https://mosadd.dev/schema/messenger/1.json",
+  "format": "mosadd.messenger",
+  "formatVersion": 1,
+  "id": "skin-club-bright",
+  "revision": 1,
+  "appVersion": "1.0.0",
+  "template": "school-club@1",
+  "brand": {
+    "name": "Club Room",
+    "shortName": "ClubRoom",
+    "description": "Class and club channels, direct messages and a helper agent that answers schedule questions.",
+    "icon": "assets/icon-1024.png",
+    "languages": [
+      "en"
+    ],
+    "defaultLanguage": "en",
+    "privacyPolicy": "https://example.org/privacy",
+    "poweredBy": "about"
+  },
+  "core": {
+    "line": "mosadd-core@1",
+    "channel": "stable"
+  },
+  "blocks": [
+    {
+      "id": "identity",
+      "enabled": true,
+      "settings": {
+        "login": [
+          "email-code",
+          "device-key"
+        ],
+        "namespace": "clubroom",
+        "joining": "link"
+      }
+    },
+    {
+      "id": "mtalk",
+      "enabled": false
+    },
+    {
+      "id": "mirc",
+      "enabled": true,
+      "settings": {
+        "startChannels": [
+          "#announcements",
+          "#homework",
+          "#events"
+        ],
+        "whoCreatesChannels": "admins"
+      }
+    },
+    {
+      "id": "mdm",
+      "enabled": true,
+      "settings": {
+        "calls": true,
+        "files": true,
+        "disappearingHours": 0
+      }
+    },
+    {
+      "id": "madd",
+      "enabled": true,
+      "settings": {
+        "homeAgents": [
+          {
+            "name": "Helper",
+            "role": "Answers questions about the timetable, events and deadlines from the channels; never gives out contact details",
+            "model": "mosadd/flash",
+            "voice": "friendly-en"
+          }
+        ],
+        "usersBringOwnAgents": false
+      }
+    },
+    {
+      "id": "mkeeper",
+      "enabled": true,
+      "settings": {
+        "jobs": [
+          {
+            "name": "weekly-digest",
+            "cron": "0 17 * * 5",
+            "does": "Helper posts next week's events and deadlines on #announcements"
+          }
+        ]
+      }
+    },
+    {
+      "id": "mrag",
+      "enabled": true,
+      "settings": {
+        "scope": "team-channels",
+        "limitMbPerUser": 100
+      }
+    },
+    {
+      "id": "mayl",
+      "enabled": false
+    },
+    {
+      "id": "murl",
+      "enabled": false
+    },
+    {
+      "id": "offline",
+      "enabled": true,
+      "settings": {
+        "storeAndForward": true,
+        "localNetwork": false,
+        "bluetooth": false,
+        "lora": false
+      }
+    }
+  ],
+  "layout": {
+    "tabs": [
+      "mirc",
+      "mdm",
+      "madd"
+    ],
+    "home": "mirc"
+  },
+  "theme": {
+    "id": "club-bright",
+    "version": "1.0.0",
+    "base": "mosadd-august",
+    "defaultMode": "dark",
+    "modes": [
+      "dark",
+      "light"
+    ],
+    "tokens": {
+      "dark": {
+        "background": "#0e1020",
+        "surface": "#171a30",
+        "border": "#2c3152",
+        "text": "#eef2f7",
+        "textMuted": "#a9b0d0",
+        "accent": "#ffb454",
+        "onAccent": "#1d1100",
+        "warning": "#f5a524",
+        "error": "#ff6b6b",
+        "pttTransmit": "#ff4d4f",
+        "pttListen": "#2ecc71"
+      },
+      "light": {
+        "background": "#f7f7fc",
+        "surface": "#ffffff",
+        "border": "#cbd5e1",
+        "text": "#0f172a",
+        "textMuted": "#475569",
+        "accent": "#a14d00",
+        "onAccent": "#ffffff",
+        "warning": "#a16207",
+        "error": "#b91c1c",
+        "pttTransmit": "#9b1515",
+        "pttListen": "#15803d"
+      }
+    },
+    "fonts": {
+      "text": "Nunito",
+      "headings": "Nunito"
+    },
+    "radius": "round",
+    "density": "comfortable",
+    "backdrop": {
+      "kind": "lidar"
+    }
+  },
+  "releases": {
+    "android": {
+      "enabled": true,
+      "package": "org.example.clubroom",
+      "shell": "bundled",
+      "signing": "creator-key",
+      "autoSignSecurityPatches": true,
+      "channels": [
+        "direct-apk",
+        "mosadd-store"
+      ],
+      "push": "unifiedpush"
+    },
+    "desktop": {
+      "enabled": true,
+      "systems": [
+        "windows",
+        "linux"
+      ],
+      "signing": "mosadd"
+    },
+    "web": {
+      "enabled": true,
+      "address": "clubroom",
+      "customDomain": null
+    },
+    "channel": "beta"
+  },
+  "instance": {
+    "hosting": "mosadd",
+    "network": {
+      "listedInMosaddDirectory": false
+    },
+    "cloudServices": [
+      "madd"
+    ]
+  },
+  "budget": {
+    "monthlyUsd": 30,
+    "overBudget": "text-only"
+  },
+  "privacy": {
+    "telemetry": "none",
+    "crashReports": "opt-in"
+  }
+}

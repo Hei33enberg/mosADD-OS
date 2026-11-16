@@ -1,0 +1,47 @@
+{
+  "format": "mosadd.skin",
+  "formatVersion": 1,
+  "name": "Port Radio",
+  "defaultMode": "dark",
+  "modes": [
+    "dark",
+    "light"
+  ],
+  "tokens": {
+    "dark": {
+      "background": "#0b1220",
+      "surface": "#121b2e",
+      "border": "#24324d",
+      "text": "#e8eef8",
+      "textMuted": "#9aa8bf",
+      "accent": "#ffb020",
+      "onAccent": "#1a1200",
+      "warning": "#f5a524",
+      "error": "#ff6b6b",
+      "pttTransmit": "#ff4d4f",
+      "pttListen": "#2ecc71"
+    },
+    "light": {
+      "background": "#f6f8fb",
+      "surface": "#ffffff",
+      "border": "#cbd5e1",
+      "text": "#0f172a",
+      "textMuted": "#475569",
+      "accent": "#b45309",
+      "onAccent": "#ffffff",
+      "warning": "#a16207",
+      "error": "#b91c1c",
+      "pttTransmit": "#9b1515",
+      "pttListen": "#15803d"
+    }
+  },
+  "fonts": {
+    "text": "Inter",
+    "headings": "Space Grotesk"
+  },
+  "radius": "soft",
+  "density": "comfortable",
+  "backdrop": {
+    "kind": "lidar"
+  }
+}
