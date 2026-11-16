@@ -13,10 +13,10 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 - The live demo now looks and fits like the real app on every screen, from a small phone to a 1920 monitor: smaller text, as many columns as fit, an open thread standing beside the wall instead of covering it, and no red card backgrounds or glow. The demo bar now says what to do — watch the army work live, or open a thread, hold PTT and give an order.
 - The dashboard is back to your conversation threads only: yesterday's NEEDS YOU tab and band, the row of agents above the wall, the push-to-talk bar under the wall, the Approve button on cards and the shorter card previews are gone, the + button is back in its corner, and the cards lost their outline frames and glow to sit directly on the deep radar background — unread conversations show a bold name and a count. Cards no longer shrink and grow back on their own when the wall refreshes or a conversation is marked read, and a message in another section no longer rebuilds the wall you are looking at. The wall of threads appears sooner: the conversation, channel, mail and call windows now load quietly in the background once the wall is on screen, instead of before it. An agent's reply without a thread name lands in the thread where you last wrote to it. The / menu is shorter and clearer: in a chat with an agent its own commands always come first (status of the work, start a new task, stop), then this chat's actions — attach a file, search memory, ask mADD — and all mosADD tools sit in one row you can open; Telegram commands show only in channels connected to Telegram.
 - Inside the conversation windows the writing bar has one order everywhere: ATTACH first, then push-to-talk or the text field, then the switch between them, then SEND — in mKEEPER, in every direct chat (which can now switch to push-to-talk too) and in mTALK, where MUTE moved to its own row above the bar. The bar in a direct chat is one line high again and sits fully on screen, also in the desktop app: its short hint no longer wraps and pushes the bottom of the bar out of the window. The conversation window lost its frames too: the mTXT, mTALK and mAYL tabs, the message bubbles and the writing bar are now set apart by shade and spacing instead of outlines. Every new message now plays the same one mosADD sound, whichever channel or agent it comes from.
-- The mosADD logo is back to the familiar dotted wordmark with its small green light, in the header and footer of the home page and across the app. The home page keeps its 3D network of your army around the mRAG memory core, now sharper and with real depth: nearer people, agents and robots look bigger and brighter, the channel names sit clearly around the core, and it now fills the screen, follows your finger, mouse or touchpad, and its memory core is one smooth glowing sphere. “Connect your AI” lists Claude Code, Codex, Cursor, VS Code, Gemini CLI and Windsurf, and copies the command for the one you pick. The pricing page and the menu now say it plainly: free at launch, no subscriptions — the old plans and per-agent prices are gone.
+- The mosADD logo is back to the familiar dotted wordmark with its small green light, in the header and footer of the home page and across the app. The home page keeps its 3D network of your army around the mRAG memory core, now sharper and with real depth: nearer people, agents and robots look bigger and brighter, the channel names sit clearly around the core, and it now fills the screen, follows your finger, mouse or touchpad, and its memory core is one smooth glowing sphere. “Connect your AI” lists Claude Code, Codex, Cursor, VS Code, Gemini CLI and Windsurf, and copies the command for the one you pick. The pricing page and the menu now say it plainly: free at launch, no subscriptions — the old plans and per-agent prices are gone. The About, Pricing, Docs and Quickstart pages are rebuilt from scratch in the look of the home page: the same header, menu and footer, numbers with a measurement behind them, a plain list of what is not there yet, and questions that fold open. The footer is now one short map of the site: every link opens a page that exists, and both connect commands copy with one tap. The changelog page is rebuilt too: 18 entries were added from the repository history for the weeks that had none, the newest five stand open and older ones fold by month. The old Security, Agent, Help, Contact and comparison pages are off for now: their addresses lead to the home page until the rebuilt ones ship.
 - In the demo, mADD in the mKEEPER window answers "@mADD who is waiting for me" with the names of the threads waiting for you within a second, however a phone keyboard typed the @, and its reply is never an empty bubble. A channel's menu is now short, like the chat programs of old: members, invite, mute, channel settings and leave — everything rarely needed sits under channel settings, and a channel card on the wall offers just pin, mark as read, mute and archive. An open channel now receives new messages live straight away, instead of waiting and retrying for many seconds, and it first loads its latest 20 messages, with older ones following as you scroll up; a very large message no longer slows the channel down each time the window updates. mADD now always answers in the language you write to it, skips an AI model that was no longer available instead of stalling on it, and records how fast each answer starts. Pressing and holding a thread on the wall, in channels and in direct chats, opens its menu again — on a phone it slides up from the bottom with large rows, and letting go no longer opens the thread by mistake. In the demo you can also ask mADD what it can do, who is stuck, to search your notes or to sum up your day — in English or Polish — and asking it to tell an agent something now shows a CONFIRM / LEAVE card first, with a pretend reply from the agent after you confirm; mADD's replies are signed. On a phone, the demo now opens on the wall with one line telling you what to do, and the home page menu is ready in the background moments after the page loads. On the wall, the time above a channel card now lights up as soon as the agent you addressed with @ (or, if you addressed no one, the channel's first agent) has read your latest message there. The sign-in page now matches the rest of mosADD: dark, with the dotted wordmark and its green light. mKEEPER is your notebook again: mADD answers only when you call it with @mADD there (or start a voice note with its name), or when you write to it directly; plain notes, voice notes and channel posts no longer wake it. Recruit now sits at the very end of the menu, and the recruiting page opens the same menu as the home page. The menu itself is now short and simple — an icon and a plain label per row, no section headings, links only to pages that exist today — and on a phone it slides up from the bottom. New accounts start with $1 of fuel.
 
-`7badcd3a4` · https://mosadd.com/changelog#2026-11-16
+`75a4de338` · https://mosadd.com/changelog#2026-11-16
 
 ## 2026-11-15 — Web · Server · Apps
 
@@ -107,6 +107,99 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 `c80955361` · https://mosadd.com/changelog#v0.2.56
 
+## 2026-10-30 — Web
+
+**mosadd.com is open to everyone again.**
+
+- From 23 Oct the site stood behind a password while the app moved to our own server. The lock came off on 30 Oct, and mosadd.com answers for everyone again.
+- The copy of the site in the second location was rebuilt without the lock, so a switch to the copy cannot bring the password back.
+
+`89c405667` · https://mosadd.com/changelog#2026-10-30
+
+## 2026-10-26 — Server
+
+**A server review after the move: old addresses replaced, rate limits count the caller's real address.**
+
+- Four server functions still called the old backend's address. They now call api.mosadd.com, and a scheduled job that had been knocking on a dead address runs again.
+- The channel event log has its route back. The app had been calling it and getting a 404.
+- Rate limits count the real address of the caller behind our proxy. A forged header no longer gets around them.
+- Scheduled jobs and admin-only functions check who is calling before they do anything, and one leftover public function from the old setup was removed.
+
+`a7b8c4c10` · https://mosadd.com/changelog#2026-10-26
+
+## 2026-10-24 — Web · Server
+
+**mosADD runs on our own server.**
+
+- The app now talks to api.mosadd.com on our own server in Tel Aviv, instead of the hosted backend it was built on. The web build that makes the switch went live on 24 Oct.
+- Deleting a channel now ends everyone's membership in it on the server, so counters and re-joining behave.
+- mADD's reply streams in smaller pieces: every 150 ms instead of 450 ms.
+
+`a3f46a152` · https://mosadd.com/changelog#2026-10-24
+
+## 2026-10-06 — Web
+
+**The home page tour, rebuilt: one scene per section, real recordings, less text.**
+
+- Every section of the home page has one scene: real recordings of the app and 3D scenes instead of still images. Boxes and frames are gone from all fifteen sections.
+- Less text on the page, rebuilt in all 25 languages.
+- On a phone the recordings are readable and lighter, and a scene stays in place until its last point has scrolled past.
+- The counters in the tour are labelled "sample fleet", never "live".
+
+`13f17430c` · https://mosadd.com/changelog#2026-10-06
+
+## 2026-10-05 — Web · Server
+
+**Push-to-talk gets a queue and a 30-second limit, mentions reach the agent you named, and the app stops showing someone else's error page.**
+
+- If the network hands the app a page that is not ours, the app shows a short "connecting…" screen and keeps its last good version, instead of someone else's error page.
+- The mosADD sound plays once when you open the installed web app. Before this fix it either did not play at all or played three copies at once on the home page.
+- In the demo, PUSH TO TALK records on your device and the note lands in the thread. Nothing is sent.
+- Voice channels: only an active member of a push-to-talk channel can queue for the microphone, one transmission lasts at most 30 seconds, and the reader catches up on what you missed when you come back to the window.
+- A mention is saved with the message and handed to the agent you named. The server also enforces what a channel allows (voice, files), and a guest in a web room can delete only their own posts in that room.
+
+`75513a036` · https://mosadd.com/changelog#2026-10-05
+
+## 2026-10-04 — Web · Server
+
+**mosadd.com leaves its hosting provider and moves to our own server.**
+
+- On 3 Oct the previous hosting provider stopped serving the site. Since 4 Oct mosadd.com is built on our own machines and served from our own server in Tel Aviv.
+- A release replaces the whole site in one step and checks itself afterwards. If a check fails, the previous release comes back automatically.
+- Every release of the website also goes to a copy in a second location. This covers the pages, not the app's data.
+- Replies from AI agents no longer pass through the old provider's gateway.
+
+`48bd9f476` · https://mosadd.com/changelog#2026-10-04
+
+## 2026-09-30 — Web
+
+**A plain sentence about addresses on /developers.**
+
+- /developers now says it plainly: a client that stores only the server address has to be given a new one if that address changes.
+
+`beb5c90f5` · https://mosadd.com/changelog#2026-09-30
+
+## 2026-09-29 — Web
+
+**Mentions find the right agent, and the locked-conversations bar counts only people.**
+
+- Type @ and a short name to mention an agent in a channel. The chip now carries that agent's address, matching ignores capitals and accents, and one agent has one name.
+- The bar "This device can't open N of M conversations" counts only your visible conversations with people. Your own thread, archived cards and chats with agents no longer inflate it.
+
+`20b68144b` · https://mosadd.com/changelog#2026-09-29
+
+## 2026-09-28 — Web
+
+**The home page becomes the 1-MAN-ARMY OPS DECK.**
+
+- mosadd.com opens on the 1-MAN-ARMY OPS DECK tour in 25 languages: one hero, one family of buttons, real screen recordings of the app and 3D scenes. Drawings and mock-ups are gone. A first version had stood at /c since the day before.
+- The demo does more without an account: open a web room, send a mail, and write "save: …" to mADD to get a to-do row. All of it stays on your device.
+- The memory screen has a new layout: the canvas is the scene, your numbers sit on the deck, logs and telemetry fold away, and the library, legend and zoom buttons lost their frames.
+- The app returns to the lighter look of late August: deeper black, thinner lines, no glass effects, neutral buttons and fields without grey plates.
+- On Android, toasts and the update line sit above the navigation bar and sub-pages come out from under the status bar. The Windows app opens on sign-in, not on the home page. One price list in the code: no button can charge an amount different from the one on screen.
+
+`fc3d34d2b` · https://mosadd.com/changelog#2026-09-28
+
 ## 2026-09-27 — Desktop 0.2.54 — Apps
 
 **Test release: numbered installers for Windows and Android, and the build refuses installer names without a version.**
@@ -175,6 +268,18 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 `d76ead8c` · https://mosadd.com/changelog#v0.2.48
 
+## 2026-09-22 — Web
+
+**Phone polish: the header clears the clock, and an encrypted reply stops quoting ciphertext.**
+
+- On iPhone the installed web app's header comes out from under the clock.
+- Replying to or editing an end-to-end encrypted message no longer quotes the ciphertext.
+- The yellow slow-connection bar stops crying wolf: its threshold comes from measurement, and a refresh is no longer treated as a first load.
+- One contact that fails to load no longer takes down the whole screen, and the way out stays visible above the error.
+- The row you are in no longer shows an unread dot in the channel list, and the + button stops lying on top of the cards on larger screens.
+
+`ea36b7bad` · https://mosadd.com/changelog#2026-09-22
+
 ## 2026-09-21 — Desktop 0.2.47 — Apps
 
 **mADD gets hands, the free plan stops being the paid one, and the light theme finally follows your phone.**
@@ -201,6 +306,18 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 - REC and PTT went back to being two separate buttons — the centre no longer switches mode under your thumb.
 
 `0dcc9860` · https://mosadd.com/changelog#v0.2.46
+
+## 2026-09-19 — Web · Server
+
+**One layout for the whole app, mRAG as a full page, and a four-step mADD window.**
+
+- One layout: the top bar stands on every screen, and memory, agents, connectors and settings open as full pages under it.
+- mRAG is a full page: search and your recent searches on top, files below, and the canvas right under the search instead of behind a button.
+- The mADD window has four steps: WALL, TO-DO, STATUS and DONE. mADD answers when you call it by name and uses your memory in the conversation.
+- A voice note in a chat with an agent comes with a transcript, and push-to-talk to an agent is hold-and-speak, with a guard against a microphone left open.
+- The home page headline becomes 1-MAN-ARMY OPS DECK, opening the app loads the newest build straight away, and mail shows the full To and Cc lines.
+
+`c8c368578` · https://mosadd.com/changelog#2026-09-19
 
 ## 2026-09-16 — Desktop 0.2.45 — Apps
 
@@ -233,6 +350,18 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 `032cfd45` · https://mosadd.com/changelog#v0.2.43
 
+## 2026-09-13 — Web · Server · Apps
+
+**Drafts get a tab, incoming mail delivers its attachments, and Android gets build 2.0.6.**
+
+- Drafts have their own tab in direct messages and in mail.
+- Incoming mail now delivers its attachments.
+- Authorizing a connected AI a second time no longer loops into a black screen.
+- The hardware Back button closes a side panel, and the wall reaches the bottom of the window with the + button floating above it.
+- Memory: the same fact no longer shows twice, and the nightly cleaner stops removing channel history. Android: build 2.0.6 (390) is the file on the download page.
+
+`c2e9cc426` · https://mosadd.com/changelog#2026-09-13
+
 ## 2026-09-12 — Desktop 0.2.41 — Apps
 
 **Screen protection actually reached installed desktops.**
@@ -243,6 +372,18 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 `4d7ab330` · https://mosadd.com/changelog#v0.2.41
 
+## 2026-09-11 — Web · Server
+
+**A high-contrast mode, a faster first screen in direct messages, and a long list of fixes from screenshots.**
+
+- A high-contrast mode with its own switch.
+- The first screen of direct messages no longer waits until the whole wall is decrypted.
+- Memory: the library sees all of your memory, a label that called fragments "sources" is corrected, and a full bar no longer says "used up" when there is no limit.
+- Dozens of fixes reported from screenshots across direct messages, mail, channels, keys, settings and statistics: labels you can read, menus that stay on screen, and engineering jargon removed from the owner's screens.
+- The "no connection" card goes back to the network by itself instead of waiting for a tap, and the install page stops calling a build "Latest" when it is not.
+
+`7e7b99bb8` · https://mosadd.com/changelog#2026-09-11
+
 ## 2026-09-08 — Desktop 0.2.40 — Apps
 
 **Electron shell 0.2.40.**
@@ -252,6 +393,18 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 `d6430d8b` · https://mosadd.com/changelog#v0.2.40
 
+## 2026-09-07 — Web · Server
+
+**The assistant in your own thread is named mADD, and notifications get a test button.**
+
+- The assistant in your own thread gets its name: mADD. Press Space there to record a voice note.
+- Settings have a button that tests whether notifications reach this device.
+- Connecting an app ends with a clear verdict, not just a green tick.
+- The memory screen counts what search can reach, so one memory no longer shows two different totals.
+- Photos survive a return from the background and channels draw them, the Vibration switch turns vibration off in all 11 places, and on a computer two side panels can be open at once.
+
+`d59c2017e` · https://mosadd.com/changelog#2026-09-07
+
 ## 2026-09-06 — Desktop 0.2.39 — Apps
 
 **The download page and the shipped build agree again.**
@@ -260,6 +413,30 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 - The install-links gate now fails when those two drift apart.
 
 `81437760` · https://mosadd.com/changelog#v0.2.39
+
+## 2026-09-05 — Web · Server
+
+**mKEEPER turns voice into words and tasks, your AI can connect as you or as your agent, and badges we never earned come off the site.**
+
+- mKEEPER: a voice note to yourself becomes words, a dictated line becomes a task in one tap, and your own thread is now called mKEEPER.
+- Connect your AI as yourself or as your agent: the consent screen asks which, asks once instead of twice, and every key says who it speaks as.
+- Push-to-talk has one icon everywhere and a vertical rail in mTALK. In a channel your voice is turned into words first, so agents can act on what you said, and the reader can read an agent's answer aloud in a direct chat.
+- Errors became instructions: a refusal from the server says what happened and what to do next, a rate limit says it is an account limit and not an outage, what you started typing no longer disappears, and files send from an iPhone.
+- The SOC 2, HIPAA and ISO 27001 badges came off the site because we do not hold those certificates. Two start-up bugs are fixed: a session lock that left mosadd.com on LOADING, and a white screen at /auth for people already signed in.
+
+`e168f2745` · https://mosadd.com/changelog#2026-09-05
+
+## 2026-08-31 — Web · Server
+
+**A safety number for every direct conversation, and agents that wake on a message.**
+
+- Direct messages: every conversation has a safety number you can compare with the other person.
+- Your recovery phrase and two-factor codes are kept out of memory search results, and deleting your account now also deletes a stored voice print.
+- "Search your memory" searches the memory itself, not file names.
+- Agents wake on a message instead of a timer: from about 67 seconds to a few seconds. A chat shows who is writing: the live session or its cloud stand-in.
+- An attachment in mail from outside no longer disappears without a trace, you can add your own agent to a channel from the app, and a channel's full ID can be copied from its menu.
+
+`ff14dc40e` · https://mosadd.com/changelog#2026-08-31
 
 ## 2026-08-26 — Desktop 0.2.37 — Apps
 
@@ -288,6 +465,18 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 `3fa909ee` · https://mosadd.com/changelog#v0.2.35
 
+## 2026-08-25 — Web · Server
+
+**Push-to-talk gets its sound and one speaker at a time, channels show who is on air, and the blank screen at start gets a sensor.**
+
+- Push-to-talk has a sound and a haptic signature: a click on press, a crackle on open and close, and a refusal tone. Tap a face in a channel to speak to one person, and only one person transmits at a time.
+- Channels show who is transmitting and who is active right now, agents count as available, @all calls everyone, and you can paste a screenshot from the clipboard.
+- Agent voice: speed control for transmission and playback, a reader bar that works as a player with pause, next and previous, and a volume slider.
+- A text message carries its addressee: naming one agent beats @all, and mentions work with letters of every alphabet.
+- Start-up: a sensor reports why a screen stayed blank and the app reloads itself once, the hardware Back button closes every window, and the strip at the bottom of the iPhone app is gone.
+
+`1e73385fb` · https://mosadd.com/changelog#2026-08-25
+
 ## 2026-08-18 — Desktop 0.2.30 — Apps
 
 **The download page stopped advertising a build nobody could get.**
@@ -295,6 +484,18 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 - A listed desktop package had no downloadable artifact behind it. The listing was removed rather than left as a dead promise.
 
 `3a33b9f6` · https://mosadd.com/changelog#v0.2.30
+
+## 2026-08-17 — Web · Server
+
+**Every screen speaks your language, channels can wake your phone, and agents answer their mail.**
+
+- 25 languages for real: dates and counts follow the language you picked, the add-agent wizard and the /mcp page are translated, and the other 24 languages stop seeing Polish.
+- A message in a channel can wake your phone, and the emergency alert reaches a locked phone.
+- Agents read and answer their own mail. Cloud agents answer in open channels only after a person asks, with a guard against agents answering each other in a loop.
+- Unread marks follow the server: a decision alarm is separate from read state, and channel and direct-message cards agree with the server after a reconnect.
+- mRAG no longer says your memory is empty when it has not looked yet, and the voice player shows a live equalizer.
+
+`11eb49cbf` · https://mosadd.com/changelog#2026-08-17
 
 ## 2026-08-16 — Desktop 0.2.27 — Apps
 
