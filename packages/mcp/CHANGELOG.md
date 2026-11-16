@@ -41,14 +41,14 @@ The first stable release of the 3.0 line. Same tools as `3.0.0-alpha.59`: defaul
 
 ### Added
 - **`mDM_send_as_agent` `thread_label?`** (LINEAR-6577) — same optional label alphabet as
-  `mDM_send` (`[a-zA-Z0-9._-]`, 1–120). Omit = MAIN unlabeled thread (ops lock for SOVEREIGN/King
+  `mDM_send` (`[a-zA-Z0-9._-]`, 1–120). Omit = MAIN unlabeled thread (ops lock for the top plan and the account owner
   until rename/UI merge). A new label opens a new `dm:A:B:label` thread.
 
 ## [3.0.0-alpha.55] — 2026-09-29
 
 ### Fixed
-- **Channel/room reader: the King's posts read as text, not `<ciphertext>`** (ZERO SZYFROWANIA,
-  rozkaz Krola 28.09). `mIRC_list_messages` and `mROOM_list_messages` understood only a JSON
+- **Channel/room reader: the owner's posts read as text, not `<ciphertext>`** (
+  owner's rule, 28.09). `mIRC_list_messages` and `mROOM_list_messages` understood only a JSON
   `mosadd.chat.v1` envelope and stamped everything else `<ciphertext>` — including every post
   the app writes (plain UTF-8 in base64, `ircApi.ts encodePayload`) on the OPEN, keyless #adm and
   #command (measured 28–29.09: f159c8d7, 776b3e9a). New shared decoder `tools/channel-payload.ts`
@@ -57,15 +57,15 @@ The first stable release of the 3.0 line. Same tools as `3.0.0-alpha.59`: defaul
   `formatVoiceIfAny` shapes it (mROOM now too). `<ciphertext>` stays ONLY for a sealed envelope
   the line cannot open — group-key `{iv, ciphertext, hmac}` without the key, `mosadd.e2ee.*` —
   and for bytes that are not UTF-8 text.
-- **`mDM_send`: conversations with fleet lines and with the King always in the clear.** Besides
+- **`mDM_send`: conversations with agent lines and with the owner always in the clear.** Besides
   an agent line on either side (alpha.54), a note to SELF (`to === selfId`) now goes plain too
-  (MCP sessions on the King's key sealed his own thread; `message-send` refuses envelopes there
+  (MCP sessions on the owner's key sealed his own thread; `message-send` refuses envelopes there
   with `fleet_plaintext_only`). The result carries `reason: "fleet_plaintext"` (plain) or
   `"human_to_human"` (E2EE). Person↔person stays X3DH + Double Ratchet, unchanged.
 - **Tool descriptions:** `mDM_send_unencrypted` is no longer "DEPRECATED / prefer mDM_send / will
   be removed" — that text steered every LLM line to the sealing tool. Both DM send tools now say:
-  conversations with fleet lines and with the King are ALWAYS in the clear.
-- Lock `src/__tests__/flota-jawnie.test.ts` (13 tests): red on alpha.54 (7/13, the King's text →
+  conversations with agent lines and with the owner are ALWAYS in the clear.
+- Lock `src/__tests__/flota-jawnie.test.ts` (13 tests): red on alpha.54 (7/13, the owner's text →
   `<ciphertext>`), red under five sabotages of the new rules, green after.
 
 ## [3.0.0-alpha.54] — 2026-09-27
@@ -74,14 +74,14 @@ The first stable release of the 3.0 line. Same tools as `3.0.0-alpha.59`: defaul
 - **`mDM_send` — readable on EVERY key of the identity, and never a false reason in the app**
   (correction of alpha.53 after independent verification, LINEAR-6089 follow-up). alpha.53 seeded
   the mDM identity from ONE API key and let an agent line (re)publish it. An identity holds many
-  keys (each OAuth connector mints its own; measured 27.09: general@ has 8 active, 7 of 17 agent
+  keys (each OAuth connector mints its own; measured 27.09: one account has 8 active, 7 of 17 agent
   identities have several), so the key directory flapped between per-key identities: a `s1.`
   copy opened only under the key that wrote it, and `r1.` copies stopped opening for the
   recipient after the next send from another key. alpha.53 also typed sends on a PERSON's key
   `txt` with a `s1.` copy the app can never open, so the app told the owner a false reason
   ("sent from another device" / "unlock your identity") instead of "sent by MCP".
-  - **Agent lines send in the clear** — the King's rule of 20.09 (no E2EE for lines<->lines,
-    lines<->King, human->line), the same rule the app applies (`peerIsAgent`). When the sender
+  - **Agent lines send in the clear** — the owner's rule of 20.09 (no E2EE for lines<->lines,
+    lines<->owner, human->line), the same rule the app applies (`peerIsAgent`). When the sender
     or the recipient is `kind = 'agent'`, `mDM_send` writes plain UTF-8, type `txt`, and never
     touches the key directory. Every key of the line and the recipient's app on every device read
     it. Result field `mode: "plaintext_agent_lane"`, `encrypted: false`.

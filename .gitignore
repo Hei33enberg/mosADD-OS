@@ -70,8 +70,8 @@ packages/mcp/*.mjs
 
 # Generated agent build artifact — do not commit
 packages/agent/dist-bundle/
-# vendor-drop: verbatim mDM E2EE copy from private Hei33enberg/mosADD (CYMRU drop only).
-# Do not publish proprietary product code into this public client repo.
+# vendor-drop: local scratch area for proprietary code. Never commit it.
+# Product code of the hosted app does not belong in this public repo.
 vendor-drop/
 
 # Local secrets
