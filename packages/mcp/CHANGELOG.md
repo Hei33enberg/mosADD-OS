@@ -8,6 +8,14 @@ gateway (Phase 2) ships.
 
 ## [Unreleased]
 
+## [3.0.0-alpha.58] — 2026-11-16
+
+### Added
+- **CLI:** `npx @mosadd/mcp --version`, `--help` and `tools` print (version, commands + env vars, all tools grouped by module) and exit instead of starting the stdio server.
+
+### Fixed
+- The "ready" log line now reports the `package.json` version (it said `3.0.0-alpha.0`).
+
 ## [3.0.0-alpha.57] — 2026-11-15
 
 ### Fixed
