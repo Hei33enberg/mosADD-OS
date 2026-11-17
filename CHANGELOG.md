@@ -6,6 +6,16 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 <!-- Generated from apps/web/src/data/changelog.ts by scripts/changelog-lustra.mjs. Do not edit by hand. -->
 
+## 2026-11-17 — Web
+
+**The website: 1 change.**
+
+- Website pages: 1 changed.
+- Web app: 1 changed.
+- Shipped as 1 change to the website; newest commit dd5f98275.
+
+Released 01:51 UTC · `dd5f98275` · https://mosadd.com/changelog#2026-11-17-0151
+
 ## 2026-11-17 — Web · Server
 
 **Pricing shows how prepaid top-ups will work before checkout exists; server docs list what M1 still needs from main.**
