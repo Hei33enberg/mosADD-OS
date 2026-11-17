@@ -8,6 +8,16 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 ## 2026-11-17 — Web
 
+**The website: 1 fix.**
+
+- Website files: 1 fixed.
+- Web app: 1 fixed.
+- Shipped as 1 change to the website; newest commit c504567d9.
+
+Released 00:30 UTC · `c504567d9` · https://mosadd.com/changelog#2026-11-17-0030
+
+## 2026-11-17 — Web
+
 **Footer motto on its own row; design-system reference patterns keep readable contrast on small labels.**
 
 - YOU'RE THE ARMY NOW. sits on its own row at the left edge under the footer columns; copyright, Fondation Proton, UID, address, Terms and Privacy stay on the legal row below, without the motto in the company line.
