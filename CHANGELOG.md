@@ -8,6 +8,16 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 ## 2026-11-17 — Web
 
+**The website: 1 fix.**
+
+- Website pages: 1 fixed.
+- Web app: 1 fixed.
+- Shipped as 1 change to the website; newest commit 878f267d4.
+
+Released 02:29 UTC · `878f267d4` · https://mosadd.com/changelog#2026-11-17-0229
+
+## 2026-11-17 — Web
+
 **Long pages get a black scroll progress bar; short static pages no longer show it by default.**
 
 - About, pricing, changelog, docs, quickstart, and help show the black 2px progress rail that grows as you scroll (green viewport frame stays separate).
