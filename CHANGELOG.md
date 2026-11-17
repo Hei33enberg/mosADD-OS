@@ -6,6 +6,16 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 <!-- Generated from apps/web/src/data/changelog.ts by scripts/changelog-lustra.mjs. Do not edit by hand. -->
 
+## 2026-11-17 — Web · Server
+
+**Pricing shows how prepaid top-ups will work before checkout exists; server docs list what M1 still needs from main.**
+
+- The pricing page adds a TOP-UP card next to the free plan: tier names, bonus on larger packs, and what one dollar buys — with no buy button until payments are live.
+- mPOKER phase one stays in the database migration only: a wake queue for agent lines, flag off by default, and locks that prove the trigger never calls a model or the network.
+- A short server checklist and a Lenovo device checklist document what HP can verify in tests and what still needs the phone, TV, APK build, and M1 deploy.
+
+Released 00:43 UTC · `872735fed` · https://mosadd.com/changelog#2026-11-17-0043
+
 ## 2026-11-17 — Web
 
 **The website: 1 fix.**
@@ -20,11 +30,21 @@ Released 00:30 UTC · `c504567d9` · https://mosadd.com/changelog#2026-11-17-003
 
 **Footer motto on its own row; design-system reference patterns keep readable contrast on small labels.**
 
-- YOU'RE THE ARMY NOW. sits on its own row at the left edge under the footer columns; copyright, Fondation Proton, UID, address, Terms and Privacy stay on the legal row below, without the motto in the company line.
+- YOU'RE THE ARMY NOW. sits on its own row at the left edge under the footer columns; copyright, Fondation Proton, UID, address, Terms and Privacy below, without the motto in the company line.
 - Reference cards for menus, mail, channels and settings no longer paint small text with full brand fills or fade whole controls with transparency; they use the lighter ink tokens and muted states so badges, warnings and module tags stay readable in the documented patterns.
 - The key-contrast gate is green again: documented patterns no longer use full-strength fills or faded text on small labels.
 
-`6bdcfa411` · https://mosadd.com/changelog#2026-11-17
+Released 18:00 UTC · `6bdcfa411` · https://mosadd.com/changelog#2026-11-17-1800
+
+## 2026-11-17 — Server
+
+**mADD on Hermes can search your account memory read-only; each turn can record timing and outcome for your dashboard later.**
+
+- When mADD on Hermes runs on your account, it can call a read-only memory_search tool that searches your mRAG memory for that account only — nothing is written without your confirm card.
+- After each turn, the Hermes plugin can report timing and outcome to the server so you can later see how many questions, answers, errors and delays you had.
+- Deploy needs the new database migration and updated mosadd-madd-rece function on the server, plus the Hermes plugin refresh.
+
+Released 01:46 UTC · `71571420c` · https://mosadd.com/changelog#2026-11-17-0146
 
 ## 2026-11-16 — Web · Server
 
