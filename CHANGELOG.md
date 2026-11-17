@@ -36,6 +36,16 @@ Released 00:30 UTC · `c504567d9` · https://mosadd.com/changelog#2026-11-17-003
 
 Released 18:00 UTC · `6bdcfa411` · https://mosadd.com/changelog#2026-11-17-1800
 
+## 2026-11-17 — Web
+
+**In your mADD chat, ⋮ now opens stats next to Edit — questions, answers, errors and turn timing.**
+
+- The ⋮ menu in a chat with mADD has a stats row beside Edit mADD. It opens a panel that reads your Hermes turn summary from the server for the last seven days.
+- Until the server migration is live the panel says so honestly instead of showing empty numbers.
+- The Hermes mosadd-mdm plugin metadata is labelled 3.1.0 in the repo — no marketplace promotion in this change.
+
+Released 01:00 UTC · `a1ef2f289` · https://mosadd.com/changelog#2026-11-17-0100
+
 ## 2026-11-17 — Server
 
 **mADD on Hermes can search your account memory read-only; each turn can record timing and outcome for your dashboard later.**
