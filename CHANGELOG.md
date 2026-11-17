@@ -8,13 +8,31 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 ## 2026-11-17 — Web
 
-**The website: 1 change.**
+**Long pages get a black scroll progress bar; short static pages no longer show it by default.**
 
-- Website pages: 1 changed.
-- Web app: 1 changed.
-- Shipped as 1 change to the website; newest commit dd5f98275.
+- About, pricing, changelog, docs, quickstart, and help show the black 2px progress rail that grows as you scroll (green viewport frame stays separate).
+- Terms of Service and Privacy Policy use the same black rail on the long legal text.
+- Product one-pagers like /install and /mcp no longer show the progress rail.
 
-Released 01:51 UTC · `dd5f98275` · https://mosadd.com/changelog#2026-11-17-0151
+Released 01:54 UTC · `ef84b299c` · https://mosadd.com/changelog#2026-11-17-0154
+
+## 2026-11-17 — Web
+
+**Static pages hide the breadcrumb strip and start the title closer under the header.**
+
+- Pages like /changelog and /docs no longer show the MOSADD / … breadcrumb row above the title — search engines still get structured breadcrumbs.
+- Less empty space above the page H1 on mobile and desktop so the section headline sits higher.
+
+Released 01:52 UTC · `582d7a80f` · https://mosadd.com/changelog#2026-11-17-0152
+
+## 2026-11-17 — Web
+
+**The site footer uses brand green on column titles and divider lines.**
+
+- Footer column headings (Product, Company, Developers, Compare, Get the app) use the same green as the rest of the brand instead of gray.
+- The thin line above the footer and the line above the legal row match that green.
+
+Released 01:50 UTC · `323fad900` · https://mosadd.com/changelog#2026-11-17-0150
 
 ## 2026-11-17 — Web · Server
 
