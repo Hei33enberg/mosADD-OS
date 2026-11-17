@@ -8,6 +8,15 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 ## 2026-11-17 — Web
 
+**Pricing now shows the free card, top-up rates, and what the same army costs elsewhere.**
+
+- Pricing now shows the free card, top-up rates, and what the same army costs elsewhere.
+- Shipped as 3 changes to the website; newest commit ed0d0fe82.
+
+Released 03:41 UTC · `ed0d0fe82` · https://mosadd.com/changelog#2026-11-17-0341
+
+## 2026-11-17 — Web
+
 **The website: 4 fixes.**
 
 - Web app: 4 fixed.
