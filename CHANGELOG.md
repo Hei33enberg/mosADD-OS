@@ -6,6 +6,16 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 <!-- Generated from apps/web/src/data/changelog.ts by scripts/changelog-lustra.mjs. Do not edit by hand. -->
 
+## 2026-11-17 — Web
+
+**Footer motto on its own row; design-system reference patterns keep readable contrast on small labels.**
+
+- YOU'RE THE ARMY NOW. sits on its own row at the left edge under the footer columns; copyright, Fondation Proton, UID, address, Terms and Privacy stay on the legal row below, without the motto in the company line.
+- Reference cards for menus, mail, channels and settings no longer paint small text with full brand fills or fade whole controls with transparency; they use the lighter ink tokens and muted states so badges, warnings and module tags stay readable in the documented patterns.
+- The key-contrast gate is green again: documented patterns no longer use full-strength fills or faded text on small labels.
+
+`6bdcfa411` · https://mosadd.com/changelog#2026-11-17
+
 ## 2026-11-16 — Web · Server
 
 **mosADD 2.1.0 — launch build: the dashboard is back to your conversation threads only, push-to-talk lives in the mKEEPER window, and the writing bar keeps one order everywhere.**
