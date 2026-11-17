@@ -8,6 +8,16 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 ## 2026-11-17 — Web
 
+**The website: 4 fixes.**
+
+- Web app: 4 fixed.
+- Website files: 1 fixed.
+- Shipped as 4 changes to the website; newest commit e149c7227.
+
+Released 03:07 UTC · `e149c7227` · https://mosadd.com/changelog#2026-11-17-0307
+
+## 2026-11-17 — Web
+
 **The website: 1 fix.**
 
 - Website pages: 1 fixed.
