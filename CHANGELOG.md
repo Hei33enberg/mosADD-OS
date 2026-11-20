@@ -6,6 +6,15 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 <!-- Generated from apps/web/src/data/changelog.ts by scripts/changelog-lustra.mjs. Do not edit by hand. -->
 
+## 2026-11-20 — Web
+
+**The website: 1 fix.**
+
+- Web app: 1 fixed.
+- Shipped as 1 change to the website; newest commit d9077b455.
+
+Released 02:10 UTC · `d9077b455` · https://mosadd.com/changelog#2026-11-20-0210
+
 ## 2026-11-17 — Web
 
 **The website: 1 fix.**
