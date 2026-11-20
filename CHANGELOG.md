@@ -6,6 +6,16 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 <!-- Generated from apps/web/src/data/changelog.ts by scripts/changelog-lustra.mjs. Do not edit by hand. -->
 
+## 2026-11-20 — Web · Server
+
+**The line row in the app now reads live data from the server, and the site says exactly what encryption covers.**
+
+- The line row in the app reads the live manifest from the server, so names and state reflect reality instead of placeholders.
+- The site serves that read through its own gateway, so the browser no longer needs a separate API origin or a CORS exception.
+- Hero copy is narrower and true: end-to-end encryption covers text between two people; the server reads a chat with an agent, voice and memory.
+
+`6d01384f8` · https://mosadd.com/changelog#2026-11-20
+
 ## 2026-11-20 — Web
 
 **The website: 1 fix.**
@@ -32,6 +42,16 @@ Released 05:10 UTC · `f9e11d484` · https://mosadd.com/changelog#2026-11-20-051
 - Shipped as 1 change to the website; newest commit d9077b455.
 
 Released 02:10 UTC · `d9077b455` · https://mosadd.com/changelog#2026-11-20-0210
+
+## 2026-11-17 — Web
+
+**Footer motto on its own row; design-system reference patterns keep readable contrast on small labels.**
+
+- YOU'RE THE ARMY NOW. sits on its own row at the left edge under the footer columns; copyright, Fondation Proton, UID, address, Terms and Privacy below, without the motto in the company line.
+- Reference cards for menus, mail, channels and settings no longer paint small text with full brand fills or fade whole controls with transparency; they use the lighter ink tokens and muted states so badges, warnings and module tags stay readable in the documented patterns.
+- The key-contrast gate is green again: documented patterns no longer use full-strength fills or faded text on small labels.
+
+Released 18:00 UTC · `6bdcfa411` · https://mosadd.com/changelog#2026-11-17-1800
 
 ## 2026-11-17 — Web
 
@@ -99,6 +119,26 @@ Released 01:52 UTC · `582d7a80f` · https://mosadd.com/changelog#2026-11-17-015
 
 Released 01:50 UTC · `323fad900` · https://mosadd.com/changelog#2026-11-17-0150
 
+## 2026-11-17 — Server
+
+**mADD on Hermes can search your account memory read-only; each turn can record timing and outcome for your dashboard later.**
+
+- When mADD on Hermes runs on your account, it can call a read-only memory_search tool that searches your mRAG memory for that account only — nothing is written without your confirm card.
+- After each turn, the Hermes plugin can report timing and outcome to the server so you can later see how many questions, answers, errors and delays you had.
+- Deploy needs the new database migration and updated mosadd-madd-rece function on the server, plus the Hermes plugin refresh.
+
+Released 01:46 UTC · `71571420c` · https://mosadd.com/changelog#2026-11-17-0146
+
+## 2026-11-17 — Web
+
+**In your mADD chat, ⋮ now opens stats next to Edit — questions, answers, errors and turn timing.**
+
+- The ⋮ menu in a chat with mADD has a stats row beside Edit mADD. It opens a panel that reads your Hermes turn summary from the server for the last seven days.
+- Until the server migration is live the panel says so honestly instead of showing empty numbers.
+- The Hermes mosadd-mdm plugin metadata is labelled 3.1.0 in the repo — no marketplace promotion in this change.
+
+Released 01:00 UTC · `a1ef2f289` · https://mosadd.com/changelog#2026-11-17-0100
+
 ## 2026-11-17 — Web · Server
 
 **Pricing shows how prepaid top-ups will work before checkout exists; server docs list what M1 still needs from main.**
@@ -118,36 +158,6 @@ Released 00:43 UTC · `872735fed` · https://mosadd.com/changelog#2026-11-17-004
 - Shipped as 1 change to the website; newest commit c504567d9.
 
 Released 00:30 UTC · `c504567d9` · https://mosadd.com/changelog#2026-11-17-0030
-
-## 2026-11-17 — Web
-
-**Footer motto on its own row; design-system reference patterns keep readable contrast on small labels.**
-
-- YOU'RE THE ARMY NOW. sits on its own row at the left edge under the footer columns; copyright, Fondation Proton, UID, address, Terms and Privacy below, without the motto in the company line.
-- Reference cards for menus, mail, channels and settings no longer paint small text with full brand fills or fade whole controls with transparency; they use the lighter ink tokens and muted states so badges, warnings and module tags stay readable in the documented patterns.
-- The key-contrast gate is green again: documented patterns no longer use full-strength fills or faded text on small labels.
-
-Released 18:00 UTC · `6bdcfa411` · https://mosadd.com/changelog#2026-11-17-1800
-
-## 2026-11-17 — Web
-
-**In your mADD chat, ⋮ now opens stats next to Edit — questions, answers, errors and turn timing.**
-
-- The ⋮ menu in a chat with mADD has a stats row beside Edit mADD. It opens a panel that reads your Hermes turn summary from the server for the last seven days.
-- Until the server migration is live the panel says so honestly instead of showing empty numbers.
-- The Hermes mosadd-mdm plugin metadata is labelled 3.1.0 in the repo — no marketplace promotion in this change.
-
-Released 01:00 UTC · `a1ef2f289` · https://mosadd.com/changelog#2026-11-17-0100
-
-## 2026-11-17 — Server
-
-**mADD on Hermes can search your account memory read-only; each turn can record timing and outcome for your dashboard later.**
-
-- When mADD on Hermes runs on your account, it can call a read-only memory_search tool that searches your mRAG memory for that account only — nothing is written without your confirm card.
-- After each turn, the Hermes plugin can report timing and outcome to the server so you can later see how many questions, answers, errors and delays you had.
-- Deploy needs the new database migration and updated mosadd-madd-rece function on the server, plus the Hermes plugin refresh.
-
-Released 01:46 UTC · `71571420c` · https://mosadd.com/changelog#2026-11-17-0146
 
 ## 2026-11-16 — Web · Server
 
