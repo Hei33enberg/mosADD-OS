@@ -8,6 +8,15 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 ## 2026-11-20 — Web
 
+**The website: 1 fix.**
+
+- Web app: 1 fixed.
+- Shipped as 1 change to the website; newest commit 81d95597e.
+
+Released 05:41 UTC · `81d95597e` · https://mosadd.com/changelog#2026-11-20-0541
+
+## 2026-11-20 — Web
+
 **The search field in the app header is full width again, like before 17 Nov.**
 
 - The SZUKAJ search field in the app header now grows to fill the space instead of stopping at a narrow cap, so the header looks like it did before 17 Nov.
