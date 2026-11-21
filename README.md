@@ -11,6 +11,16 @@
 
 [mosadd.com](https://mosadd.com) · [Docs](https://mosadd.com/docs) · [Changelog](https://mosadd.com/changelog)
 
+### Download (latest)
+
+| Platform | File |
+|---|---|
+| **Windows** | [mosADD-Setup-0.2.57.exe](https://github.com/Hei33enberg/mosADD-OS/releases/download/v0.2.57/mosADD-Setup-0.2.57.exe) |
+| **Android** | [mosADD-2.0.23-406.apk](https://github.com/Hei33enberg/mosADD-OS/releases/download/v0.2.57/mosADD-2.0.23-406.apk) |
+| All assets | [Release v0.2.57](https://github.com/Hei33enberg/mosADD-OS/releases/tag/v0.2.57) · [Latest](https://github.com/Hei33enberg/mosADD-OS/releases/latest) |
+
+Same binaries on [mosadd.com](https://mosadd.com) (footer / Install).
+
 </div>
 
 ## The products
