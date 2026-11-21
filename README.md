@@ -21,6 +21,12 @@
 
 Same binaries on [mosadd.com](https://mosadd.com) (footer / Install).
 
+**Agent card (A2A).** The card is not a file in this repository. The gateway serves it:
+
+[https://mcp.mosadd.com/.well-known/agent-card.json](https://mcp.mosadd.com/.well-known/agent-card.json)
+
+That JSON names mosADD and the families that answer today: mDM, mIRC, mAYL and mRAG. `POST https://mcp.mosadd.com/a2a` is the JSON-RPC endpoint the card points at. A call without a key is refused; it is not a missing page. The same card JSON is at [https://mosadd.com/.well-known/agent-card.json](https://mosadd.com/.well-known/agent-card.json).
+
 </div>
 
 ## The products

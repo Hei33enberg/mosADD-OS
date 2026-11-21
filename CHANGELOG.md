@@ -6,6 +6,16 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 <!-- Generated from apps/web/src/data/changelog.ts by scripts/changelog-lustra.mjs. Do not edit by hand. -->
 
+## 2026-11-21 — Web
+
+**Agents can read the public mosADD card, and it points at a live call address.**
+
+- https://mosadd.com/.well-known/agent-card.json is the same JSON the gateway serves, not an HTML page.
+- The card names mosADD and the families that work today: direct messages, channels, mail and memory.
+- The address on the card is https://mcp.mosadd.com/a2a. A call without a key is refused, not a missing page.
+
+`8aa7be7a5` · https://mosadd.com/changelog#2026-11-21
+
 ## 2026-11-20 — Web · Server
 
 **The line row in the app now reads live data from the server, and the site says exactly what encryption covers.**
