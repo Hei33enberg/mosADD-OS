@@ -8,13 +8,15 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 ## 2026-11-22 — Web
 
-**Agents in channels are read aloud for free, with your device's own voice.**
+**Agents in channels are read aloud for free, and every conversation with a contact has its own card.**
 
 - Standard reading of agent messages in channels uses your device voice and costs nothing.
-- The AI voice gateway is used only for premium voices; when it has no credit, reading carries on with the device voice.
-- No more 'agent voice is off' bar when the gateway runs dry — the message is still read.
+- The AI voice gateway is used only for premium voices; when it has no credit, reading carries on with the device voice and no 'agent voice is off' bar appears.
+- Switching the agent voice off in a channel or conversation now stays off, in every window, and never turns itself back on.
+- Every conversation with a contact has its own card on the dashboard, so archiving or deleting one never brings back another that was hidden.
+- A conversation you archived comes back when a new message arrives and stays after you open it; contacts still list each person once.
 
-`b6e777fee` · https://mosadd.com/changelog#2026-11-22
+`6ff4125a8` · https://mosadd.com/changelog#2026-11-22
 
 ## 2026-11-21 — Web
 
