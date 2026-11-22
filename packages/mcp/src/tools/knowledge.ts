@@ -99,10 +99,42 @@ interface RagSource {
   created_at: string;
 }
 
+/**
+ * What rag-query says about HOW it found the sources. Until now the handler kept only answer/sources/chunks_found, so an agent
+ * could not tell a complete hybrid result from a keyword-only fallback after the vector stage ran out of time (rag-query ≥ 2026-11-22),
+ * nor see which stage was slow. All fields are optional and copied only when the backend sent them — an older backend yields the same
+ * three-field result as before.
+ */
+export interface RagSearchDiagnostics {
+  /** true when the vector stage did not deliver and the sources come from the keyword fallback (or are empty because both stages failed). */
+  partial?: boolean;
+  /** search_timeout | embed_failed | search_error */
+  partial_reason?: string;
+  /** "hybrid" (vector + keyword) or "keyword" (fallback). */
+  search_mode?: string;
+  /** Set when a model answer was requested but not produced (e.g. "ai_unavailable", "budget"); sources are still returned. */
+  degraded?: string;
+  /** Per-stage milliseconds measured by rag-query (auth, embed, vector, keyword, rerank, model, total). */
+  timing?: Record<string, number | string>;
+  /** Normalised stage summary: embed_ms, wektor_ms, slowa_ms, rerank_ms, synteza_ms, total_ms and per-stage status (ok | limit | blad | pominiety | niedostepny). */
+  stages?: Record<string, unknown>;
+}
+
+const DIAGNOSTIC_KEYS = ["partial", "partial_reason", "search_mode", "degraded", "timing", "stages"] as const;
+
+function ragDiagnostics(data: RagSearchDiagnostics): RagSearchDiagnostics {
+  const out: Record<string, unknown> = {};
+  for (const key of DIAGNOSTIC_KEYS) {
+    const value = data[key];
+    if (value !== undefined && value !== null) out[key] = value;
+  }
+  return out as RagSearchDiagnostics;
+}
+
 async function mRAG_search(
   input: z.infer<typeof mRAG_search_input>,
   ctx: MosaddToolContext,
-): Promise<{ answer: string; sources: RagSource[]; chunks_found: number }> {
+): Promise<{ answer: string; sources: RagSource[]; chunks_found: number } & RagSearchDiagnostics> {
   readSupabaseEnv();
   ctx.log("debug", "mRAG_search via rag-query", { top_k: input.top_k ?? 8 });
 
@@ -110,7 +142,7 @@ async function mRAG_search(
     answer?: string;
     sources?: RagSource[];
     chunks_found?: number;
-  };
+  } & RagSearchDiagnostics;
   const data = await invokeFunction<RagQueryResponse>("rag-query", {
     query: input.query,
     top_k: input.top_k ?? 8,
@@ -123,6 +155,7 @@ async function mRAG_search(
     answer: data.answer ?? "",
     sources: data.sources ?? [],
     chunks_found: data.chunks_found ?? (data.sources?.length ?? 0),
+    ...ragDiagnostics(data),
   };
 }
 
@@ -324,7 +357,7 @@ export const knowledgeTools: MosaddTool[] = [
     annotations: { readOnlyHint: true },
     requires: "network",
     description:
-      "Search and answer questions over the USER'S OWN mosadd data (messages, emails, calls, notes) with a private per-user RAG index — hybrid vector + keyword retrieval, reranked, grounded in cited sources (no fabrication). Use it to recall 'what did X say about Y', summarize a thread, or pull facts the user has received. By DEFAULT (via MCP) it returns the ranked source snippets only and `answer` is an empty string (answer_mode retrieve_only): fast, no model call. Pass answer:true to also get a generated answer grounded in those sources (slower, uses the model budget). If the index search runs out of time the call still succeeds and carries partial:true with partial_reason, instead of failing. This is agent memory (mRAG = RAG over your own data) over the user's communications, available outside the mosadd app. NOTE: RAG requires content to be indexed server-side in plaintext, so anything searchable here is NOT covered b",
+      "Search and answer questions over the USER'S OWN mosadd data (messages, emails, calls, notes) with a private per-user RAG index — hybrid vector + keyword retrieval, reranked, grounded in cited sources (no fabrication). Use it to recall 'what did X say about Y', summarize a thread, or pull facts the user has received. By DEFAULT (via MCP) it returns the ranked source snippets only (answer_mode retrieve_only): fast, no model call; `answer` is empty or a short status note starting with '[mRAG' that names the stages and their times. Pass answer:true to also get a generated answer grounded in those sources (slower, uses the model budget). If the vector stage runs out of time the call still succeeds: the sources come from a keyword fallback and the result carries partial:true, partial_reason and search_mode:'keyword' (never a silent empty list); `timing` and `stages` give the milliseconds of every stage. This is agent memory (mRAG = RAG over your own data) over the user's communications, available outside the mosadd app. NOTE: RAG requires content to be indexed server-side in plaintext, so anything searchable here is NOT covered b",
     inputSchema: mRAG_search_input,
     handler: mRAG_search as MosaddTool["handler"],
   },

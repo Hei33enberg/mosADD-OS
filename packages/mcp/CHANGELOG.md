@@ -7,6 +7,9 @@ and this project follows [Semantic Versioning](https://semver.org/). The `3.0.0-
 
 ## [Unreleased]
 
+### Fixed
+- **`mRAG_search` no longer hides how it found the sources.** The tool description promised `partial:true` with `partial_reason`, but the handler kept only `answer`/`sources`/`chunks_found`, so a keyword-only fallback after a vector timeout looked like an empty memory and no stage time was visible. It now also forwards, when the backend sends them: `partial`, `partial_reason` (`search_timeout` | `embed_failed` | `search_error`), `search_mode` (`hybrid` | `keyword`), `degraded` (a model answer was requested but not produced) and per-stage milliseconds as `timing` and `stages`. An older backend yields the same three-field result as before.
+
 ## [3.0.0] — 2026-11-16
 
 The first stable release of the 3.0 line. Same tools as `3.0.0-alpha.59`: default host `https://api.mosadd.com`, `mRAG_search` with `answer`. `latest` on npm now points here; install with `npx -y @mosadd/mcp`.
