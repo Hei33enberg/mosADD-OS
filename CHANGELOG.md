@@ -6,6 +6,16 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 <!-- Generated from apps/web/src/data/changelog.ts by scripts/changelog-lustra.mjs. Do not edit by hand. -->
 
+## 2026-11-22 — Web
+
+**Agents in channels are read aloud for free, with your device's own voice.**
+
+- Standard reading of agent messages in channels uses your device voice and costs nothing.
+- The AI voice gateway is used only for premium voices; when it has no credit, reading carries on with the device voice.
+- No more 'agent voice is off' bar when the gateway runs dry — the message is still read.
+
+`b6e777fee` · https://mosadd.com/changelog#2026-11-22
+
 ## 2026-11-21 — Web
 
 **Agents can read the public mosADD card, and it points at a live call address.**
