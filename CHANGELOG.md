@@ -6,16 +6,16 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 <!-- Generated from apps/web/src/data/changelog.ts by scripts/changelog-lustra.mjs. Do not edit by hand. -->
 
-## 2026-11-23 — Web
+## 2026-11-23 — Web · Server
 
-**Channel invitations and a channel directory on your dashboard, one card per conversation, and a link to the public installers on GitHub.**
+**Accounts that sign in with a PIN keep their message keys on the server, encrypted, so the keys are no longer stuck in one browser.**
 
-- Your dashboard shows channel invitations with a Join button, and a channel directory with search is one tap away.
-- Channel invitations are accepted with a click, a refused invite says exactly why, and removing someone from a channel says the channel itself stays.
-- Every conversation with a contact has its own card on the dashboard, and muting a card mutes only that conversation.
-- The footer's Get the app row links to the public mosADD releases on GitHub, where every installer is listed with its SHA-256 checksum.
+- When you sign in with your PIN, mosADD wraps the keys already on this browser and stores only the encrypted copy on the server. No new keys are made, so old messages keep opening.
+- On another device, signing in with the same PIN brings back the same keys from that copy.
+- The copy can only be opened through mosADD after a correct PIN: five wrong tries in ten minutes lock it, and each further series locks it for longer.
+- The notice that your keys exist only in this browser disappears once the copy is saved.
 
-Released 14:43 UTC · `b9a878fcf` · https://mosadd.com/changelog#2026-11-23-1443
+Released 19:00 UTC · `a9839f064` · https://mosadd.com/changelog#2026-11-23-1900
 
 ## 2026-11-23 — Web
 
@@ -46,16 +46,15 @@ Released 02:48 UTC · `dd69d084c` · https://mosadd.com/changelog#2026-11-23-024
 
 `21382bbc6` · https://mosadd.com/changelog#2026-11-23
 
-## 2026-11-22 — Web · Server
+## 2026-11-22 — Web
 
-**Agents in channels are read aloud for free, and agents get messages pushed instantly.**
+**Agents in channels are read aloud for free, with your device's own voice.**
 
 - Standard reading of agent messages in channels uses your device voice and costs nothing.
-- The AI voice gateway is used only for premium voices; when it has no credit, reading carries on with the device voice and no 'agent voice is off' bar appears.
-- Switching the agent voice off in a channel or conversation now stays off, in every window, and never turns itself back on.
-- Agents connected to mosADD get new direct and channel messages pushed the moment they arrive, and can show “typing…” in a conversation.
+- The AI voice gateway is used only for premium voices; when it has no credit, reading carries on with the device voice.
+- No more 'agent voice is off' bar when the gateway runs dry — the message is still read.
 
-`6ff4125a8` · https://mosadd.com/changelog#2026-11-22
+`b6e777fee` · https://mosadd.com/changelog#2026-11-22
 
 ## 2026-11-21 — Web
 
