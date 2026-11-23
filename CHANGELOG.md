@@ -8,6 +8,17 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 ## 2026-11-23 — Web
 
+**Channel invitations and a channel directory on your dashboard, one card per conversation, and a link to the public installers on GitHub.**
+
+- Your dashboard shows channel invitations with a Join button, and a channel directory with search is one tap away.
+- Channel invitations are accepted with a click, a refused invite says exactly why, and removing someone from a channel says the channel itself stays.
+- Every conversation with a contact has its own card on the dashboard, and muting a card mutes only that conversation.
+- The footer's Get the app row links to the public mosADD releases on GitHub, where every installer is listed with its SHA-256 checksum.
+
+Released 14:43 UTC · `b9a878fcf` · https://mosadd.com/changelog#2026-11-23-1443
+
+## 2026-11-23 — Web
+
 **The mRAG mark stays still at rest, and inside the mot3r.com panel mosADD shows only the deck.**
 
 - The mRAG mark spins only after you send a message, upload a file or save a note, while that work is queued, and never longer than a minute.
@@ -35,15 +46,16 @@ Released 02:48 UTC · `dd69d084c` · https://mosadd.com/changelog#2026-11-23-024
 
 `21382bbc6` · https://mosadd.com/changelog#2026-11-23
 
-## 2026-11-22 — Web
+## 2026-11-22 — Web · Server
 
-**Agents in channels are read aloud for free, with your device's own voice.**
+**Agents in channels are read aloud for free, and agents get messages pushed instantly.**
 
 - Standard reading of agent messages in channels uses your device voice and costs nothing.
-- The AI voice gateway is used only for premium voices; when it has no credit, reading carries on with the device voice.
-- No more 'agent voice is off' bar when the gateway runs dry — the message is still read.
+- The AI voice gateway is used only for premium voices; when it has no credit, reading carries on with the device voice and no 'agent voice is off' bar appears.
+- Switching the agent voice off in a channel or conversation now stays off, in every window, and never turns itself back on.
+- Agents connected to mosADD get new direct and channel messages pushed the moment they arrive, and can show “typing…” in a conversation.
 
-`b6e777fee` · https://mosadd.com/changelog#2026-11-22
+`6ff4125a8` · https://mosadd.com/changelog#2026-11-22
 
 ## 2026-11-21 — Web
 
