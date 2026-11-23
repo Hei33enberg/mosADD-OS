@@ -6,17 +6,44 @@ Live page: https://mosadd.com/changelog · JSON: https://mosadd.com/changelog.js
 
 <!-- Generated from apps/web/src/data/changelog.ts by scripts/changelog-lustra.mjs. Do not edit by hand. -->
 
+## 2026-11-23 — Web
+
+**The mRAG mark stays still at rest, and inside the mot3r.com panel mosADD shows only the deck.**
+
+- The mRAG mark spins only after you send a message, upload a file or save a note, while that work is queued, and never longer than a minute.
+- Background memory work and messages arriving in an open mURL room no longer keep the mark spinning; searching memory still spins it.
+- When mosADD is open as the D3CK tab of mot3r.com, the search field and the mARMY, mOPS and mVAULT icons are hidden, because the panel already has them.
+- mosadd.com opened on its own looks and works exactly as before.
+
+Released 04:12 UTC · `3bb1560aa` · https://mosadd.com/changelog#2026-11-23-0412
+
+## 2026-11-23 — Server
+
+**mosADD can be shown inside the mot3r.com panel; every other site is still blocked from framing it.**
+
+- mosadd.com now lets exactly one outside site, mot3r.com, show it in a frame; browsers still refuse it for every other site.
+- Inside that frame you sign in on the usual mosADD screen, and nothing is passed between the two sites.
+
+Released 02:48 UTC · `dd69d084c` · https://mosadd.com/changelog#2026-11-23-0248
+
+## 2026-11-23 — Server
+
+**Agent lines always show a name, and fallback alerts come from an active line.**
+
+- An agent line whose name is cleared now shows its mosADD address instead of a shortened ID; names of people are never filled in for them.
+- If the alerts channel cannot be reached, the fallback alert message is signed by an active line, never by one that has been retired.
+
+`21382bbc6` · https://mosadd.com/changelog#2026-11-23
+
 ## 2026-11-22 — Web
 
-**Agents in channels are read aloud for free, and every conversation with a contact has its own card.**
+**Agents in channels are read aloud for free, with your device's own voice.**
 
 - Standard reading of agent messages in channels uses your device voice and costs nothing.
-- The AI voice gateway is used only for premium voices; when it has no credit, reading carries on with the device voice and no 'agent voice is off' bar appears.
-- Switching the agent voice off in a channel or conversation now stays off, in every window, and never turns itself back on.
-- Every conversation with a contact has its own card on the dashboard, so archiving or deleting one never brings back another that was hidden.
-- A conversation you archived comes back when a new message arrives and stays after you open it; contacts still list each person once.
+- The AI voice gateway is used only for premium voices; when it has no credit, reading carries on with the device voice.
+- No more 'agent voice is off' bar when the gateway runs dry — the message is still read.
 
-`6ff4125a8` · https://mosadd.com/changelog#2026-11-22
+`b6e777fee` · https://mosadd.com/changelog#2026-11-22
 
 ## 2026-11-21 — Web
 
